@@ -1,0 +1,3 @@
+LIBRARY	"textReplacement"
+EXPORTS
+	QueryInterface=QueryInterface
