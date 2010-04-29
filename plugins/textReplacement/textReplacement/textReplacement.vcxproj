@@ -98,8 +98,10 @@
     <ClCompile Include="textReplacement.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\Program Files (x86)\--Diablo II\Plugin\textReplacement.txt" />
     <None Include="textReplacement.def" />
+    <None Include="textReplacement.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="plugin.h" />

@@ -23,7 +23,7 @@
     <None Include="textReplacement.def">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="..\..\..\..\Program Files (x86)\--Diablo II\Plugin\textReplacement.txt">
+    <None Include="textReplacement.txt">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
