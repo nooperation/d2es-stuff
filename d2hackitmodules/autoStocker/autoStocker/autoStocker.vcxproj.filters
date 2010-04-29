@@ -37,5 +37,8 @@
     <None Include="..\goodSuffix_as.txt">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\autostockerMisc.ini">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
