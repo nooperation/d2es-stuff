@@ -1,0 +1,3 @@
+LIBRARY	"loadHireling"
+EXPORTS
+	QueryInterface=QueryInterface
