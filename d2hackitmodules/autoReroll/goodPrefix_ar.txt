@@ -1,0 +1,8 @@
+23      Cruel                 dmg% (201-300)                                
+24      Bloodlust             dmg% (400-400) howl (128-128) regen (-8--8)       
+49      Grandmaster's         att (251-300) dmg% (151-200)                                                       
+336     Shouting              20 dmg%/lvl                                   
+337     Screaming             24 dmg%/lvl                                   
+347     Joker's               16 dmg/lvl 8 att/lvl                          
+348     Fool's                20 dmg/lvl 10 att/lvl                                                                                                            
+           
