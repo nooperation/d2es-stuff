@@ -423,7 +423,27 @@
     <ClInclude Include="SpellDef.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\D2HackIt.ini" />
+    <None Include="..\AllItems.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\Armor.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\D2HackIt.ini">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\MagicPrefix_all.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\MagicSuffix_all.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\Sets.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\Weapons.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

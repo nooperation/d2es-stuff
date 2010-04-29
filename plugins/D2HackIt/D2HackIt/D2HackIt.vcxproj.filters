@@ -18,6 +18,9 @@
     <Filter Include="NewFilter1\Header">
       <UniqueIdentifier>{16c98954-885e-4658-b413-27e23850915f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{7fa9dbb8-268a-4e98-ae09-49c396fba693}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientHandler.cpp">
@@ -231,7 +234,27 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\D2HackIt.ini" />
+    <None Include="..\AllItems.txt">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\Armor.txt">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\MagicPrefix_all.txt">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\MagicSuffix_all.txt">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\Sets.txt">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\Weapons.txt">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="..\D2HackIt.ini">
+      <Filter>Resources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuildStep Include="..\Includes\D2Client.h">
