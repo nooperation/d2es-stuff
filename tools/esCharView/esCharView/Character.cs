@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
 
@@ -37,7 +36,7 @@ namespace esCharView
 				byte[] newName = ASCIIEncoding.ASCII.GetBytes(value);
 
 				//15 instead of 16 to keep trailing null character
-				Array.Copy(newName, paddedName, newName.Length < 15 ? newName.Length : 15); 
+				Array.Copy(newName, paddedName, newName.Length < 15 ? newName.Length : 15);
 				Array.Copy(paddedName, 0, headerBytes, 0x14, paddedName.Length);
 			}
 		}
@@ -67,8 +66,8 @@ namespace esCharView
 		/// <summary>
 		/// Character has died before
 		/// </summary>
-		public bool Died 
-		{ 
+		public bool Died
+		{
 			get
 			{
 				return (characterFlags & 0x08) > 0;
