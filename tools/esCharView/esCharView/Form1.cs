@@ -48,6 +48,10 @@ namespace esCharView
 			playerData.Read(filePath);
 
 			listBoxInventory.Items.Clear();
+			listBoxCorpseInventory.Items.Clear();
+			listBoxGolemInventory.Items.Clear();
+			listBoxMercInventory.Items.Clear();
+			textBoxGeneral.Clear();
 
 			UpdateInventoryList();
 
@@ -56,6 +60,27 @@ namespace esCharView
 			checkBoxHardcore.Checked = playerData.Hardcore;
 			textBoxUnknownFlags.Text = playerData.UnknownFlags.ToString();
 			textBoxName.Text = playerData.Name;
+
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine(string.Format("Class: {0}", playerData.Class));
+			sb.AppendLine(string.Format("Strength: {0}", playerData.Strength));
+			sb.AppendLine(string.Format("Energy: {0}", playerData.Energy));
+			sb.AppendLine(string.Format("Dexterity: {0}", playerData.Dexterity));
+			sb.AppendLine(string.Format("Vitality: {0}", playerData.Vitality));
+			sb.AppendLine(string.Format("StatPoints: {0}", playerData.StatPoints));
+			sb.AppendLine(string.Format("SkillPoints: {0}", playerData.SkillPoints));
+			sb.AppendLine(string.Format("Hitpoints: {0}", playerData.Hitpoints));
+			sb.AppendLine(string.Format("MaxHitpoints: {0}", playerData.MaxHitpoints));
+			sb.AppendLine(string.Format("Mana: {0}", playerData.Mana));
+			sb.AppendLine(string.Format("MaxMana: {0}", playerData.MaxMana));
+			sb.AppendLine(string.Format("Stamina: {0}", playerData.Stamina));
+			sb.AppendLine(string.Format("MaxStamina: {0}", playerData.MaxStamina));
+			sb.AppendLine(string.Format("Level: {0}", playerData.Level));
+			sb.AppendLine(string.Format("Experience: {0}", playerData.Experience));
+			sb.AppendLine(string.Format("Gold: {0}", playerData.Gold));
+			sb.AppendLine(string.Format("GoldBank: {0}", playerData.GoldBank));
+
+			textBoxGeneral.Text = sb.ToString();
 		}
 
 		private void UpdateInventoryList()
@@ -115,7 +140,6 @@ namespace esCharView
 				}
 			}
 
-			playerData.UpdateInventoryHeaders();
 			UpdateInventoryList();
 		}
 

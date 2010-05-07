@@ -270,6 +270,18 @@ namespace esCharView
 			return retVal;
 		}
 
+		/// <summary>
+		/// Read specific amount of bits from stream, maximum amount of 32
+		/// </summary>
+		/// <param name="bitCount">Number of bits to read, maximum of 32</param>
+		/// <returns>Unsigned integer representation of specified bits</returns>
+		unsafe public uint Read(int bitCount)
+		{
+			uint retVal;
+			this.Read((byte*)&retVal, bitCount);
+			return retVal;
+		}
+
 		unsafe public short ReadInt16()
 		{
 			short retVal;

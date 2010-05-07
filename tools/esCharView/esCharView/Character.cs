@@ -2,24 +2,35 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Collections;
 
 namespace esCharView
 {
 	class Character
 	{
 		private byte[] headerBytes;
-		private byte[] inventoryBytes;
-		private byte characterFlags;
-		private string filePath;
+		private uint[] statValues = new uint[16];
 		private Inventory inventory;
 
-		public Character()
-		{
-
-		}
+		private byte characterFlags;
+		private string filePath;
 
 		public int HeaderSize { get { return headerBytes.Length; } }
-		public int InventorySize { get { return inventoryBytes.Length; } }
+
+		/// <summary>
+		/// Character classes
+		/// </summary>
+		public enum CharacterClass
+		{
+			Amazon,
+			Sorceress,
+			Necromancer,
+			Paladin,
+			Barbarian,
+			Druid,
+			Assassin,
+			Unknown
+		}
 
 		/// <summary>
 		/// Character's name
@@ -40,6 +51,146 @@ namespace esCharView
 				Array.Copy(paddedName, 0, headerBytes, 0x14, paddedName.Length);
 			}
 		}
+
+		/// <summary>
+		/// Character Stat Types
+		/// </summary>
+		enum StatTypes
+		{
+			Strength,
+			Energy,
+			Dexterity,
+			Vitality,
+			StatPoints,
+			SkillPoints,
+			Hitpoints,
+			MaxHitpoints,
+			Mana,
+			MaxMana,
+			Stamina,
+			MaxStamina,
+			Level,
+			Experience,
+			Gold,
+			GoldBank,
+		}
+
+		public uint Strength
+		{
+			get { return statValues[(int)StatTypes.Strength]; }
+			set { statValues[(int)StatTypes.Strength] = value; }
+		}
+		public uint Energy
+		{
+			get { return statValues[(int)StatTypes.Energy]; }
+			set { statValues[(int)StatTypes.Energy] = value; }
+		}
+		public uint Dexterity
+		{
+			get { return statValues[(int)StatTypes.Dexterity]; }
+			set { statValues[(int)StatTypes.Dexterity] = value; }
+		}
+		public uint Vitality
+		{
+			get { return statValues[(int)StatTypes.Vitality]; }
+			set { statValues[(int)StatTypes.Vitality] = value; }
+		}
+		public uint StatPoints
+		{
+			get { return statValues[(int)StatTypes.StatPoints]; }
+			set { statValues[(int)StatTypes.StatPoints] = value; }
+		}
+		public uint SkillPoints
+		{
+			get { return statValues[(int)StatTypes.SkillPoints]; }
+			set { statValues[(int)StatTypes.SkillPoints] = value; }
+		}
+		public uint Hitpoints
+		{
+			get { return statValues[(int)StatTypes.Hitpoints]; }
+			set { statValues[(int)StatTypes.Hitpoints] = value; }
+		}
+		public uint MaxHitpoints
+		{
+			get { return statValues[(int)StatTypes.MaxHitpoints]; }
+			set { statValues[(int)StatTypes.MaxHitpoints] = value; }
+		}
+		public uint Mana
+		{
+			get { return statValues[(int)StatTypes.Mana]; }
+			set { statValues[(int)StatTypes.Mana] = value; }
+		}
+		public uint MaxMana
+		{
+			get { return statValues[(int)StatTypes.MaxMana]; }
+			set { statValues[(int)StatTypes.MaxMana] = value; }
+		}
+		public uint Stamina
+		{
+			get { return statValues[(int)StatTypes.Stamina]; }
+			set { statValues[(int)StatTypes.Stamina] = value; }
+		}
+		public uint MaxStamina
+		{
+			get { return statValues[(int)StatTypes.MaxStamina]; }
+			set { statValues[(int)StatTypes.MaxStamina] = value; }
+		}
+		public uint Level
+		{
+			get { return statValues[(int)StatTypes.Level]; }
+			set { statValues[(int)StatTypes.Level] = value; }
+		}
+		public uint Experience
+		{
+			get { return statValues[(int)StatTypes.Experience]; }
+			set { statValues[(int)StatTypes.Experience] = value; }
+		}
+		public uint Gold
+		{
+			get { return statValues[(int)StatTypes.Gold]; }
+			set { statValues[(int)StatTypes.Gold] = value; }
+		}
+		public uint GoldBank
+		{
+			get { return statValues[(int)StatTypes.GoldBank]; }
+			set { statValues[(int)StatTypes.GoldBank] = value; }
+		}
+
+		public CharacterClass Class
+		{
+			get
+			{
+				switch (headerBytes[40])
+				{
+					case 0:
+						return CharacterClass.Amazon;
+					case 1:
+						return CharacterClass.Sorceress;
+					case 2:
+						return CharacterClass.Necromancer;
+					case 3:
+						return CharacterClass.Paladin;
+					case 4:
+						return CharacterClass.Barbarian;
+					case 5:
+						return CharacterClass.Druid;
+					case 6:
+						return CharacterClass.Assassin;
+					default:
+						return CharacterClass.Unknown;
+				}
+			}
+			set
+			{
+				if (value == CharacterClass.Unknown)
+				{
+					return;
+				}
+
+				headerBytes[40] = (byte)value;
+			}
+		}
+
 
 		/// <summary>
 		/// Chracter has a mercenary
@@ -111,6 +262,12 @@ namespace esCharView
 			}
 		}
 
+
+		public Character()
+		{
+
+		}
+
 		/// <summary>
 		/// Read character save from disk
 		/// </summary>
@@ -120,14 +277,6 @@ namespace esCharView
 			this.filePath = filePath;
 
 			ReadHeaders();
-		}
-
-		/// <summary>
-		/// Updates inventory data (mainly after user deletes an item)
-		/// </summary>
-		public void UpdateInventoryHeaders()
-		{
-			inventoryBytes = Inventory.GetInventoryBytes(HasMercenary);
 		}
 
 		/// <summary>
@@ -163,7 +312,8 @@ namespace esCharView
 		/// <param name="filePath">Path to save character data as</param>
 		public void Write(string filePath)
 		{
-			UpdateInventoryHeaders();
+			byte[] inventoryBytes = Inventory.GetInventoryBytes(HasMercenary);
+			///UpdateInventoryHeaders();
 
 			byte[] rawCharacterData = new byte[headerBytes.Length + inventoryBytes.Length];
 
@@ -192,13 +342,109 @@ namespace esCharView
 			int itemListBegin = FindItemListBegin(rawCharacterData);
 
 			headerBytes = new byte[itemListBegin];
-			inventoryBytes = new byte[rawCharacterData.Length - itemListBegin];
+			byte[] inventoryBytes = new byte[rawCharacterData.Length - itemListBegin];
 
 			Array.Copy(rawCharacterData, 0, headerBytes, 0, headerBytes.Length);
 			Array.Copy(rawCharacterData, itemListBegin, inventoryBytes, 0, inventoryBytes.Length);
 
+			ReadStats(headerBytes);
+
 			inventory = new Inventory(inventoryBytes);
 			characterFlags = headerBytes[0x24];
+		}
+
+		/// <summary>
+		/// Copies character's raw stat data from raw header bytes
+		/// </summary>
+		/// <param name="headerBytes">Raw header data from save file</param>
+		/// <returns>Raw stat data</returns>
+		private byte[] GetStatsData(byte[] headerBytes)
+		{
+			byte[] statsSection;
+			int statsSectionLength = 0;
+
+			for (int i = 767; i < headerBytes.Length; i++)
+			{
+				if (headerBytes[i] == 0x69 && headerBytes[i + 1] == 0x66)
+				{
+					break;
+				}
+
+				statsSectionLength++;
+			}
+
+			statsSection = new byte[statsSectionLength];
+			Array.Copy(headerBytes, 767, statsSection, 0, statsSection.Length);
+
+			return statsSection;
+		}
+
+		/// <summary>
+		/// Parses raw character stat data
+		/// </summary>
+		/// <param name="headerBytes">Raw characte stat data found between "gf" and "if" near offset 765 in save file</param>
+		/// <remarks>Bit lengths of stat types are found in the CSvBits column of ItemStatCost.txt</remarks>
+		/// Source: http://phrozenkeep.hugelaser.com/forum/viewtopic.php?f=8&t=9011&start=50
+		private void ReadStats(byte[] headerBytes)
+		{
+			byte[] statsData = GetStatsData(headerBytes);
+			BitReader br = new BitReader(statsData);
+
+			while (br.Position < br.BitCount)
+			{
+				// ID of stat (See ItemStatCost.txt)
+				byte statIndex = (byte)br.Read(9);
+				// Value contains this many bits (See CSvBits in ItemStatCost.txt)
+				int statValueBits = 0;
+				// Value needs to be shifted by this amount
+				int valShift = 0;
+
+				switch ((StatTypes)statIndex)
+				{
+					case StatTypes.Strength:
+					case StatTypes.Energy:
+					case StatTypes.Dexterity:
+					case StatTypes.Vitality:
+						statValueBits = 11;
+						break;
+					case StatTypes.StatPoints:
+						statValueBits = 10;
+						break;
+					case StatTypes.SkillPoints:
+						statValueBits = 8;
+						break;
+					case StatTypes.Hitpoints:
+					case StatTypes.MaxHitpoints:
+					case StatTypes.Mana:
+					case StatTypes.MaxMana:
+					case StatTypes.Stamina:
+					case StatTypes.MaxStamina:
+						statValueBits = 21;
+						valShift = 8;
+						break;
+					case StatTypes.Level:
+						statValueBits = 7;
+						break;
+					case StatTypes.Experience:
+						statValueBits = 32;
+						break;
+					case StatTypes.Gold:
+					case StatTypes.GoldBank:
+						statValueBits = 25;
+						break;
+					default:
+						return;
+				}
+
+				if (statValueBits == 0)
+				{
+					break;
+				}
+
+				uint statValue = br.Read(statValueBits);
+
+				statValues[statIndex] = (statValue >> valShift);
+			}
 		}
 
 		/// <summary>
