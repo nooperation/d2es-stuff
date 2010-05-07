@@ -10,7 +10,6 @@ namespace esCharView
 	{
 		private byte[] headerBytes;
 		private byte[] inventoryBytes;
-		private byte[] footerBytes;
 		private byte characterFlags;
 		private string filePath;
 		private Inventory inventory;
@@ -22,8 +21,10 @@ namespace esCharView
 
 		public int HeaderSize { get { return headerBytes.Length; } }
 		public int InventorySize { get { return inventoryBytes.Length; } }
-		public int FooterSize { get { return footerBytes.Length; } }
 
+		/// <summary>
+		/// Character's name
+		/// </summary>
 		public String Name
 		{
 			get
@@ -41,6 +42,20 @@ namespace esCharView
 			}
 		}
 
+		/// <summary>
+		/// Chracter has a mercenary
+		/// </summary>
+		public bool HasMercenary
+		{
+			get
+			{
+				return BitConverter.ToInt32(headerBytes, 179) != 0;
+			}
+		}
+
+		/// <summary>
+		/// Character is in hardcore mode
+		/// </summary>
 		public bool Hardcore
 		{
 			get
@@ -48,6 +63,10 @@ namespace esCharView
 				return (characterFlags & 0x04) > 0;
 			}
 		}
+
+		/// <summary>
+		/// Character has died before
+		/// </summary>
 		public bool Died 
 		{ 
 			get
@@ -55,6 +74,10 @@ namespace esCharView
 				return (characterFlags & 0x08) > 0;
 			}
 		}
+
+		/// <summary>
+		/// Character is expansion character
+		/// </summary>
 		public bool Expansion
 		{
 			get
@@ -62,6 +85,10 @@ namespace esCharView
 				return (characterFlags & 0x20) > 0;
 			}
 		}
+
+		/// <summary>
+		/// Collection of unknown flags
+		/// </summary>
 		public int UnknownFlags
 		{
 			get
@@ -70,6 +97,9 @@ namespace esCharView
 			}
 		}
 
+		/// <summary>
+		/// Character's inventory
+		/// </summary>
 		public Inventory Inventory
 		{
 			get
@@ -82,6 +112,10 @@ namespace esCharView
 			}
 		}
 
+		/// <summary>
+		/// Read character save from disk
+		/// </summary>
+		/// <param name="filePath">Path of save file</param>
 		public void Read(string filePath)
 		{
 			this.filePath = filePath;
@@ -89,11 +123,21 @@ namespace esCharView
 			ReadHeaders();
 		}
 
+		/// <summary>
+		/// Updates inventory data (mainly after user deletes an item)
+		/// </summary>
 		public void UpdateInventoryHeaders()
 		{
-			inventoryBytes = Inventory.GetInventoryBytes();
+			inventoryBytes = Inventory.GetInventoryBytes(HasMercenary);
 		}
 
+		/// <summary>
+		/// Sets various character flags
+		/// </summary>
+		/// <param name="expansion">Character is expansion character</param>
+		/// <param name="died">Character has died before</param>
+		/// <param name="hardcore">Hardcore mode</param>
+		/// <param name="unknownFlags">Other flags - 64 is common value for realm characters</param>
 		public void SetCharacterFlags(bool expansion, bool died, bool hardcore, byte unknownFlags)
 		{
 			byte characterFlags = unknownFlags;
@@ -114,44 +158,54 @@ namespace esCharView
 			headerBytes[0x24] = characterFlags;
 		}
 
+		/// <summary>
+		/// Saves player data to specified path
+		/// </summary>
+		/// <param name="filePath">Path to save character data as</param>
 		public void Write(string filePath)
 		{
 			UpdateInventoryHeaders();
 
-			byte[] rawCharacterData = new byte[headerBytes.Length + inventoryBytes.Length + footerBytes.Length];
+			byte[] rawCharacterData = new byte[headerBytes.Length + inventoryBytes.Length];
 
 			Array.Copy(headerBytes, rawCharacterData, headerBytes.Length);
 			Array.Copy(inventoryBytes, 0, rawCharacterData, headerBytes.Length, inventoryBytes.Length);
-			Array.Copy(footerBytes, 0, rawCharacterData, headerBytes.Length + inventoryBytes.Length, footerBytes.Length);
 
 			FixHeaders(ref rawCharacterData);
 
 			File.WriteAllBytes(filePath, rawCharacterData);
 		}
 
+		/// <summary>
+		/// Saves the player data to original file
+		/// </summary>
 		public void Write()
 		{
 			Write(filePath);
 		}
 
+		/// <summary>
+		/// Splits character data into several sections for easier parsing
+		/// </summary>
 		private void ReadHeaders()
 		{
 			byte[] rawCharacterData = File.ReadAllBytes(filePath);
 			int itemListBegin = FindItemListBegin(rawCharacterData);
-			int itemListEnd = FindItemListEnd(rawCharacterData);
 
 			headerBytes = new byte[itemListBegin];
-			inventoryBytes = new byte[itemListEnd - itemListBegin];
-			footerBytes = new byte[rawCharacterData.Length - itemListEnd];
+			inventoryBytes = new byte[rawCharacterData.Length - itemListBegin];
 
 			Array.Copy(rawCharacterData, 0, headerBytes, 0, headerBytes.Length);
 			Array.Copy(rawCharacterData, itemListBegin, inventoryBytes, 0, inventoryBytes.Length);
-			Array.Copy(rawCharacterData, itemListEnd, footerBytes, 0, footerBytes.Length);
 
 			inventory = new Inventory(inventoryBytes);
 			characterFlags = headerBytes[0x24];
 		}
 
+		/// <summary>
+		/// Corrects checksum of new player data
+		/// </summary>
+		/// <param name="rawCharacterData">Raw player save data</param>
 		public void FixHeaders(ref byte[] rawCharacterData)
 		{
 			byte[] fileSizeBytes = BitConverter.GetBytes(rawCharacterData.Length);
@@ -163,7 +217,13 @@ namespace esCharView
 			Array.Copy(checksumBytes, 0, rawCharacterData, 12, 4);
 		}
 
-		// Source: ehertlein ( http://forums.diii.net/showthread.php?t=532037&page=41 )
+		// 
+		/// <summary>
+		/// Calculates a new checksum for specified data
+		/// </summary>
+		/// <param name="fileBytes">Raw character data</param>
+		/// <returns>Checksum for specified data</returns>
+		/// <remarks>Source: ehertlein ( http://forums.diii.net/showthread.php?t=532037&page=41 )</remarks>
 		private static uint CalculateChecksum(byte[] fileBytes)
 		{
 			uint hexTest = 0x80000000;
@@ -193,6 +253,11 @@ namespace esCharView
 			return checksum;
 		}
 
+		/// <summary>
+		/// Returns the location of the inventory data
+		/// </summary>
+		/// <param name="rawCharacterData">Raw bytes from save file</param>
+		/// <returns>Location of inventory data</returns>
 		private static int FindItemListBegin(byte[] rawCharacterData)
 		{
 			for (int i = 768; i < rawCharacterData.Length - 1; i++)
@@ -200,19 +265,6 @@ namespace esCharView
 				if (rawCharacterData[i] == 'J' && rawCharacterData[i + 1] == 'M')
 				{
 					return i;
-				}
-			}
-
-			return 0;
-		}
-
-		private static int FindItemListEnd(byte[] rawCharacterData)
-		{
-			for (int i = rawCharacterData.Length - 1; i > 768; i--)
-			{
-				if (rawCharacterData[i - 1] == 'j' && rawCharacterData[i] == 'f')
-				{
-					return i - 1;
 				}
 			}
 

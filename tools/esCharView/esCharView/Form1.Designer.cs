@@ -42,6 +42,19 @@
 			this.textBoxName = new System.Windows.Forms.TextBox();
 			this.textBoxUnknownFlags = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
+			this.tabControlInventory = new System.Windows.Forms.TabControl();
+			this.tabPageInventoryPlayer = new System.Windows.Forms.TabPage();
+			this.tabPageInventoryCorpse = new System.Windows.Forms.TabPage();
+			this.listBoxCorpseInventory = new System.Windows.Forms.ListBox();
+			this.tabPageInventoryMerc = new System.Windows.Forms.TabPage();
+			this.listBoxMercInventory = new System.Windows.Forms.ListBox();
+			this.tabPageInventoryGolem = new System.Windows.Forms.TabPage();
+			this.listBoxGolemInventory = new System.Windows.Forms.ListBox();
+			this.tabControlInventory.SuspendLayout();
+			this.tabPageInventoryPlayer.SuspendLayout();
+			this.tabPageInventoryCorpse.SuspendLayout();
+			this.tabPageInventoryMerc.SuspendLayout();
+			this.tabPageInventoryGolem.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// buttonLoadCharacter
@@ -56,15 +69,13 @@
 			// 
 			// listBoxInventory
 			// 
-			this.listBoxInventory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.listBoxInventory.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.listBoxInventory.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.listBoxInventory.FormattingEnabled = true;
-			this.listBoxInventory.Location = new System.Drawing.Point(12, 46);
+			this.listBoxInventory.Location = new System.Drawing.Point(3, 3);
 			this.listBoxInventory.Name = "listBoxInventory";
 			this.listBoxInventory.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-			this.listBoxInventory.Size = new System.Drawing.Size(599, 225);
+			this.listBoxInventory.Size = new System.Drawing.Size(582, 198);
 			this.listBoxInventory.TabIndex = 2;
 			this.listBoxInventory.SelectedIndexChanged += new System.EventHandler(this.listBoxInventory_SelectedIndexChanged);
 			// 
@@ -186,11 +197,101 @@
 			this.label2.TabIndex = 13;
 			this.label2.Text = "Other";
 			// 
+			// tabControlInventory
+			// 
+			this.tabControlInventory.Controls.Add(this.tabPageInventoryPlayer);
+			this.tabControlInventory.Controls.Add(this.tabPageInventoryCorpse);
+			this.tabControlInventory.Controls.Add(this.tabPageInventoryMerc);
+			this.tabControlInventory.Controls.Add(this.tabPageInventoryGolem);
+			this.tabControlInventory.Location = new System.Drawing.Point(15, 41);
+			this.tabControlInventory.Name = "tabControlInventory";
+			this.tabControlInventory.SelectedIndex = 0;
+			this.tabControlInventory.Size = new System.Drawing.Size(596, 230);
+			this.tabControlInventory.TabIndex = 14;
+			// 
+			// tabPageInventoryPlayer
+			// 
+			this.tabPageInventoryPlayer.Controls.Add(this.listBoxInventory);
+			this.tabPageInventoryPlayer.Location = new System.Drawing.Point(4, 22);
+			this.tabPageInventoryPlayer.Name = "tabPageInventoryPlayer";
+			this.tabPageInventoryPlayer.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageInventoryPlayer.Size = new System.Drawing.Size(588, 204);
+			this.tabPageInventoryPlayer.TabIndex = 0;
+			this.tabPageInventoryPlayer.Text = "Player";
+			this.tabPageInventoryPlayer.UseVisualStyleBackColor = true;
+			// 
+			// tabPageInventoryCorpse
+			// 
+			this.tabPageInventoryCorpse.Controls.Add(this.listBoxCorpseInventory);
+			this.tabPageInventoryCorpse.Location = new System.Drawing.Point(4, 22);
+			this.tabPageInventoryCorpse.Name = "tabPageInventoryCorpse";
+			this.tabPageInventoryCorpse.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageInventoryCorpse.Size = new System.Drawing.Size(588, 204);
+			this.tabPageInventoryCorpse.TabIndex = 1;
+			this.tabPageInventoryCorpse.Text = "Corpse";
+			this.tabPageInventoryCorpse.UseVisualStyleBackColor = true;
+			// 
+			// listBoxCorpseInventory
+			// 
+			this.listBoxCorpseInventory.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.listBoxCorpseInventory.Font = new System.Drawing.Font("Lucida Console", 9.75F);
+			this.listBoxCorpseInventory.FormattingEnabled = true;
+			this.listBoxCorpseInventory.Location = new System.Drawing.Point(3, 3);
+			this.listBoxCorpseInventory.Name = "listBoxCorpseInventory";
+			this.listBoxCorpseInventory.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+			this.listBoxCorpseInventory.Size = new System.Drawing.Size(582, 198);
+			this.listBoxCorpseInventory.TabIndex = 0;
+			// 
+			// tabPageInventoryMerc
+			// 
+			this.tabPageInventoryMerc.Controls.Add(this.listBoxMercInventory);
+			this.tabPageInventoryMerc.Location = new System.Drawing.Point(4, 22);
+			this.tabPageInventoryMerc.Name = "tabPageInventoryMerc";
+			this.tabPageInventoryMerc.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageInventoryMerc.Size = new System.Drawing.Size(588, 204);
+			this.tabPageInventoryMerc.TabIndex = 2;
+			this.tabPageInventoryMerc.Text = "Mercenary";
+			this.tabPageInventoryMerc.UseVisualStyleBackColor = true;
+			// 
+			// listBoxMercInventory
+			// 
+			this.listBoxMercInventory.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.listBoxMercInventory.Font = new System.Drawing.Font("Lucida Console", 9.75F);
+			this.listBoxMercInventory.FormattingEnabled = true;
+			this.listBoxMercInventory.Location = new System.Drawing.Point(3, 3);
+			this.listBoxMercInventory.Name = "listBoxMercInventory";
+			this.listBoxMercInventory.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+			this.listBoxMercInventory.Size = new System.Drawing.Size(582, 198);
+			this.listBoxMercInventory.TabIndex = 0;
+			// 
+			// tabPageInventoryGolem
+			// 
+			this.tabPageInventoryGolem.Controls.Add(this.listBoxGolemInventory);
+			this.tabPageInventoryGolem.Location = new System.Drawing.Point(4, 22);
+			this.tabPageInventoryGolem.Name = "tabPageInventoryGolem";
+			this.tabPageInventoryGolem.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageInventoryGolem.Size = new System.Drawing.Size(588, 204);
+			this.tabPageInventoryGolem.TabIndex = 3;
+			this.tabPageInventoryGolem.Text = "Golem";
+			this.tabPageInventoryGolem.UseVisualStyleBackColor = true;
+			// 
+			// listBoxGolemInventory
+			// 
+			this.listBoxGolemInventory.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.listBoxGolemInventory.Font = new System.Drawing.Font("Lucida Console", 9.75F);
+			this.listBoxGolemInventory.FormattingEnabled = true;
+			this.listBoxGolemInventory.Location = new System.Drawing.Point(3, 3);
+			this.listBoxGolemInventory.Name = "listBoxGolemInventory";
+			this.listBoxGolemInventory.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+			this.listBoxGolemInventory.Size = new System.Drawing.Size(582, 198);
+			this.listBoxGolemInventory.TabIndex = 0;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(623, 309);
+			this.Controls.Add(this.tabControlInventory);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textBoxUnknownFlags);
 			this.Controls.Add(this.textBoxName);
@@ -201,10 +302,14 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.buttonRemoveItem);
 			this.Controls.Add(this.textBoxItemLocation);
-			this.Controls.Add(this.listBoxInventory);
 			this.Controls.Add(this.buttonLoadCharacter);
 			this.Name = "Form1";
 			this.Text = "D2ES Save Fix";
+			this.tabControlInventory.ResumeLayout(false);
+			this.tabPageInventoryPlayer.ResumeLayout(false);
+			this.tabPageInventoryCorpse.ResumeLayout(false);
+			this.tabPageInventoryMerc.ResumeLayout(false);
+			this.tabPageInventoryGolem.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -226,6 +331,14 @@
 		private System.Windows.Forms.TextBox textBoxName;
 		private System.Windows.Forms.TextBox textBoxUnknownFlags;
 		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.TabControl tabControlInventory;
+		private System.Windows.Forms.TabPage tabPageInventoryPlayer;
+		private System.Windows.Forms.TabPage tabPageInventoryCorpse;
+		private System.Windows.Forms.ListBox listBoxCorpseInventory;
+		private System.Windows.Forms.TabPage tabPageInventoryMerc;
+		private System.Windows.Forms.ListBox listBoxMercInventory;
+		private System.Windows.Forms.TabPage tabPageInventoryGolem;
+		private System.Windows.Forms.ListBox listBoxGolemInventory;
 
 	}
 }

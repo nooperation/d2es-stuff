@@ -37,6 +37,8 @@ namespace esCharView
 
 				while (true)
 				{
+					// SpecialChar is the color character (followed by 2 other characters), this
+					//  is just stripping it since it looks bad
 					int specialCharLocation = cleanStr.IndexOf('\xfffd');
 
 					if (specialCharLocation == -1)

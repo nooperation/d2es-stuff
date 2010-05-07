@@ -11,25 +11,36 @@ using System.Collections;
 
 namespace esCharView
 {
+	// This whole form is temporary and poorly thrown together
 	public partial class Form1 : Form
 	{
+		private Character playerData = null;
+
 		public Form1()
 		{
 			InitializeComponent();
 			ItemDefs.GetItemDescription("dongs");
 		}
 
+		private void LoadSave(string savePath)
+		{
+			if (!File.Exists(savePath))
+			{
+				return;
+			}
+
+			this.Text = "D2ES Save Fix - " + Path.GetFileName(savePath);
+			ProcessCharacter(savePath);
+			buttonSave.Enabled = true;
+		}
+
 		private void button1_Click(object sender, EventArgs e)
 		{		
 			if (openFileDialog2.ShowDialog() == DialogResult.OK)
 			{
-				this.Text = "D2ES Save Fix - " + Path.GetFileName(openFileDialog2.FileName);
-				ProcessCharacter(openFileDialog2.FileName);
-				buttonSave.Enabled = true;
+				LoadSave(openFileDialog2.FileName);
 			}
 		}
-
-		Character playerData = null;
 
 		private void ProcessCharacter(string filePath)
 		{
@@ -53,16 +64,29 @@ namespace esCharView
 			int selected = listBoxInventory.SelectedIndex;
 
 			listBoxInventory.Items.Clear();
+			listBoxCorpseInventory.Items.Clear();
+			listBoxMercInventory.Items.Clear();
+			listBoxGolemInventory.Items.Clear();
 			textBoxItemLocation.Clear();
 
-			foreach (Item item in playerData.Inventory.Items)
+			foreach (Item item in playerData.Inventory.PlayerItems)
 			{
 				listBoxInventory.Items.Add(String.Format("{0:X}: {1}", item.Location + playerData.HeaderSize, item.ToString()));
 			}
 
 			foreach (Item item in playerData.Inventory.CorpseItems)
 			{
-				listBoxInventory.Items.Add(String.Format("{0:X}: (Corpse) {1}", item.Location + playerData.HeaderSize, item.ToString()));
+				listBoxCorpseInventory.Items.Add(String.Format("{0:X}: {1}", item.Location + playerData.HeaderSize, item.ToString()));
+			}
+
+			foreach (Item item in playerData.Inventory.MercItems)
+			{
+				listBoxMercInventory.Items.Add(String.Format("{0:X}: {1}", item.Location + playerData.HeaderSize, item.ToString()));
+			}
+
+			foreach (Item item in playerData.Inventory.GolemItems)
+			{
+				listBoxGolemInventory.Items.Add(String.Format("{0:X}: {1}", item.Location + playerData.HeaderSize, item.ToString()));
 			}
 
 			if (selected > 0)
@@ -81,26 +105,44 @@ namespace esCharView
 			}
 		}
 
+		private void removeSelectedItems(ListBox listBox, List<Item> items)
+		{
+			if (listBox.SelectedIndices.Count > 0)
+			{
+				for (int i = listBox.SelectedIndices.Count - 1; i >= 0; i--)
+				{
+					items.RemoveAt(listBox.SelectedIndices[i]);
+					listBox.Items.RemoveAt(i);
+				}
+			}
+
+			playerData.UpdateInventoryHeaders();
+			UpdateInventoryList();
+		}
+
+		private void removeSelectedItems()
+		{
+			if (tabControlInventory.SelectedTab == tabPageInventoryPlayer)
+			{
+				removeSelectedItems(listBoxInventory, playerData.Inventory.PlayerItems);
+			}
+			else if (tabControlInventory.SelectedTab == tabPageInventoryCorpse)
+			{
+				removeSelectedItems(listBoxCorpseInventory, playerData.Inventory.CorpseItems);
+			}
+			else if (tabControlInventory.SelectedTab == tabPageInventoryMerc)
+			{
+				removeSelectedItems(listBoxMercInventory, playerData.Inventory.MercItems);
+			}
+			else if (tabControlInventory.SelectedTab == tabPageInventoryGolem)
+			{
+				removeSelectedItems(listBoxGolemInventory, playerData.Inventory.GolemItems);
+			}
+		}
+
 		private void buttonRemoveItem_Click(object sender, EventArgs e)
 		{
-			if (listBoxInventory.SelectedIndices.Count > 0)
-			{
-				int itemsCount = playerData.Inventory.Items.Count;
-				for (int i = listBoxInventory.SelectedIndices.Count-1; i >= 0; i--)
-				{
-					if (listBoxInventory.SelectedIndices[i] >= itemsCount)
-					{
-						playerData.Inventory.CorpseItems.RemoveAt(listBoxInventory.SelectedIndices[i] - itemsCount);
-					}
-					else
-					{
-						playerData.Inventory.Items.RemoveAt(listBoxInventory.SelectedIndices[i]);
-					}
-				}
-	
-				playerData.UpdateInventoryHeaders();
-				UpdateInventoryList();
-			}
+			removeSelectedItems();
 		}
 
 		private void buttonSave_Click(object sender, EventArgs e)

@@ -6,17 +6,18 @@ namespace esCharView
 {
 	public class Item
 	{
+		private List<Item> sockets = new List<Item>();
+
 		public string ItemCode { get; set; }
 		public byte[] ItemData { get; set; }
 		public int Location { get; set; }
 		public bool Socketed { get; set; }
+		public int SocketCount { get; set; }
 
 		public List<Item> Sockets
 		{
 			get { return sockets; }
 		}
-
-		private List<Item> sockets = new List<Item>();
 
 		public override string ToString()
 		{
