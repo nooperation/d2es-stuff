@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
 namespace esCharView
 {
@@ -103,7 +104,13 @@ namespace esCharView
 		public uint SocketCount { get; set; }
 		public uint Quantity { get; set; }
 
+		public BitArray ItemSetPropertyBits { get; set; }
+		public uint[] ItemSetProperties { get; set; }
+		public uint ItemProperties { get; set; }
+		public uint RunewordProperties { get; set; }
+
 		BitReader br;
+		public long RemainingBits { get { return br.BitCount - br.Position; } }
 
 		public Item(byte[] itemData)
 		{
@@ -112,11 +119,61 @@ namespace esCharView
 
 			Prefix = new uint[3];
 			Suffix = new uint[3];
+			ItemSetPropertyBits = new BitArray(5);
+			ItemSetProperties = new uint[5];
 
 			ReadItemData();
 		}
 
+		/// <summary>
+		/// Decodes raw item data
+		/// </summary>
 		private void ReadItemData()
+		{
+			ReadItemDataSimple();
+
+			if (IsEar)
+			{
+				ReadItemDataEar();
+				return;
+			}
+
+			ItemCode = br.ReadString(3, 8);
+			br.SkipBits(8); // Skip null terminator of item code
+
+			// Read gold data if it's gold
+			// TODO: Should this come later on? Not sure how to test this...
+			if (ItemCode.ToLower() == "gld")
+			{
+				ReadItemDataGold();
+				return;
+			}
+
+			// Simple items don't have extended data
+			if (!IsSimpleItem)
+			{
+				ReadItemDataExtended();
+			}
+
+			// TODO: Not sure what this bit is, I can't find any items with it set
+			// Extend.txt says it's some sort of random flag followed by 40 bits
+			if (br.ReadBoolean())
+			{
+				br.SkipBits(8);
+				br.SkipBits(32);
+			}
+
+			// Type specific extended data
+			if (!IsSimpleItem)
+			{
+				ReadItemDataExtendedSpecific();
+			}
+		}
+
+		/// <summary>
+		/// Decodes basic item data. All items have basic data
+		/// </summary>
+		private void ReadItemDataSimple()
 		{
 			br.SkipBits(16); // "JM" header
 
@@ -151,43 +208,46 @@ namespace esCharView
 			PositionX = br.Read(4);
 			PositionY = br.Read(4);
 			StorageId = (StorageType)br.Read(3);
+		}
 
-			if (IsEar)
-			{
-				uint earClass = br.Read(3);
-				uint earLevel = br.Read(7);
-				// earName is the rest of the packet
+		/// <summary>
+		/// Decodes ear data
+		/// </summary>
+		private void ReadItemDataEar()
+		{
+			uint earClass = br.Read(3);
+			uint earLevel = br.Read(7);
+			// earName is the rest of the packet
 
-				Level = earLevel;
-				ItemCode = "ear";
+			Level = earLevel;
+			ItemCode = "ear";
 
-				return;
-			}
+			return;
+		}
 
-			ItemCode = br.ReadString(3, 8);
-			br.SkipBits(8); // last bit of itemcode ignored
+		/// <summary>
+		/// Decodes gold data
+		/// </summary>
+		private void ReadItemDataGold()
+		{
+			if (br.ReadBoolean())
+				GoldAmount = br.ReadUInt32();
+			else
+				GoldAmount = br.Read(12);
 
-			// Read gold data if it's gold
-			if (ItemCode.ToLower() == "gld")
-			{
-				if (br.ReadBoolean())
-					GoldAmount = br.ReadUInt32();
-				else
-					GoldAmount = br.Read(12);
+			return;
+		}
 
-				return;
-			}
-
-			// Skip all simple items
-			if (IsSimpleItem || IsGamble || ItemCode.ToLower() == "box")
-			{
-				return;
-			}
-
+		/// <summary>
+		/// Decodes extended item data
+		/// </summary>
+		private void ReadItemDataExtended()
+		{
 			SocketsFilled = br.Read(3);
 
 			Id = br.ReadUInt32();
 			Level = br.Read(7);
+
 			Quality = (ItemQuality)br.Read(4);
 
 			HasGraphic = br.ReadBoolean();
@@ -202,18 +262,26 @@ namespace esCharView
 				br.SkipBits(11);
 			}
 
-			if (!IsIdentified)
-			{
-				return;
-			}
-
 			switch (Quality)
 			{
 				case ItemQuality.Inferior:
 				case ItemQuality.Superior:
 					br.SkipBits(3);
 					break;
-
+				case ItemQuality.Normal:
+					if (ItemDefs.IsCharm(ItemCode))
+					{
+						br.SkipBits(12); // Not sure
+					}
+					else if (ItemDefs.IsScrollOrTome(ItemCode))
+					{
+						br.SkipBits(5); // Spell Id?
+					}
+					else if (ItemDefs.IsMonsterPart(ItemCode))
+					{
+						br.SkipBits(10); // Monster id?
+					}
+					break;
 				case ItemQuality.Magic:
 					Prefix[0] = br.Read(11);
 					Suffix[0] = br.Read(11);
@@ -246,18 +314,23 @@ namespace esCharView
 					break;
 			}
 
-			if (IsPersonalized)
-			{
-				br.SkipBits(15);
-			}
+			// TODO: check order of Runeword and personalized
 			if (IsRuneword)
 			{
 				br.SkipBits(16);
 			}
+			// TODO: check order of Runeword and personalized
+			if (IsPersonalized)
+			{
+				br.SkipBits(15);
+			}
+		}
 
-			// Not sure what this bit is, it doesn't appear in item packet
-			br.SkipBits(1);
-
+		/// <summary>
+		/// Decodes item specific data
+		/// </summary>
+		private void ReadItemDataExtendedSpecific()
+		{
 			if (ItemDefs.IsArmor(ItemCode))
 			{
 				// 1095 from ItemStatCost.txt. It just allows for a minimum of -1095 defense
@@ -283,15 +356,54 @@ namespace esCharView
 				SocketCount = br.Read(4);
 			}
 
-			if (ItemCode == "tbk" || ItemCode == "ibk")
-			{
-				br.SkipBits(5);
-			}
-
 			if (ItemDefs.IsStackable(ItemCode))
 			{
 				Quantity = br.Read(9);
 			}
+
+			if (Quality == ItemQuality.Set)
+			{
+				for (int i = 0; i < ItemSetPropertyBits.Length; i++)
+				{
+					ItemSetPropertyBits[i] = br.ReadBoolean();
+				}
+			}
+
+			ReadItemDataProperty();
+
+			if (Quality == ItemQuality.Set)
+			{
+				for (int i = 0; i < ItemSetPropertyBits.Length; i++)
+				{
+					if (ItemSetPropertyBits[i])
+					{
+						ReadItemDataProperty();
+					}
+				}
+			}
+
+			if (IsRuneword)
+			{
+				ReadItemDataProperty();
+			}
+		}
+
+		// TODO: Not yet implemented
+		private void ReadItemDataProperty()
+		{
+			br.Read(9);
+			//uint propertyId = 0;
+
+			//while (br.Position < br.BitCount)
+			//{
+			//    propertyId = br.Read(9);
+			//    if (propertyId == 0x1ff)
+			//    {
+			//        break;
+			//    }
+
+			//    //Read property specific bits
+			//}
 		}
 
 		/// <summary>

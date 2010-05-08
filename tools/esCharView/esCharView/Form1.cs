@@ -70,11 +70,11 @@ namespace esCharView
 			sb.AppendLine(string.Format("StatPoints: {0}", playerData.StatPoints));
 			sb.AppendLine(string.Format("SkillPoints: {0}", playerData.SkillPoints));
 			sb.AppendLine(string.Format("Hitpoints: {0}", playerData.Hitpoints));
-			sb.AppendLine(string.Format("MaxHitpoints: {0}", playerData.MaxHitpoints));
+			sb.AppendLine(string.Format("BaseHitpoints: {0}", playerData.BaseHitpoints));
 			sb.AppendLine(string.Format("Mana: {0}", playerData.Mana));
-			sb.AppendLine(string.Format("MaxMana: {0}", playerData.MaxMana));
+			sb.AppendLine(string.Format("BaseMana: {0}", playerData.BaseMana));
 			sb.AppendLine(string.Format("Stamina: {0}", playerData.Stamina));
-			sb.AppendLine(string.Format("MaxStamina: {0}", playerData.MaxStamina));
+			sb.AppendLine(string.Format("BaseStamina: {0}", playerData.BaseStamina));
 			sb.AppendLine(string.Format("Level: {0}", playerData.Level));
 			sb.AppendLine(string.Format("Experience: {0}", playerData.Experience));
 			sb.AppendLine(string.Format("Gold: {0}", playerData.Gold));
@@ -313,6 +313,8 @@ namespace esCharView
 			sb.AppendLine(string.Format("IsIndestructable: {0}", itemToEdit.IsIndestructable));
 			sb.AppendLine(string.Format("SocketCount: {0}", itemToEdit.SocketCount));
 			sb.AppendLine(string.Format("Quantity: {0}", itemToEdit.Quantity));
+			sb.AppendLine(string.Format("RemainingBits: {0}", itemToEdit.RemainingBits));
+
 			foreach (var socket in itemToEdit.Sockets)
 			{
 				listBoxItemEditorSockets.Items.Add(socket);

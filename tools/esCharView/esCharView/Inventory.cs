@@ -143,21 +143,24 @@ namespace esCharView
 
 			// Player inventory data ends with "JM\x00\x00" or "JM\x01\x00"
 			playerInventoryStart = 0;
-			for (int i = playerInventoryStart + 4; i < inventoryBytes.Length; i++)
+			for (int i = playerInventoryStart + 5; i < inventoryBytes.Length; i++)
 			{
 				// End of player inventory list
-				if (inventoryBytes[i] == 'J' &&
-					inventoryBytes[i + 1] == 'M' &&
-					(inventoryBytes[i + 2] == '\x01' || inventoryBytes[i + 2] == '\x00') &&
-					inventoryBytes[i + 3] == '\x00')
+				if (inventoryBytes[i] == 'J' && inventoryBytes[i + 1] == 'M' && inventoryBytes[i + 3] == 0x00)
 				{
-					if (inventoryBytes[i + 2] == '\x01')
+					// Corpse exists if JM\x01\x00 followed by 12 unknown bytes and JM (the first corpse item entry)
+					if(inventoryBytes[i + 2] == 0x01 && inventoryBytes[i+16] == 'J' && inventoryBytes[i+17] == 'M')
 					{
 						hasCorpseData = true;
+						playerInventoryLength = i - playerInventoryStart;
+						break;
 					}
-
-					playerInventoryLength = i - playerInventoryStart;
-					break;
+					// No corpse exists if JM\x00\x00 followed by jf (ending tag of corpse data)
+					else if (inventoryBytes[i + 2] == 0x00 && inventoryBytes[i + 4] == 'j' && inventoryBytes[i+5] == 'f')
+					{
+						playerInventoryLength = i - playerInventoryStart;
+						break;
+					}
 				}
 			}
 

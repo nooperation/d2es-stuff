@@ -6,6 +6,7 @@ using System.Windows.Forms;
 
 namespace esCharView
 {
+	//TODO: Move all specific groups of items into a single file like Autostocker.ini has
 	class ItemDefs
 	{
 		private static Dictionary<string, string> ItemDescriptions = new Dictionary<string, string>();
@@ -13,6 +14,9 @@ namespace esCharView
 		private static HashSet<string> ArmorCodes = new HashSet<string>();
 		private static HashSet<string> WeaponCodes = new HashSet<string>();
 		private static HashSet<string> StackableCodes = new HashSet<string>();
+		private static HashSet<string> MonsterPartCodes = new HashSet<string>();
+		private static HashSet<string> ScrollOrTomeCodes = new HashSet<string>();
+		private static HashSet<string> CharmCodes = new HashSet<string>();
 
 		public static string GetItemDescription(string itemCode)
 		{
@@ -47,6 +51,21 @@ namespace esCharView
 		public static bool IsStackable(string itemCode)
 		{
 			return StackableCodes.Contains(itemCode);
+		}
+
+		public static bool IsMonsterPart(string itemCode)
+		{
+			return MonsterPartCodes.Contains(itemCode);
+		}
+
+		public static bool IsScrollOrTome(string itemCode)
+		{
+			return ScrollOrTomeCodes.Contains(itemCode);
+		}
+
+		public static bool IsCharm(string itemCode)
+		{
+			return CharmCodes.Contains(itemCode);
 		}
 
 		static ItemDefs()
@@ -120,8 +139,42 @@ namespace esCharView
 			{
 				StackableCodes.Add(str.Substring(0, 3));
 			}
+
+			//TODO: Move all specific groups of items into a single file like Autostocker has
+			MonsterPartCodes.Add("yyy");
+			MonsterPartCodes.Add("zzz");
+			MonsterPartCodes.Add("hrt");
+			MonsterPartCodes.Add("brz");
+			MonsterPartCodes.Add("jaw");
+			MonsterPartCodes.Add("eyz");
+			MonsterPartCodes.Add("hrn");
+			MonsterPartCodes.Add("tal");
+			MonsterPartCodes.Add("flg");
+			MonsterPartCodes.Add("fng");
+			MonsterPartCodes.Add("qll");
+			MonsterPartCodes.Add("sol");
+			MonsterPartCodes.Add("scz");
+			MonsterPartCodes.Add("spe");
+
+			ScrollOrTomeCodes.Add("tbk");
+			ScrollOrTomeCodes.Add("ibk");
+			ScrollOrTomeCodes.Add("tsc");
+			ScrollOrTomeCodes.Add("isc");
+
+			CharmCodes.Add("cm0");
+			CharmCodes.Add("cm1");
+			CharmCodes.Add("cm2");
+			CharmCodes.Add("cm3");
+			CharmCodes.Add("cm4");
+			CharmCodes.Add("cm5");
+			CharmCodes.Add("cm6");
+			CharmCodes.Add("cm7");
+			CharmCodes.Add("cm8");
+			CharmCodes.Add("cm9");
+			CharmCodes.Add("cx0");
+			CharmCodes.Add("cx1");
+			CharmCodes.Add("cx2");
+			CharmCodes.Add("cx3");
 		}
-
-
 	}
 }

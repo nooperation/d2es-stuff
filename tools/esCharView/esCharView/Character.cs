@@ -64,11 +64,11 @@ namespace esCharView
 			StatPoints,
 			SkillPoints,
 			Hitpoints,
-			MaxHitpoints,
+			BaseHitpoints,
 			Mana,
-			MaxMana,
+			BaseMana,
 			Stamina,
-			MaxStamina,
+			BaseStamina,
 			Level,
 			Experience,
 			Gold,
@@ -110,30 +110,30 @@ namespace esCharView
 			get { return statValues[(int)StatTypes.Hitpoints]; }
 			set { statValues[(int)StatTypes.Hitpoints] = value; }
 		}
-		public uint MaxHitpoints
+		public uint BaseHitpoints
 		{
-			get { return statValues[(int)StatTypes.MaxHitpoints]; }
-			set { statValues[(int)StatTypes.MaxHitpoints] = value; }
+			get { return statValues[(int)StatTypes.BaseHitpoints]; }
+			set { statValues[(int)StatTypes.BaseHitpoints] = value; }
 		}
 		public uint Mana
 		{
 			get { return statValues[(int)StatTypes.Mana]; }
 			set { statValues[(int)StatTypes.Mana] = value; }
 		}
-		public uint MaxMana
+		public uint BaseMana
 		{
-			get { return statValues[(int)StatTypes.MaxMana]; }
-			set { statValues[(int)StatTypes.MaxMana] = value; }
+			get { return statValues[(int)StatTypes.BaseMana]; }
+			set { statValues[(int)StatTypes.BaseMana] = value; }
 		}
 		public uint Stamina
 		{
 			get { return statValues[(int)StatTypes.Stamina]; }
 			set { statValues[(int)StatTypes.Stamina] = value; }
 		}
-		public uint MaxStamina
+		public uint BaseStamina
 		{
-			get { return statValues[(int)StatTypes.MaxStamina]; }
-			set { statValues[(int)StatTypes.MaxStamina] = value; }
+			get { return statValues[(int)StatTypes.BaseStamina]; }
+			set { statValues[(int)StatTypes.BaseStamina] = value; }
 		}
 		public uint Level
 		{
@@ -414,11 +414,11 @@ namespace esCharView
 						statValueBits = 8;
 						break;
 					case StatTypes.Hitpoints:
-					case StatTypes.MaxHitpoints:
+					case StatTypes.BaseHitpoints:
 					case StatTypes.Mana:
-					case StatTypes.MaxMana:
+					case StatTypes.BaseMana:
 					case StatTypes.Stamina:
-					case StatTypes.MaxStamina:
+					case StatTypes.BaseStamina:
 						statValueBits = 21;
 						valShift = 8;
 						break;
