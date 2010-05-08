@@ -1,0 +1,48 @@
+jav Javelin
+pil Pilum
+ssp Short Spear
+glv Glaive
+tsp Throwing Spear
+9ja War Javelin
+9pi Great Pilum
+9s9 Simbilan
+9gl Spiculum
+9ts Harpoon
+0ja Ancient Shards
+0pi Dire Pilum
+0s9 Lissom Spear
+0gl Ahab Spear
+0ts Whale Hunter
+am5 Maiden Javelin
+ama Ceremonial Javelin
+amf MatriarchalJavelin
+tkf Throwing Knife
+tax Throwing Axe
+bkf Balanced Knife
+bal Balanced Axe
+9tk Battle Dart
+9ta Francisca
+9bk War Dart
+9b8 Hurlbat
+0tk Throwing Dagger
+0ta Throwing Hatchet
+0bk Balanced Dagger
+0b6 Balanced Hatchet
+bts Tribal Hatchet
+9xb Highland Hatchet
+0xb Arreat's Hatchet
+gps Rancid Gas Potion
+ops Oil Potion
+gpm Choking Gas Potion
+opm Exploding Potion
+gpl Strangling Gas Potion
+opl Fulminating Potion
+aqv Arrows
+cqv Bolts
+aq2 Magic Arrows
+cq2 Magic Bolts
+aq0 Magic Arrows (soc)
+cq0 Magic Bolts (soc)
+tbk Town Portal Book
+ibk Identify Book
+key Key

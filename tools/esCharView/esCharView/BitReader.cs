@@ -231,9 +231,10 @@ namespace esCharView
 		unsafe public bool ReadBoolean()
 		{
 			byte retVal;
-			this.Read((byte*)&retVal, BYTE_BITS);
+			this.Read((byte*)&retVal, 1);
 			return retVal != 0;
 		}
+
 		unsafe public bool ReadBoolean(int bits)
 		{
 			this.CheckLength(bits, DWORD_BITS);

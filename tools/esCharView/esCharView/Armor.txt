@@ -1,0 +1,388 @@
+cap Cap/hat
+skp Skull Cap
+hlm Helm
+fhl Full Helm
+ghm Great Helm
+crn Crown
+msk Mask
+qui Quilted Armor
+lea Leather Armor
+hla Hard Leather Armor
+stu Studded Leather
+rng Ring Mail
+scl Scale Mail
+chn Chain Mail
+brs Breast Plate
+spl Splint Mail
+plt Plate Mail
+fld Field Plate
+gth Gothic Plate
+ful Full Plate Mail
+aar Ancient Armor
+ltp Light Plate
+buc Buckler
+sml Small Shield
+lrg Large Shield
+kit Kite Shield
+tow Tower Shield
+gts Gothic Shield
+lgl Gloves(L)
+vgl Heavy Gloves
+mgl Bracers(M)
+tgl Light Gauntlets
+hgl Gaunlets(H)
+lbt Leather Boots
+vbt Heavy Boots
+mbt Chain Boots
+tbt Light Plate Boots
+hbt Plate Boots
+lbl Sash(L)
+vbl Light Belt
+mbl Belt(M)
+tbl Heavy Belt
+hbl Girdle(H)
+bhm Bone Helm
+bsh Bone Shield
+spk Spiked Shield
+xap War Hat
+xkp Sallet
+xlm Casque
+xhl Basinet
+xhm Winged Helm
+xrn Grand Crown
+xsk Death Mask
+xui Ghost Armor
+xea Serpentskin Armor
+xla Demonhide Armor
+xtu Trellised Armor
+xng Linked Mail
+xcl Tigulated Mail
+xhn Mesh Armor
+xrs Cuirass
+xpl Russet Armor
+xlt Templar Coat
+xld Sharktooth Armor
+xth Embossed Plate
+xul Chaos Armor
+xar Ornate Armor
+xtp Mage Plate
+xuc Defender
+xml Round Shield
+xrg Scutum
+xit Dragon Shield
+xow Pavise
+xts Ancient Shield
+xlg Demonhide Gloves
+xvg Sharkskin Gloves
+xmg Heavy Bracers
+xtg Battle Gauntlets
+xhg War Gauntlets
+xlb Demonhide Boots
+xvb Sharkskin Boots
+xmb Mesh Boots
+xtb Battle Boots
+xhb War Boots
+zlb Demonhide Sash
+zvb Sharkskin Belt
+zmb Mesh Belt
+ztb Battle Belt
+zhb War Belt
+xh9 Grim Helm
+xsh Grim Shield
+xpk Barbed Shield
+dr1 Wolf Head
+dr2 Hawk Helm
+dr3 Antlers
+dr4 Falcon Mask
+dr5 Spirit Mask
+ba1 Jawbone Cap
+ba2 Fanged Helm
+ba3 Horned Helm
+ba4 Assault Helmet
+ba5 Avenger Guard
+pa1 Targe
+pa2 Rondache
+pa3 Heraldic Shield
+pa4 Aerin Shield
+pa5 Crown Shield
+ne1 Preserved Head
+ne2 Zombie Head
+ne3 Unraveller Head
+ne4 Gargoyle Head
+ne5 Demon Head
+ci0 Circlet
+ci1 Coronet
+ci2 Tiara
+ci3 Diadem
+ci4 Faceguard
+uap Shako
+ukp Hydraskull
+ulm Armet
+uhl Giant Conch
+uhm Spired Helm
+urn Corona
+usk Demonhead
+uui Dusk Shroud
+uea Wyrmhide
+ula Scarab Husk
+utu Wire Fleece
+ung Diamond Mail
+ucl Loricated Mail
+uhn Boneweave
+urs Great Hauberk
+upl Balrog Skin
+ult Hellforged Plate
+uld Kraken Shell
+uth Lacquered Plate
+uul Shadow Plate
+uar Sacred Armor
+utp Archon Plate
+uuc Heater
+uml Luna
+urg Hyperion
+uit Monarch
+uow Aegis
+uts Ward
+ulg Bramble Mitts
+uvg Vampirebone Gloves
+umg Vambraces
+utg Crusader Gauntlets
+uhg Ogre Gauntlets
+ulb Wyrmhide Boots
+uvb Scarabshell Boots
+umb Boneweave Boots
+utb Mirrored Boots
+uhb Myrmidon Greaves
+ulc Spiderweb Sash
+uvc Vampirefang Belt
+umc Mithril Coil
+utc Troll Belt
+uhc Colossus Girdle
+uh9 Bone Visage
+ush Troll Nest
+upk Blade Barrier
+dr6 Alpha Helm
+dr7 Griffon Headress
+dr8 Hunter's Guise
+dr9 Sacred Feathers
+dra Totemic Mask
+ba6 Jawbone Visor
+ba7 Lion Helm
+ba8 Rage Mask
+ba9 Savage Helmet
+baa Slayer Guard
+pa6 Akaran Targe
+pa7 Akaran Rondache
+pa8 Protector Shield
+pa9 Guilded Shield
+paa Royal Shield
+ne6 Mummified Trophy
+ne7 Fetish Trophy
+ne8 Sexton Trophy
+ne9 Cantor Trophy
+nea Heirophant Trophy
+drb Blood Spirt
+drc Sun Spirit
+drd Earth Spirit
+dre Sky Spirit
+drf Dream Spirit
+bab Carnage Helm
+bac Fury Visor
+bad Destroyer Helm
+bae Conquerer Crown
+baf Guardian Crown
+pab Sacred Targe
+pac Sacred Rondache
+pad Ancient Shield
+pae Zakarum Shield
+paf Vortex Shield
+neb Minion Skull
+neg Hellspawn Skull
+ned Overseer Skull
+nee Succubae Skull
+nef Bloodlord Skull
+yap Hood
+ykp Fedora
+ylm Guardian Helm
+yhl Gladiator Helm
+yhm Tusk Helm
+yrn Royal Crown
+ysk Devil Mask
+yui Padded Armor
+yea Viper Skin
+yla Demon Carapace
+ytu Gemstoned Armor
+yng Heavy Mail
+ycl Dragon Scale
+yhn Chain Shirt
+yrs Chest Guard
+ypl Demon Fleece
+ylt Plated Cuirass
+yld Combat Plate
+yth Royal Armor
+yul Ceremonial Armor
+yar Archaic Armor
+ytp Archmage Plate
+yuc Petrified Buckler
+yml Desert Shield
+yrg Giant Buckler
+yit Military Shield
+yow Royal Guard
+yts Body Shield
+ylg Spellcaster Gloves
+yvg Viper Hands
+ymg Sepulcher Gloves
+ytg Gladiator Bracers
+yhg Titan Bracers
+ylb Rogue Boots
+yvb Viper Boots
+ymb Sepulcher Boots
+ytb Plated Boots
+yhb Gladiator Boots
+alb Hemp Band
+avb Rogue Belt
+bmb Merchant Belt
+atb Military Belt
+ahb Girdle
+yh9 Demon Skull
+ysh Demon Shield
+ypk Thorned Shield
+cix Hachigane
+eht Spirit Crown
+xht Ethereal Crown
+yht Enchanted Crown
+dwc Dwarven Crown
+xdw Dwarven Helm
+ydw Dwarven Battle Helm
+clk Cloak
+xlk Summoner's Cloak
+ylk Enchanted Cloak
+rob Robe
+xrb Mage Robe
+yrb Archmage Robe
+shl Spiked Shoulder
+xhh Thorned Armor
+yhh Spiked Armor
+elv Elven Chain
+xlv Drow Adamantite Chain
+ylv Sylvan Chain
+fts Fortress Shield
+xft Reflection Shield
+yft Ceremonial Shield
+irg Iron Guards
+xig Imperial Guards
+yig Royal Guards
+dbt Dimensional Boots
+xbt Mystile Boots
+ybt Spirit Boots
+msb Muscle Belt
+xms Titan Brace
+yms Gladiator Wrap
+2ap Cap/hat
+2kp Skull Cap
+2lm Helm
+2hl Full Helm
+2hm Great Helm
+2rn Crown
+2sk Mask
+2ui Quilted Armor
+2ea Leather Armor
+2la Hard Leather Armor
+2tu Studded Leather
+2ng Ring Mail
+2cl Scale Mail
+2hn Chain Mail
+2rs Breast Plate
+2pl Splint Mail
+2lt Plate Mail
+2ld Field Plate
+2th Gothic Plate
+2ul Full Plate Mail
+2ar Ancient Armor
+2tp Light Plate
+2uc Buckler
+2ml Small Shield
+2rg Large Shield
+2it Kite Shield
+2ow Tower Shield
+2ts Gothic Shield
+2lg Gloves(L)
+2vg Heavy Gloves
+2mg Bracers(M)
+2tg Light Gauntlets
+2hg Gaunlets(H)
+2lb Leather Boots
+2vb Heavy Boots
+2mb Chain Boots
+2tb Light Plate Boots
+2hb Plate Boots
+3lb Sash(L)
+3vb Light Belt
+3mb Belt(M)
+3tb Heavy Belt
+3hb Girdle(H)
+2h9 Bone Helm
+2sh Bone Shield
+2pk Spiked Shield
+4ap War Hat
+4kp Sallet
+4lm Casque
+4hl Basinet
+4hm Winged Helm
+4rn Grand Crown
+4sk Death Mask
+4ui Ghost Armor
+4ea Serpentskin Armor
+4la Demonhide Armor
+4tu Trellised Armor
+4ng Linked Mail
+4cl Tigulated Mail
+4hn Mesh Armor
+4rs Cuirass
+4pl Russet Armor
+4lt Templar Coat
+4ld Sharktooth Armor
+4th Embossed Plate
+4ul Chaos Armor
+4ar Ornate Armor
+4tp Mage Plate
+4uc Defender
+4ml Round Shield
+4rg Scutum
+4it Dragon Shield
+4ow Pavise
+4ts Ancient Shield
+4lg Demonhide Gloves
+4vg Sharkskin Gloves
+4mg Heavy Bracers
+4tg Battle Gauntlets
+4hg War Gauntlets
+4lb Demonhide Boots
+4vb Sharkskin Boots
+4mb Mesh Boots
+4tb Battle Boots
+4hb War Boots
+5lb Demonhide Sash
+5vb Sharkskin Belt
+5mb Mesh Belt
+5tb Battle Belt
+5hb War Belt
+4h9 Grim Helm
+4sh Grim Shield
+4pk Barbed Shield
+qi2 Tiara
+qi3 Diadem
+qba Slayer Guard
+qda Totemic Mask
+qna Heirophant Trophy
+qp9 Guilded Shield
+qbc Fury Visor
+qbd Destroyer Helm
+qbe Conquerer Crown
+qdb Blood Spirt
+qdd Earth Spirit
+qde Sky Spirit
+qne Succubae Skull
+qnf Bloodlord Skull
+qpc Sacred Rondache
+qpe Zakarum Shield

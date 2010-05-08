@@ -34,7 +34,7 @@ namespace esCharView
 		}
 
 		private void button1_Click(object sender, EventArgs e)
-		{		
+		{
 			if (openFileDialog2.ShowDialog() == DialogResult.OK)
 			{
 				LoadSave(openFileDialog2.FileName);
@@ -91,41 +91,31 @@ namespace esCharView
 			listBoxCorpseInventory.Items.Clear();
 			listBoxMercInventory.Items.Clear();
 			listBoxGolemInventory.Items.Clear();
-			textBoxItemLocation.Clear();
+			ClearItemEditor();
 
 			foreach (Item item in playerData.Inventory.PlayerItems)
 			{
-				listBoxInventory.Items.Add(String.Format("{0:X}: {1}", item.Location + playerData.HeaderSize, item.ToString()));
+				listBoxInventory.Items.Add(item.ToString());
 			}
 
 			foreach (Item item in playerData.Inventory.CorpseItems)
 			{
-				listBoxCorpseInventory.Items.Add(String.Format("{0:X}: {1}", item.Location + playerData.HeaderSize, item.ToString()));
+				listBoxCorpseInventory.Items.Add(item.ToString());
 			}
 
 			foreach (Item item in playerData.Inventory.MercItems)
 			{
-				listBoxMercInventory.Items.Add(String.Format("{0:X}: {1}", item.Location + playerData.HeaderSize, item.ToString()));
+				listBoxMercInventory.Items.Add(item.ToString());
 			}
 
 			foreach (Item item in playerData.Inventory.GolemItems)
 			{
-				listBoxGolemInventory.Items.Add(String.Format("{0:X}: {1}", item.Location + playerData.HeaderSize, item.ToString()));
+				listBoxGolemInventory.Items.Add(item.ToString());
 			}
 
 			if (selected > 0)
 			{
 				listBoxInventory.SelectedIndex = selected - 1;
-			}
-		}
-
-		private void listBoxInventory_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			if (listBoxInventory.SelectedIndices.Count > 0)
-			{
-				int lastSelectedIndex = listBoxInventory.SelectedIndices[listBoxInventory.SelectedIndices.Count - 1];
-				string selectedItemText = listBoxInventory.Items[lastSelectedIndex].ToString();
-				textBoxItemLocation.Text = selectedItemText.Substring(0, selectedItemText.IndexOf(':'));
 			}
 		}
 
@@ -135,7 +125,14 @@ namespace esCharView
 			{
 				for (int i = listBox.SelectedIndices.Count - 1; i >= 0; i--)
 				{
-					items.RemoveAt(listBox.SelectedIndices[i]);
+					if (listBox == listBoxItemEditorSockets)
+					{
+						itemToEdit.RemoveSocketedItem(listBox.SelectedIndices[i]);
+					}
+					else
+					{
+						items.RemoveAt(listBox.SelectedIndices[i]);
+					}
 					listBox.Items.RemoveAt(i);
 				}
 			}
@@ -184,7 +181,7 @@ namespace esCharView
 			textBoxUnknownFlags.Text = unknownFlags.ToString();
 
 			playerData.Name = textBoxName.Text;
-			playerData.SetCharacterFlags(checkBoxExpansion.Checked, checkBoxDied.Checked, checkBoxHardcore.Checked, unknownFlags); 
+			playerData.SetCharacterFlags(checkBoxExpansion.Checked, checkBoxDied.Checked, checkBoxHardcore.Checked, unknownFlags);
 			saveFileDialog1.FileName = playerData.Name + ".d2s";
 
 			if (saveFileDialog1.ShowDialog() == DialogResult.OK)
@@ -199,6 +196,154 @@ namespace esCharView
 			{
 				e.Handled = true;
 			}
+		}
+
+		private void listBoxInventory_DoubleClick(object sender, EventArgs e)
+		{
+			OpenItemProperties();
+		}
+
+		private void OpenItemProperties()
+		{
+			if (tabControl1.SelectedTab == tabPageItemEditor)
+			{
+				if (listBoxItemEditorSockets.SelectedIndex == -1)
+				{
+					return;
+				}
+
+				OpenItemProperties(itemToEdit.Sockets[listBoxItemEditorSockets.SelectedIndex]);
+			}
+			else
+			{
+				if (tabControlInventory.SelectedTab == tabPageInventoryPlayer)
+				{
+					if (listBoxInventory.SelectedIndex == -1)
+					{
+						return;
+					}
+
+					OpenItemProperties(playerData.Inventory.PlayerItems[listBoxInventory.SelectedIndex]);
+				}
+				else if (tabControlInventory.SelectedTab == tabPageInventoryCorpse)
+				{
+					if (listBoxCorpseInventory.SelectedIndex == -1)
+					{
+						return;
+					}
+
+					OpenItemProperties(playerData.Inventory.CorpseItems[listBoxCorpseInventory.SelectedIndex]);
+				}
+				else if (tabControlInventory.SelectedTab == tabPageInventoryMerc)
+				{
+					if (listBoxMercInventory.SelectedIndex == -1)
+					{
+						return;
+					}
+
+					OpenItemProperties(playerData.Inventory.MercItems[listBoxMercInventory.SelectedIndex]);
+				}
+				else if (tabControlInventory.SelectedTab == tabPageInventoryGolem)
+				{
+					if (listBoxGolemInventory.SelectedIndex == -1)
+					{
+						return;
+					}
+
+					OpenItemProperties(playerData.Inventory.GolemItems[listBoxGolemInventory.SelectedIndex]);
+				}
+			}
+		}
+
+
+		private Item itemToEdit;
+
+		private void OpenItemProperties(Item itemToEdit)
+		{
+			ClearItemEditor();
+
+			this.itemToEdit = itemToEdit;
+			StringBuilder sb = new StringBuilder();
+
+			labelItemName.Text = itemToEdit.ToString();
+
+			sb.AppendLine(string.Format("IsEquipped: {0}", itemToEdit.IsEquipped));
+			sb.AppendLine(string.Format("IsInSocket: {0}", itemToEdit.IsInSocket));
+			sb.AppendLine(string.Format("IsIdentified: {0}", itemToEdit.IsIdentified));
+			sb.AppendLine(string.Format("IsSwitchIn: {0}", itemToEdit.IsSwitchIn));
+			sb.AppendLine(string.Format("IsSwitchOut: {0}", itemToEdit.IsSwitchOut));
+			sb.AppendLine(string.Format("IsBroken: {0}", itemToEdit.IsBroken));
+			sb.AppendLine(string.Format("IsSocketed: {0}", itemToEdit.IsSocketed));
+			sb.AppendLine(string.Format("IsStoreItem: {0}", itemToEdit.IsStoreItem));
+			sb.AppendLine(string.Format("IsEar: {0}", itemToEdit.IsEar));
+			sb.AppendLine(string.Format("IsStarterItem: {0}", itemToEdit.IsStarterItem));
+			sb.AppendLine(string.Format("IsSimpleItem: {0}", itemToEdit.IsSimpleItem));
+			sb.AppendLine(string.Format("IsEthereal: {0}", itemToEdit.IsEthereal));
+			sb.AppendLine(string.Format("IsPersonalized: {0}", itemToEdit.IsPersonalized));
+			sb.AppendLine(string.Format("IsGamble: {0}", itemToEdit.IsGamble));
+			sb.AppendLine(string.Format("IsRuneword: {0}", itemToEdit.IsRuneword));
+			sb.AppendLine(string.Format("Location: {0}", itemToEdit.Location));
+			sb.AppendLine(string.Format("PositionOnBody: {0}", itemToEdit.PositionOnBody));
+			sb.AppendLine(string.Format("PositionX: {0}", itemToEdit.PositionX));
+			sb.AppendLine(string.Format("PositionY: {0}", itemToEdit.PositionY));
+			sb.AppendLine(string.Format("StorageId: {0}", itemToEdit.StorageId));
+			sb.AppendLine(string.Format("GoldAmount: {0}", itemToEdit.GoldAmount));
+			sb.AppendLine(string.Format("SocketsFilled: {0}", itemToEdit.SocketsFilled));
+			sb.AppendLine(string.Format("Id: {0:X}", itemToEdit.Id));
+			sb.AppendLine(string.Format("Level: {0}", itemToEdit.Level));
+			sb.AppendLine(string.Format("Quality: {0}", itemToEdit.Quality));
+			sb.AppendLine(string.Format("HasGraphic: {0}", itemToEdit.HasGraphic));
+			sb.AppendLine(string.Format("Graphic: {0}", itemToEdit.Graphic));
+
+			sb.AppendLine("Prefix: ");
+			foreach (var item in itemToEdit.Prefix)
+			{
+				sb.AppendLine(string.Format("   {0}", item));
+			}
+			sb.AppendLine("Suffix: ");
+			foreach (var item in itemToEdit.Suffix)
+			{
+				sb.AppendLine(string.Format("   {0}", item));
+			}
+
+			sb.AppendLine(string.Format("UniqueSetId: {0}", itemToEdit.UniqueSetId));
+			sb.AppendLine(string.Format("Defense: {0}", itemToEdit.Defense));
+			sb.AppendLine(string.Format("MaxDurability: {0}", itemToEdit.MaxDurability));
+			sb.AppendLine(string.Format("Durability: {0}", itemToEdit.Durability));
+			sb.AppendLine(string.Format("IsIndestructable: {0}", itemToEdit.IsIndestructable));
+			sb.AppendLine(string.Format("SocketCount: {0}", itemToEdit.SocketCount));
+			sb.AppendLine(string.Format("Quantity: {0}", itemToEdit.Quantity));
+			foreach (var socket in itemToEdit.Sockets)
+			{
+				listBoxItemEditorSockets.Items.Add(socket);
+			}
+
+			textBoxItemEditor.Text = sb.ToString();
+			textBoxItemEditor.Select(0, 0);
+
+			tabControl1.SelectTab(2);
+		}
+
+		private void ClearItemEditor()
+		{
+			itemToEdit = null;
+			textBoxItemEditor.Clear();
+			listBoxItemEditorSockets.Items.Clear();
+		}
+
+		private void buttonRemoveSocket_Click(object sender, EventArgs e)
+		{
+			if (listBoxItemEditorSockets.SelectedIndex < 0)
+			{
+				return;
+			}
+
+			if (itemToEdit == null)
+			{
+				return;
+			}
+
+			removeSelectedItems(listBoxItemEditorSockets, itemToEdit.Sockets);
 		}
 	}
 }

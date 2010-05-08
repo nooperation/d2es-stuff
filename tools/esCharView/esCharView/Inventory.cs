@@ -94,30 +94,15 @@ namespace esCharView
 		private Item GetNextItem(byte[] inventoryBytes, ref int begin)
 		{
 			int itemDataSize = GetNextItemSize(inventoryBytes, begin);
-
-			Item item = new Item();
-
-			// TODO: Have Item decode itself
 			byte[] itemData = new byte[itemDataSize];
 			Array.Copy(inventoryBytes, begin, itemData, 0, itemDataSize);
 
-			BitReader br = new BitReader(itemData);
-
-			br.Position = 27;
-			item.Socketed = br.ReadBoolean();
-
-			br.Position = 76;
-			item.ItemData = itemData;
-			item.ItemCode = br.ReadString(3, 8);
-			item.Location = begin;
+			Item item = new Item(itemData);
 
 			begin += itemDataSize;
-			if (item.Socketed)
+			if (item.IsSocketed)
 			{
-				br.Position = 108;
-				item.SocketCount = br.ReadByte(3);
-
-				for (int i = 0; i < item.SocketCount; i++)
+				for (int i = 0; i < item.SocketsFilled; i++)
 				{
 					item.Sockets.Add(GetNextItem(inventoryBytes, ref begin));
 				}
@@ -267,51 +252,36 @@ namespace esCharView
 				out golemInventoryBytes);
 
 			int currentPosition;
-			int physicalPositionOffset;
 
 			// Parse player's inventory items, skipping 4 byte header
 			currentPosition = 4;
-			physicalPositionOffset = 0;
 			while (currentPosition < playerInventoryBytes.Length)
 			{
 				Item currentItem = GetNextItem(playerInventoryBytes, ref currentPosition);
-				currentItem.Location += physicalPositionOffset;
 				playerItems.Add(currentItem);
 			}
 
 			// Parse corpse inventory, skipping 4 byte header and 12 byte unknown corpse data
 			currentPosition = 4;
-			physicalPositionOffset = playerInventoryBytes.Length + 4;
 			while (currentPosition < corpseInventoryBytes.Length)
 			{
 				Item currentItem = GetNextItem(corpseInventoryBytes, ref currentPosition);
-				currentItem.Location += physicalPositionOffset + unknownCorpseData.Length;
 				corpseItems.Add(currentItem);
-			}
-
-			// Add unknown data length to physical offset if corpse data exists
-			if (corpseItems.Count > 0)
-			{
-				physicalPositionOffset += unknownCorpseData.Length;
 			}
 
 			// Parse merc items
 			currentPosition = 4;
-			physicalPositionOffset += corpseInventoryBytes.Length + 2;
 			while (currentPosition < mercInventoryBytes.Length)
 			{
 				Item currentItem = GetNextItem(mercInventoryBytes, ref currentPosition);
-				currentItem.Location += physicalPositionOffset;
 				mercItems.Add(currentItem);
 			}
 
 			// Parse golem item(s)
 			currentPosition = 0;
-			physicalPositionOffset += mercInventoryBytes.Length + 3;
 			while (currentPosition < golemInventoryBytes.Length)
 			{
 				Item currentItem = GetNextItem(golemInventoryBytes, ref currentPosition);
-				currentItem.Location += physicalPositionOffset;
 				golemItems.Add(currentItem);
 			}
 		}

@@ -31,9 +31,7 @@
 			this.buttonLoadCharacter = new System.Windows.Forms.Button();
 			this.listBoxInventory = new System.Windows.Forms.ListBox();
 			this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
-			this.textBoxItemLocation = new System.Windows.Forms.TextBox();
 			this.buttonRemoveItem = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
 			this.buttonSave = new System.Windows.Forms.Button();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 			this.checkBoxExpansion = new System.Windows.Forms.CheckBox();
@@ -51,17 +49,23 @@
 			this.tabPageInventoryGolem = new System.Windows.Forms.TabPage();
 			this.listBoxGolemInventory = new System.Windows.Forms.ListBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
-			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.tabPageGeneral = new System.Windows.Forms.TabPage();
 			this.textBoxGeneral = new System.Windows.Forms.TextBox();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.tabPageInventoryEditor = new System.Windows.Forms.TabPage();
+			this.tabPageItemEditor = new System.Windows.Forms.TabPage();
+			this.labelItemName = new System.Windows.Forms.Label();
+			this.buttonRemoveSocket = new System.Windows.Forms.Button();
+			this.listBoxItemEditorSockets = new System.Windows.Forms.ListBox();
+			this.textBoxItemEditor = new System.Windows.Forms.TextBox();
 			this.tabControlInventory.SuspendLayout();
 			this.tabPageInventoryPlayer.SuspendLayout();
 			this.tabPageInventoryCorpse.SuspendLayout();
 			this.tabPageInventoryMerc.SuspendLayout();
 			this.tabPageInventoryGolem.SuspendLayout();
 			this.tabControl1.SuspendLayout();
-			this.tabPage1.SuspendLayout();
-			this.tabPage2.SuspendLayout();
+			this.tabPageGeneral.SuspendLayout();
+			this.tabPageInventoryEditor.SuspendLayout();
+			this.tabPageItemEditor.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// buttonLoadCharacter
@@ -84,22 +88,12 @@
 			this.listBoxInventory.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.listBoxInventory.Size = new System.Drawing.Size(607, 174);
 			this.listBoxInventory.TabIndex = 2;
-			this.listBoxInventory.SelectedIndexChanged += new System.EventHandler(this.listBoxInventory_SelectedIndexChanged);
+			this.listBoxInventory.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
 			// 
 			// openFileDialog2
 			// 
 			this.openFileDialog2.Filter = "d2s files|*.d2s|All files|*.*";
 			this.openFileDialog2.InitialDirectory = ".";
-			// 
-			// textBoxItemLocation
-			// 
-			this.textBoxItemLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxItemLocation.Location = new System.Drawing.Point(63, 230);
-			this.textBoxItemLocation.Name = "textBoxItemLocation";
-			this.textBoxItemLocation.ReadOnly = true;
-			this.textBoxItemLocation.Size = new System.Drawing.Size(398, 20);
-			this.textBoxItemLocation.TabIndex = 3;
 			// 
 			// buttonRemoveItem
 			// 
@@ -111,16 +105,6 @@
 			this.buttonRemoveItem.Text = "Remove";
 			this.buttonRemoveItem.UseVisualStyleBackColor = true;
 			this.buttonRemoveItem.Click += new System.EventHandler(this.buttonRemoveItem_Click);
-			// 
-			// label1
-			// 
-			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(11, 233);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(35, 13);
-			this.label1.TabIndex = 5;
-			this.label1.Text = "Offset";
 			// 
 			// buttonSave
 			// 
@@ -236,7 +220,7 @@
 			this.tabPageInventoryCorpse.Location = new System.Drawing.Point(4, 22);
 			this.tabPageInventoryCorpse.Name = "tabPageInventoryCorpse";
 			this.tabPageInventoryCorpse.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageInventoryCorpse.Size = new System.Drawing.Size(601, 180);
+			this.tabPageInventoryCorpse.Size = new System.Drawing.Size(613, 180);
 			this.tabPageInventoryCorpse.TabIndex = 1;
 			this.tabPageInventoryCorpse.Text = "Corpse";
 			this.tabPageInventoryCorpse.UseVisualStyleBackColor = true;
@@ -249,8 +233,9 @@
 			this.listBoxCorpseInventory.Location = new System.Drawing.Point(3, 3);
 			this.listBoxCorpseInventory.Name = "listBoxCorpseInventory";
 			this.listBoxCorpseInventory.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-			this.listBoxCorpseInventory.Size = new System.Drawing.Size(595, 174);
+			this.listBoxCorpseInventory.Size = new System.Drawing.Size(607, 174);
 			this.listBoxCorpseInventory.TabIndex = 0;
+			this.listBoxCorpseInventory.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
 			// 
 			// tabPageInventoryMerc
 			// 
@@ -258,7 +243,7 @@
 			this.tabPageInventoryMerc.Location = new System.Drawing.Point(4, 22);
 			this.tabPageInventoryMerc.Name = "tabPageInventoryMerc";
 			this.tabPageInventoryMerc.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageInventoryMerc.Size = new System.Drawing.Size(601, 180);
+			this.tabPageInventoryMerc.Size = new System.Drawing.Size(613, 180);
 			this.tabPageInventoryMerc.TabIndex = 2;
 			this.tabPageInventoryMerc.Text = "Mercenary";
 			this.tabPageInventoryMerc.UseVisualStyleBackColor = true;
@@ -271,8 +256,9 @@
 			this.listBoxMercInventory.Location = new System.Drawing.Point(3, 3);
 			this.listBoxMercInventory.Name = "listBoxMercInventory";
 			this.listBoxMercInventory.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-			this.listBoxMercInventory.Size = new System.Drawing.Size(595, 174);
+			this.listBoxMercInventory.Size = new System.Drawing.Size(607, 174);
 			this.listBoxMercInventory.TabIndex = 0;
+			this.listBoxMercInventory.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
 			// 
 			// tabPageInventoryGolem
 			// 
@@ -280,7 +266,7 @@
 			this.tabPageInventoryGolem.Location = new System.Drawing.Point(4, 22);
 			this.tabPageInventoryGolem.Name = "tabPageInventoryGolem";
 			this.tabPageInventoryGolem.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageInventoryGolem.Size = new System.Drawing.Size(601, 180);
+			this.tabPageInventoryGolem.Size = new System.Drawing.Size(613, 180);
 			this.tabPageInventoryGolem.TabIndex = 3;
 			this.tabPageInventoryGolem.Text = "Golem";
 			this.tabPageInventoryGolem.UseVisualStyleBackColor = true;
@@ -293,32 +279,34 @@
 			this.listBoxGolemInventory.Location = new System.Drawing.Point(3, 3);
 			this.listBoxGolemInventory.Name = "listBoxGolemInventory";
 			this.listBoxGolemInventory.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-			this.listBoxGolemInventory.Size = new System.Drawing.Size(595, 174);
+			this.listBoxGolemInventory.Size = new System.Drawing.Size(607, 174);
 			this.listBoxGolemInventory.TabIndex = 0;
+			this.listBoxGolemInventory.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
 			// 
 			// tabControl1
 			// 
 			this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.tabControl1.Controls.Add(this.tabPage1);
-			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Controls.Add(this.tabPageGeneral);
+			this.tabControl1.Controls.Add(this.tabPageInventoryEditor);
+			this.tabControl1.Controls.Add(this.tabPageItemEditor);
 			this.tabControl1.Location = new System.Drawing.Point(0, 41);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(632, 282);
 			this.tabControl1.TabIndex = 15;
 			// 
-			// tabPage1
+			// tabPageGeneral
 			// 
-			this.tabPage1.Controls.Add(this.textBoxGeneral);
-			this.tabPage1.Location = new System.Drawing.Point(4, 22);
-			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(584, 256);
-			this.tabPage1.TabIndex = 0;
-			this.tabPage1.Text = "General";
-			this.tabPage1.UseVisualStyleBackColor = true;
+			this.tabPageGeneral.Controls.Add(this.textBoxGeneral);
+			this.tabPageGeneral.Location = new System.Drawing.Point(4, 22);
+			this.tabPageGeneral.Name = "tabPageGeneral";
+			this.tabPageGeneral.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageGeneral.Size = new System.Drawing.Size(624, 256);
+			this.tabPageGeneral.TabIndex = 0;
+			this.tabPageGeneral.Text = "General";
+			this.tabPageGeneral.UseVisualStyleBackColor = true;
 			// 
 			// textBoxGeneral
 			// 
@@ -328,22 +316,81 @@
 			this.textBoxGeneral.Multiline = true;
 			this.textBoxGeneral.Name = "textBoxGeneral";
 			this.textBoxGeneral.ReadOnly = true;
-			this.textBoxGeneral.Size = new System.Drawing.Size(578, 250);
+			this.textBoxGeneral.Size = new System.Drawing.Size(618, 250);
 			this.textBoxGeneral.TabIndex = 0;
 			// 
-			// tabPage2
+			// tabPageInventoryEditor
 			// 
-			this.tabPage2.Controls.Add(this.tabControlInventory);
-			this.tabPage2.Controls.Add(this.textBoxItemLocation);
-			this.tabPage2.Controls.Add(this.buttonRemoveItem);
-			this.tabPage2.Controls.Add(this.label1);
-			this.tabPage2.Location = new System.Drawing.Point(4, 22);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage2.Size = new System.Drawing.Size(624, 256);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "Inventory";
-			this.tabPage2.UseVisualStyleBackColor = true;
+			this.tabPageInventoryEditor.Controls.Add(this.tabControlInventory);
+			this.tabPageInventoryEditor.Controls.Add(this.buttonRemoveItem);
+			this.tabPageInventoryEditor.Location = new System.Drawing.Point(4, 22);
+			this.tabPageInventoryEditor.Name = "tabPageInventoryEditor";
+			this.tabPageInventoryEditor.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageInventoryEditor.Size = new System.Drawing.Size(624, 256);
+			this.tabPageInventoryEditor.TabIndex = 1;
+			this.tabPageInventoryEditor.Text = "Inventory";
+			this.tabPageInventoryEditor.UseVisualStyleBackColor = true;
+			// 
+			// tabPageItemEditor
+			// 
+			this.tabPageItemEditor.Controls.Add(this.labelItemName);
+			this.tabPageItemEditor.Controls.Add(this.buttonRemoveSocket);
+			this.tabPageItemEditor.Controls.Add(this.listBoxItemEditorSockets);
+			this.tabPageItemEditor.Controls.Add(this.textBoxItemEditor);
+			this.tabPageItemEditor.Location = new System.Drawing.Point(4, 22);
+			this.tabPageItemEditor.Name = "tabPageItemEditor";
+			this.tabPageItemEditor.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageItemEditor.Size = new System.Drawing.Size(624, 256);
+			this.tabPageItemEditor.TabIndex = 2;
+			this.tabPageItemEditor.Text = "ItemViewer";
+			this.tabPageItemEditor.UseVisualStyleBackColor = true;
+			// 
+			// labelItemName
+			// 
+			this.labelItemName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelItemName.AutoSize = true;
+			this.labelItemName.Location = new System.Drawing.Point(251, 12);
+			this.labelItemName.Name = "labelItemName";
+			this.labelItemName.Size = new System.Drawing.Size(0, 13);
+			this.labelItemName.TabIndex = 4;
+			// 
+			// buttonRemoveSocket
+			// 
+			this.buttonRemoveSocket.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonRemoveSocket.Location = new System.Drawing.Point(541, 133);
+			this.buttonRemoveSocket.Name = "buttonRemoveSocket";
+			this.buttonRemoveSocket.Size = new System.Drawing.Size(75, 23);
+			this.buttonRemoveSocket.TabIndex = 3;
+			this.buttonRemoveSocket.Text = "Remove";
+			this.buttonRemoveSocket.UseVisualStyleBackColor = true;
+			this.buttonRemoveSocket.Click += new System.EventHandler(this.buttonRemoveSocket_Click);
+			// 
+			// listBoxItemEditorSockets
+			// 
+			this.listBoxItemEditorSockets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.listBoxItemEditorSockets.Font = new System.Drawing.Font("Lucida Console", 9.75F);
+			this.listBoxItemEditorSockets.FormattingEnabled = true;
+			this.listBoxItemEditorSockets.Location = new System.Drawing.Point(251, 28);
+			this.listBoxItemEditorSockets.Name = "listBoxItemEditorSockets";
+			this.listBoxItemEditorSockets.Size = new System.Drawing.Size(367, 95);
+			this.listBoxItemEditorSockets.TabIndex = 2;
+			this.listBoxItemEditorSockets.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
+			// 
+			// textBoxItemEditor
+			// 
+			this.textBoxItemEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxItemEditor.Font = new System.Drawing.Font("Lucida Console", 9.75F);
+			this.textBoxItemEditor.Location = new System.Drawing.Point(8, 6);
+			this.textBoxItemEditor.Multiline = true;
+			this.textBoxItemEditor.Name = "textBoxItemEditor";
+			this.textBoxItemEditor.ReadOnly = true;
+			this.textBoxItemEditor.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+			this.textBoxItemEditor.Size = new System.Drawing.Size(237, 242);
+			this.textBoxItemEditor.TabIndex = 1;
+			this.textBoxItemEditor.WordWrap = false;
 			// 
 			// Form1
 			// 
@@ -368,10 +415,11 @@
 			this.tabPageInventoryMerc.ResumeLayout(false);
 			this.tabPageInventoryGolem.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
-			this.tabPage1.ResumeLayout(false);
-			this.tabPage1.PerformLayout();
-			this.tabPage2.ResumeLayout(false);
-			this.tabPage2.PerformLayout();
+			this.tabPageGeneral.ResumeLayout(false);
+			this.tabPageGeneral.PerformLayout();
+			this.tabPageInventoryEditor.ResumeLayout(false);
+			this.tabPageItemEditor.ResumeLayout(false);
+			this.tabPageItemEditor.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -382,9 +430,7 @@
 		private System.Windows.Forms.Button buttonLoadCharacter;
 		private System.Windows.Forms.ListBox listBoxInventory;
 		private System.Windows.Forms.OpenFileDialog openFileDialog2;
-		private System.Windows.Forms.TextBox textBoxItemLocation;
 		private System.Windows.Forms.Button buttonRemoveItem;
-		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button buttonSave;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
 		private System.Windows.Forms.CheckBox checkBoxExpansion;
@@ -402,9 +448,14 @@
 		private System.Windows.Forms.TabPage tabPageInventoryGolem;
 		private System.Windows.Forms.ListBox listBoxGolemInventory;
 		private System.Windows.Forms.TabControl tabControl1;
-		private System.Windows.Forms.TabPage tabPage1;
-		private System.Windows.Forms.TabPage tabPage2;
+		private System.Windows.Forms.TabPage tabPageGeneral;
+		private System.Windows.Forms.TabPage tabPageInventoryEditor;
 		private System.Windows.Forms.TextBox textBoxGeneral;
+		private System.Windows.Forms.TabPage tabPageItemEditor;
+		private System.Windows.Forms.TextBox textBoxItemEditor;
+		private System.Windows.Forms.Button buttonRemoveSocket;
+		private System.Windows.Forms.ListBox listBoxItemEditorSockets;
+		private System.Windows.Forms.Label labelItemName;
 
 	}
 }
