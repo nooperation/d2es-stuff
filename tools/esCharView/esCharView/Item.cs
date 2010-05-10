@@ -351,14 +351,14 @@ namespace esCharView
 				}
 			}
 
-			if (IsSocketed)
-			{
-				SocketCount = br.Read(4);
-			}
-
+			// Not sure of the order of socketed+stackable. Socketed arrows seem to mess up
 			if (ItemDefs.IsStackable(ItemCode))
 			{
 				Quantity = br.Read(9);
+			}
+			if (IsSocketed)
+			{
+				SocketCount = br.Read(4);
 			}
 
 			if (Quality == ItemQuality.Set)
@@ -388,7 +388,7 @@ namespace esCharView
 			}
 		}
 
-		// TODO: Not yet implemented
+		// TODO: Not yet implemented, probably won't be since it's such a pain to do
 		private void ReadItemDataProperty()
 		{
 			br.Read(9);

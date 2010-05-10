@@ -9,20 +9,15 @@ namespace esCharView
 	//TODO: Move all specific groups of items into a single file like Autostocker.ini has
 	class ItemDefs
 	{
-		private static Dictionary<string, string> ItemDescriptions = new Dictionary<string, string>();
-		private static Dictionary<string, string> SetDescriptions = new Dictionary<string, string>();
-		private static HashSet<string> ArmorCodes = new HashSet<string>();
-		private static HashSet<string> WeaponCodes = new HashSet<string>();
-		private static HashSet<string> StackableCodes = new HashSet<string>();
-		private static HashSet<string> MonsterPartCodes = new HashSet<string>();
-		private static HashSet<string> ScrollOrTomeCodes = new HashSet<string>();
-		private static HashSet<string> CharmCodes = new HashSet<string>();
+		private static Dictionary<string, string> itemDescriptions = new Dictionary<string, string>();
+		private static Dictionary<string, string> setDescriptions = new Dictionary<string, string>();
+		private static Dictionary<string, HashSet<string>> itemCodeSets = new Dictionary<string, HashSet<string>>();
 
 		public static string GetItemDescription(string itemCode)
 		{
-			if (ItemDescriptions.ContainsKey(itemCode))
+			if (itemDescriptions.ContainsKey(itemCode))
 			{
-				return ItemDescriptions[itemCode];
+				return itemDescriptions[itemCode];
 			}
 
 			return "UNKNOWN";
@@ -30,42 +25,42 @@ namespace esCharView
 
 		public static string GetUniqueSetName(string itemCode)
 		{
-			if (!SetDescriptions.ContainsKey(itemCode))
+			if (!setDescriptions.ContainsKey(itemCode))
 			{
 				return "UNKNOWN SET";
 			}
 
-			return SetDescriptions[itemCode];
+			return setDescriptions[itemCode];
 		}
 
 		public static bool IsArmor(string itemCode)
 		{
-			return ArmorCodes.Contains(itemCode);
+			return itemCodeSets["armor"].Contains(itemCode);
 		}
 
 		public static bool IsWeapon(string itemCode)
 		{
-			return WeaponCodes.Contains(itemCode);
+			return itemCodeSets["weapons"].Contains(itemCode);
 		}
 
 		public static bool IsStackable(string itemCode)
 		{
-			return StackableCodes.Contains(itemCode);
+			return itemCodeSets["stackable"].Contains(itemCode);
 		}
 
 		public static bool IsMonsterPart(string itemCode)
 		{
-			return MonsterPartCodes.Contains(itemCode);
+			return itemCodeSets["monsterparts"].Contains(itemCode);
 		}
 
 		public static bool IsScrollOrTome(string itemCode)
 		{
-			return ScrollOrTomeCodes.Contains(itemCode);
+			return itemCodeSets["scrolltome"].Contains(itemCode);
 		}
 
 		public static bool IsCharm(string itemCode)
 		{
-			return CharmCodes.Contains(itemCode);
+			return itemCodeSets["charms"].Contains(itemCode);
 		}
 
 		static ItemDefs()
@@ -76,23 +71,12 @@ namespace esCharView
 				return;
 			}
 
-			if (!File.Exists("Armor.txt"))
+			if (!File.Exists("ItemGroups.txt"))
 			{
-				MessageBox.Show("Failed to locate Armor.txt", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show("Failed to locate ItemGroups.txt", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 
-			if (!File.Exists("Weapons.txt"))
-			{
-				MessageBox.Show("Failed to locate Weapons.txt", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
-			}
-
-			if (!File.Exists("Stackable.txt"))
-			{
-				MessageBox.Show("Failed to locate Stackable.txt", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
-			}
 			if (!File.Exists("Sets.txt"))
 			{
 				MessageBox.Show("Failed to locate Sets.txt", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -117,64 +101,75 @@ namespace esCharView
 					cleanStr = cleanStr.Remove(specialCharLocation, 3);
 				}
 
-				ItemDescriptions.Add(cleanStr.Substring(0, 3), cleanStr.Substring(4));
+				itemDescriptions.Add(cleanStr.Substring(0, 3), cleanStr.Substring(4));
 			}
+
+			// Just so it's guaranteed that these sections exist
+			itemCodeSets.Add("weapons", new HashSet<string>());
+			itemCodeSets.Add("armor", new HashSet<string>());
+			itemCodeSets.Add("stackable", new HashSet<string>());
+			itemCodeSets.Add("monsterparts", new HashSet<string>());
+			itemCodeSets.Add("scrolltome", new HashSet<string>());
+			itemCodeSets.Add("charms", new HashSet<string>());
+
+			ReadItemCodeSet(itemCodeSets, "ItemGroups.txt");
 
 			foreach (string str in File.ReadAllLines("Sets.txt"))
 			{
 				string itemCode = str.Substring(0, 3);
 
-				if(!SetDescriptions.ContainsKey(itemCode))
-					SetDescriptions.Add(itemCode, str.Substring(4));
+				if(!setDescriptions.ContainsKey(itemCode))
+					setDescriptions.Add(itemCode, str.Substring(4));
 			}
-			foreach (string str in File.ReadAllLines("Armor.txt"))
-			{
-				ArmorCodes.Add(str.Substring(0, 3));
-			}
-			foreach (string str in File.ReadAllLines("Weapons.txt"))
-			{
-				WeaponCodes.Add(str.Substring(0, 3));
-			}
-			foreach (string str in File.ReadAllLines("Stackable.txt"))
-			{
-				StackableCodes.Add(str.Substring(0, 3));
-			}
+		}
 
-			//TODO: Move all specific groups of items into a single file like Autostocker has
-			MonsterPartCodes.Add("yyy");
-			MonsterPartCodes.Add("zzz");
-			MonsterPartCodes.Add("hrt");
-			MonsterPartCodes.Add("brz");
-			MonsterPartCodes.Add("jaw");
-			MonsterPartCodes.Add("eyz");
-			MonsterPartCodes.Add("hrn");
-			MonsterPartCodes.Add("tal");
-			MonsterPartCodes.Add("flg");
-			MonsterPartCodes.Add("fng");
-			MonsterPartCodes.Add("qll");
-			MonsterPartCodes.Add("sol");
-			MonsterPartCodes.Add("scz");
-			MonsterPartCodes.Add("spe");
+		/// <summary>
+		/// Reads multiple sets of item codes from disk. Each set has a unique section name defined in brackets (eg. [sectionName]).
+		/// If multiple identical section names are exist, then the data for these sections are combined into the same set.
+		/// </summary>
+		/// <param name="itemCodeSets">Table of sets to store data</param>
+		/// <param name="filePath">Path containing sets of item codes</param>
+		/// <example>
+		/// 
+		/// [armor]
+		/// cap Cap/hat
+		/// skp Skull Cap
+		/// 
+		/// [weapons]
+		/// hax Hand Axe 
+		/// axe Axe 
+		/// 
+		/// </example>
+		public static void ReadItemCodeSet(Dictionary<string, HashSet<string>> itemCodeSets, string filePath)
+		{
+			string[] lines = File.ReadAllLines(filePath);
+			HashSet<string> currentSection = null;
 
-			ScrollOrTomeCodes.Add("tbk");
-			ScrollOrTomeCodes.Add("ibk");
-			ScrollOrTomeCodes.Add("tsc");
-			ScrollOrTomeCodes.Add("isc");
+			foreach (var line in lines)
+			{
+				if (line.Length <= 2)
+				{
+					continue;
+				}
 
-			CharmCodes.Add("cm0");
-			CharmCodes.Add("cm1");
-			CharmCodes.Add("cm2");
-			CharmCodes.Add("cm3");
-			CharmCodes.Add("cm4");
-			CharmCodes.Add("cm5");
-			CharmCodes.Add("cm6");
-			CharmCodes.Add("cm7");
-			CharmCodes.Add("cm8");
-			CharmCodes.Add("cm9");
-			CharmCodes.Add("cx0");
-			CharmCodes.Add("cx1");
-			CharmCodes.Add("cx2");
-			CharmCodes.Add("cx3");
+				if (line[0] == '[' && line[line.Length - 1] == ']')
+				{
+					string sectionName = line.Substring(1, line.Length - 2).ToLower();
+
+					if (!itemCodeSets.ContainsKey(sectionName))
+					{
+						itemCodeSets.Add(sectionName, new HashSet<string>());
+					}
+
+					currentSection = itemCodeSets[sectionName];
+				}
+				else if (currentSection != null)
+				{
+					string itemCode = line.Substring(0, 3).ToLower();
+
+					currentSection.Add(itemCode);
+				}
+			}
 		}
 	}
 }

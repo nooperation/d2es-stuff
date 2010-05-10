@@ -10,12 +10,7 @@ namespace esCharView
 	{
 		private byte[] headerBytes;
 		private uint[] statValues = new uint[16];
-		private Inventory inventory;
-
 		private byte characterFlags;
-		private string filePath;
-
-		public int HeaderSize { get { return headerBytes.Length; } }
 
 		/// <summary>
 		/// Character classes
@@ -247,36 +242,12 @@ namespace esCharView
 			}
 		}
 
-		/// <summary>
-		/// Character's inventory
-		/// </summary>
-		public Inventory Inventory
+
+		public Character(byte[] characterBytes)
 		{
-			get
-			{
-				return inventory;
-			}
-			set
-			{
-				inventory = value;
-			}
-		}
-
-
-		public Character()
-		{
-
-		}
-
-		/// <summary>
-		/// Read character save from disk
-		/// </summary>
-		/// <param name="filePath">Path of save file</param>
-		public void Read(string filePath)
-		{
-			this.filePath = filePath;
-
-			ReadHeaders();
+			headerBytes = characterBytes;
+			ReadStats(characterBytes);
+			characterFlags = characterBytes[0x24];
 		}
 
 		/// <summary>
@@ -306,52 +277,6 @@ namespace esCharView
 			headerBytes[0x24] = characterFlags;
 		}
 
-		/// <summary>
-		/// Saves player data to specified path
-		/// </summary>
-		/// <param name="filePath">Path to save character data as</param>
-		public void Write(string filePath)
-		{
-			byte[] inventoryBytes = Inventory.GetInventoryBytes(HasMercenary);
-			///UpdateInventoryHeaders();
-
-			byte[] rawCharacterData = new byte[headerBytes.Length + inventoryBytes.Length];
-
-			Array.Copy(headerBytes, rawCharacterData, headerBytes.Length);
-			Array.Copy(inventoryBytes, 0, rawCharacterData, headerBytes.Length, inventoryBytes.Length);
-
-			FixHeaders(ref rawCharacterData);
-
-			File.WriteAllBytes(filePath, rawCharacterData);
-		}
-
-		/// <summary>
-		/// Saves the player data to original file
-		/// </summary>
-		public void Write()
-		{
-			Write(filePath);
-		}
-
-		/// <summary>
-		/// Splits character data into several sections for easier parsing
-		/// </summary>
-		private void ReadHeaders()
-		{
-			byte[] rawCharacterData = File.ReadAllBytes(filePath);
-			int itemListBegin = FindItemListBegin(rawCharacterData);
-
-			headerBytes = new byte[itemListBegin];
-			byte[] inventoryBytes = new byte[rawCharacterData.Length - itemListBegin];
-
-			Array.Copy(rawCharacterData, 0, headerBytes, 0, headerBytes.Length);
-			Array.Copy(rawCharacterData, itemListBegin, inventoryBytes, 0, inventoryBytes.Length);
-
-			ReadStats(headerBytes);
-
-			inventory = new Inventory(inventoryBytes);
-			characterFlags = headerBytes[0x24];
-		}
 
 		/// <summary>
 		/// Copies character's raw stat data from raw header bytes
@@ -447,73 +372,9 @@ namespace esCharView
 			}
 		}
 
-		/// <summary>
-		/// Corrects checksum of new player data
-		/// </summary>
-		/// <param name="rawCharacterData">Raw player save data</param>
-		public void FixHeaders(ref byte[] rawCharacterData)
+		public byte[] GetCharacterBytes()
 		{
-			byte[] fileSizeBytes = BitConverter.GetBytes(rawCharacterData.Length);
-			Array.Copy(fileSizeBytes, 0, rawCharacterData, 8, 4);
-
-			uint checksum = CalculateChecksum(rawCharacterData);
-
-			byte[] checksumBytes = BitConverter.GetBytes(checksum);
-			Array.Copy(checksumBytes, 0, rawCharacterData, 12, 4);
-		}
-
-		// 
-		/// <summary>
-		/// Calculates a new checksum for specified data
-		/// </summary>
-		/// <param name="fileBytes">Raw character data</param>
-		/// <returns>Checksum for specified data</returns>
-		/// <remarks>Source: ehertlein ( http://forums.diii.net/showthread.php?t=532037&page=41 )</remarks>
-		private static uint CalculateChecksum(byte[] fileBytes)
-		{
-			uint hexTest = 0x80000000;
-			uint checksum = 0;
-
-			// clear out the old checksum
-			fileBytes[12] = 0;
-			fileBytes[13] = 0;
-			fileBytes[14] = 0;
-			fileBytes[15] = 0;
-
-			foreach (byte currentByte in fileBytes)
-			{
-				if ((checksum & hexTest) == hexTest)
-				{
-					checksum = checksum << 1;
-					checksum = checksum + 1;
-				}
-				else
-				{
-					checksum = checksum << 1;
-				}
-
-				checksum += currentByte;
-			}
-
-			return checksum;
-		}
-
-		/// <summary>
-		/// Returns the location of the inventory data
-		/// </summary>
-		/// <param name="rawCharacterData">Raw bytes from save file</param>
-		/// <returns>Location of inventory data</returns>
-		private static int FindItemListBegin(byte[] rawCharacterData)
-		{
-			for (int i = 768; i < rawCharacterData.Length - 1; i++)
-			{
-				if (rawCharacterData[i] == 'J' && rawCharacterData[i + 1] == 'M')
-				{
-					return i;
-				}
-			}
-
-			return 0;
+			return headerBytes;
 		}
 	}
 }
