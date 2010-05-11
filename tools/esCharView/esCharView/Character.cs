@@ -8,7 +8,7 @@ namespace esCharView
 {
 	public class Character
 	{
-		private byte[] headerBytes;
+		private byte[] characterBytes;
 		private byte characterFlags;
 
 		/// <summary>
@@ -23,7 +23,6 @@ namespace esCharView
 			Barbarian,
 			Druid,
 			Assassin,
-			Unknown
 		}
 
 		/// <summary>
@@ -33,7 +32,7 @@ namespace esCharView
 		{
 			get
 			{
-				return ASCIIEncoding.ASCII.GetString(headerBytes, 0x14, 16);
+				return ASCIIEncoding.ASCII.GetString(characterBytes, 0x14, 16);
 			}
 			set
 			{
@@ -42,54 +41,7 @@ namespace esCharView
 
 				//15 instead of 16 to keep trailing null character
 				Array.Copy(newName, paddedName, newName.Length < 15 ? newName.Length : 15);
-				Array.Copy(paddedName, 0, headerBytes, 0x14, paddedName.Length);
-			}
-		}
-
-		public CharacterClass Class
-		{
-			get
-			{
-				switch (headerBytes[40])
-				{
-					case 0:
-						return CharacterClass.Amazon;
-					case 1:
-						return CharacterClass.Sorceress;
-					case 2:
-						return CharacterClass.Necromancer;
-					case 3:
-						return CharacterClass.Paladin;
-					case 4:
-						return CharacterClass.Barbarian;
-					case 5:
-						return CharacterClass.Druid;
-					case 6:
-						return CharacterClass.Assassin;
-					default:
-						return CharacterClass.Unknown;
-				}
-			}
-			set
-			{
-				if (value == CharacterClass.Unknown)
-				{
-					return;
-				}
-
-				headerBytes[40] = (byte)value;
-			}
-		}
-
-
-		/// <summary>
-		/// Chracter has a mercenary
-		/// </summary>
-		public bool HasMercenary
-		{
-			get
-			{
-				return BitConverter.ToInt32(headerBytes, 179) != 0;
+				Array.Copy(paddedName, 0, characterBytes, 0x14, paddedName.Length);
 			}
 		}
 
@@ -102,6 +54,17 @@ namespace esCharView
 			{
 				return (characterFlags & 0x04) > 0;
 			}
+			set
+			{
+				if (value)
+				{
+					characterFlags |= 0x04;
+				}
+				else
+				{
+					characterFlags &= 0xfb;
+				}
+			}
 		}
 
 		/// <summary>
@@ -112,6 +75,17 @@ namespace esCharView
 			get
 			{
 				return (characterFlags & 0x08) > 0;
+			}
+			set
+			{
+				if (value)
+				{
+					characterFlags |= 0x08;
+				}
+				else
+				{
+					characterFlags &= 0xf7;
+				}
 			}
 		}
 
@@ -124,56 +98,125 @@ namespace esCharView
 			{
 				return (characterFlags & 0x20) > 0;
 			}
+			set
+			{
+				if (value)
+				{
+					characterFlags |= 0x20;
+				}
+				else
+				{
+					characterFlags &= 0xDF;
+				}
+			}
 		}
 
 		/// <summary>
 		/// Collection of unknown flags
 		/// </summary>
-		public int UnknownFlags
+		public byte UnknownFlags
 		{
 			get
 			{
-				return (characterFlags & 0xd3);
+				return (byte)(characterFlags & (byte)0xd3);
+			}
+			set
+			{
+				characterFlags &= 0x2C;
+				characterFlags |= value;
 			}
 		}
 
+		/// <summary>
+		/// Character's title / progression
+		/// </summary>
+		public byte Progression
+		{
+			get { return characterBytes[37]; }
+			set { characterBytes[37] = value; }
+		}
 
+		/// <summary>
+		/// Character's class
+		/// </summary>
+		public CharacterClass Class
+		{
+			get { return (CharacterClass)characterBytes[40]; }
+			set { characterBytes[40] = (byte)value; }
+		}
+
+		/// <summary>
+		/// Level displayed on character list ?
+		/// </summary>
+		public byte LevelDisplay
+		{
+			get { return characterBytes[43]; }
+			set { characterBytes[43] = value; }
+		}
+
+		/// <summary>
+		/// Chracter has a mercenary
+		/// </summary>
+		public bool HasMercenary
+		{
+			get
+			{
+				return BitConverter.ToUInt32(characterBytes, 179) != 0;
+			}
+		}
+
+		/// <summary>
+		/// ID Of mercenary's name
+		/// </summary>
+		public ushort MercenaryNameId
+		{
+			get
+			{
+				return BitConverter.ToUInt16(characterBytes, 183);
+			}
+		}
+
+		/// <summary>
+		/// Mercenary type
+		/// </summary>
+		public ushort MercenaryType
+		{
+			get
+			{
+				return BitConverter.ToUInt16(characterBytes, 185);
+			}
+		}
+
+		/// <summary>
+		/// Mercenary's experience points
+		/// </summary>
+		public uint MercenaryExp
+		{
+			get
+			{
+				return BitConverter.ToUInt32(characterBytes, 185);
+			}
+		}
+
+		/// <summary>
+		/// Creates a new character reader with specified header
+		/// </summary>
+		/// <param name="characterBytes">Raw character bytes from save file</param>
 		public Character(byte[] characterBytes)
 		{
-			headerBytes = characterBytes;
+			this.characterBytes = characterBytes;
 			characterFlags = characterBytes[0x24];
 		}
 
 		/// <summary>
-		/// Sets various character flags
+		/// Returns modified character bytes for use in save file
 		/// </summary>
-		/// <param name="expansion">Character is expansion character</param>
-		/// <param name="died">Character has died before</param>
-		/// <param name="hardcore">Hardcore mode</param>
-		/// <param name="unknownFlags">Other flags - 64 is common value for realm characters</param>
-		public void SetCharacterFlags(bool expansion, bool died, bool hardcore, byte unknownFlags)
-		{
-			byte characterFlags = unknownFlags;
-
-			if (expansion)
-			{
-				characterFlags |= 0x20;
-			}
-			if (died)
-			{
-				characterFlags |= 0x08;
-			}
-			if (hardcore)
-			{
-				characterFlags |= 0x04;
-			}
-
-			headerBytes[0x24] = characterFlags;
-		}
-
+		/// <returns>Raw character bytes</returns>
 		public byte[] GetCharacterBytes()
 		{
-			return headerBytes;
+			characterBytes[0x24] = characterFlags;
+
+			return characterBytes;
 		}
 	}
 }

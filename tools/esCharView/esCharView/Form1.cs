@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using System.IO;
 using System.Collections;
 
+using System.Reflection;
+
 namespace esCharView
 {
 	// This whole form is temporary and poorly thrown together
@@ -62,6 +64,25 @@ namespace esCharView
 			textBoxName.Text = playerData.Character.Name;
 
 			StringBuilder sb = new StringBuilder();
+
+			PropertyInfo[] characterProperties = typeof(Character).GetProperties();
+
+			foreach (var item in characterProperties)
+			{
+				if (item.PropertyType.IsPrimitive || item.PropertyType == typeof(string))
+				{
+					if (item.Name == "Name")
+					{
+						string fixedName = playerData.Character.Name.Substring(0, playerData.Character.Name.IndexOf('\0'));
+
+						sb.AppendLine(string.Format("{0}: {1}", item.Name, fixedName));
+					}
+					else
+					{
+						sb.AppendLine(string.Format("{0}: {1}", item.Name, item.GetValue(playerData.Character, null).ToString()));
+					}
+				}
+			}
 
 			sb.AppendLine(string.Format("Class: {0}", playerData.Character.Class));
 			foreach (var item in playerData.Stat)
@@ -174,10 +195,12 @@ namespace esCharView
 				unknownFlags = 0;
 			}
 
-			textBoxUnknownFlags.Text = unknownFlags.ToString();
-
 			playerData.Character.Name = textBoxName.Text;
-			playerData.Character.SetCharacterFlags(checkBoxExpansion.Checked, checkBoxDied.Checked, checkBoxHardcore.Checked, unknownFlags);
+			playerData.Character.Died = checkBoxDied.Checked;
+			playerData.Character.Hardcore = checkBoxHardcore.Checked;
+			playerData.Character.Expansion = checkBoxExpansion.Checked;
+			playerData.Character.UnknownFlags = unknownFlags;
+
 			saveFileDialog1.FileName = playerData.Character.Name + ".d2s";
 
 			if (saveFileDialog1.ShowDialog() == DialogResult.OK)
@@ -263,33 +286,18 @@ namespace esCharView
 
 			labelItemName.Text = itemToEdit.ToString();
 
-			sb.AppendLine(string.Format("IsEquipped: {0}", itemToEdit.IsEquipped));
-			sb.AppendLine(string.Format("IsInSocket: {0}", itemToEdit.IsInSocket));
-			sb.AppendLine(string.Format("IsIdentified: {0}", itemToEdit.IsIdentified));
-			sb.AppendLine(string.Format("IsSwitchIn: {0}", itemToEdit.IsSwitchIn));
-			sb.AppendLine(string.Format("IsSwitchOut: {0}", itemToEdit.IsSwitchOut));
-			sb.AppendLine(string.Format("IsBroken: {0}", itemToEdit.IsBroken));
-			sb.AppendLine(string.Format("IsSocketed: {0}", itemToEdit.IsSocketed));
-			sb.AppendLine(string.Format("IsStoreItem: {0}", itemToEdit.IsStoreItem));
-			sb.AppendLine(string.Format("IsEar: {0}", itemToEdit.IsEar));
-			sb.AppendLine(string.Format("IsStarterItem: {0}", itemToEdit.IsStarterItem));
-			sb.AppendLine(string.Format("IsSimpleItem: {0}", itemToEdit.IsSimpleItem));
-			sb.AppendLine(string.Format("IsEthereal: {0}", itemToEdit.IsEthereal));
-			sb.AppendLine(string.Format("IsPersonalized: {0}", itemToEdit.IsPersonalized));
-			sb.AppendLine(string.Format("IsGamble: {0}", itemToEdit.IsGamble));
-			sb.AppendLine(string.Format("IsRuneword: {0}", itemToEdit.IsRuneword));
-			sb.AppendLine(string.Format("Location: {0}", itemToEdit.Location));
-			sb.AppendLine(string.Format("PositionOnBody: {0}", itemToEdit.PositionOnBody));
-			sb.AppendLine(string.Format("PositionX: {0}", itemToEdit.PositionX));
-			sb.AppendLine(string.Format("PositionY: {0}", itemToEdit.PositionY));
-			sb.AppendLine(string.Format("StorageId: {0}", itemToEdit.StorageId));
-			sb.AppendLine(string.Format("GoldAmount: {0}", itemToEdit.GoldAmount));
-			sb.AppendLine(string.Format("SocketsFilled: {0}", itemToEdit.SocketsFilled));
-			sb.AppendLine(string.Format("Id: {0:X}", itemToEdit.Id));
-			sb.AppendLine(string.Format("Level: {0}", itemToEdit.Level));
-			sb.AppendLine(string.Format("Quality: {0}", itemToEdit.Quality));
-			sb.AppendLine(string.Format("HasGraphic: {0}", itemToEdit.HasGraphic));
-			sb.AppendLine(string.Format("Graphic: {0}", itemToEdit.Graphic));
+
+			// It's just debug output only, so just grab all the primitive+string properties of the items
+			//  and output them
+			PropertyInfo[] itemProperties = typeof(Item).GetProperties();
+
+			foreach (var item in itemProperties)
+			{
+				if (item.PropertyType.IsPrimitive || item.PropertyType == typeof(string))
+				{
+					sb.AppendLine(string.Format("{0}: {1}", item.Name, item.GetValue(itemToEdit, null)));
+				}
+			}
 
 			sb.AppendLine("Prefix: ");
 			foreach (var item in itemToEdit.Prefix)
@@ -301,15 +309,6 @@ namespace esCharView
 			{
 				sb.AppendLine(string.Format("   {0}", item));
 			}
-
-			sb.AppendLine(string.Format("UniqueSetId: {0}", itemToEdit.UniqueSetId));
-			sb.AppendLine(string.Format("Defense: {0}", itemToEdit.Defense));
-			sb.AppendLine(string.Format("MaxDurability: {0}", itemToEdit.MaxDurability));
-			sb.AppendLine(string.Format("Durability: {0}", itemToEdit.Durability));
-			sb.AppendLine(string.Format("IsIndestructable: {0}", itemToEdit.IsIndestructable));
-			sb.AppendLine(string.Format("SocketCount: {0}", itemToEdit.SocketCount));
-			sb.AppendLine(string.Format("Quantity: {0}", itemToEdit.Quantity));
-			sb.AppendLine(string.Format("RemainingBits: {0}", itemToEdit.RemainingBits));
 
 			foreach (var socket in itemToEdit.Sockets)
 			{
