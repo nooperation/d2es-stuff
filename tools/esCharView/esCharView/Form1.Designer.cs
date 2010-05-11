@@ -86,7 +86,7 @@
 			this.listBoxInventory.Location = new System.Drawing.Point(3, 3);
 			this.listBoxInventory.Name = "listBoxInventory";
 			this.listBoxInventory.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-			this.listBoxInventory.Size = new System.Drawing.Size(607, 174);
+			this.listBoxInventory.Size = new System.Drawing.Size(607, 194);
 			this.listBoxInventory.TabIndex = 2;
 			this.listBoxInventory.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
 			// 
@@ -98,7 +98,7 @@
 			// buttonRemoveItem
 			// 
 			this.buttonRemoveItem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonRemoveItem.Location = new System.Drawing.Point(541, 227);
+			this.buttonRemoveItem.Location = new System.Drawing.Point(541, 247);
 			this.buttonRemoveItem.Name = "buttonRemoveItem";
 			this.buttonRemoveItem.Size = new System.Drawing.Size(75, 23);
 			this.buttonRemoveItem.TabIndex = 4;
@@ -200,7 +200,7 @@
 			this.tabControlInventory.Location = new System.Drawing.Point(3, 3);
 			this.tabControlInventory.Name = "tabControlInventory";
 			this.tabControlInventory.SelectedIndex = 0;
-			this.tabControlInventory.Size = new System.Drawing.Size(621, 206);
+			this.tabControlInventory.Size = new System.Drawing.Size(621, 226);
 			this.tabControlInventory.TabIndex = 14;
 			// 
 			// tabPageInventoryPlayer
@@ -209,7 +209,7 @@
 			this.tabPageInventoryPlayer.Location = new System.Drawing.Point(4, 22);
 			this.tabPageInventoryPlayer.Name = "tabPageInventoryPlayer";
 			this.tabPageInventoryPlayer.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageInventoryPlayer.Size = new System.Drawing.Size(613, 180);
+			this.tabPageInventoryPlayer.Size = new System.Drawing.Size(613, 200);
 			this.tabPageInventoryPlayer.TabIndex = 0;
 			this.tabPageInventoryPlayer.Text = "Player";
 			this.tabPageInventoryPlayer.UseVisualStyleBackColor = true;
@@ -294,7 +294,7 @@
 			this.tabControl1.Location = new System.Drawing.Point(0, 41);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(632, 282);
+			this.tabControl1.Size = new System.Drawing.Size(632, 302);
 			this.tabControl1.TabIndex = 15;
 			// 
 			// tabPageGeneral
@@ -303,7 +303,7 @@
 			this.tabPageGeneral.Location = new System.Drawing.Point(4, 22);
 			this.tabPageGeneral.Name = "tabPageGeneral";
 			this.tabPageGeneral.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageGeneral.Size = new System.Drawing.Size(624, 256);
+			this.tabPageGeneral.Size = new System.Drawing.Size(624, 276);
 			this.tabPageGeneral.TabIndex = 0;
 			this.tabPageGeneral.Text = "General";
 			this.tabPageGeneral.UseVisualStyleBackColor = true;
@@ -316,7 +316,8 @@
 			this.textBoxGeneral.Multiline = true;
 			this.textBoxGeneral.Name = "textBoxGeneral";
 			this.textBoxGeneral.ReadOnly = true;
-			this.textBoxGeneral.Size = new System.Drawing.Size(618, 250);
+			this.textBoxGeneral.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.textBoxGeneral.Size = new System.Drawing.Size(618, 270);
 			this.textBoxGeneral.TabIndex = 0;
 			// 
 			// tabPageInventoryEditor
@@ -326,7 +327,7 @@
 			this.tabPageInventoryEditor.Location = new System.Drawing.Point(4, 22);
 			this.tabPageInventoryEditor.Name = "tabPageInventoryEditor";
 			this.tabPageInventoryEditor.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageInventoryEditor.Size = new System.Drawing.Size(624, 256);
+			this.tabPageInventoryEditor.Size = new System.Drawing.Size(624, 276);
 			this.tabPageInventoryEditor.TabIndex = 1;
 			this.tabPageInventoryEditor.Text = "Inventory";
 			this.tabPageInventoryEditor.UseVisualStyleBackColor = true;
@@ -340,7 +341,7 @@
 			this.tabPageItemEditor.Location = new System.Drawing.Point(4, 22);
 			this.tabPageItemEditor.Name = "tabPageItemEditor";
 			this.tabPageItemEditor.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageItemEditor.Size = new System.Drawing.Size(624, 256);
+			this.tabPageItemEditor.Size = new System.Drawing.Size(624, 276);
 			this.tabPageItemEditor.TabIndex = 2;
 			this.tabPageItemEditor.Text = "ItemViewer";
 			this.tabPageItemEditor.UseVisualStyleBackColor = true;
@@ -357,7 +358,7 @@
 			// buttonRemoveSocket
 			// 
 			this.buttonRemoveSocket.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonRemoveSocket.Location = new System.Drawing.Point(541, 133);
+			this.buttonRemoveSocket.Location = new System.Drawing.Point(541, 153);
 			this.buttonRemoveSocket.Name = "buttonRemoveSocket";
 			this.buttonRemoveSocket.Size = new System.Drawing.Size(75, 23);
 			this.buttonRemoveSocket.TabIndex = 3;
@@ -373,7 +374,7 @@
 			this.listBoxItemEditorSockets.FormattingEnabled = true;
 			this.listBoxItemEditorSockets.Location = new System.Drawing.Point(251, 28);
 			this.listBoxItemEditorSockets.Name = "listBoxItemEditorSockets";
-			this.listBoxItemEditorSockets.Size = new System.Drawing.Size(367, 95);
+			this.listBoxItemEditorSockets.Size = new System.Drawing.Size(367, 108);
 			this.listBoxItemEditorSockets.TabIndex = 2;
 			this.listBoxItemEditorSockets.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
 			// 
@@ -388,7 +389,7 @@
 			this.textBoxItemEditor.Name = "textBoxItemEditor";
 			this.textBoxItemEditor.ReadOnly = true;
 			this.textBoxItemEditor.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBoxItemEditor.Size = new System.Drawing.Size(237, 242);
+			this.textBoxItemEditor.Size = new System.Drawing.Size(237, 262);
 			this.textBoxItemEditor.TabIndex = 1;
 			this.textBoxItemEditor.WordWrap = false;
 			// 
@@ -396,7 +397,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(632, 323);
+			this.ClientSize = new System.Drawing.Size(632, 343);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textBoxUnknownFlags);

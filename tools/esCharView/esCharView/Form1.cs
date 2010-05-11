@@ -62,24 +62,20 @@ namespace esCharView
 			textBoxName.Text = playerData.Character.Name;
 
 			StringBuilder sb = new StringBuilder();
-			sb.AppendLine(string.Format("Class: {0}", playerData.Character.Class));
-			sb.AppendLine(string.Format("Strength: {0}", playerData.Character.Strength));
-			sb.AppendLine(string.Format("Energy: {0}", playerData.Character.Energy));
-			sb.AppendLine(string.Format("Dexterity: {0}", playerData.Character.Dexterity));
-			sb.AppendLine(string.Format("Vitality: {0}", playerData.Character.Vitality));
-			sb.AppendLine(string.Format("StatPoints: {0}", playerData.Character.StatPoints));
-			sb.AppendLine(string.Format("SkillPoints: {0}", playerData.Character.SkillPoints));
-			sb.AppendLine(string.Format("Hitpoints: {0}", playerData.Character.Hitpoints));
-			sb.AppendLine(string.Format("BaseHitpoints: {0}", playerData.Character.BaseHitpoints));
-			sb.AppendLine(string.Format("Mana: {0}", playerData.Character.Mana));
-			sb.AppendLine(string.Format("BaseMana: {0}", playerData.Character.BaseMana));
-			sb.AppendLine(string.Format("Stamina: {0}", playerData.Character.Stamina));
-			sb.AppendLine(string.Format("BaseStamina: {0}", playerData.Character.BaseStamina));
-			sb.AppendLine(string.Format("Level: {0}", playerData.Character.Level));
-			sb.AppendLine(string.Format("Experience: {0}", playerData.Character.Experience));
-			sb.AppendLine(string.Format("Gold: {0}", playerData.Character.Gold));
-			sb.AppendLine(string.Format("GoldBank: {0}", playerData.Character.GoldBank));
 
+			sb.AppendLine(string.Format("Class: {0}", playerData.Character.Class));
+			foreach (var item in playerData.Stat)
+			{
+				sb.AppendLine(string.Format("{0}: {1}", item.Key, item.Value));
+			}
+
+			sb.AppendLine("Skills: ");
+
+			foreach (var item in playerData.Skill)
+			{
+				sb.Append(string.Format("{0} ", item));
+			}
+			
 			textBoxGeneral.Text = sb.ToString();
 		}
 
