@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
+using BKSystem.IO;
 
 //TODO: Read information directly from ItemStatCost.txt so it's more compatible
 namespace esCharView
@@ -20,9 +21,38 @@ namespace esCharView
 		/// Decoded stat values
 		/// </summary>
 		private Dictionary<StatTypes, uint> statValues = new Dictionary<StatTypes, uint>();
+		private Dictionary<StatTypes, int> statValueBitCounts = new Dictionary<StatTypes, int>();
+		private Dictionary<StatTypes, int> statValueBitShifts = new Dictionary<StatTypes, int>();
 
 		public Stat(byte[] statsBytes)
 		{
+			//TODO: Read from file
+			statValueBitCounts.Add(StatTypes.Strength, 11);
+			statValueBitCounts.Add(StatTypes.Energy, 11);
+			statValueBitCounts.Add(StatTypes.Dexterity, 11);
+			statValueBitCounts.Add(StatTypes.Vitality, 11);
+			statValueBitCounts.Add(StatTypes.StatPoints, 10);
+			statValueBitCounts.Add(StatTypes.SkillPoints, 8);
+			statValueBitCounts.Add(StatTypes.Hitpoints, 21);
+			statValueBitCounts.Add(StatTypes.BaseHitpoints, 21);
+			statValueBitCounts.Add(StatTypes.Mana, 21);
+			statValueBitCounts.Add(StatTypes.BaseMana, 21);
+			statValueBitCounts.Add(StatTypes.Stamina, 21);
+			statValueBitCounts.Add(StatTypes.BaseStamina, 21);
+			statValueBitCounts.Add(StatTypes.Level, 7);
+			statValueBitCounts.Add(StatTypes.Experience, 32);
+			statValueBitCounts.Add(StatTypes.Gold, 25);
+			statValueBitCounts.Add(StatTypes.GoldBank, 25);
+			statValueBitCounts.Add(StatTypes.KillCount, 32);
+			statValueBitCounts.Add(StatTypes.DeathCount, 32);
+
+			statValueBitShifts.Add(StatTypes.Hitpoints, 8);
+			statValueBitShifts.Add(StatTypes.BaseHitpoints, 8);
+			statValueBitShifts.Add(StatTypes.Mana, 8);
+			statValueBitShifts.Add(StatTypes.BaseMana, 8);
+			statValueBitShifts.Add(StatTypes.Stamina, 8);
+			statValueBitShifts.Add(StatTypes.BaseStamina, 8);
+
 			this.statsBytes = statsBytes;
 			ReadStats();
 		}
@@ -107,7 +137,7 @@ namespace esCharView
 		public uint Strength
 		{
 			get { return this[StatTypes.Strength]; }
-			protected set { this[StatTypes.Strength] = value; }
+			set { this[StatTypes.Strength] = value; }
 		}
 		/// <summary>
 		/// Base value of energy
@@ -115,7 +145,7 @@ namespace esCharView
 		public uint Energy
 		{
 			get { return this[StatTypes.Energy]; }
-			protected set { this[StatTypes.Energy] = value; }
+			set { this[StatTypes.Energy] = value; }
 		}
 		/// <summary>
 		/// Base value of dexterity
@@ -123,7 +153,7 @@ namespace esCharView
 		public uint Dexterity
 		{
 			get { return this[StatTypes.Dexterity]; }
-			protected set { this[StatTypes.Dexterity] = value; }
+			set { this[StatTypes.Dexterity] = value; }
 		}
 		/// <summary>
 		/// Base value of vitality
@@ -131,7 +161,7 @@ namespace esCharView
 		public uint Vitality
 		{
 			get { return this[StatTypes.Vitality]; }
-			protected set { this[StatTypes.Vitality] = value; }
+			set { this[StatTypes.Vitality] = value; }
 		}
 		/// <summary>
 		/// Number of unallocated stat points
@@ -139,7 +169,7 @@ namespace esCharView
 		public uint StatPoints
 		{
 			get { return this[StatTypes.StatPoints]; }
-			protected set { this[StatTypes.StatPoints] = value; }
+			set { this[StatTypes.StatPoints] = value; }
 		}
 		/// <summary>
 		/// Number of unallocated skill points
@@ -147,7 +177,7 @@ namespace esCharView
 		public uint SkillPoints
 		{
 			get { return this[StatTypes.SkillPoints]; }
-			protected set { this[StatTypes.SkillPoints] = value; }
+			set { this[StatTypes.SkillPoints] = value; }
 		}
 		/// <summary>
 		/// Current value of hitpoints
@@ -156,7 +186,7 @@ namespace esCharView
 		public uint Hitpoints
 		{
 			get { return this[StatTypes.Hitpoints]; }
-			protected set { this[StatTypes.Hitpoints] = value; }
+			set { this[StatTypes.Hitpoints] = value; }
 		}
 		/// <summary>
 		/// Base value of hitpoints
@@ -164,7 +194,7 @@ namespace esCharView
 		public uint BaseHitpoints
 		{
 			get { return this[StatTypes.BaseHitpoints]; }
-			protected set { this[StatTypes.BaseHitpoints] = value; }
+			set { this[StatTypes.BaseHitpoints] = value; }
 		}
 		/// <summary>
 		/// Current value of mana
@@ -173,7 +203,7 @@ namespace esCharView
 		public uint Mana
 		{
 			get { return this[StatTypes.Mana]; }
-			protected set { this[StatTypes.Mana] = value; }
+			set { this[StatTypes.Mana] = value; }
 		}
 		/// <summary>
 		/// Base value of mana
@@ -181,7 +211,7 @@ namespace esCharView
 		public uint BaseMana
 		{
 			get { return this[StatTypes.BaseMana]; }
-			protected set { this[StatTypes.BaseMana] = value; }
+			set { this[StatTypes.BaseMana] = value; }
 		}
 		/// <summary>
 		/// Current value of stamina.
@@ -190,7 +220,7 @@ namespace esCharView
 		public uint Stamina
 		{
 			get { return this[StatTypes.Stamina]; }
-			protected set { this[StatTypes.Stamina] = value; }
+			set { this[StatTypes.Stamina] = value; }
 		}
 		/// <summary>
 		/// Base value of stamina
@@ -198,7 +228,7 @@ namespace esCharView
 		public uint BaseStamina
 		{
 			get { return this[StatTypes.BaseStamina]; }
-			protected set { this[StatTypes.BaseStamina] = value; }
+			set { this[StatTypes.BaseStamina] = value; }
 		}
 		/// <summary>
 		/// Character's level
@@ -206,7 +236,7 @@ namespace esCharView
 		public uint Level
 		{
 			get { return this[StatTypes.Level]; }
-			protected set { this[StatTypes.Level] = value; }
+			set { this[StatTypes.Level] = value; }
 		}
 		/// <summary>
 		/// Number of experience points character has
@@ -214,7 +244,7 @@ namespace esCharView
 		public uint Experience
 		{
 			get { return this[StatTypes.Experience]; }
-			protected set { this[StatTypes.Experience] = value; }
+			set { this[StatTypes.Experience] = value; }
 		}
 		/// <summary>
 		/// Amount of gold character has in inventory
@@ -222,7 +252,7 @@ namespace esCharView
 		public uint Gold
 		{
 			get { return this[StatTypes.Gold]; }
-			protected set { this[StatTypes.Gold] = value; }
+			set { this[StatTypes.Gold] = value; }
 		}
 		/// <summary>
 		/// Amount of gold character has in the bank
@@ -230,7 +260,7 @@ namespace esCharView
 		public uint GoldBank
 		{
 			get { return this[StatTypes.GoldBank]; }
-			protected set { this[StatTypes.GoldBank] = value; }
+			set { this[StatTypes.GoldBank] = value; }
 		}
 		/// <summary>
 		/// Number of kills
@@ -248,6 +278,8 @@ namespace esCharView
 			get { return this[StatTypes.DeathCount]; }
 			set { this[StatTypes.DeathCount] = value; }
 		}
+
+		private byte[] remainingBytes;
 
 		/// <summary>
 		/// Parses raw character stat data
@@ -272,57 +304,38 @@ namespace esCharView
 				// Value needs to be shifted by this amount
 				int valShift = 0;
 
-				switch ((StatTypes)statIndex)
+				if(!statValueBitCounts.ContainsKey(statIndex))
 				{
-					case StatTypes.Strength:
-					case StatTypes.Energy:
-					case StatTypes.Dexterity:
-					case StatTypes.Vitality:
-						statValueBits = 11;
-						break;
-					case StatTypes.StatPoints:
-						statValueBits = 10;
-						break;
-					case StatTypes.SkillPoints:
-						statValueBits = 8;
-						break;
-					case StatTypes.Hitpoints:
-					case StatTypes.BaseHitpoints:
-					case StatTypes.Mana:
-					case StatTypes.BaseMana:
-					case StatTypes.Stamina:
-					case StatTypes.BaseStamina:
-						statValueBits = 21;
-						valShift = 8;
-						break;
-					case StatTypes.Level:
-						statValueBits = 7;
-						break;
-					case StatTypes.Experience:
-						statValueBits = 32;
-						break;
-					case StatTypes.Gold:
-					case StatTypes.GoldBank:
-						statValueBits = 25;
-						break;
-					case StatTypes.KillCount:
-						statValueBits = 32;
-						break;
-					case StatTypes.DeathCount:
-						statValueBits = 32;
-						break;
-					default:
-						// There are still atleast 2 more unknowns, including 511
-						return;
+					br.Position -= 9;
+					remainingBytes = new byte[(((br.BitCount-16) - br.Position) / 8) + 1];
+
+					for (int i = 0; i < remainingBytes.Length-1; i++)
+					{
+						remainingBytes[i] = br.ReadByte();
+					}
+
+					int remainingBitsCount = (int)((br.BitCount-16) - br.Position);
+					if (remainingBitsCount > 0)
+					{
+						remainingBytes[remainingBytes.Length - 1] = (byte)br.Read(remainingBitsCount);
+					}
+
+					break;
 				}
 
+				statValueBits = statValueBitCounts[statIndex];
 				if (statValueBits == 0)
 				{
 					break;
 				}
 
-				uint statValue = br.Read(statValueBits);
+				// Get the shift value if it exists (Used on health/mana/stamina stats)
+				if (statValueBitShifts.ContainsKey(statIndex))
+				{
+					valShift = statValueBitShifts[statIndex];
+				}
 
+				uint statValue = br.Read(statValueBits);
 				if (!statValues.ContainsKey(statIndex))
 				{
 					statValues.Add(statIndex, (statValue >> valShift));
@@ -336,7 +349,45 @@ namespace esCharView
 		/// <returns>Raw stat data ready for insertion into save file</returns>
 		public byte[] GetStatBytes()
 		{
-			return statsBytes;
+			BitStream bits = new BitStream();
+			byte[] temp;
+
+			bits.Write(Utils.ReverseBits('g', 8), 0, 8);
+			bits.Write(Utils.ReverseBits('f', 8), 0, 8);
+
+			temp = Utils.ReverseByteArrayBits(bits.ToByteArray());
+
+			foreach (var stat in statValues)
+			{
+				bits.Write(Utils.ReverseBits((uint)stat.Key, 9), 0, 9);
+				temp = Utils.ReverseByteArrayBits(bits.ToByteArray());
+
+				int valShift = 0;
+				int bitCount = statValueBitCounts[stat.Key];
+
+				if (statValueBitShifts.ContainsKey(stat.Key))
+				{
+					valShift = statValueBitShifts[stat.Key];
+				}
+
+				bits.Write(Utils.ReverseBits((uint)((stat.Value << valShift)), bitCount), 0, bitCount);
+				temp = Utils.ReverseByteArrayBits(bits.ToByteArray());
+			}
+
+			// These last 2 bytes seem to be some soft of terminator?
+			bits.Write(Utils.ReverseByteArrayBits(remainingBytes));
+
+			// I don't know about this, but it seems to work?
+			while (bits.Position % 8 != 0)
+			{
+				bits.Position--;
+			}
+
+			bits.Write(Utils.ReverseBits('i', 8), 0, 8);
+			bits.Write(Utils.ReverseBits('f', 8), 0, 8);
+			temp = Utils.ReverseByteArrayBits(bits.ToByteArray());
+
+			return Utils.ReverseByteArrayBits(bits.ToByteArray());
 		}
 
 		#region IEnumerable<KeyValuePair<StatTypes,uint>> Members

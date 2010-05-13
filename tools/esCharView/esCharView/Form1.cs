@@ -53,51 +53,27 @@ namespace esCharView
 			listBoxCorpseInventory.Items.Clear();
 			listBoxGolemInventory.Items.Clear();
 			listBoxMercInventory.Items.Clear();
-			textBoxGeneral.Clear();
 
 			UpdateInventoryList();
 
-			checkBoxDied.Checked = playerData.Character.Died;
-			checkBoxExpansion.Checked = playerData.Character.Expansion;
-			checkBoxHardcore.Checked = playerData.Character.Hardcore;
-			textBoxUnknownFlags.Text = playerData.Character.UnknownFlags.ToString();
-			textBoxName.Text = playerData.Character.Name;
 
-			StringBuilder sb = new StringBuilder();
+			checkBoxDied.DataBindings.Clear();
+			checkBoxExpansion.DataBindings.Clear();
+			checkBoxHardcore.DataBindings.Clear();
+			textBoxUnknownFlags.DataBindings.Clear();
+			textBoxName.DataBindings.Clear();
+			characterBindingSource.Clear();
+			statBindingSource.Clear();
 
-			PropertyInfo[] characterProperties = typeof(Character).GetProperties();
 
-			foreach (var item in characterProperties)
-			{
-				if (item.PropertyType.IsPrimitive || item.PropertyType == typeof(string))
-				{
-					if (item.Name == "Name")
-					{
-						string fixedName = playerData.Character.Name.Substring(0, playerData.Character.Name.IndexOf('\0'));
+			checkBoxDied.DataBindings.Add("Checked", playerData.Character, "Died");
+			checkBoxExpansion.DataBindings.Add("Checked", playerData.Character, "Expansion");
+			checkBoxHardcore.DataBindings.Add("Checked", playerData.Character, "Hardcore");
+			textBoxUnknownFlags.DataBindings.Add("Text", playerData.Character, "UnknownFlags");
+			textBoxName.DataBindings.Add("Text", playerData.Character, "Name");
 
-						sb.AppendLine(string.Format("{0}: {1}", item.Name, fixedName));
-					}
-					else
-					{
-						sb.AppendLine(string.Format("{0}: {1}", item.Name, item.GetValue(playerData.Character, null).ToString()));
-					}
-				}
-			}
-
-			sb.AppendLine(string.Format("Class: {0}", playerData.Character.Class));
-			foreach (var item in playerData.Stat)
-			{
-				sb.AppendLine(string.Format("{0}: {1}", item.Key, item.Value));
-			}
-
-			sb.AppendLine("Skills: ");
-
-			foreach (var item in playerData.Skill)
-			{
-				sb.Append(string.Format("{0} ", item));
-			}
-			
-			textBoxGeneral.Text = sb.ToString();
+			characterBindingSource.Add(playerData.Character);
+			statBindingSource.Add(playerData.Stat);
 		}
 
 		private void UpdateInventoryList()
@@ -342,5 +318,6 @@ namespace esCharView
 
 			removeSelectedItems(listBoxItemEditorSockets, itemToEdit.Sockets);
 		}
+
 	}
 }

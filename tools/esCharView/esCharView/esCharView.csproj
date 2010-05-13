@@ -106,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitReader.cs" />
+    <Compile Include="BitStream.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -121,6 +122,10 @@
     <Compile Include="SaveReader.cs" />
     <Compile Include="Skill.cs" />
     <Compile Include="Stat.cs" />
+    <Compile Include="Utils.cs" />
+    <EmbeddedResource Include="BitStream.resx">
+      <DependentUpon>BitStream.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -136,6 +141,9 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="Properties\DataSources\Character.datasource" />
+    <None Include="Properties\DataSources\Skill.datasource" />
+    <None Include="Properties\DataSources\Stat.datasource" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AllItems.txt">

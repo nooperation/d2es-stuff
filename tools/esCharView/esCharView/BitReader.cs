@@ -5,6 +5,8 @@ using System.IO;
 
 //http://forum.valhallalegends.com/index.php?PHPSESSID=ba8cac6978590e8cbdb57f03a569e775&topic=16354.msg165191#msg165191
 // E.T -> http://forum.valhallalegends.com/index.php?action=profile;u=4447
+
+//TODO: No longer needed due to BitStream?
 namespace esCharView
 {
 	/// <summary>
