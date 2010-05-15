@@ -262,7 +262,6 @@ namespace esCharView
 
 			labelItemName.Text = itemToEdit.ToString();
 
-
 			// It's just debug output only, so just grab all the primitive+string properties of the items
 			//  and output them
 			PropertyInfo[] itemProperties = typeof(Item).GetProperties();
@@ -275,17 +274,6 @@ namespace esCharView
 				}
 			}
 
-			sb.AppendLine("Prefix: ");
-			foreach (var item in itemToEdit.Prefix)
-			{
-				sb.AppendLine(string.Format("   {0}", item));
-			}
-			sb.AppendLine("Suffix: ");
-			foreach (var item in itemToEdit.Suffix)
-			{
-				sb.AppendLine(string.Format("   {0}", item));
-			}
-
 			foreach (var socket in itemToEdit.Sockets)
 			{
 				listBoxItemEditorSockets.Items.Add(socket);
@@ -293,6 +281,9 @@ namespace esCharView
 
 			textBoxItemEditor.Text = sb.ToString();
 			textBoxItemEditor.Select(0, 0);
+
+			itemBindingSource.Clear();
+			itemBindingSource.Add(itemToEdit);
 
 			tabControl1.SelectTab(2);
 		}
@@ -317,6 +308,11 @@ namespace esCharView
 			}
 
 			removeSelectedItems(listBoxItemEditorSockets, itemToEdit.Sockets);
+		}
+
+		private void buttonItemViewerRefresh_Click(object sender, EventArgs e)
+		{
+			OpenItemProperties(itemToEdit);
 		}
 
 	}

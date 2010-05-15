@@ -298,11 +298,11 @@ namespace esCharView
 		{
 			foreach (Item item in items)
 			{
-				inventoryBytes.AddRange(item.ItemData);
+				inventoryBytes.AddRange(item.GetItemBytes());
 
 				foreach (Item itemSocket in item.Sockets)
 				{
-					inventoryBytes.AddRange(itemSocket.ItemData);
+					inventoryBytes.AddRange(itemSocket.GetItemBytes());
 				}
 			}
 		}

@@ -142,6 +142,7 @@
     </Compile>
     <None Include="app.config" />
     <None Include="Properties\DataSources\Character.datasource" />
+    <None Include="Properties\DataSources\Item.datasource" />
     <None Include="Properties\DataSources\Skill.datasource" />
     <None Include="Properties\DataSources\Stat.datasource" />
   </ItemGroup>
