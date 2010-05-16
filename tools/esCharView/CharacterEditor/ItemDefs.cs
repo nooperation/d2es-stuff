@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Windows.Forms;
 
-namespace esCharView
+namespace CharacterEditor
 {
 	//TODO: Move all specific groups of items into a single file like Autostocker.ini has
 	class ItemDefs
@@ -67,20 +66,17 @@ namespace esCharView
 		{
 			if (!File.Exists("AllItems.txt"))
 			{
-				MessageBox.Show("Failed to locate AllItems.txt, unable to get item descriptions", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
+				throw new ApplicationException("Failed to locate AllItems.txt, unable to get item descriptions");
 			}
 
 			if (!File.Exists("ItemGroups.txt"))
 			{
-				MessageBox.Show("Failed to locate ItemGroups.txt", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
+				throw new ApplicationException("Failed to locate ItemGroups.txt");
 			}
 
 			if (!File.Exists("Sets.txt"))
 			{
-				MessageBox.Show("Failed to locate Sets.txt", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return;
+				throw new ApplicationException("Failed to locate Sets.txt");
 			}
 
 			String[] fileContents = File.ReadAllLines("AllItems.txt");

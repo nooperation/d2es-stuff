@@ -7,7 +7,7 @@ using System.IO;
 // E.T -> http://forum.valhallalegends.com/index.php?action=profile;u=4447
 
 //TODO: No longer needed due to BitStream?
-namespace esCharView
+namespace CharacterEditor
 {
 	/// <summary>
 	/// Utility class to parse an octet stream from a byte arrays, supporting bit packing.

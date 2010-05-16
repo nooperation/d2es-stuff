@@ -5,7 +5,7 @@ using System.Collections;
 using System.Linq;
 using BKSystem.IO;
 
-namespace esCharView
+namespace CharacterEditor
 {
 	public class Item
 	{

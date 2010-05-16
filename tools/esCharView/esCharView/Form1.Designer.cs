@@ -543,7 +543,7 @@
 			// 
 			// characterBindingSource
 			// 
-			this.characterBindingSource.DataSource = typeof(esCharView.Character);
+			this.characterBindingSource.DataSource = typeof(CharacterEditor.Character);
 			// 
 			// dataGridViewStats
 			// 
@@ -685,7 +685,7 @@
 			// 
 			// statBindingSource
 			// 
-			this.statBindingSource.DataSource = typeof(esCharView.Stat);
+			this.statBindingSource.DataSource = typeof(CharacterEditor.Stat);
 			// 
 			// tabPageInventoryEditor
 			// 
@@ -844,7 +844,7 @@
 			// 
 			// itemBindingSource
 			// 
-			this.itemBindingSource.DataSource = typeof(esCharView.Item);
+			this.itemBindingSource.DataSource = typeof(CharacterEditor.Item);
 			// 
 			// isEquippedDataGridViewCheckBoxColumn
 			// 
@@ -1361,7 +1361,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn deathCountDataGridViewTextBoxColumn;
 		private System.Windows.Forms.BindingSource statBindingSource;
 		private System.Windows.Forms.DataGridView dataGridView1;
-		private System.Windows.Forms.DataGridViewTextBoxColumn goldAmountDataGridViewTextBoxColumn;
 		private System.Windows.Forms.Button buttonItemViewerRefresh;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn isEquippedDataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn isInSocketDataGridViewCheckBoxColumn;

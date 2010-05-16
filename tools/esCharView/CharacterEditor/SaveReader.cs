@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace esCharView
+namespace CharacterEditor
 {
-	class SaveReader
+	public class SaveReader
 	{
 		private Inventory inventory;
 		private Character character;

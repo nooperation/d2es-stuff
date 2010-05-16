@@ -6,7 +6,7 @@ using System.Collections;
 using BKSystem.IO;
 
 //TODO: Read information directly from ItemStatCost.txt so it's more compatible
-namespace esCharView
+namespace CharacterEditor
 {
 	/// <summary>
 	/// Controls access to character's stats

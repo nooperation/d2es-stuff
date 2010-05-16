@@ -7,8 +7,9 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Collections;
-
 using System.Reflection;
+
+using CharacterEditor;
 
 namespace esCharView
 {
@@ -20,7 +21,6 @@ namespace esCharView
 		public Form1()
 		{
 			InitializeComponent();
-			ItemDefs.GetItemDescription("dongs");
 		}
 
 		private void LoadSave(string savePath)
