@@ -53,15 +53,6 @@
 			this.tabPageGeneral = new System.Windows.Forms.TabPage();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.dataGridViewCharacter = new System.Windows.Forms.DataGridView();
-			this.dataGridViewStats = new System.Windows.Forms.DataGridView();
-			this.tabPageInventoryEditor = new System.Windows.Forms.TabPage();
-			this.tabPageItemEditor = new System.Windows.Forms.TabPage();
-			this.buttonItemViewerRefresh = new System.Windows.Forms.Button();
-			this.dataGridView1 = new System.Windows.Forms.DataGridView();
-			this.labelItemName = new System.Windows.Forms.Label();
-			this.buttonRemoveSocket = new System.Windows.Forms.Button();
-			this.listBoxItemEditorSockets = new System.Windows.Forms.ListBox();
-			this.textBoxItemEditor = new System.Windows.Forms.TextBox();
 			this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.hardcoreDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.diedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -75,6 +66,7 @@
 			this.mercenaryTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.mercenaryExpDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.characterBindingSource = new System.Windows.Forms.BindingSource(this.components);
+			this.dataGridViewStats = new System.Windows.Forms.DataGridView();
 			this.strengthDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.energyDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dexterityDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -94,6 +86,14 @@
 			this.killCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.deathCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.statBindingSource = new System.Windows.Forms.BindingSource(this.components);
+			this.tabPageInventoryEditor = new System.Windows.Forms.TabPage();
+			this.tabPageItemEditor = new System.Windows.Forms.TabPage();
+			this.buttonItemViewerRefresh = new System.Windows.Forms.Button();
+			this.dataGridView1 = new System.Windows.Forms.DataGridView();
+			this.buttonRemoveSocket = new System.Windows.Forms.Button();
+			this.listBoxItemEditorSockets = new System.Windows.Forms.ListBox();
+			this.textBoxItemEditor = new System.Windows.Forms.TextBox();
+			this.itemBindingSource = new System.Windows.Forms.BindingSource(this.components);
 			this.isEquippedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.isInSocketDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.isIdentifiedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -101,7 +101,9 @@
 			this.isSwitchOutDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.isBrokenDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.isSocketedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.isPotionDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.isStoreItemDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.isNotInSocketDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.isEarDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.isStarterItemDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.isSimpleItemDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -115,7 +117,8 @@
 			this.positionYDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.storageIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.itemCodeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.goldAmountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.goldAmountSmallDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.goldAmountLargeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.socketsFilledDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.idDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.levelDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -132,21 +135,33 @@
 			this.randomFlagDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.unknownGoldFlagDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.classFlagDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.classInfoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.inferiorQualityTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.superiorQualityTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.charmDataDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.spellIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.monsterIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.earClassDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.earLevelDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.earNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.personalizedNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.runewordIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.prefixNameIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.suffixNameIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.prefixFlag0DataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.prefixFlag1DataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.prefixFlag2DataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.suffixFlag0DataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.suffixFlag1DataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.suffixFlag2DataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.magicPrefixDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.magicSuffixDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.prefix0DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.prefix1DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.prefix2DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.suffix0DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.suffix1DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.suffix2DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.itemBindingSource = new System.Windows.Forms.BindingSource(this.components);
 			this.tabControlInventory.SuspendLayout();
 			this.tabPageInventoryPlayer.SuspendLayout();
 			this.tabPageInventoryCorpse.SuspendLayout();
@@ -159,12 +174,12 @@
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewCharacter)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.characterBindingSource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewStats)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.statBindingSource)).BeginInit();
 			this.tabPageInventoryEditor.SuspendLayout();
 			this.tabPageItemEditor.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.characterBindingSource)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.statBindingSource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.itemBindingSource)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -450,186 +465,6 @@
 			this.dataGridViewCharacter.Size = new System.Drawing.Size(618, 128);
 			this.dataGridViewCharacter.TabIndex = 0;
 			// 
-			// dataGridViewStats
-			// 
-			this.dataGridViewStats.AutoGenerateColumns = false;
-			this.dataGridViewStats.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridViewStats.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.strengthDataGridViewTextBoxColumn,
-            this.energyDataGridViewTextBoxColumn,
-            this.dexterityDataGridViewTextBoxColumn,
-            this.vitalityDataGridViewTextBoxColumn,
-            this.statPointsDataGridViewTextBoxColumn,
-            this.skillPointsDataGridViewTextBoxColumn,
-            this.hitpointsDataGridViewTextBoxColumn,
-            this.baseHitpointsDataGridViewTextBoxColumn,
-            this.manaDataGridViewTextBoxColumn,
-            this.baseManaDataGridViewTextBoxColumn,
-            this.staminaDataGridViewTextBoxColumn,
-            this.baseStaminaDataGridViewTextBoxColumn,
-            this.levelDataGridViewTextBoxColumn,
-            this.experienceDataGridViewTextBoxColumn,
-            this.goldDataGridViewTextBoxColumn,
-            this.goldBankDataGridViewTextBoxColumn,
-            this.killCountDataGridViewTextBoxColumn,
-            this.deathCountDataGridViewTextBoxColumn});
-			this.dataGridViewStats.DataSource = this.statBindingSource;
-			this.dataGridViewStats.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.dataGridViewStats.Location = new System.Drawing.Point(0, 0);
-			this.dataGridViewStats.Name = "dataGridViewStats";
-			this.dataGridViewStats.Size = new System.Drawing.Size(618, 138);
-			this.dataGridViewStats.TabIndex = 1;
-			// 
-			// tabPageInventoryEditor
-			// 
-			this.tabPageInventoryEditor.Controls.Add(this.tabControlInventory);
-			this.tabPageInventoryEditor.Controls.Add(this.buttonRemoveItem);
-			this.tabPageInventoryEditor.Location = new System.Drawing.Point(4, 22);
-			this.tabPageInventoryEditor.Name = "tabPageInventoryEditor";
-			this.tabPageInventoryEditor.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageInventoryEditor.Size = new System.Drawing.Size(624, 276);
-			this.tabPageInventoryEditor.TabIndex = 1;
-			this.tabPageInventoryEditor.Text = "Inventory";
-			this.tabPageInventoryEditor.UseVisualStyleBackColor = true;
-			// 
-			// tabPageItemEditor
-			// 
-			this.tabPageItemEditor.Controls.Add(this.buttonItemViewerRefresh);
-			this.tabPageItemEditor.Controls.Add(this.dataGridView1);
-			this.tabPageItemEditor.Controls.Add(this.labelItemName);
-			this.tabPageItemEditor.Controls.Add(this.buttonRemoveSocket);
-			this.tabPageItemEditor.Controls.Add(this.listBoxItemEditorSockets);
-			this.tabPageItemEditor.Controls.Add(this.textBoxItemEditor);
-			this.tabPageItemEditor.Location = new System.Drawing.Point(4, 22);
-			this.tabPageItemEditor.Name = "tabPageItemEditor";
-			this.tabPageItemEditor.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageItemEditor.Size = new System.Drawing.Size(624, 276);
-			this.tabPageItemEditor.TabIndex = 2;
-			this.tabPageItemEditor.Text = "ItemViewer";
-			this.tabPageItemEditor.UseVisualStyleBackColor = true;
-			// 
-			// buttonItemViewerRefresh
-			// 
-			this.buttonItemViewerRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonItemViewerRefresh.Location = new System.Drawing.Point(252, 12);
-			this.buttonItemViewerRefresh.Name = "buttonItemViewerRefresh";
-			this.buttonItemViewerRefresh.Size = new System.Drawing.Size(75, 23);
-			this.buttonItemViewerRefresh.TabIndex = 6;
-			this.buttonItemViewerRefresh.Text = "Refresh";
-			this.buttonItemViewerRefresh.UseVisualStyleBackColor = true;
-			this.buttonItemViewerRefresh.Click += new System.EventHandler(this.buttonItemViewerRefresh_Click);
-			// 
-			// dataGridView1
-			// 
-			this.dataGridView1.AutoGenerateColumns = false;
-			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.isEquippedDataGridViewCheckBoxColumn,
-            this.isInSocketDataGridViewCheckBoxColumn,
-            this.isIdentifiedDataGridViewCheckBoxColumn,
-            this.isSwitchInDataGridViewCheckBoxColumn,
-            this.isSwitchOutDataGridViewCheckBoxColumn,
-            this.isBrokenDataGridViewCheckBoxColumn,
-            this.isSocketedDataGridViewCheckBoxColumn,
-            this.isStoreItemDataGridViewCheckBoxColumn,
-            this.isEarDataGridViewCheckBoxColumn,
-            this.isStarterItemDataGridViewCheckBoxColumn,
-            this.isSimpleItemDataGridViewCheckBoxColumn,
-            this.isEtherealDataGridViewCheckBoxColumn,
-            this.isPersonalizedDataGridViewCheckBoxColumn,
-            this.isGambleDataGridViewCheckBoxColumn,
-            this.isRunewordDataGridViewCheckBoxColumn,
-            this.locationDataGridViewTextBoxColumn,
-            this.positionOnBodyDataGridViewTextBoxColumn,
-            this.positionXDataGridViewTextBoxColumn,
-            this.positionYDataGridViewTextBoxColumn,
-            this.storageIdDataGridViewTextBoxColumn,
-            this.itemCodeDataGridViewTextBoxColumn,
-            this.goldAmountDataGridViewTextBoxColumn,
-            this.socketsFilledDataGridViewTextBoxColumn,
-            this.idDataGridViewTextBoxColumn,
-            this.levelDataGridViewTextBoxColumn1,
-            this.qualityDataGridViewTextBoxColumn,
-            this.hasGraphicDataGridViewCheckBoxColumn,
-            this.graphicDataGridViewTextBoxColumn,
-            this.uniqueSetIdDataGridViewTextBoxColumn,
-            this.defenseDataGridViewTextBoxColumn,
-            this.maxDurabilityDataGridViewTextBoxColumn,
-            this.durabilityDataGridViewTextBoxColumn,
-            this.isIndestructableDataGridViewCheckBoxColumn,
-            this.socketCountDataGridViewTextBoxColumn,
-            this.quantityDataGridViewTextBoxColumn,
-            this.randomFlagDataGridViewCheckBoxColumn,
-            this.unknownGoldFlagDataGridViewCheckBoxColumn,
-            this.classFlagDataGridViewCheckBoxColumn,
-            this.earClassDataGridViewTextBoxColumn,
-            this.earLevelDataGridViewTextBoxColumn,
-            this.prefixFlag0DataGridViewCheckBoxColumn,
-            this.prefixFlag1DataGridViewCheckBoxColumn,
-            this.prefixFlag2DataGridViewCheckBoxColumn,
-            this.suffixFlag0DataGridViewCheckBoxColumn,
-            this.suffixFlag1DataGridViewCheckBoxColumn,
-            this.suffixFlag2DataGridViewCheckBoxColumn,
-            this.prefix0DataGridViewTextBoxColumn,
-            this.prefix1DataGridViewTextBoxColumn,
-            this.prefix2DataGridViewTextBoxColumn,
-            this.suffix0DataGridViewTextBoxColumn,
-            this.suffix1DataGridViewTextBoxColumn,
-            this.suffix2DataGridViewTextBoxColumn});
-			this.dataGridView1.DataSource = this.itemBindingSource;
-			this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.dataGridView1.Location = new System.Drawing.Point(3, 182);
-			this.dataGridView1.Name = "dataGridView1";
-			this.dataGridView1.Size = new System.Drawing.Size(618, 91);
-			this.dataGridView1.TabIndex = 5;
-			// 
-			// labelItemName
-			// 
-			this.labelItemName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelItemName.AutoSize = true;
-			this.labelItemName.Location = new System.Drawing.Point(251, 12);
-			this.labelItemName.Name = "labelItemName";
-			this.labelItemName.Size = new System.Drawing.Size(0, 13);
-			this.labelItemName.TabIndex = 4;
-			// 
-			// buttonRemoveSocket
-			// 
-			this.buttonRemoveSocket.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonRemoveSocket.Location = new System.Drawing.Point(518, 12);
-			this.buttonRemoveSocket.Name = "buttonRemoveSocket";
-			this.buttonRemoveSocket.Size = new System.Drawing.Size(98, 23);
-			this.buttonRemoveSocket.TabIndex = 3;
-			this.buttonRemoveSocket.Text = "Remove socket";
-			this.buttonRemoveSocket.UseVisualStyleBackColor = true;
-			this.buttonRemoveSocket.Click += new System.EventHandler(this.buttonRemoveSocket_Click);
-			// 
-			// listBoxItemEditorSockets
-			// 
-			this.listBoxItemEditorSockets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.listBoxItemEditorSockets.Font = new System.Drawing.Font("Lucida Console", 9.75F);
-			this.listBoxItemEditorSockets.FormattingEnabled = true;
-			this.listBoxItemEditorSockets.Location = new System.Drawing.Point(254, 42);
-			this.listBoxItemEditorSockets.Name = "listBoxItemEditorSockets";
-			this.listBoxItemEditorSockets.Size = new System.Drawing.Size(367, 134);
-			this.listBoxItemEditorSockets.TabIndex = 2;
-			this.listBoxItemEditorSockets.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
-			// 
-			// textBoxItemEditor
-			// 
-			this.textBoxItemEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxItemEditor.Font = new System.Drawing.Font("Lucida Console", 9.75F);
-			this.textBoxItemEditor.Location = new System.Drawing.Point(8, 6);
-			this.textBoxItemEditor.Multiline = true;
-			this.textBoxItemEditor.Name = "textBoxItemEditor";
-			this.textBoxItemEditor.ReadOnly = true;
-			this.textBoxItemEditor.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBoxItemEditor.Size = new System.Drawing.Size(237, 170);
-			this.textBoxItemEditor.TabIndex = 1;
-			this.textBoxItemEditor.WordWrap = false;
-			// 
 			// nameDataGridViewTextBoxColumn
 			// 
 			this.nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
@@ -709,6 +544,36 @@
 			// characterBindingSource
 			// 
 			this.characterBindingSource.DataSource = typeof(esCharView.Character);
+			// 
+			// dataGridViewStats
+			// 
+			this.dataGridViewStats.AutoGenerateColumns = false;
+			this.dataGridViewStats.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridViewStats.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.strengthDataGridViewTextBoxColumn,
+            this.energyDataGridViewTextBoxColumn,
+            this.dexterityDataGridViewTextBoxColumn,
+            this.vitalityDataGridViewTextBoxColumn,
+            this.statPointsDataGridViewTextBoxColumn,
+            this.skillPointsDataGridViewTextBoxColumn,
+            this.hitpointsDataGridViewTextBoxColumn,
+            this.baseHitpointsDataGridViewTextBoxColumn,
+            this.manaDataGridViewTextBoxColumn,
+            this.baseManaDataGridViewTextBoxColumn,
+            this.staminaDataGridViewTextBoxColumn,
+            this.baseStaminaDataGridViewTextBoxColumn,
+            this.levelDataGridViewTextBoxColumn,
+            this.experienceDataGridViewTextBoxColumn,
+            this.goldDataGridViewTextBoxColumn,
+            this.goldBankDataGridViewTextBoxColumn,
+            this.killCountDataGridViewTextBoxColumn,
+            this.deathCountDataGridViewTextBoxColumn});
+			this.dataGridViewStats.DataSource = this.statBindingSource;
+			this.dataGridViewStats.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dataGridViewStats.Location = new System.Drawing.Point(0, 0);
+			this.dataGridViewStats.Name = "dataGridViewStats";
+			this.dataGridViewStats.Size = new System.Drawing.Size(618, 138);
+			this.dataGridViewStats.TabIndex = 1;
 			// 
 			// strengthDataGridViewTextBoxColumn
 			// 
@@ -822,6 +687,165 @@
 			// 
 			this.statBindingSource.DataSource = typeof(esCharView.Stat);
 			// 
+			// tabPageInventoryEditor
+			// 
+			this.tabPageInventoryEditor.Controls.Add(this.tabControlInventory);
+			this.tabPageInventoryEditor.Controls.Add(this.buttonRemoveItem);
+			this.tabPageInventoryEditor.Location = new System.Drawing.Point(4, 22);
+			this.tabPageInventoryEditor.Name = "tabPageInventoryEditor";
+			this.tabPageInventoryEditor.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageInventoryEditor.Size = new System.Drawing.Size(624, 276);
+			this.tabPageInventoryEditor.TabIndex = 1;
+			this.tabPageInventoryEditor.Text = "Inventory";
+			this.tabPageInventoryEditor.UseVisualStyleBackColor = true;
+			// 
+			// tabPageItemEditor
+			// 
+			this.tabPageItemEditor.Controls.Add(this.buttonItemViewerRefresh);
+			this.tabPageItemEditor.Controls.Add(this.dataGridView1);
+			this.tabPageItemEditor.Controls.Add(this.buttonRemoveSocket);
+			this.tabPageItemEditor.Controls.Add(this.listBoxItemEditorSockets);
+			this.tabPageItemEditor.Controls.Add(this.textBoxItemEditor);
+			this.tabPageItemEditor.Location = new System.Drawing.Point(4, 22);
+			this.tabPageItemEditor.Name = "tabPageItemEditor";
+			this.tabPageItemEditor.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageItemEditor.Size = new System.Drawing.Size(624, 276);
+			this.tabPageItemEditor.TabIndex = 2;
+			this.tabPageItemEditor.Text = "ItemViewer";
+			this.tabPageItemEditor.UseVisualStyleBackColor = true;
+			// 
+			// buttonItemViewerRefresh
+			// 
+			this.buttonItemViewerRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonItemViewerRefresh.Location = new System.Drawing.Point(254, 12);
+			this.buttonItemViewerRefresh.Name = "buttonItemViewerRefresh";
+			this.buttonItemViewerRefresh.Size = new System.Drawing.Size(75, 23);
+			this.buttonItemViewerRefresh.TabIndex = 6;
+			this.buttonItemViewerRefresh.Text = "Refresh";
+			this.buttonItemViewerRefresh.UseVisualStyleBackColor = true;
+			this.buttonItemViewerRefresh.Click += new System.EventHandler(this.buttonItemViewerRefresh_Click);
+			// 
+			// dataGridView1
+			// 
+			this.dataGridView1.AutoGenerateColumns = false;
+			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.isEquippedDataGridViewCheckBoxColumn,
+            this.isInSocketDataGridViewCheckBoxColumn,
+            this.isIdentifiedDataGridViewCheckBoxColumn,
+            this.isSwitchInDataGridViewCheckBoxColumn,
+            this.isSwitchOutDataGridViewCheckBoxColumn,
+            this.isBrokenDataGridViewCheckBoxColumn,
+            this.isSocketedDataGridViewCheckBoxColumn,
+            this.isPotionDataGridViewCheckBoxColumn,
+            this.isStoreItemDataGridViewCheckBoxColumn,
+            this.isNotInSocketDataGridViewCheckBoxColumn,
+            this.isEarDataGridViewCheckBoxColumn,
+            this.isStarterItemDataGridViewCheckBoxColumn,
+            this.isSimpleItemDataGridViewCheckBoxColumn,
+            this.isEtherealDataGridViewCheckBoxColumn,
+            this.isPersonalizedDataGridViewCheckBoxColumn,
+            this.isGambleDataGridViewCheckBoxColumn,
+            this.isRunewordDataGridViewCheckBoxColumn,
+            this.locationDataGridViewTextBoxColumn,
+            this.positionOnBodyDataGridViewTextBoxColumn,
+            this.positionXDataGridViewTextBoxColumn,
+            this.positionYDataGridViewTextBoxColumn,
+            this.storageIdDataGridViewTextBoxColumn,
+            this.itemCodeDataGridViewTextBoxColumn,
+            this.goldAmountSmallDataGridViewTextBoxColumn,
+            this.goldAmountLargeDataGridViewTextBoxColumn,
+            this.socketsFilledDataGridViewTextBoxColumn,
+            this.idDataGridViewTextBoxColumn,
+            this.levelDataGridViewTextBoxColumn1,
+            this.qualityDataGridViewTextBoxColumn,
+            this.hasGraphicDataGridViewCheckBoxColumn,
+            this.graphicDataGridViewTextBoxColumn,
+            this.uniqueSetIdDataGridViewTextBoxColumn,
+            this.defenseDataGridViewTextBoxColumn,
+            this.maxDurabilityDataGridViewTextBoxColumn,
+            this.durabilityDataGridViewTextBoxColumn,
+            this.isIndestructableDataGridViewCheckBoxColumn,
+            this.socketCountDataGridViewTextBoxColumn,
+            this.quantityDataGridViewTextBoxColumn,
+            this.randomFlagDataGridViewCheckBoxColumn,
+            this.unknownGoldFlagDataGridViewCheckBoxColumn,
+            this.classFlagDataGridViewCheckBoxColumn,
+            this.classInfoDataGridViewTextBoxColumn,
+            this.inferiorQualityTypeDataGridViewTextBoxColumn,
+            this.superiorQualityTypeDataGridViewTextBoxColumn,
+            this.charmDataDataGridViewTextBoxColumn,
+            this.spellIdDataGridViewTextBoxColumn,
+            this.monsterIdDataGridViewTextBoxColumn,
+            this.earClassDataGridViewTextBoxColumn,
+            this.earLevelDataGridViewTextBoxColumn,
+            this.earNameDataGridViewTextBoxColumn,
+            this.personalizedNameDataGridViewTextBoxColumn,
+            this.runewordIdDataGridViewTextBoxColumn,
+            this.prefixNameIdDataGridViewTextBoxColumn,
+            this.suffixNameIdDataGridViewTextBoxColumn,
+            this.prefixFlag0DataGridViewCheckBoxColumn,
+            this.prefixFlag1DataGridViewCheckBoxColumn,
+            this.prefixFlag2DataGridViewCheckBoxColumn,
+            this.suffixFlag0DataGridViewCheckBoxColumn,
+            this.suffixFlag1DataGridViewCheckBoxColumn,
+            this.suffixFlag2DataGridViewCheckBoxColumn,
+            this.magicPrefixDataGridViewTextBoxColumn,
+            this.magicSuffixDataGridViewTextBoxColumn,
+            this.prefix0DataGridViewTextBoxColumn,
+            this.prefix1DataGridViewTextBoxColumn,
+            this.prefix2DataGridViewTextBoxColumn,
+            this.suffix0DataGridViewTextBoxColumn,
+            this.suffix1DataGridViewTextBoxColumn,
+            this.suffix2DataGridViewTextBoxColumn});
+			this.dataGridView1.DataSource = this.itemBindingSource;
+			this.dataGridView1.Location = new System.Drawing.Point(3, 182);
+			this.dataGridView1.Name = "dataGridView1";
+			this.dataGridView1.Size = new System.Drawing.Size(618, 91);
+			this.dataGridView1.TabIndex = 5;
+			// 
+			// buttonRemoveSocket
+			// 
+			this.buttonRemoveSocket.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonRemoveSocket.Location = new System.Drawing.Point(518, 12);
+			this.buttonRemoveSocket.Name = "buttonRemoveSocket";
+			this.buttonRemoveSocket.Size = new System.Drawing.Size(98, 23);
+			this.buttonRemoveSocket.TabIndex = 3;
+			this.buttonRemoveSocket.Text = "Remove socket";
+			this.buttonRemoveSocket.UseVisualStyleBackColor = true;
+			this.buttonRemoveSocket.Click += new System.EventHandler(this.buttonRemoveSocket_Click);
+			// 
+			// listBoxItemEditorSockets
+			// 
+			this.listBoxItemEditorSockets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.listBoxItemEditorSockets.Font = new System.Drawing.Font("Lucida Console", 9.75F);
+			this.listBoxItemEditorSockets.FormattingEnabled = true;
+			this.listBoxItemEditorSockets.Location = new System.Drawing.Point(254, 42);
+			this.listBoxItemEditorSockets.Name = "listBoxItemEditorSockets";
+			this.listBoxItemEditorSockets.Size = new System.Drawing.Size(367, 134);
+			this.listBoxItemEditorSockets.TabIndex = 2;
+			this.listBoxItemEditorSockets.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
+			// 
+			// textBoxItemEditor
+			// 
+			this.textBoxItemEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxItemEditor.Font = new System.Drawing.Font("Lucida Console", 9.75F);
+			this.textBoxItemEditor.Location = new System.Drawing.Point(8, 6);
+			this.textBoxItemEditor.Multiline = true;
+			this.textBoxItemEditor.Name = "textBoxItemEditor";
+			this.textBoxItemEditor.ReadOnly = true;
+			this.textBoxItemEditor.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+			this.textBoxItemEditor.Size = new System.Drawing.Size(237, 170);
+			this.textBoxItemEditor.TabIndex = 1;
+			this.textBoxItemEditor.WordWrap = false;
+			// 
+			// itemBindingSource
+			// 
+			this.itemBindingSource.DataSource = typeof(esCharView.Item);
+			// 
 			// isEquippedDataGridViewCheckBoxColumn
 			// 
 			this.isEquippedDataGridViewCheckBoxColumn.DataPropertyName = "IsEquipped";
@@ -864,11 +888,23 @@
 			this.isSocketedDataGridViewCheckBoxColumn.HeaderText = "IsSocketed";
 			this.isSocketedDataGridViewCheckBoxColumn.Name = "isSocketedDataGridViewCheckBoxColumn";
 			// 
+			// isPotionDataGridViewCheckBoxColumn
+			// 
+			this.isPotionDataGridViewCheckBoxColumn.DataPropertyName = "IsPotion";
+			this.isPotionDataGridViewCheckBoxColumn.HeaderText = "IsPotion";
+			this.isPotionDataGridViewCheckBoxColumn.Name = "isPotionDataGridViewCheckBoxColumn";
+			// 
 			// isStoreItemDataGridViewCheckBoxColumn
 			// 
 			this.isStoreItemDataGridViewCheckBoxColumn.DataPropertyName = "IsStoreItem";
 			this.isStoreItemDataGridViewCheckBoxColumn.HeaderText = "IsStoreItem";
 			this.isStoreItemDataGridViewCheckBoxColumn.Name = "isStoreItemDataGridViewCheckBoxColumn";
+			// 
+			// isNotInSocketDataGridViewCheckBoxColumn
+			// 
+			this.isNotInSocketDataGridViewCheckBoxColumn.DataPropertyName = "IsNotInSocket";
+			this.isNotInSocketDataGridViewCheckBoxColumn.HeaderText = "IsNotInSocket";
+			this.isNotInSocketDataGridViewCheckBoxColumn.Name = "isNotInSocketDataGridViewCheckBoxColumn";
 			// 
 			// isEarDataGridViewCheckBoxColumn
 			// 
@@ -948,11 +984,17 @@
 			this.itemCodeDataGridViewTextBoxColumn.HeaderText = "ItemCode";
 			this.itemCodeDataGridViewTextBoxColumn.Name = "itemCodeDataGridViewTextBoxColumn";
 			// 
-			// goldAmountDataGridViewTextBoxColumn
+			// goldAmountSmallDataGridViewTextBoxColumn
 			// 
-			this.goldAmountDataGridViewTextBoxColumn.DataPropertyName = "GoldAmount";
-			this.goldAmountDataGridViewTextBoxColumn.HeaderText = "GoldAmount";
-			this.goldAmountDataGridViewTextBoxColumn.Name = "goldAmountDataGridViewTextBoxColumn";
+			this.goldAmountSmallDataGridViewTextBoxColumn.DataPropertyName = "GoldAmountSmall";
+			this.goldAmountSmallDataGridViewTextBoxColumn.HeaderText = "GoldAmountSmall";
+			this.goldAmountSmallDataGridViewTextBoxColumn.Name = "goldAmountSmallDataGridViewTextBoxColumn";
+			// 
+			// goldAmountLargeDataGridViewTextBoxColumn
+			// 
+			this.goldAmountLargeDataGridViewTextBoxColumn.DataPropertyName = "GoldAmountLarge";
+			this.goldAmountLargeDataGridViewTextBoxColumn.HeaderText = "GoldAmountLarge";
+			this.goldAmountLargeDataGridViewTextBoxColumn.Name = "goldAmountLargeDataGridViewTextBoxColumn";
 			// 
 			// socketsFilledDataGridViewTextBoxColumn
 			// 
@@ -1050,6 +1092,42 @@
 			this.classFlagDataGridViewCheckBoxColumn.HeaderText = "ClassFlag";
 			this.classFlagDataGridViewCheckBoxColumn.Name = "classFlagDataGridViewCheckBoxColumn";
 			// 
+			// classInfoDataGridViewTextBoxColumn
+			// 
+			this.classInfoDataGridViewTextBoxColumn.DataPropertyName = "ClassInfo";
+			this.classInfoDataGridViewTextBoxColumn.HeaderText = "ClassInfo";
+			this.classInfoDataGridViewTextBoxColumn.Name = "classInfoDataGridViewTextBoxColumn";
+			// 
+			// inferiorQualityTypeDataGridViewTextBoxColumn
+			// 
+			this.inferiorQualityTypeDataGridViewTextBoxColumn.DataPropertyName = "InferiorQualityType";
+			this.inferiorQualityTypeDataGridViewTextBoxColumn.HeaderText = "InferiorQualityType";
+			this.inferiorQualityTypeDataGridViewTextBoxColumn.Name = "inferiorQualityTypeDataGridViewTextBoxColumn";
+			// 
+			// superiorQualityTypeDataGridViewTextBoxColumn
+			// 
+			this.superiorQualityTypeDataGridViewTextBoxColumn.DataPropertyName = "SuperiorQualityType";
+			this.superiorQualityTypeDataGridViewTextBoxColumn.HeaderText = "SuperiorQualityType";
+			this.superiorQualityTypeDataGridViewTextBoxColumn.Name = "superiorQualityTypeDataGridViewTextBoxColumn";
+			// 
+			// charmDataDataGridViewTextBoxColumn
+			// 
+			this.charmDataDataGridViewTextBoxColumn.DataPropertyName = "CharmData";
+			this.charmDataDataGridViewTextBoxColumn.HeaderText = "CharmData";
+			this.charmDataDataGridViewTextBoxColumn.Name = "charmDataDataGridViewTextBoxColumn";
+			// 
+			// spellIdDataGridViewTextBoxColumn
+			// 
+			this.spellIdDataGridViewTextBoxColumn.DataPropertyName = "SpellId";
+			this.spellIdDataGridViewTextBoxColumn.HeaderText = "SpellId";
+			this.spellIdDataGridViewTextBoxColumn.Name = "spellIdDataGridViewTextBoxColumn";
+			// 
+			// monsterIdDataGridViewTextBoxColumn
+			// 
+			this.monsterIdDataGridViewTextBoxColumn.DataPropertyName = "MonsterId";
+			this.monsterIdDataGridViewTextBoxColumn.HeaderText = "MonsterId";
+			this.monsterIdDataGridViewTextBoxColumn.Name = "monsterIdDataGridViewTextBoxColumn";
+			// 
 			// earClassDataGridViewTextBoxColumn
 			// 
 			this.earClassDataGridViewTextBoxColumn.DataPropertyName = "EarClass";
@@ -1061,6 +1139,36 @@
 			this.earLevelDataGridViewTextBoxColumn.DataPropertyName = "EarLevel";
 			this.earLevelDataGridViewTextBoxColumn.HeaderText = "EarLevel";
 			this.earLevelDataGridViewTextBoxColumn.Name = "earLevelDataGridViewTextBoxColumn";
+			// 
+			// earNameDataGridViewTextBoxColumn
+			// 
+			this.earNameDataGridViewTextBoxColumn.DataPropertyName = "EarName";
+			this.earNameDataGridViewTextBoxColumn.HeaderText = "EarName";
+			this.earNameDataGridViewTextBoxColumn.Name = "earNameDataGridViewTextBoxColumn";
+			// 
+			// personalizedNameDataGridViewTextBoxColumn
+			// 
+			this.personalizedNameDataGridViewTextBoxColumn.DataPropertyName = "PersonalizedName";
+			this.personalizedNameDataGridViewTextBoxColumn.HeaderText = "PersonalizedName";
+			this.personalizedNameDataGridViewTextBoxColumn.Name = "personalizedNameDataGridViewTextBoxColumn";
+			// 
+			// runewordIdDataGridViewTextBoxColumn
+			// 
+			this.runewordIdDataGridViewTextBoxColumn.DataPropertyName = "RunewordId";
+			this.runewordIdDataGridViewTextBoxColumn.HeaderText = "RunewordId";
+			this.runewordIdDataGridViewTextBoxColumn.Name = "runewordIdDataGridViewTextBoxColumn";
+			// 
+			// prefixNameIdDataGridViewTextBoxColumn
+			// 
+			this.prefixNameIdDataGridViewTextBoxColumn.DataPropertyName = "PrefixNameId";
+			this.prefixNameIdDataGridViewTextBoxColumn.HeaderText = "PrefixNameId";
+			this.prefixNameIdDataGridViewTextBoxColumn.Name = "prefixNameIdDataGridViewTextBoxColumn";
+			// 
+			// suffixNameIdDataGridViewTextBoxColumn
+			// 
+			this.suffixNameIdDataGridViewTextBoxColumn.DataPropertyName = "SuffixNameId";
+			this.suffixNameIdDataGridViewTextBoxColumn.HeaderText = "SuffixNameId";
+			this.suffixNameIdDataGridViewTextBoxColumn.Name = "suffixNameIdDataGridViewTextBoxColumn";
 			// 
 			// prefixFlag0DataGridViewCheckBoxColumn
 			// 
@@ -1098,6 +1206,18 @@
 			this.suffixFlag2DataGridViewCheckBoxColumn.HeaderText = "SuffixFlag2";
 			this.suffixFlag2DataGridViewCheckBoxColumn.Name = "suffixFlag2DataGridViewCheckBoxColumn";
 			// 
+			// magicPrefixDataGridViewTextBoxColumn
+			// 
+			this.magicPrefixDataGridViewTextBoxColumn.DataPropertyName = "MagicPrefix";
+			this.magicPrefixDataGridViewTextBoxColumn.HeaderText = "MagicPrefix";
+			this.magicPrefixDataGridViewTextBoxColumn.Name = "magicPrefixDataGridViewTextBoxColumn";
+			// 
+			// magicSuffixDataGridViewTextBoxColumn
+			// 
+			this.magicSuffixDataGridViewTextBoxColumn.DataPropertyName = "MagicSuffix";
+			this.magicSuffixDataGridViewTextBoxColumn.HeaderText = "MagicSuffix";
+			this.magicSuffixDataGridViewTextBoxColumn.Name = "magicSuffixDataGridViewTextBoxColumn";
+			// 
 			// prefix0DataGridViewTextBoxColumn
 			// 
 			this.prefix0DataGridViewTextBoxColumn.DataPropertyName = "Prefix0";
@@ -1134,10 +1254,6 @@
 			this.suffix2DataGridViewTextBoxColumn.HeaderText = "Suffix2";
 			this.suffix2DataGridViewTextBoxColumn.Name = "suffix2DataGridViewTextBoxColumn";
 			// 
-			// itemBindingSource
-			// 
-			this.itemBindingSource.DataSource = typeof(esCharView.Item);
-			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1167,13 +1283,13 @@
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
 			this.splitContainer1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewCharacter)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.characterBindingSource)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewStats)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.statBindingSource)).EndInit();
 			this.tabPageInventoryEditor.ResumeLayout(false);
 			this.tabPageItemEditor.ResumeLayout(false);
 			this.tabPageItemEditor.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.characterBindingSource)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.statBindingSource)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.itemBindingSource)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -1209,7 +1325,6 @@
 		private System.Windows.Forms.TextBox textBoxItemEditor;
 		private System.Windows.Forms.Button buttonRemoveSocket;
 		private System.Windows.Forms.ListBox listBoxItemEditorSockets;
-		private System.Windows.Forms.Label labelItemName;
 		private System.Windows.Forms.DataGridView dataGridViewCharacter;
 		private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn hardcoreDataGridViewCheckBoxColumn;
@@ -1246,6 +1361,8 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn deathCountDataGridViewTextBoxColumn;
 		private System.Windows.Forms.BindingSource statBindingSource;
 		private System.Windows.Forms.DataGridView dataGridView1;
+		private System.Windows.Forms.DataGridViewTextBoxColumn goldAmountDataGridViewTextBoxColumn;
+		private System.Windows.Forms.Button buttonItemViewerRefresh;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn isEquippedDataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn isInSocketDataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn isIdentifiedDataGridViewCheckBoxColumn;
@@ -1253,7 +1370,9 @@
 		private System.Windows.Forms.DataGridViewCheckBoxColumn isSwitchOutDataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn isBrokenDataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn isSocketedDataGridViewCheckBoxColumn;
+		private System.Windows.Forms.DataGridViewCheckBoxColumn isPotionDataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn isStoreItemDataGridViewCheckBoxColumn;
+		private System.Windows.Forms.DataGridViewCheckBoxColumn isNotInSocketDataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn isEarDataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn isStarterItemDataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn isSimpleItemDataGridViewCheckBoxColumn;
@@ -1267,7 +1386,8 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn positionYDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn storageIdDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn itemCodeDataGridViewTextBoxColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn goldAmountDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn goldAmountSmallDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn goldAmountLargeDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn socketsFilledDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn idDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn levelDataGridViewTextBoxColumn1;
@@ -1284,14 +1404,27 @@
 		private System.Windows.Forms.DataGridViewCheckBoxColumn randomFlagDataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn unknownGoldFlagDataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn classFlagDataGridViewCheckBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn classInfoDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn inferiorQualityTypeDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn superiorQualityTypeDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn charmDataDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn spellIdDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn monsterIdDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn earClassDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn earLevelDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn earNameDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn personalizedNameDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn runewordIdDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn prefixNameIdDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn suffixNameIdDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn prefixFlag0DataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn prefixFlag1DataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn prefixFlag2DataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn suffixFlag0DataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn suffixFlag1DataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn suffixFlag2DataGridViewCheckBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn magicPrefixDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn magicSuffixDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn prefix0DataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn prefix1DataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn prefix2DataGridViewTextBoxColumn;
@@ -1299,7 +1432,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn suffix1DataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn suffix2DataGridViewTextBoxColumn;
 		private System.Windows.Forms.BindingSource itemBindingSource;
-		private System.Windows.Forms.Button buttonItemViewerRefresh;
 
 	}
 }

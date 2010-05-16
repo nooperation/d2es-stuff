@@ -79,10 +79,16 @@ namespace esCharView
 			public string Name;
 			public object Value;
 			public int BitCount;
+
+			public override string ToString()
+			{
+				return Value.ToString();
+			}
 		}
 
+		private static Dictionary<string, int> dataIndicies = new Dictionary<string, int>();
 		private Dictionary<string, ItemData> dataEntries = new Dictionary<string, ItemData>();
-		private int dataEntryIndex = 0;
+		//private int dataEntryIndex = 0;
 		private BitReader br;
 		private byte[] remainingBytes;
 
@@ -130,10 +136,20 @@ namespace esCharView
 			get { return GetDataBoolean("IsSocketed"); }
 			set { SetData("IsSocketed", value); }
 		}
+		public bool IsPotion
+		{
+			get { return GetDataBoolean("IsPotion"); }
+			set { SetData("IsPotion", value); }
+		}
 		public bool IsStoreItem
 		{
 			get { return GetDataBoolean("IsStoreItem"); }
 			set { SetData("IsStoreItem", value); }
+		}
+		public bool IsNotInSocket
+		{
+			get { return GetDataBoolean("IsNotInSocket"); }
+			set { SetData("IsNotInSocket", value); }
 		}
 		public bool IsEar
 		{
@@ -212,14 +228,19 @@ namespace esCharView
 			}
 			set
 			{
-				dataEntries["ItemCode"].Value = value;
+				dataEntries["ItemCode"].Value = value.Substring(0, 3);
 			}
 		}
 
-		public uint GoldAmount
+		public uint GoldAmountSmall
 		{
-			get { return GetDataValue("GoldAmount"); }
-			set { SetData("GoldAmount", value); }
+			get { return GetDataValue("GoldAmountSmall"); }
+			set { SetData("GoldAmountSmall", value); }
+		}
+		public uint GoldAmountLarge
+		{
+			get { return GetDataValue("GoldAmountLarge"); }
+			set { SetData("GoldAmountLarge", value); }
 		}
 		public uint SocketsFilled
 		{
@@ -312,6 +333,38 @@ namespace esCharView
 			get { return GetDataBoolean("ClassFlag"); }
 			set { SetData("ClassFlag", value); }
 		}
+
+		public uint ClassInfo
+		{
+			get { return GetDataValue("ClassInfo"); }
+			set { SetData("ClassInfo", value); }
+		}
+		public uint InferiorQualityType
+		{
+			get { return GetDataValue("InferiorQualityType"); }
+			set { SetData("InferiorQualityType", value); }
+		}
+		public uint SuperiorQualityType
+		{
+			get { return GetDataValue("SuperiorQualityType"); }
+			set { SetData("SuperiorQualityType", value); }
+		}
+		public uint CharmData
+		{
+			get { return GetDataValue("CharmData"); }
+			set { SetData("CharmData", value); }
+		}
+		public uint SpellId
+		{
+			get { return GetDataValue("SpellId"); }
+			set { SetData("SpellId", value); }
+		}
+		public uint MonsterId
+		{
+			get { return GetDataValue("MonsterId"); }
+			set { SetData("MonsterId", value); }
+		}
+
 		public uint EarClass
 		{
 			get { return GetDataValue("EarClass"); }
@@ -322,9 +375,28 @@ namespace esCharView
 			get { return GetDataValue("EarLevel"); }
 			set { SetData("EarLevel", value); }
 		}
+		public string EarName
+		{
+			get { return (string)GetDataObject("EarName"); }
+			set { SetData("EarName", value.Length > 17 ? value.Substring(0, 17) : value); }
+		}
+		public string PersonalizedName
+		{
+			get { return (string)GetDataObject("PersonalizedName"); }
+			protected set { SetData("PersonalizedName", value.Length > 17? value.Substring(0, 17) : value); }
+		}
+		public uint RunewordId
+		{
+			get { return GetDataValue("RunewordId"); }
+			set { SetData("RunewordId", value); }
+		}
+
 		#endregion
 
 		#region Affix
+
+		public uint PrefixNameId { get; set; }
+		public uint SuffixNameId { get; set; }
 
 		public bool PrefixFlag0
 		{
@@ -356,7 +428,16 @@ namespace esCharView
 			get { return GetDataBoolean("SuffixFlag2"); }
 			set { SetData("SuffixFlag2", value); }
 		}
-
+		public uint MagicPrefix
+		{
+			get { return GetDataValue("MagicPrefix"); }
+			set { SetData("MagicPrefix", value); }
+		}
+		public uint MagicSuffix
+		{
+			get { return GetDataValue("MagicSuffix"); }
+			set { SetData("MagicSuffix", value); }
+		}
 		public uint Prefix0
 		{
 			get { return GetDataValue("Prefix0"); }
@@ -389,6 +470,11 @@ namespace esCharView
 		}
 		#endregion
 
+		static Item()
+		{
+			CreateDataIndicies();
+		}
+
 		public Item(byte[] itemData)
 		{
 			br = new BitReader(itemData);
@@ -410,7 +496,7 @@ namespace esCharView
 				return;
 			}
 
-			ReadString("ItemCode", 3, true);
+			ReadString("ItemCode", 3, 8, true);
 
 			// Read gold data if it's gold
 			// TODO: Should this come later on? Not sure how to test this...
@@ -426,14 +512,15 @@ namespace esCharView
 				ReadItemDataExtended();
 			}
 
+
 			// TODO: Not sure what this bit is, I can't find any items with it set
 			// Extend.txt says it's some sort of random flag followed by 40 bits
 
 			ReadData("RandomFlag", 1);
 			if (RandomFlag)
 			{
-				ReadData(8);
-				ReadData(32);
+				ReadData("Unknown8", 8);
+				ReadData("Unknown9", 32);
 			}
 
 			// Type specific extended data
@@ -451,30 +538,30 @@ namespace esCharView
 			br.SkipBits(16); // "JM" header
 
 			ReadData("IsEquipped", 1);
-			ReadData(2);
+			ReadData("Unknown0", 2);
 			ReadData("IsInSocket", 1);
 			ReadData("IsIdentified", 1);
-			ReadData(1); // Unknown 2
+			ReadData("Unknown1", 1); // Unknown 2
 			ReadData("IsSwitchIn", 1);
 			ReadData("IsSwitchOut", 1);
 			ReadData("IsBroken", 1);
-			ReadData(1); // Unknown 3 +
-			ReadData(1); // Potion (?)
+			ReadData("Unknown2", 1); // Unknown 3 +
+			ReadData("IsPotion", 1); // TODO: Check this! 
 			ReadData("IsSocketed", 1);
-			ReadData(1); // Unknown 4
+			ReadData("Unknown3", 1); // Unknown 4
 			ReadData("IsStoreItem", 1);
-			ReadData(1); // NotInSocket (?)
-			ReadData(1); // Unknown 5
+			ReadData("IsNotInSocket", 1);// TODO: Check this! 
+			ReadData("Unknown4", 1); // Unknown 5
 			ReadData("IsEar", 1);
 			ReadData("IsStarterItem", 1);
-			ReadData(3); // Unknown 6
+			ReadData("Unknown5", 3); // Unknown 6
 			ReadData("IsSimpleItem", 1);
 			ReadData("IsEthereal", 1);
-			ReadData(1); // Any (?)
+			ReadData("Unknown6", 1); // Any (?)
 			ReadData("IsPersonalized", 1);
 			ReadData("IsGamble", 1);
 			ReadData("IsRuneword", 1);
-			ReadData(15);
+			ReadData("Unknown7", 15);
 			ReadData("Location", 3);
 			ReadData("PositionOnBody", 4);
 			ReadData("PositionX", 4);
@@ -489,9 +576,10 @@ namespace esCharView
 		{
 			ReadData("EarClass", 3);
 			ReadData("EarLevel", 7);
-			// earName is the rest of the packet
+			ReadString("EarName", 7);
 
-			//ItemCode = "ear";
+			// Fill in last byte with 0, TODO: double check 4-8 legnth names
+			br.SkipBits(8 - (int)br.Position % 8);
 
 			return;
 		}
@@ -505,9 +593,9 @@ namespace esCharView
 
 			// Not sure if this is correct
 			if (UnknownGoldFlag)
-				ReadData("GoldAmount", 32);
+				ReadData("GoldAmountLarge", 32);
 			else
-				ReadData("GoldAmount", 12);
+				ReadData("GoldAmountSmall", 12);
 
 			return;
 		}
@@ -531,47 +619,45 @@ namespace esCharView
 			ReadData("ClassFlag", 1);
 			if (ClassFlag)
 			{
-				ReadData(11);
+				ReadData("ClassInfo", 11);
 			}
 
 			switch (Quality)
 			{
 				case ItemQuality.Inferior:
+					ReadData("InferiorQualityType", 3);
+					break;
 				case ItemQuality.Superior:
-					ReadData(3);
+					ReadData("SuperiorQualityType", 3);
 					break;
 
 				case ItemQuality.Normal:
-					if (ItemDefs.IsCharm(ItemCode))
+					if (ItemDefs.IsScrollOrTome(ItemCode))
 					{
-						ReadData(12); // Not sure
-					}
-					else if (ItemDefs.IsScrollOrTome(ItemCode))
-					{
-						ReadData(5); // Spell Id?
+						ReadData("SpellId", 5);
 					}
 					else if (ItemDefs.IsMonsterPart(ItemCode))
 					{
-						ReadData(10); // Monster id?
+						ReadData("MonsterId", 10);
 					}
 					break;
 
 				case ItemQuality.Magic:
-					ReadData("Prefix0", 11);
-					ReadData("Suffix0", 11);
+					ReadData("MagicPrefix", 11);
+					ReadData("MagicSuffix", 11);
 					break;
 
 				case ItemQuality.Rare:
 				case ItemQuality.Craft:
-					ReadData(8); // Prefix name id?
-					ReadData(8); // Suffix name id?
+					ReadData("PrefixNameId", 8);
+					ReadData("SuffixNameId", 8);
 
 					for (int i = 0; i < 3; i++)
 					{
 						string prefixIndex = string.Format("PrefixFlag{0}", i);
 
 						ReadData(prefixIndex, 1);
-						if (dataEntries.ContainsKey(prefixIndex))
+						if (GetDataBoolean(prefixIndex))
 						{
 							ReadData(string.Format("Prefix{0}", i), 11);
 						}
@@ -579,7 +665,7 @@ namespace esCharView
 						string suffixIndex = string.Format("SuffixFlag{0}", i);
 
 						ReadData(suffixIndex, 1);
-						if (dataEntries.ContainsKey(suffixIndex))
+						if (GetDataBoolean(suffixIndex))
 						{
 							ReadData(string.Format("Suffix{0}", i), 11);
 						}
@@ -595,15 +681,13 @@ namespace esCharView
 					break;
 			}
 
-			// TODO: check order of Runeword and personalized
 			if (IsRuneword)
 			{
-				ReadData(16);
+				ReadData("RunewordId", 16);
 			}
-			// TODO: check order of Runeword and personalized
 			if (IsPersonalized)
 			{
-				ReadData(15);
+				ReadString("PersonalizedName", 7);
 			}
 		}
 
@@ -687,22 +771,18 @@ namespace esCharView
 		/// <summary>
 		/// Reads a value (up to 32 bits) from the BitReader
 		/// </summary>
-		/// <param name="bitCount">Number of bits to read</param>
-		private void ReadData(int bitCount)
-		{
-			ReadData(string.Format("Unknown{0}", dataEntryIndex), bitCount);
-		}
-
-		/// <summary>
-		/// Reads a value (up to 32 bits) from the BitReader
-		/// </summary>
 		/// <param name="name">Name of the property to create to store the data</param>
 		/// <param name="bitCount">Number of bits to read</param>
 		private void ReadData(string name, int bitCount)
 		{
 			ItemData data = new ItemData();
 
-			data.Index = dataEntryIndex++;
+			if (!dataIndicies.ContainsKey(name))
+			{
+				throw new ApplicationException("ReadData: Invalid property name specified");
+			}
+
+			data.Index = dataIndicies[name];
 			data.BitCount = bitCount;
 			data.Value = br.Read(bitCount);
 			data.Name = name;
@@ -716,19 +796,41 @@ namespace esCharView
 		/// <param name="name">Name of property to store data in</param>
 		/// <param name="characterCount">Number of characters to read</param>
 		/// <param name="skipFollowingByte">Skip an additional byte after reading the characters</param>
-		private void ReadString(string name, int characterCount, bool skipFollowingByte)
+		private void ReadString(string name, int characterCount, int bitsPerChar, bool skipFollowingByte)
 		{
 			ItemData data = new ItemData();
 
-			data.Index = dataEntryIndex++;
-			data.Value = br.ReadString(characterCount, 8);
-			data.BitCount = (data.Value as string).Length * 8;
+			if (!dataIndicies.ContainsKey(name))
+			{
+				throw new ApplicationException("ReadString: Invalid property name specified");
+			}
+
+			data.Index = dataIndicies[name];
+			data.Value = br.ReadString(characterCount, bitsPerChar);
+			data.BitCount = (data.Value as string).Length * bitsPerChar;
 			data.Name = name;
 
 			if (skipFollowingByte)
 			{
 				br.ReadByte();
 			}
+
+			dataEntries.Add(data.Name, data);
+		}
+
+		private void ReadString(string name, int bitsPerChar)
+		{
+			ItemData data = new ItemData();
+
+			if (!dataIndicies.ContainsKey(name))
+			{
+				throw new ApplicationException("ReadString: Invalid property name specified");
+			}
+
+			data.Index = dataIndicies[name];
+			data.Value = br.ReadString(bitsPerChar);
+			data.BitCount = (data.Value as string).Length * bitsPerChar;
+			data.Name = name;
 
 			dataEntries.Add(data.Name, data);
 		}
@@ -842,12 +944,29 @@ namespace esCharView
 				if (item.Value.Value is string)
 				{
 					string value = item.Value.Value as string;
-					foreach (var ch in value)
+
+					if (item.Key == "ItemCode")
 					{
-						bs.Write(Utils.ReverseBits(ch, 8), 0, 8);
+						foreach (var ch in value)
+						{
+							bs.Write(Utils.ReverseBits(ch, 8), 0, 8);
+						}
+						// This is odd, Reverse(32) = 4, but file wants 2
+						bs.Write(Utils.ReverseBits(0x10, 7), 0, 8);
 					}
-					// This is odd, Reverse(32) = 4, but file wants 2
-					bs.Write(Utils.ReverseBits(0x10, 7), 0, 8);
+					else if (item.Key == "EarName" || item.Key == "PersonalizedName")
+					{
+						foreach (var ch in value)
+						{
+							bs.Write(Utils.ReverseBits(ch, 7), 0, 7);
+						}
+						bs.Write((byte)0, 0, 7);
+						bs.Write((byte)0, 0, 8 - (int)bs.Position % 8);
+					}
+					else
+					{
+						throw new ApplicationException("Unknown string type in item data");
+					}
 				}
 				else if (item.Value.Value is ValueType)
 				{
@@ -869,7 +988,7 @@ namespace esCharView
 						value = Utils.ReverseBits(value, item.Value.BitCount);
 						bs.Write(value, 0, item.Value.BitCount);
 					}
-					else if(valueType == TypeCode.Boolean)
+					else if (valueType == TypeCode.Boolean)
 					{
 						bs.Write((bool)item.Value.Value);
 					}
@@ -897,6 +1016,108 @@ namespace esCharView
 			}
 
 			return Utils.ReverseByteArrayBits(bs.ToByteArray());
+		}
+
+		/// <summary>
+		/// Creates a list of indicies for each data entry name
+		/// </summary>
+		private static void CreateDataIndicies()
+		{
+			int index = 0;
+
+			// Simple data
+			dataIndicies.Add("IsEquipped", index++);
+			dataIndicies.Add("Unknown0", index++);
+			dataIndicies.Add("IsInSocket", index++);
+			dataIndicies.Add("IsIdentified", index++);
+			dataIndicies.Add("Unknown1", index++);
+			dataIndicies.Add("IsSwitchIn", index++);
+			dataIndicies.Add("IsSwitchOut", index++);
+			dataIndicies.Add("IsBroken", index++);
+			dataIndicies.Add("Unknown2", index++);
+			dataIndicies.Add("IsPotion", index++);
+			dataIndicies.Add("IsSocketed", index++);
+			dataIndicies.Add("Unknown3", index++);
+			dataIndicies.Add("IsStoreItem", index++);
+			dataIndicies.Add("IsNotInSocket", index++);
+			dataIndicies.Add("Unknown4", index++);
+			dataIndicies.Add("IsEar", index++);
+			dataIndicies.Add("IsStarterItem", index++);
+			dataIndicies.Add("Unknown5", index++);
+			dataIndicies.Add("IsSimpleItem", index++);
+			dataIndicies.Add("IsEthereal", index++);
+			dataIndicies.Add("Unknown6", index++);
+			dataIndicies.Add("IsPersonalized", index++);
+			dataIndicies.Add("IsGamble", index++);
+			dataIndicies.Add("IsRuneword", index++);
+			dataIndicies.Add("Unknown7", index++);
+			dataIndicies.Add("Location", index++);
+			dataIndicies.Add("PositionOnBody", index++);
+			dataIndicies.Add("PositionX", index++);
+			dataIndicies.Add("PositionY", index++);
+			dataIndicies.Add("StorageId", index++);
+
+			// Ear data
+			dataIndicies.Add("EarClass", index++);
+			dataIndicies.Add("EarLevel", index++);
+			dataIndicies.Add("EarName", index++);
+
+			// Extended data
+			dataIndicies.Add("ItemCode", index++);
+
+			// Gold Data
+			dataIndicies.Add("UnknownGoldFlag", index++);
+			dataIndicies.Add("GoldAmountLarge", index++);
+			dataIndicies.Add("GoldAmountSmall", index++);
+
+			// Extended data
+			dataIndicies.Add("SocketsFilled", index++);
+			dataIndicies.Add("Id", index++);
+			dataIndicies.Add("Level", index++);
+			dataIndicies.Add("Quality", index++);
+			dataIndicies.Add("HasGraphic", index++);
+			dataIndicies.Add("Graphic", index++);
+			dataIndicies.Add("ClassFlag", index++);
+			dataIndicies.Add("ClassInfo", index++);
+			dataIndicies.Add("InferiorQualityType", index++);
+			dataIndicies.Add("SuperiorQualityType", index++);
+			dataIndicies.Add("CharmData", index++);
+			dataIndicies.Add("SpellId", index++);
+			dataIndicies.Add("MonsterId", index++);
+			dataIndicies.Add("MagicPrefix", index++);
+			dataIndicies.Add("MagicSuffix", index++);
+			dataIndicies.Add("PrefixNameId", index++);
+			dataIndicies.Add("SuffixNameId", index++);
+			dataIndicies.Add("PrefixFlag0", index++);
+			dataIndicies.Add("Prefix0", index++);
+			dataIndicies.Add("SuffixFlag0", index++);
+			dataIndicies.Add("Suffix0", index++);
+			dataIndicies.Add("PrefixFlag1", index++);
+			dataIndicies.Add("Prefix1", index++);
+			dataIndicies.Add("SuffixFlag1", index++);
+			dataIndicies.Add("Suffix1", index++);
+			dataIndicies.Add("PrefixFlag2", index++);
+			dataIndicies.Add("Prefix2", index++);
+			dataIndicies.Add("SuffixFlag2", index++);
+			dataIndicies.Add("Suffix2", index++);
+			dataIndicies.Add("UniqueSetId", index++);
+			dataIndicies.Add("RunewordId", index++);
+			dataIndicies.Add("PersonalizedName", index++);
+
+			// Extended data
+			dataIndicies.Add("RandomFlag", index++);
+			dataIndicies.Add("Unknown8", index++);
+			dataIndicies.Add("Unknown9", index++);
+
+			// Extended specific data
+			dataIndicies.Add("Defense", index++);
+			dataIndicies.Add("MaxDurability", index++);
+			dataIndicies.Add("Durability", index++);
+			dataIndicies.Add("Quantity", index++);
+			dataIndicies.Add("SocketCount", index++);
+
+			// Very last data
+			dataIndicies.Add("LAST", index++);
 		}
 
 		public override string ToString()

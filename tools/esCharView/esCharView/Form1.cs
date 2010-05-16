@@ -260,8 +260,6 @@ namespace esCharView
 			this.itemToEdit = itemToEdit;
 			StringBuilder sb = new StringBuilder();
 
-			labelItemName.Text = itemToEdit.ToString();
-
 			// It's just debug output only, so just grab all the primitive+string properties of the items
 			//  and output them
 			PropertyInfo[] itemProperties = typeof(Item).GetProperties();
