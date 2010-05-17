@@ -55,6 +55,23 @@ namespace CharacterEditor
 		}
 
 		/// <summary>
+		/// Creates a new SaveReader
+		/// </summary>
+		public SaveReader()
+		{
+
+		}
+
+		/// <summary>
+		/// Creates a new SaveReader and begins to read and decode character data
+		/// </summary>
+		/// <param name="path">Path of save file</param>
+		public SaveReader(string path)
+		{
+			Read(path);
+		}
+
+		/// <summary>
 		/// Read character save from disk
 		/// </summary>
 		/// <param name="filePath">Path of save file</param>

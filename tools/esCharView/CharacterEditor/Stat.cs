@@ -21,8 +21,26 @@ namespace CharacterEditor
 		/// Decoded stat values
 		/// </summary>
 		private Dictionary<StatTypes, uint> statValues = new Dictionary<StatTypes, uint>();
+		/// <summary>
+		/// Number of bits each stat requires
+		/// </summary>
 		private Dictionary<StatTypes, int> statValueBitCounts = new Dictionary<StatTypes, int>();
+		/// <summary>
+		/// Specific stats that need to be shifted by the specified amount
+		/// </summary>
 		private Dictionary<StatTypes, int> statValueBitShifts = new Dictionary<StatTypes, int>();
+		/// <summary>
+		/// Remaining bits that need to be written (Each a full byte)
+		/// </summary>
+		private byte[] remainingBytes;
+		/// <summary>
+		/// Remaining bits that need to be written after remainingBytes (Not a full byte)
+		/// </summary>
+		private byte remainingBits;
+		/// <summary>
+		/// Total number of bits in remainingBits
+		/// </summary>
+		private int remainingBitsCount;
 
 		public Stat(byte[] statsBytes)
 		{
@@ -279,8 +297,6 @@ namespace CharacterEditor
 			set { this[StatTypes.DeathCount] = value; }
 		}
 
-		private byte[] remainingBytes;
-
 		/// <summary>
 		/// Parses raw character stat data
 		/// </summary>
@@ -307,17 +323,17 @@ namespace CharacterEditor
 				if(!statValueBitCounts.ContainsKey(statIndex))
 				{
 					br.Position -= 9;
-					remainingBytes = new byte[(((br.BitCount-16) - br.Position) / 8) + 1];
+					remainingBytes = new byte[(((br.BitCount-16) - br.Position) / 8)];
 
-					for (int i = 0; i < remainingBytes.Length-1; i++)
+					for (int i = 0; i < remainingBytes.Length; i++)
 					{
 						remainingBytes[i] = br.ReadByte();
 					}
 
-					int remainingBitsCount = (int)((br.BitCount-16) - br.Position);
+					remainingBitsCount = (int)((br.BitCount-16) - br.Position);
 					if (remainingBitsCount > 0)
 					{
-						remainingBytes[remainingBytes.Length - 1] = (byte)br.Read(remainingBitsCount);
+						remainingBits = (byte)br.Read(remainingBitsCount);
 					}
 
 					break;
@@ -350,17 +366,13 @@ namespace CharacterEditor
 		public byte[] GetStatBytes()
 		{
 			BitStream bits = new BitStream();
-			byte[] temp;
 
 			bits.Write(Utils.ReverseBits('g', 8), 0, 8);
 			bits.Write(Utils.ReverseBits('f', 8), 0, 8);
 
-			temp = Utils.ReverseByteArrayBits(bits.ToByteArray());
-
 			foreach (var stat in statValues)
 			{
 				bits.Write(Utils.ReverseBits((uint)stat.Key, 9), 0, 9);
-				temp = Utils.ReverseByteArrayBits(bits.ToByteArray());
 
 				int valShift = 0;
 				int bitCount = statValueBitCounts[stat.Key];
@@ -371,21 +383,20 @@ namespace CharacterEditor
 				}
 
 				bits.Write(Utils.ReverseBits((uint)((stat.Value << valShift)), bitCount), 0, bitCount);
-				temp = Utils.ReverseByteArrayBits(bits.ToByteArray());
 			}
 
-			// These last 2 bytes seem to be some soft of terminator?
+			// These last 2 bytes seem to be some sort of terminator?
 			bits.Write(Utils.ReverseByteArrayBits(remainingBytes));
 
-			// I don't know about this, but it seems to work?
-			while (bits.Position % 8 != 0)
+			if (remainingBitsCount > 0)
 			{
-				bits.Position--;
+				bits.Write(Utils.ReverseBits(remainingBits, remainingBitsCount), 0, remainingBitsCount);
 			}
 
+			// This is actually the skill header, but it's easier to just handle the header here
+			//  and keep the skill data as raw bytes containing skill levels, no additional processing needed
 			bits.Write(Utils.ReverseBits('i', 8), 0, 8);
 			bits.Write(Utils.ReverseBits('f', 8), 0, 8);
-			temp = Utils.ReverseByteArrayBits(bits.ToByteArray());
 
 			return Utils.ReverseByteArrayBits(bits.ToByteArray());
 		}
