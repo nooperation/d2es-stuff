@@ -248,11 +248,15 @@ namespace CharacterEditor
 		/// <returns>Location of inventory data</returns>
 		private static int FindItemListBegin(byte[] rawCharacterData)
 		{
-			for (int i = StatListBegin; i < rawCharacterData.Length - 1; i++)
+			for (int i = StatListBegin; i < rawCharacterData.Length - 5; i++)
 			{
 				if (rawCharacterData[i] == 'J' && rawCharacterData[i + 1] == 'M')
 				{
-					return i;
+					// JM..JM is the pattern we're looking for
+					if (rawCharacterData[i + 4] == 'J' && rawCharacterData[i + 5] == 'M')
+					{
+						return i;
+					}
 				}
 			}
 
