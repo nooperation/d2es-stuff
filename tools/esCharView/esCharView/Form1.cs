@@ -49,13 +49,17 @@ namespace esCharView
 
 			playerData.Read(filePath);
 
+			if (playerData.Inventory.FailedItemCount > 0)
+			{
+				MessageBox.Show(string.Format("Failed to read {0} items. These items will not be included when saving character", playerData.Inventory.FailedItemCount));
+			}
+
 			listBoxInventory.Items.Clear();
 			listBoxCorpseInventory.Items.Clear();
 			listBoxGolemInventory.Items.Clear();
 			listBoxMercInventory.Items.Clear();
 
 			UpdateInventoryList();
-
 
 			checkBoxDied.DataBindings.Clear();
 			checkBoxExpansion.DataBindings.Clear();
@@ -64,7 +68,6 @@ namespace esCharView
 			textBoxName.DataBindings.Clear();
 			characterBindingSource.Clear();
 			statBindingSource.Clear();
-
 
 			checkBoxDied.DataBindings.Add("Checked", playerData.Character, "Died");
 			checkBoxExpansion.DataBindings.Add("Checked", playerData.Character, "Expansion");
@@ -88,22 +91,22 @@ namespace esCharView
 
 			foreach (Item item in playerData.Inventory.PlayerItems)
 			{
-				listBoxInventory.Items.Add(item.ToString());
+				listBoxInventory.Items.Add(item);
 			}
 
 			foreach (Item item in playerData.Inventory.CorpseItems)
 			{
-				listBoxCorpseInventory.Items.Add(item.ToString());
+				listBoxCorpseInventory.Items.Add(item);
 			}
 
 			foreach (Item item in playerData.Inventory.MercItems)
 			{
-				listBoxMercInventory.Items.Add(item.ToString());
+				listBoxMercInventory.Items.Add(item);
 			}
 
 			foreach (Item item in playerData.Inventory.GolemItems)
 			{
-				listBoxGolemInventory.Items.Add(item.ToString());
+				listBoxGolemInventory.Items.Add(item);
 			}
 
 			if (selected > 0)
@@ -114,20 +117,10 @@ namespace esCharView
 
 		private void removeSelectedItems(ListBox listBox, List<Item> items)
 		{
-			if (listBox.SelectedIndices.Count > 0)
+			while (listBox.SelectedItems.Count > 0)
 			{
-				for (int i = listBox.SelectedIndices.Count - 1; i >= 0; i--)
-				{
-					if (listBox == listBoxItemEditorSockets)
-					{
-						itemToEdit.RemoveSocketedItem(listBox.SelectedIndices[i]);
-					}
-					else
-					{
-						items.RemoveAt(listBox.SelectedIndices[i]);
-					}
-					listBox.Items.RemoveAt(i);
-				}
+				items.Remove(listBox.SelectedItem as Item);
+				listBox.Items.Remove(listBox.SelectedItem);
 			}
 
 			UpdateInventoryList();
@@ -312,6 +305,5 @@ namespace esCharView
 		{
 			OpenItemProperties(itemToEdit);
 		}
-
 	}
 }

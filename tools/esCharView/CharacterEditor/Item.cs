@@ -578,6 +578,19 @@ namespace CharacterEditor
 			ReadData("EarLevel", 7);
 			ReadString("EarName", 7);
 
+			if (EarName.Trim().Length == 0)
+			{
+				throw new ApplicationException("Invalid Ear: Blank ear name");
+			}
+
+			foreach (char ch in EarName)
+			{
+				if (!Char.IsLetterOrDigit(ch) && ch != '-' && ch != '_')
+				{
+					throw new ApplicationException("Invalid Ear: Ear name contains invalid characters");
+				}
+			}
+
 			// Fill in last byte with 0, TODO: double check 4-8 legnth names
 			br.SkipBits(8 - (int)br.Position % 8);
 

@@ -12,10 +12,10 @@ namespace CharacterEditor
 		}
 
 		private byte[] unknownCorpseData = new byte[12];
-		private List<Item> playerItems;
-		private List<Item> corpseItems;
-		private List<Item> mercItems;
-		private List<Item> golemItems;
+		private List<Item> playerItems = new List<Item>();
+		private List<Item> corpseItems = new List<Item>();
+		private List<Item> mercItems = new List<Item>();
+		private List<Item> golemItems = new List<Item>();
 
 		/// <summary>
 		/// All player items
@@ -51,6 +51,15 @@ namespace CharacterEditor
 		{
 			get { return golemItems; }
 			set { golemItems = value; }
+		}
+
+		/// <summary>
+		/// Number of items failed to be parsed, items will not be included when saving data
+		/// </summary>
+		public int FailedItemCount
+		{ 
+			get;
+			protected set;
 		}
 
 		/// <summary>
@@ -97,14 +106,38 @@ namespace CharacterEditor
 			byte[] itemData = new byte[itemDataSize];
 			Array.Copy(inventoryBytes, begin, itemData, 0, itemDataSize);
 
-			Item item = new Item(itemData);
+			Item item;
+
+			try
+			{
+				item = new Item(itemData);
+			}
+			catch (Exception)
+			{
+				FailedItemCount++;
+				begin += itemDataSize;
+				return null;
+			}
 
 			begin += itemDataSize;
 			if (item.IsSocketed)
 			{
 				for (int i = 0; i < item.SocketsFilled; i++)
 				{
-					item.Sockets.Add(GetNextItem(inventoryBytes, ref begin));
+					Item nextItem = GetNextItem(inventoryBytes, ref begin);
+
+					// TODO: Untested! 
+					if (nextItem == null)
+					{
+						continue;
+					}
+
+					if (!nextItem.IsInSocket)
+					{
+
+					}
+
+					item.Sockets.Add(nextItem);
 				}
 			}
 
@@ -237,11 +270,6 @@ namespace CharacterEditor
 		/// <param name="inventoryBytes">Raw inventory data from save file</param>
 		private void ProcessInventoryBytes(byte[] inventoryBytes)
 		{
-			playerItems = new List<Item>();
-			corpseItems = new List<Item>();
-			mercItems = new List<Item>();
-			golemItems = new List<Item>();
-
 			byte[] playerInventoryBytes;
 			byte[] corpseInventoryBytes;
 			byte[] mercInventoryBytes;
@@ -261,6 +289,11 @@ namespace CharacterEditor
 			while (currentPosition < playerInventoryBytes.Length)
 			{
 				Item currentItem = GetNextItem(playerInventoryBytes, ref currentPosition);
+				if (currentItem == null)
+				{
+					continue;
+				}
+
 				playerItems.Add(currentItem);
 			}
 
@@ -269,6 +302,11 @@ namespace CharacterEditor
 			while (currentPosition < corpseInventoryBytes.Length)
 			{
 				Item currentItem = GetNextItem(corpseInventoryBytes, ref currentPosition);
+				if (currentItem == null)
+				{
+					continue;
+				}
+
 				corpseItems.Add(currentItem);
 			}
 
@@ -277,6 +315,11 @@ namespace CharacterEditor
 			while (currentPosition < mercInventoryBytes.Length)
 			{
 				Item currentItem = GetNextItem(mercInventoryBytes, ref currentPosition);
+				if (currentItem == null)
+				{
+					continue;
+				}
+
 				mercItems.Add(currentItem);
 			}
 
@@ -285,6 +328,11 @@ namespace CharacterEditor
 			while (currentPosition < golemInventoryBytes.Length)
 			{
 				Item currentItem = GetNextItem(golemInventoryBytes, ref currentPosition);
+				if (currentItem == null)
+				{
+					continue;
+				}
+
 				golemItems.Add(currentItem);
 			}
 		}
