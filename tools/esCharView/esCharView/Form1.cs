@@ -49,6 +49,19 @@ namespace esCharView
 
 			playerData.Read(filePath);
 
+			if (playerData.FailedCharacterDecoding)
+			{
+				MessageBox.Show("Failed character decoding");
+			}
+			if (playerData.FailedInventoryDecoding)
+			{
+				MessageBox.Show("Failed inventory decoding");
+			}
+			if (playerData.FailedSkillDecoding)
+			{
+				MessageBox.Show("Failed skill decoding");
+			}
+
 			if (playerData.Inventory.FailedItemCount > 0)
 			{
 				MessageBox.Show(string.Format("Failed to read {0} items. These items will not be included when saving character", playerData.Inventory.FailedItemCount));
@@ -61,17 +74,11 @@ namespace esCharView
 
 			UpdateInventoryList();
 
-			checkBoxDied.DataBindings.Clear();
-			checkBoxExpansion.DataBindings.Clear();
-			checkBoxHardcore.DataBindings.Clear();
 			textBoxUnknownFlags.DataBindings.Clear();
 			textBoxName.DataBindings.Clear();
 			characterBindingSource.Clear();
 			statBindingSource.Clear();
 
-			checkBoxDied.DataBindings.Add("Checked", playerData.Character, "Died");
-			checkBoxExpansion.DataBindings.Add("Checked", playerData.Character, "Expansion");
-			checkBoxHardcore.DataBindings.Add("Checked", playerData.Character, "Hardcore");
 			textBoxUnknownFlags.DataBindings.Add("Text", playerData.Character, "UnknownFlags");
 			textBoxName.DataBindings.Add("Text", playerData.Character, "Name");
 
@@ -165,16 +172,13 @@ namespace esCharView
 			}
 
 			playerData.Character.Name = textBoxName.Text;
-			playerData.Character.Died = checkBoxDied.Checked;
-			playerData.Character.Hardcore = checkBoxHardcore.Checked;
-			playerData.Character.Expansion = checkBoxExpansion.Checked;
 			playerData.Character.UnknownFlags = unknownFlags;
 
 			saveFileDialog1.FileName = playerData.Character.Name + ".d2s";
 
 			if (saveFileDialog1.ShowDialog() == DialogResult.OK)
 			{
-				playerData.Write(saveFileDialog1.FileName);
+				playerData.Write(saveFileDialog1.FileName, checkBoxSkipFailedData.Checked);
 			}
 		}
 

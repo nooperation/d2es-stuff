@@ -8,11 +8,38 @@ namespace CharacterEditor
 {
 	public class SaveReader
 	{
+		/// <summary>
+		/// Character's inventory
+		/// </summary>
 		private Inventory inventory;
+		/// <summary>
+		/// General character information
+		/// </summary>
 		private Character character;
+		/// <summary>
+		/// Character's stats
+		/// </summary>
 		private Stat stat;
+		/// <summary>
+		/// Character's skills
+		/// </summary>
 		private Skill skill;
+		/// <summary>
+		/// Path of save file
+		/// </summary>
 		private string filePath;
+		/// <summary>
+		/// Unmodified character data from save file
+		/// </summary>
+		private byte[] OriginalCharacterBytes;
+		/// <summary>
+		/// Unmodified skill data from save file
+		/// </summary>
+		private byte[] OriginalSkillBytes;
+		/// <summary>
+		/// Unmodified inventory data from save file
+		/// </summary>
+		private byte[] OriginalInventoryBytes;
 
 		/// <summary>
 		/// Character's inventory
@@ -55,6 +82,21 @@ namespace CharacterEditor
 		}
 
 		/// <summary>
+		/// Failed to decode character data
+		/// </summary>
+		public bool FailedCharacterDecoding { get; protected set; }
+
+		/// <summary>
+		/// Failed to decode skill data
+		/// </summary>
+		public bool FailedSkillDecoding { get; protected set; }
+
+		/// <summary>
+		/// Failed to decode inventory data
+		/// </summary>
+		public bool FailedInventoryDecoding { get; protected set; }
+
+		/// <summary>
 		/// Creates a new SaveReader
 		/// </summary>
 		public SaveReader()
@@ -86,12 +128,12 @@ namespace CharacterEditor
 		/// Saves player data to specified path
 		/// </summary>
 		/// <param name="filePath">Path to save character data as</param>
-		public void Write(string filePath)
+		public void Write(string filePath, bool skipFailedData)
 		{
-			byte[] characterBytes = Character.GetCharacterBytes();
+			byte[] characterBytes = (skipFailedData && FailedCharacterDecoding) ? OriginalCharacterBytes : Character.GetCharacterBytes();
 			byte[] statsBytes = Stat.GetStatBytes();
-			byte[] skillBytes = Skill.GetSkillBytes();
-			byte[] inventoryBytes = Inventory.GetInventoryBytes(Character.HasMercenary);
+			byte[] skillBytes = (skipFailedData && FailedSkillDecoding) ? OriginalSkillBytes : Skill.GetSkillBytes();
+			byte[] inventoryBytes = (skipFailedData && FailedInventoryDecoding) ? OriginalInventoryBytes : Inventory.GetInventoryBytes(Character.HasMercenary);
 			byte[] rawCharacterData = new byte[characterBytes.Length + statsBytes.Length + skillBytes.Length + inventoryBytes.Length];
 
 			Array.Copy(characterBytes, rawCharacterData, characterBytes.Length);
@@ -107,9 +149,9 @@ namespace CharacterEditor
 		/// <summary>
 		/// Saves the player data to original file
 		/// </summary>
-		public void Write()
+		public void Write(bool skipFailedData)
 		{
-			Write(filePath);
+			Write(filePath, skipFailedData);
 		}
 
 		/// <summary>
@@ -117,6 +159,10 @@ namespace CharacterEditor
 		/// </summary>
 		private void ReadHeaders()
 		{
+			OriginalCharacterBytes = null;
+			OriginalSkillBytes = null;
+			OriginalInventoryBytes = null;
+
 			byte[] rawCharacterData = File.ReadAllBytes(filePath);
 
 			byte[] statBytes = GetStatBytes(rawCharacterData);
@@ -128,6 +174,24 @@ namespace CharacterEditor
 			character = new Character(characterBytes);
 			stat = new Stat(statBytes);
 			skill = new Skill(skillBytes);
+
+			// Stats will always be different, we're not reading the fractional portion of hp/mana/stamina
+			FailedCharacterDecoding = !characterBytes.SequenceEqual(character.GetCharacterBytes());
+			FailedSkillDecoding = !skillBytes.SequenceEqual(skill.GetSkillBytes());
+			FailedInventoryDecoding = !inventoryBytes.SequenceEqual(inventory.GetInventoryBytes(character.HasMercenary));
+
+			if (FailedCharacterDecoding)
+			{
+				OriginalCharacterBytes = characterBytes;
+			}
+			if (FailedInventoryDecoding)
+			{
+				OriginalInventoryBytes = inventoryBytes;
+			}
+			if (FailedSkillDecoding)
+			{
+				OriginalSkillBytes = skillBytes;
+			}
 		}
 
 		/// <summary>
@@ -274,14 +338,14 @@ namespace CharacterEditor
 
 			if (rawCharacterBytes[itemListBegin - 37] == 'i' && rawCharacterBytes[itemListBegin - 36] == 'f')
 			{
-				return itemListBegin - 35;
+				return itemListBegin - 37;
 			}
-			
+
 			for (int i = FindItemListBegin(rawCharacterBytes); i > StatListBegin; i--)
 			{
 				if (rawCharacterBytes[i] == 'i' && rawCharacterBytes[i + 1] == 'f')
 				{
-					return i + 2;
+					return i;
 				}
 			}
 

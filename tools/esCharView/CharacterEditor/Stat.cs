@@ -314,7 +314,7 @@ namespace CharacterEditor
 			br.SkipBits(8);
 			br.SkipBits(8);
 
-			while (br.Position < br.BitCount - 16)
+			while (br.Position < br.BitCount)
 			{
 				// ID of stat (See ItemStatCost.txt)
 				StatTypes statIndex = (StatTypes)br.Read(9);
@@ -323,17 +323,17 @@ namespace CharacterEditor
 				// Value needs to be shifted by this amount
 				int valShift = 0;
 
-				if(!statValueBitCounts.ContainsKey(statIndex))
+				if (!statValueBitCounts.ContainsKey(statIndex))
 				{
 					br.Position -= 9;
-					remainingBytes = new byte[(((br.BitCount-16) - br.Position) / 8)];
+					remainingBytes = new byte[((br.BitCount - br.Position) / 8)];
 
 					for (int i = 0; i < remainingBytes.Length; i++)
 					{
 						remainingBytes[i] = br.ReadByte();
 					}
 
-					remainingBitsCount = (int)((br.BitCount-16) - br.Position);
+					remainingBitsCount = (int)(br.BitCount - br.Position);
 					if (remainingBitsCount > 0)
 					{
 						remainingBits = (byte)br.Read(remainingBitsCount);
@@ -389,17 +389,15 @@ namespace CharacterEditor
 			}
 
 			// These last 2 bytes seem to be some sort of terminator?
-			bits.Write(Utils.ReverseByteArrayBits(remainingBytes));
+			if (remainingBytes != null)
+			{
+				bits.Write(Utils.ReverseByteArrayBits(remainingBytes));
+			}
 
 			if (remainingBitsCount > 0)
 			{
 				bits.Write(Utils.ReverseBits(remainingBits, remainingBitsCount), 0, remainingBitsCount);
 			}
-
-			// This is actually the skill header, but it's easier to just handle the header here
-			//  and keep the skill data as raw bytes containing skill levels, no additional processing needed
-			bits.Write(Utils.ReverseBits('i', 8), 0, 8);
-			bits.Write(Utils.ReverseBits('f', 8), 0, 8);
 
 			return Utils.ReverseByteArrayBits(bits.ToByteArray());
 		}

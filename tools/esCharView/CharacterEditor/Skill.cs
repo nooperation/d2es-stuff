@@ -29,6 +29,11 @@ namespace CharacterEditor
 			}
 			set
 			{
+				// "if" skill header should not be set, will remove this when skill editing is 
+				//  updated
+				if (index <= 1)
+					return;
+
 				skillBytes[index] = value;
 			}
 		}

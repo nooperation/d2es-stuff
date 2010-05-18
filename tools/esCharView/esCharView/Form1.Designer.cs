@@ -35,9 +35,6 @@
 			this.buttonRemoveItem = new System.Windows.Forms.Button();
 			this.buttonSave = new System.Windows.Forms.Button();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-			this.checkBoxExpansion = new System.Windows.Forms.CheckBox();
-			this.checkBoxHardcore = new System.Windows.Forms.CheckBox();
-			this.checkBoxDied = new System.Windows.Forms.CheckBox();
 			this.textBoxName = new System.Windows.Forms.TextBox();
 			this.textBoxUnknownFlags = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
@@ -90,10 +87,6 @@
 			this.tabPageItemEditor = new System.Windows.Forms.TabPage();
 			this.buttonItemViewerRefresh = new System.Windows.Forms.Button();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
-			this.buttonRemoveSocket = new System.Windows.Forms.Button();
-			this.listBoxItemEditorSockets = new System.Windows.Forms.ListBox();
-			this.textBoxItemEditor = new System.Windows.Forms.TextBox();
-			this.itemBindingSource = new System.Windows.Forms.BindingSource(this.components);
 			this.isEquippedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.isInSocketDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.isIdentifiedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -162,6 +155,11 @@
 			this.suffix0DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.suffix1DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.suffix2DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.itemBindingSource = new System.Windows.Forms.BindingSource(this.components);
+			this.buttonRemoveSocket = new System.Windows.Forms.Button();
+			this.listBoxItemEditorSockets = new System.Windows.Forms.ListBox();
+			this.textBoxItemEditor = new System.Windows.Forms.TextBox();
+			this.checkBoxSkipFailedData = new System.Windows.Forms.CheckBox();
 			this.tabControlInventory.SuspendLayout();
 			this.tabPageInventoryPlayer.SuspendLayout();
 			this.tabPageInventoryCorpse.SuspendLayout();
@@ -238,39 +236,6 @@
 			this.saveFileDialog1.DefaultExt = "d2s";
 			this.saveFileDialog1.Filter = "d2s files|*.d2s";
 			this.saveFileDialog1.InitialDirectory = ".";
-			// 
-			// checkBoxExpansion
-			// 
-			this.checkBoxExpansion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkBoxExpansion.AutoSize = true;
-			this.checkBoxExpansion.Location = new System.Drawing.Point(265, 15);
-			this.checkBoxExpansion.Name = "checkBoxExpansion";
-			this.checkBoxExpansion.Size = new System.Drawing.Size(75, 17);
-			this.checkBoxExpansion.TabIndex = 7;
-			this.checkBoxExpansion.Text = "Expansion";
-			this.checkBoxExpansion.UseVisualStyleBackColor = true;
-			// 
-			// checkBoxHardcore
-			// 
-			this.checkBoxHardcore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkBoxHardcore.AutoSize = true;
-			this.checkBoxHardcore.Location = new System.Drawing.Point(346, 15);
-			this.checkBoxHardcore.Name = "checkBoxHardcore";
-			this.checkBoxHardcore.Size = new System.Drawing.Size(70, 17);
-			this.checkBoxHardcore.TabIndex = 8;
-			this.checkBoxHardcore.Text = "Hardcore";
-			this.checkBoxHardcore.UseVisualStyleBackColor = true;
-			// 
-			// checkBoxDied
-			// 
-			this.checkBoxDied.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkBoxDied.AutoSize = true;
-			this.checkBoxDied.Location = new System.Drawing.Point(417, 15);
-			this.checkBoxDied.Name = "checkBoxDied";
-			this.checkBoxDied.Size = new System.Drawing.Size(48, 17);
-			this.checkBoxDied.TabIndex = 9;
-			this.checkBoxDied.Text = "Died";
-			this.checkBoxDied.UseVisualStyleBackColor = true;
 			// 
 			// textBoxName
 			// 
@@ -804,48 +769,6 @@
 			this.dataGridView1.Size = new System.Drawing.Size(618, 91);
 			this.dataGridView1.TabIndex = 5;
 			// 
-			// buttonRemoveSocket
-			// 
-			this.buttonRemoveSocket.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonRemoveSocket.Location = new System.Drawing.Point(518, 12);
-			this.buttonRemoveSocket.Name = "buttonRemoveSocket";
-			this.buttonRemoveSocket.Size = new System.Drawing.Size(98, 23);
-			this.buttonRemoveSocket.TabIndex = 3;
-			this.buttonRemoveSocket.Text = "Remove socket";
-			this.buttonRemoveSocket.UseVisualStyleBackColor = true;
-			this.buttonRemoveSocket.Click += new System.EventHandler(this.buttonRemoveSocket_Click);
-			// 
-			// listBoxItemEditorSockets
-			// 
-			this.listBoxItemEditorSockets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.listBoxItemEditorSockets.Font = new System.Drawing.Font("Lucida Console", 9.75F);
-			this.listBoxItemEditorSockets.FormattingEnabled = true;
-			this.listBoxItemEditorSockets.Location = new System.Drawing.Point(254, 42);
-			this.listBoxItemEditorSockets.Name = "listBoxItemEditorSockets";
-			this.listBoxItemEditorSockets.Size = new System.Drawing.Size(367, 134);
-			this.listBoxItemEditorSockets.TabIndex = 2;
-			this.listBoxItemEditorSockets.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
-			// 
-			// textBoxItemEditor
-			// 
-			this.textBoxItemEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxItemEditor.Font = new System.Drawing.Font("Lucida Console", 9.75F);
-			this.textBoxItemEditor.Location = new System.Drawing.Point(8, 6);
-			this.textBoxItemEditor.Multiline = true;
-			this.textBoxItemEditor.Name = "textBoxItemEditor";
-			this.textBoxItemEditor.ReadOnly = true;
-			this.textBoxItemEditor.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBoxItemEditor.Size = new System.Drawing.Size(237, 170);
-			this.textBoxItemEditor.TabIndex = 1;
-			this.textBoxItemEditor.WordWrap = false;
-			// 
-			// itemBindingSource
-			// 
-			this.itemBindingSource.DataSource = typeof(CharacterEditor.Item);
-			// 
 			// isEquippedDataGridViewCheckBoxColumn
 			// 
 			this.isEquippedDataGridViewCheckBoxColumn.DataPropertyName = "IsEquipped";
@@ -1151,6 +1074,7 @@
 			this.personalizedNameDataGridViewTextBoxColumn.DataPropertyName = "PersonalizedName";
 			this.personalizedNameDataGridViewTextBoxColumn.HeaderText = "PersonalizedName";
 			this.personalizedNameDataGridViewTextBoxColumn.Name = "personalizedNameDataGridViewTextBoxColumn";
+			this.personalizedNameDataGridViewTextBoxColumn.ReadOnly = true;
 			// 
 			// runewordIdDataGridViewTextBoxColumn
 			// 
@@ -1254,18 +1178,69 @@
 			this.suffix2DataGridViewTextBoxColumn.HeaderText = "Suffix2";
 			this.suffix2DataGridViewTextBoxColumn.Name = "suffix2DataGridViewTextBoxColumn";
 			// 
+			// itemBindingSource
+			// 
+			this.itemBindingSource.DataSource = typeof(CharacterEditor.Item);
+			// 
+			// buttonRemoveSocket
+			// 
+			this.buttonRemoveSocket.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonRemoveSocket.Location = new System.Drawing.Point(518, 12);
+			this.buttonRemoveSocket.Name = "buttonRemoveSocket";
+			this.buttonRemoveSocket.Size = new System.Drawing.Size(98, 23);
+			this.buttonRemoveSocket.TabIndex = 3;
+			this.buttonRemoveSocket.Text = "Remove socket";
+			this.buttonRemoveSocket.UseVisualStyleBackColor = true;
+			this.buttonRemoveSocket.Click += new System.EventHandler(this.buttonRemoveSocket_Click);
+			// 
+			// listBoxItemEditorSockets
+			// 
+			this.listBoxItemEditorSockets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.listBoxItemEditorSockets.Font = new System.Drawing.Font("Lucida Console", 9.75F);
+			this.listBoxItemEditorSockets.FormattingEnabled = true;
+			this.listBoxItemEditorSockets.Location = new System.Drawing.Point(254, 42);
+			this.listBoxItemEditorSockets.Name = "listBoxItemEditorSockets";
+			this.listBoxItemEditorSockets.Size = new System.Drawing.Size(367, 134);
+			this.listBoxItemEditorSockets.TabIndex = 2;
+			this.listBoxItemEditorSockets.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
+			// 
+			// textBoxItemEditor
+			// 
+			this.textBoxItemEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.textBoxItemEditor.Font = new System.Drawing.Font("Lucida Console", 9.75F);
+			this.textBoxItemEditor.Location = new System.Drawing.Point(8, 6);
+			this.textBoxItemEditor.Multiline = true;
+			this.textBoxItemEditor.Name = "textBoxItemEditor";
+			this.textBoxItemEditor.ReadOnly = true;
+			this.textBoxItemEditor.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+			this.textBoxItemEditor.Size = new System.Drawing.Size(237, 170);
+			this.textBoxItemEditor.TabIndex = 1;
+			this.textBoxItemEditor.WordWrap = false;
+			// 
+			// checkBoxSkipFailedData
+			// 
+			this.checkBoxSkipFailedData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.checkBoxSkipFailedData.AutoSize = true;
+			this.checkBoxSkipFailedData.Location = new System.Drawing.Point(255, 15);
+			this.checkBoxSkipFailedData.Name = "checkBoxSkipFailedData";
+			this.checkBoxSkipFailedData.Size = new System.Drawing.Size(99, 17);
+			this.checkBoxSkipFailedData.TabIndex = 16;
+			this.checkBoxSkipFailedData.Text = "Skip failed data";
+			this.checkBoxSkipFailedData.UseVisualStyleBackColor = true;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(632, 343);
+			this.Controls.Add(this.checkBoxSkipFailedData);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textBoxUnknownFlags);
 			this.Controls.Add(this.textBoxName);
-			this.Controls.Add(this.checkBoxDied);
-			this.Controls.Add(this.checkBoxHardcore);
-			this.Controls.Add(this.checkBoxExpansion);
 			this.Controls.Add(this.buttonSave);
 			this.Controls.Add(this.buttonLoadCharacter);
 			this.MinimumSize = new System.Drawing.Size(600, 250);
@@ -1304,9 +1279,6 @@
 		private System.Windows.Forms.Button buttonRemoveItem;
 		private System.Windows.Forms.Button buttonSave;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-		private System.Windows.Forms.CheckBox checkBoxExpansion;
-		private System.Windows.Forms.CheckBox checkBoxHardcore;
-		private System.Windows.Forms.CheckBox checkBoxDied;
 		private System.Windows.Forms.TextBox textBoxName;
 		private System.Windows.Forms.TextBox textBoxUnknownFlags;
 		private System.Windows.Forms.Label label2;
@@ -1431,6 +1403,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn suffix1DataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn suffix2DataGridViewTextBoxColumn;
 		private System.Windows.Forms.BindingSource itemBindingSource;
+		private System.Windows.Forms.CheckBox checkBoxSkipFailedData;
 
 	}
 }
