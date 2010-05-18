@@ -997,12 +997,6 @@ q4c Balrog Blade
 q4d Champion Sword 
 q4e Colossal Sword 
 q4f Colossus Blade 
-aq2 Magic Arrows
-cq2 Magic Bolts
-aq0 Magic Arrows (soc)
-cq0 Magic Bolts (soc)
-aqv Arrows
-cqv Bolts
 
 [stackable]
 jav Javelin

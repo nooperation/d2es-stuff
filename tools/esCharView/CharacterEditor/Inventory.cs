@@ -11,6 +11,14 @@ namespace CharacterEditor
 			ProcessInventoryBytes(inventoryBytes);
 		}
 
+		enum ItemContainer
+		{
+			Player,
+			Corpse,
+			Mercenary,
+			Golem
+		}
+
 		private byte[] unknownCorpseData = new byte[12];
 		private List<Item> playerItems = new List<Item>();
 		private List<Item> corpseItems = new List<Item>();
@@ -57,7 +65,7 @@ namespace CharacterEditor
 		/// Number of items failed to be parsed, items will not be included when saving data
 		/// </summary>
 		public int FailedItemCount
-		{ 
+		{
 			get;
 			protected set;
 		}
@@ -74,18 +82,6 @@ namespace CharacterEditor
 			{
 				// Header of next item record or end of inventory list reached
 				if (inventoryBytes[i] == 'J' && inventoryBytes[i + 1] == 'M')
-				{
-					return i - begin;
-				}
-
-				// End of corpse inventory reached
-				if (inventoryBytes[i] == 'j' && inventoryBytes[i + 1] == 'f')
-				{
-					return i - begin;
-				}
-
-				// End of merc inventory reached
-				if (inventoryBytes[i] == 'k' && inventoryBytes[i + 1] == 'f')
 				{
 					return i - begin;
 				}
@@ -114,30 +110,93 @@ namespace CharacterEditor
 			}
 			catch (Exception)
 			{
-				FailedItemCount++;
-				begin += itemDataSize;
-				return null;
+				// Using a new itemDataSize because if this fails we need to increase begin by the original
+				//  itemDataSize
+				int itemDataSizeNew = itemDataSize + GetNextItemSize(inventoryBytes, begin + itemDataSize);
+				
+				try
+				{
+					// Assume the JM found by GetNextItemSize was just part of the item's data.
+					//  Recalculate the length of the item ignoring the first JM it encounters
+					itemData = new byte[itemDataSizeNew];
+					Array.Copy(inventoryBytes, begin, itemData, 0, itemData.Length);
+					item = new Item(itemData);
+				}
+				catch (Exception)
+				{
+					// Not recoverable, handles by code below
+					item = null;
+				}
+
+				if (item == null)
+				{
+					// Item not recoverable, skip it
+					FailedItemCount++;
+					begin += itemDataSize;
+					return null;
+				}
+				else
+				{
+					// Set the new itemDataSize since the we fixed the problem
+					itemDataSize = itemDataSizeNew;
+				}
 			}
 
 			begin += itemDataSize;
 			if (item.IsSocketed)
 			{
+				uint failedSockets = 0;
+
 				for (int i = 0; i < item.SocketsFilled; i++)
 				{
 					Item nextItem = GetNextItem(inventoryBytes, ref begin);
 
-					// TODO: Untested! 
 					if (nextItem == null)
 					{
+						failedSockets++;
 						continue;
 					}
 
-					if (!nextItem.IsInSocket)
-					{
-
-					}
-
 					item.Sockets.Add(nextItem);
+				}
+
+				if (failedSockets > 0)
+				{
+					if (!item.IsRuneword)
+					{
+						// Items can be removed from non runewords, just decrease socketsfilled
+						item.SocketsFilled -= failedSockets;
+						return item;
+					}
+					else
+					{
+						// There is currently no way to make a runeword a non runeword, we have to
+						//   move all the good socketed items into a corpse and delete the runeword item
+						// TODO: Should move to a new function, called when IsRuneword is set to false
+						if (unknownCorpseData.Length == 0)
+						{
+							// I don't know what the 12 bytes are, but 0 seems to work
+							unknownCorpseData = new byte[12];
+						}
+
+						if (unknownCorpseData[2] == 0)
+						{
+							// This byte has to be flagged to make the corpse appear, might be corpse count
+							unknownCorpseData[2] = 1;
+						}
+
+						for (int i = 0; i < item.Sockets.Count; i++)
+						{
+							// Move each valid socketed item to the corpse 
+							item.Sockets[i].Location = Item.ItemLocation.Stored;
+							item.Sockets[i].IsNotInSocket = true;
+							item.Sockets[i].IsInSocket = false;
+							CorpseItems.Add(item.Sockets[i]);
+						}
+
+						// Delete the runeword item
+						return null;
+					}
 				}
 			}
 
@@ -182,14 +241,14 @@ namespace CharacterEditor
 				if (inventoryBytes[i] == 'J' && inventoryBytes[i + 1] == 'M' && inventoryBytes[i + 3] == 0x00)
 				{
 					// Corpse exists if JM\x01\x00 followed by 12 unknown bytes and JM (the first corpse item entry)
-					if(inventoryBytes[i + 2] == 0x01 && inventoryBytes[i+16] == 'J' && inventoryBytes[i+17] == 'M')
+					if (inventoryBytes[i + 2] == 0x01 && inventoryBytes[i + 16] == 'J' && inventoryBytes[i + 17] == 'M')
 					{
 						hasCorpseData = true;
 						playerInventoryLength = i - playerInventoryStart;
 						break;
 					}
 					// No corpse exists if JM\x00\x00 followed by jf (ending tag of corpse data)
-					else if (inventoryBytes[i + 2] == 0x00 && inventoryBytes[i + 4] == 'j' && inventoryBytes[i+5] == 'f')
+					else if (inventoryBytes[i + 2] == 0x00 && inventoryBytes[i + 4] == 'j' && inventoryBytes[i + 5] == 'f')
 					{
 						playerInventoryLength = i - playerInventoryStart;
 						break;
@@ -275,11 +334,11 @@ namespace CharacterEditor
 			byte[] mercInventoryBytes;
 			byte[] golemInventoryBytes;
 
-			SplitInventoryBytes(inventoryBytes, 
+			SplitInventoryBytes(inventoryBytes,
 				out playerInventoryBytes,
 				out unknownCorpseData,
 				out corpseInventoryBytes,
-				out mercInventoryBytes, 
+				out mercInventoryBytes,
 				out golemInventoryBytes);
 
 			int currentPosition;

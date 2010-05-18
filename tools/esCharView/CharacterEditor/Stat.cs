@@ -24,11 +24,11 @@ namespace CharacterEditor
 		/// <summary>
 		/// Number of bits each stat requires
 		/// </summary>
-		private Dictionary<StatTypes, int> statValueBitCounts = new Dictionary<StatTypes, int>();
+		private static Dictionary<StatTypes, int> statValueBitCounts = new Dictionary<StatTypes, int>();
 		/// <summary>
 		/// Specific stats that need to be shifted by the specified amount
 		/// </summary>
-		private Dictionary<StatTypes, int> statValueBitShifts = new Dictionary<StatTypes, int>();
+		private static Dictionary<StatTypes, int> statValueBitShifts = new Dictionary<StatTypes, int>();
 		/// <summary>
 		/// Remaining bits that need to be written (Each a full byte)
 		/// </summary>
@@ -42,7 +42,7 @@ namespace CharacterEditor
 		/// </summary>
 		private int remainingBitsCount;
 
-		public Stat(byte[] statsBytes)
+		static Stat()
 		{
 			//TODO: Read from file
 			statValueBitCounts.Add(StatTypes.Strength, 11);
@@ -70,7 +70,10 @@ namespace CharacterEditor
 			statValueBitShifts.Add(StatTypes.BaseMana, 8);
 			statValueBitShifts.Add(StatTypes.Stamina, 8);
 			statValueBitShifts.Add(StatTypes.BaseStamina, 8);
+		}
 
+		public Stat(byte[] statsBytes)
+		{
 			this.statsBytes = statsBytes;
 			ReadStats();
 		}

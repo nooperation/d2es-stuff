@@ -270,9 +270,16 @@ namespace CharacterEditor
 		/// <returns>Location of the end of character's stat list</returns>
 		private static int FindStatListEnd(byte[] rawCharacterBytes)
 		{
-			for (int i = StatListBegin; i < rawCharacterBytes.Length; i++)
+			int itemListBegin = FindItemListBegin(rawCharacterBytes);
+
+			if (rawCharacterBytes[itemListBegin - 37] == 'i' && rawCharacterBytes[itemListBegin - 36] == 'f')
 			{
-				if (rawCharacterBytes[i] == 0x69 && rawCharacterBytes[i + 1] == 0x66)
+				return itemListBegin - 35;
+			}
+			
+			for (int i = FindItemListBegin(rawCharacterBytes); i > StatListBegin; i--)
+			{
+				if (rawCharacterBytes[i] == 'i' && rawCharacterBytes[i + 1] == 'f')
 				{
 					return i + 2;
 				}

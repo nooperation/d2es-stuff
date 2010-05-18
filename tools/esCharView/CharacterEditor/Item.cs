@@ -506,16 +506,15 @@ namespace CharacterEditor
 				return;
 			}
 
-			// Simple items don't have extended data
-			if (!IsSimpleItem)
+			if (IsSimpleItem)
 			{
-				ReadItemDataExtended();
+				return;
 			}
 
+			ReadItemDataExtended();
 
 			// TODO: Not sure what this bit is, I can't find any items with it set
 			// Extend.txt says it's some sort of random flag followed by 40 bits
-
 			ReadData("RandomFlag", 1);
 			if (RandomFlag)
 			{
@@ -524,10 +523,7 @@ namespace CharacterEditor
 			}
 
 			// Type specific extended data
-			if (!IsSimpleItem)
-			{
-				ReadItemDataExtendedSpecific();
-			}
+			ReadItemDataExtendedSpecific();
 		}
 
 		/// <summary>
@@ -999,6 +995,11 @@ namespace CharacterEditor
 						}
 
 						value = Utils.ReverseBits(value, item.Value.BitCount);
+						bs.Write(value, 0, item.Value.BitCount);
+					}
+					else if (valueType == TypeCode.Int32)
+					{
+						uint value = Utils.ReverseBits((uint)((int)item.Value.Value), item.Value.BitCount);
 						bs.Write(value, 0, item.Value.BitCount);
 					}
 					else if (valueType == TypeCode.Boolean)
