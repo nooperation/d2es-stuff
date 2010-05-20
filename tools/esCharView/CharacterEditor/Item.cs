@@ -4,6 +4,8 @@ using System.Text;
 using System.Collections;
 using System.Linq;
 using BKSystem.IO;
+using FileHelpers;
+using System.IO;
 
 namespace CharacterEditor
 {
@@ -86,16 +88,55 @@ namespace CharacterEditor
 			}
 		}
 
+		public struct PropertyInfo
+		{
+			public int ID;
+			public int Value;
+			public int ParamValue;
+			public bool IsAdditionProperty;
+
+			public override string ToString()
+			{
+				return string.Format("[{0}] {1} -> {2} [{3}]", ID, GetPropertyName(ID), Value, ParamValue);
+			}
+		}
+
+		private List<PropertyInfo> properties = new List<PropertyInfo>();
+		private List<PropertyInfo> propertiesSet = new List<PropertyInfo>();
+		private List<PropertyInfo> propertiesRuneword = new List<PropertyInfo>();
+		private List<Item> sockets = new List<Item>();
 		private static Dictionary<string, int> dataIndicies = new Dictionary<string, int>();
 		private Dictionary<string, ItemData> dataEntries = new Dictionary<string, ItemData>();
-		//private int dataEntryIndex = 0;
 		private BitReader br;
 		private byte[] remainingBytes;
 
-		private List<Item> sockets = new List<Item>();
+		/// <summary>
+		/// List of items stored in item's sockets
+		/// </summary>
 		public List<Item> Sockets
 		{
 			get { return sockets; }
+		}
+		/// <summary>
+		/// Item properties
+		/// </summary>
+		public List<PropertyInfo> Properties
+		{
+			get { return properties; }
+		}
+		/// <summary>
+		/// Set bonuses for wearing multiple parts
+		/// </summary>
+		public List<PropertyInfo> PropertiesSet
+		{
+			get { return propertiesSet; }
+		}
+		/// <summary>
+		/// Runeword properties
+		/// </summary>
+		public List<PropertyInfo> PropertiesRuneword
+		{
+			get { return propertiesRuneword; }
 		}
 
 		#region SimpleProperties
@@ -383,7 +424,7 @@ namespace CharacterEditor
 		public string PersonalizedName
 		{
 			get { return (string)GetDataObject("PersonalizedName"); }
-			protected set { SetData("PersonalizedName", value.Length > 17? value.Substring(0, 17) : value); }
+			protected set { SetData("PersonalizedName", value.Length > 17 ? value.Substring(0, 17) : value); }
 		}
 		public uint RunewordId
 		{
@@ -470,9 +511,40 @@ namespace CharacterEditor
 		}
 		#endregion
 
+
+
 		static Item()
 		{
 			CreateDataIndicies();
+			ReadItemStatCost();
+		}
+
+		static Dictionary<string, ItemStatCost> itemStatCostsByName = new Dictionary<string, ItemStatCost>();
+		static Dictionary<int, ItemStatCost> itemStatCostsById = new Dictionary<int, ItemStatCost>();
+		static Dictionary<int, int> itemStatCostsBits = new Dictionary<int, int>();
+
+		private static void ReadItemStatCost()
+		{
+			DelimitedFileEngine itemStatCostCsv = new DelimitedFileEngine(typeof(ItemStatCost));
+			ItemStatCost[] statCosts = (ItemStatCost[])itemStatCostCsv.ReadFile("ItemStatCost.txt");
+
+			itemStatCostsByName = statCosts.ToDictionary(v => v.Stat, v => v);
+			itemStatCostsById = statCosts.ToDictionary(v => v.ID, v => v);
+
+			itemStatCostsBits = new Dictionary<int, int>();
+
+			foreach (var item in itemStatCostsByName)
+			{
+				itemStatCostsBits.Add(item.Value.ID, GetBitCount(item.Key));
+			}
+		}
+
+		private static int GetBitCount(string statName)
+		{
+			ItemStatCost stat = itemStatCostsByName[statName];
+			int bitCount = stat.SaveBits;
+
+			return bitCount;
 		}
 
 		public Item(byte[] itemData)
@@ -586,9 +658,6 @@ namespace CharacterEditor
 					throw new ApplicationException("Invalid Ear: Ear name contains invalid characters");
 				}
 			}
-
-			// Fill in last byte with 0, TODO: double check 4-8 legnth names
-			br.SkipBits(8 - (int)br.Position % 8);
 
 			return;
 		}
@@ -736,7 +805,101 @@ namespace CharacterEditor
 				ReadData("SocketCount", 4);
 			}
 
-			// TODO: Maybe read the rest of the item properties? Most likely won't be implemented.
+			if (Quality == ItemQuality.Set)
+			{
+				ReadData("NumberOfSetProperties", 5);
+			}
+
+			// TODO: Majority of saves will fail when reading properties. All of the tested
+			//   saves (2,369) will succeed until this point unless they have invalid items
+			//   that need to be rebuilt/deleted.
+
+			//ReadPropertyList(properties);
+
+			/*
+			if (Quality == ItemQuality.Set)
+			{
+				int numberOfSetProperties = (int)GetDataValue("NumberOfSetProperties");
+
+				while(propertiesSet.Count <= numberOfSetProperties)
+				{
+					ReadPropertyList(propertiesSet);
+				}
+			}
+			
+			if (IsRuneword)
+			{
+				ReadPropertyList(propertiesRuneword);
+			}*/
+		}
+
+		/// <summary>
+		/// Reads a list of properties to specified property list from the BitReader
+		/// </summary>
+		/// <param name="propertyList">List of properties to read properties into</param>
+		private void ReadPropertyList(List<PropertyInfo> propertyList)
+		{			
+			while (true)
+			{
+				int currentPropertyID = (int)br.Read(9);
+				if (currentPropertyID == 0x1ff)
+				{
+					propertyList.Add(new PropertyInfo() { ID = currentPropertyID });
+					break;
+				}
+
+				ReadPropertyData(propertyList, currentPropertyID);
+			}
+		}
+		
+		/// <summary>
+		/// Reads property data for a specified ID from BitReader
+		/// </summary>
+		/// <param name="propertyList">List of properties to add data to</param>
+		/// <param name="currentPropertyID">ID of property to read from BitReader</param>
+		/// <param name="isAdditional">Property to read has no header. Found in damage type properties</param>
+		private void ReadPropertyData(List<PropertyInfo> propertyList, int currentPropertyID, bool isAdditional = false)
+		{
+			ItemStatCost statCost = itemStatCostsById[currentPropertyID];
+			PropertyInfo currentPropertyInfo = new PropertyInfo() ;
+
+			currentPropertyInfo.IsAdditionProperty = isAdditional;
+			currentPropertyInfo.ID = currentPropertyID;
+			currentPropertyInfo.Value = (int)br.Read(statCost.SaveBits) - statCost.SaveAdd;
+
+			if (statCost.SaveParamBits > 0)
+			{
+				currentPropertyInfo.ParamValue = (int)br.Read(statCost.SaveParamBits);
+			}
+
+			propertyList.Add(currentPropertyInfo);
+
+			switch (statCost.Stat)
+			{
+				case "item_maxdamage_percent": // TODO: Untested
+					ReadPropertyData(propertyList, itemStatCostsByName["item_mindamage_percent"].ID, true);
+					break;
+				case "firemindam":
+					ReadPropertyData(propertyList, itemStatCostsByName["firemaxdam"].ID, true);
+					break;
+				case "lightmindam": // TODO: Untested
+					ReadPropertyData(propertyList, itemStatCostsByName["lightmaxdam"].ID, true);
+					break;
+				case "magicmindam": // TODO: Untested
+					ReadPropertyData(propertyList, itemStatCostsByName["magicmaxdam"].ID, true);
+					break;
+				case "coldmindam": // TODO: Untested
+					ReadPropertyData(propertyList, itemStatCostsByName["coldmaxdam"].ID, true);
+					ReadPropertyData(propertyList, itemStatCostsByName["coldlength"].ID, true);
+					break;
+				case "poisonmindam": // TODO: Untested
+					ReadPropertyData(propertyList, itemStatCostsByName["poisonmaxdam"].ID, true);
+					ReadPropertyData(propertyList,  itemStatCostsByName["poisonlength"].ID, true);
+					break;
+				default:
+					break;
+			}
+			
 		}
 
 		/// <summary>
@@ -970,7 +1133,6 @@ namespace CharacterEditor
 							bs.Write(Utils.ReverseBits(ch, 7), 0, 7);
 						}
 						bs.Write((byte)0, 0, 7);
-						bs.Write((byte)0, 0, 8 - (int)bs.Position % 8);
 					}
 					else
 					{
@@ -1017,6 +1179,22 @@ namespace CharacterEditor
 				}
 			}
 
+			foreach (var item in properties)
+			{
+				WriteItemProperty(bs, item);
+			}
+
+			foreach (var item in propertiesSet)
+			{
+				WriteItemProperty(bs, item);
+			}
+
+			// TODO: Untested! probably missing ending/starting 0x1ff
+			foreach (var item in propertiesRuneword)
+			{
+				WriteItemProperty(bs, item);
+			}
+
 			if (remainingBytes != null)
 			{
 				bs.Write(Utils.ReverseByteArrayBits(remainingBytes));
@@ -1030,6 +1208,36 @@ namespace CharacterEditor
 			}
 
 			return Utils.ReverseByteArrayBits(bs.ToByteArray());
+		}
+
+		/// <summary>
+		/// Writes an item property to the BitStream
+		/// </summary>
+		/// <param name="bs">Bitstream to write property to</param>
+		/// <param name="property">Property to write</param>
+		private void WriteItemProperty(BitStream bs, PropertyInfo property)
+		{
+			if (property.ID == 0x1ff)
+			{
+				bs.Write(Utils.ReverseBits((uint)property.ID, 9), 0, 9);
+				return;
+			}
+
+			ItemStatCost statCost = itemStatCostsById[property.ID];
+
+			int fixedValue = property.Value + statCost.SaveAdd;
+
+			if (!property.IsAdditionProperty)
+			{
+				bs.Write(Utils.ReverseBits((uint)property.ID, 9), 0, 9);
+			}
+
+			bs.Write(Utils.ReverseBits((uint)fixedValue, statCost.SaveBits), 0, statCost.SaveBits);
+
+			if (statCost.SaveParamBits > 0)
+			{
+				bs.Write(Utils.ReverseBits((uint)property.ParamValue, statCost.SaveParamBits), 0, statCost.SaveParamBits);
+			}
 		}
 
 		/// <summary>
@@ -1130,8 +1338,20 @@ namespace CharacterEditor
 			dataIndicies.Add("Quantity", index++);
 			dataIndicies.Add("SocketCount", index++);
 
+			dataIndicies.Add("UnknownCharmData", index++);
+
+			dataIndicies.Add("NumberOfSetProperties", index++);
+
+			// Properties are managed in lists
+
 			// Very last data
-			dataIndicies.Add("LAST", index++);
+			dataIndicies.Add("LAST", int.MaxValue);
+		}
+
+		// TEMP
+		public static string GetPropertyName(int id)
+		{
+			return itemStatCostsById[id].Stat;
 		}
 
 		public override string ToString()

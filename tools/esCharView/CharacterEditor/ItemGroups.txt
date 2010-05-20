@@ -387,6 +387,16 @@ qne Succubae Skull
 qnf Bloodlord Skull
 qpc Sacred Rondache
 qpe Zakarum Shield
+gb8 Belt token
+gb7 Boots token
+gb6 Gloves token
+gb5 Shield token
+gb4 Body Armor token
+gb3 Helm token
+gd6 Paladin Shield token
+gd5 Necro Head token
+gd4 Wolf Helm token
+gd3 Barb Helm token
 
 [weapons]
 hax Hand Axe 
@@ -964,7 +974,6 @@ q71 Battle Dart
 q72 Francisca 
 gb1 Token Sw1 
 gb2 Token Bow 
-gb9 Token Aqv 
 njt Ninja To 
 9nj Wakizashi 
 kkl Brass Knuckle 
@@ -997,6 +1006,24 @@ q4c Balrog Blade
 q4d Champion Sword 
 q4e Colossal Sword 
 q4f Colossus Blade 
+gb2 Bow token
+gb1 Sword 1h token
+gb0 Sword 2h token
+gd9 Knuckles token
+gd7 Crossbow token
+gd2 Eagle Orb token
+gd1 Katar token
+gd0 Staff token
+gc9 Polearm token
+gc8 Spear token
+gc7 Javelin token
+gc6 Throwing Weapon token
+gc5 Dagger token
+gc4 Maul token
+gc3 Mace token
+gc2 Wand token
+gc1 Axe 2h token
+gc0 Axe 1h token
 
 [stackable]
 jav Javelin

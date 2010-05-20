@@ -104,16 +104,17 @@ namespace CharacterEditor
 
 			Item item;
 
+			// TODO: This is a horror - should be rewritten soon
 			try
 			{
 				item = new Item(itemData);
 			}
-			catch (Exception)
+			catch (IndexOutOfRangeException)
 			{
 				// Using a new itemDataSize because if this fails we need to increase begin by the original
 				//  itemDataSize
 				int itemDataSizeNew = itemDataSize + GetNextItemSize(inventoryBytes, begin + itemDataSize);
-				
+
 				try
 				{
 					// Assume the JM found by GetNextItemSize was just part of the item's data.
@@ -122,9 +123,9 @@ namespace CharacterEditor
 					Array.Copy(inventoryBytes, begin, itemData, 0, itemData.Length);
 					item = new Item(itemData);
 				}
-				catch (Exception)
+				catch (IndexOutOfRangeException)
 				{
-					// Not recoverable, handles by code below
+					// Not recoverable, handled by code below
 					item = null;
 				}
 
