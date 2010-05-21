@@ -2,64 +2,34 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Collections;
+using System.Linq;
+using FileHelpers;
 
 namespace CharacterEditor
 {
-	//TODO: Move all specific groups of items into a single file like Autostocker.ini has
 	class ItemDefs
 	{
 		private static Dictionary<string, string> itemDescriptions = new Dictionary<string, string>();
 		private static Dictionary<string, string> setDescriptions = new Dictionary<string, string>();
 		private static Dictionary<string, HashSet<string>> itemCodeSets = new Dictionary<string, HashSet<string>>();
+		private static Dictionary<string, ItemStatCost> itemStatCostsByName = new Dictionary<string, ItemStatCost>();
+		private static Dictionary<int, ItemStatCost> itemStatCostsById = new Dictionary<int, ItemStatCost>();
 
-		public static string GetItemDescription(string itemCode)
+		/// <summary>
+		/// List of ItemStatCost records based on Name
+		/// </summary>
+		public static Dictionary<string, ItemStatCost> ItemStatCostsByName
 		{
-			if (itemDescriptions.ContainsKey(itemCode))
-			{
-				return itemDescriptions[itemCode];
-			}
-
-			return "UNKNOWN";
+			get { return itemStatCostsByName; }
 		}
 
-		public static string GetUniqueSetName(string itemCode)
+		/// <summary>
+		/// List of ItemStatCost records based on ID
+		/// </summary>
+		public static Dictionary<int, ItemStatCost> ItemStatCostsById
 		{
-			if (!setDescriptions.ContainsKey(itemCode))
-			{
-				return "UNKNOWN SET";
-			}
-
-			return setDescriptions[itemCode];
-		}
-
-		public static bool IsArmor(string itemCode)
-		{
-			return itemCodeSets["armor"].Contains(itemCode);
-		}
-
-		public static bool IsWeapon(string itemCode)
-		{
-			return itemCodeSets["weapons"].Contains(itemCode);
-		}
-
-		public static bool IsStackable(string itemCode)
-		{
-			return itemCodeSets["stackable"].Contains(itemCode);
-		}
-
-		public static bool IsMonsterPart(string itemCode)
-		{
-			return itemCodeSets["monsterparts"].Contains(itemCode);
-		}
-
-		public static bool IsScrollOrTome(string itemCode)
-		{
-			return itemCodeSets["scrolltome"].Contains(itemCode);
-		}
-
-		public static bool IsCharm(string itemCode)
-		{
-			return itemCodeSets["charms"].Contains(itemCode);
+			get { return itemStatCostsById; }
 		}
 
 		static ItemDefs()
@@ -114,9 +84,133 @@ namespace CharacterEditor
 			{
 				string itemCode = str.Substring(0, 3);
 
-				if(!setDescriptions.ContainsKey(itemCode))
+				if (!setDescriptions.ContainsKey(itemCode))
 					setDescriptions.Add(itemCode, str.Substring(4));
 			}
+
+			ReadItemStatCost();
+		}
+
+		/// <summary>
+		/// Read ItemStatCost data
+		/// </summary>
+		private static void ReadItemStatCost()
+		{
+			DelimitedFileEngine itemStatCostCsv = new DelimitedFileEngine(typeof(ItemStatCost));
+			ItemStatCost[] statCosts = (ItemStatCost[])itemStatCostCsv.ReadFile("ItemStatCost.txt");
+
+			itemStatCostsByName = statCosts.ToDictionary(v => v.Stat, v => v);
+			itemStatCostsById = statCosts.ToDictionary(v => v.ID, v => v);
+		}
+
+		/// <summary>
+		/// Returns the name of the specified property ID
+		/// </summary>
+		/// <param name="id">ID of property</param>
+		/// <returns>Name of property with specified ID</returns>
+		public static string GetPropertyName(int id)
+		{
+			if (!itemStatCostsById.ContainsKey(id))
+			{
+				if (id == 0x1ff)
+				{
+					return "EOF";
+				}
+
+				return "UNKNOWN";
+			}
+
+			return itemStatCostsById[id].Stat;
+		}
+
+		/// <summary>
+		/// Returns the description of the specified item code
+		/// </summary>
+		/// <param name="itemCode">Item code</param>
+		/// <returns>Item description</returns>
+		public static string GetItemDescription(string itemCode)
+		{
+			if (itemDescriptions.ContainsKey(itemCode))
+			{
+				return itemDescriptions[itemCode];
+			}
+
+			return "UNKNOWN";
+		}
+
+		/// <summary>
+		/// Returns the name of the set item with specified item code
+		/// </summary>
+		/// <param name="itemCode">Item code</param>
+		/// <returns>Name of set item</returns>
+		public static string GetUniqueSetName(string itemCode)
+		{
+			if (!setDescriptions.ContainsKey(itemCode))
+			{
+				return "UNKNOWN SET";
+			}
+
+			return setDescriptions[itemCode];
+		}
+
+		/// <summary>
+		/// Item is armor
+		/// </summary>
+		/// <param name="itemCode">Item code</param>
+		/// <returns>True if item is armor</returns>
+		public static bool IsArmor(string itemCode)
+		{
+			return itemCodeSets["armor"].Contains(itemCode);
+		}
+
+		/// <summary>
+		/// Item is a weapon
+		/// </summary>
+		/// <param name="itemCode">Item code</param>
+		/// <returns>True if item is a weapon</returns>
+		public static bool IsWeapon(string itemCode)
+		{
+			return itemCodeSets["weapons"].Contains(itemCode);
+		}
+
+		/// <summary>
+		/// Item is stackable
+		/// </summary>
+		/// <param name="itemCode">Item code</param>
+		/// <returns>True if item is stackable</returns>
+		public static bool IsStackable(string itemCode)
+		{
+			return itemCodeSets["stackable"].Contains(itemCode);
+		}
+
+		/// <summary>
+		/// Item is a monster part
+		/// </summary>
+		/// <param name="itemCode">Item code</param>
+		/// <returns>True if item is a monster part</returns>
+		public static bool IsMonsterPart(string itemCode)
+		{
+			return itemCodeSets["monsterparts"].Contains(itemCode);
+		}
+
+		/// <summary>
+		/// Item is a scroll or tome
+		/// </summary>
+		/// <param name="itemCode">Item code</param>
+		/// <returns>True if item is a scroll or tome</returns>
+		public static bool IsScrollOrTome(string itemCode)
+		{
+			return itemCodeSets["scrolltome"].Contains(itemCode);
+		}
+
+		/// <summary>
+		/// Item is a charm
+		/// </summary>
+		/// <param name="itemCode">Item code</param>
+		/// <returns>True if item is a charm</returns>
+		public static bool IsCharm(string itemCode)
+		{
+			return itemCodeSets["charms"].Contains(itemCode);
 		}
 
 		/// <summary>

@@ -4,7 +4,6 @@ using System.Text;
 using System.Collections;
 using System.Linq;
 using BKSystem.IO;
-using FileHelpers;
 using System.IO;
 
 namespace CharacterEditor
@@ -77,10 +76,10 @@ namespace CharacterEditor
 				this.BitCount = bitCount;
 			}
 
-			public int Index;
-			public string Name;
-			public object Value;
-			public int BitCount;
+			public int Index { get; set; }
+			public string Name { get; set; }
+			public object Value { get; set; }
+			public int BitCount { get; set; }
 
 			public override string ToString()
 			{
@@ -96,7 +95,7 @@ namespace CharacterEditor
 			{
 				get
 				{
-					return GetPropertyName(ID);
+					return ItemDefs.GetPropertyName(ID);
 				}
 			}
 
@@ -521,26 +520,9 @@ namespace CharacterEditor
 		#endregion
 
 
-
 		static Item()
 		{
 			CreateDataIndicies();
-			ReadItemStatCost();
-		}
-
-		static private Dictionary<string, ItemStatCost> itemStatCostsByName = new Dictionary<string, ItemStatCost>();
-		static private Dictionary<int, ItemStatCost> itemStatCostsById = new Dictionary<int, ItemStatCost>();
-
-		/// <summary>
-		/// Read ItemStatCost data
-		/// </summary>
-		private static void ReadItemStatCost()
-		{
-			DelimitedFileEngine itemStatCostCsv = new DelimitedFileEngine(typeof(ItemStatCost));
-			ItemStatCost[] statCosts = (ItemStatCost[])itemStatCostCsv.ReadFile("ItemStatCost.txt");
-
-			itemStatCostsByName = statCosts.ToDictionary(v => v.Stat, v => v);
-			itemStatCostsById = statCosts.ToDictionary(v => v.ID, v => v);
 		}
 
 		public Item(byte[] itemData)
@@ -605,23 +587,23 @@ namespace CharacterEditor
 			ReadData("Unknown0", 2);
 			ReadData("IsInSocket", 1);
 			ReadData("IsIdentified", 1);
-			ReadData("Unknown1", 1); // Unknown 2
+			ReadData("Unknown1", 1);
 			ReadData("IsSwitchIn", 1);
 			ReadData("IsSwitchOut", 1);
 			ReadData("IsBroken", 1);
-			ReadData("Unknown2", 1); // Unknown 3 +
-			ReadData("IsPotion", 1); // TODO: Check this! 
+			ReadData("Unknown2", 1);
+			ReadData("IsPotion", 1);
 			ReadData("IsSocketed", 1);
-			ReadData("Unknown3", 1); // Unknown 4
+			ReadData("Unknown3", 1);
 			ReadData("IsStoreItem", 1);
-			ReadData("IsNotInSocket", 1);// TODO: Check this! 
-			ReadData("Unknown4", 1); // Unknown 5
+			ReadData("IsNotInSocket", 1);
+			ReadData("Unknown4", 1);
 			ReadData("IsEar", 1);
 			ReadData("IsStarterItem", 1);
-			ReadData("Unknown5", 3); // Unknown 6
+			ReadData("Unknown5", 3);
 			ReadData("IsSimpleItem", 1);
 			ReadData("IsEthereal", 1);
-			ReadData("Unknown6", 1); // Any (?)
+			ReadData("Unknown6", 1);
 			ReadData("IsPersonalized", 1);
 			ReadData("IsGamble", 1);
 			ReadData("IsRuneword", 1);
@@ -772,9 +754,8 @@ namespace CharacterEditor
 		{
 			if (ItemDefs.IsArmor(ItemCode))
 			{
-				// 1095 from ItemStatCost.txt. It just allows for a minimum of -1095 defense
 				ReadData("Defense", 12);
-				Defense -= 1095;
+				Defense -= (uint)ItemDefs.ItemStatCostsByName["armorclass"].SaveAdd;
 			}
 
 			if (ItemDefs.IsWeapon(ItemCode) || ItemDefs.IsArmor(ItemCode))
@@ -847,7 +828,7 @@ namespace CharacterEditor
 		/// </summary>
 		/// <param name="propertyList">List of properties to read properties into</param>
 		private void ReadPropertyList(List<PropertyInfo> propertyList)
-		{			
+		{
 			while (true)
 			{
 				int currentPropertyID = (int)br.Read(9);
@@ -860,7 +841,7 @@ namespace CharacterEditor
 				ReadPropertyData(propertyList, currentPropertyID);
 			}
 		}
-		
+
 		/// <summary>
 		/// Reads property data for a specified ID from BitReader
 		/// </summary>
@@ -869,8 +850,8 @@ namespace CharacterEditor
 		/// <param name="isAdditional">Property to read has no header. Found in damage type properties</param>
 		private void ReadPropertyData(List<PropertyInfo> propertyList, int currentPropertyID, bool isAdditional = false)
 		{
-			ItemStatCost statCost = itemStatCostsById[currentPropertyID];
-			PropertyInfo currentPropertyInfo = new PropertyInfo() ;
+			ItemStatCost statCost = ItemDefs.ItemStatCostsById[currentPropertyID];
+			PropertyInfo currentPropertyInfo = new PropertyInfo();
 
 			currentPropertyInfo.IsAdditionalProperty = isAdditional;
 			currentPropertyInfo.ID = currentPropertyID;
@@ -886,29 +867,29 @@ namespace CharacterEditor
 			switch (statCost.Stat)
 			{
 				case "item_maxdamage_percent": // TODO: Untested
-					ReadPropertyData(propertyList, itemStatCostsByName["item_mindamage_percent"].ID, true);
+					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["item_mindamage_percent"].ID, true);
 					break;
 				case "firemindam":
-					ReadPropertyData(propertyList, itemStatCostsByName["firemaxdam"].ID, true);
+					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["firemaxdam"].ID, true);
 					break;
 				case "lightmindam": // TODO: Untested
-					ReadPropertyData(propertyList, itemStatCostsByName["lightmaxdam"].ID, true);
+					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["lightmaxdam"].ID, true);
 					break;
 				case "magicmindam": // TODO: Untested
-					ReadPropertyData(propertyList, itemStatCostsByName["magicmaxdam"].ID, true);
+					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["magicmaxdam"].ID, true);
 					break;
 				case "coldmindam": // TODO: Untested
-					ReadPropertyData(propertyList, itemStatCostsByName["coldmaxdam"].ID, true);
-					ReadPropertyData(propertyList, itemStatCostsByName["coldlength"].ID, true);
+					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["coldmaxdam"].ID, true);
+					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["coldlength"].ID, true);
 					break;
 				case "poisonmindam": // TODO: Untested
-					ReadPropertyData(propertyList, itemStatCostsByName["poisonmaxdam"].ID, true);
-					ReadPropertyData(propertyList,  itemStatCostsByName["poisonlength"].ID, true);
+					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["poisonmaxdam"].ID, true);
+					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["poisonlength"].ID, true);
 					break;
 				default:
 					break;
 			}
-			
+
 		}
 
 		/// <summary>
@@ -1162,7 +1143,7 @@ namespace CharacterEditor
 
 						if (item.Key == "Defense")
 						{
-							value += 1095;
+							value += (uint)ItemDefs.ItemStatCostsByName["armorclass"].SaveAdd;
 						}
 
 						value = Utils.ReverseBits(value, item.Value.BitCount);
@@ -1234,7 +1215,7 @@ namespace CharacterEditor
 				return;
 			}
 
-			ItemStatCost statCost = itemStatCostsById[property.ID];
+			ItemStatCost statCost = ItemDefs.ItemStatCostsById[property.ID];
 
 			int fixedValue = property.Value + statCost.SaveAdd;
 
@@ -1359,21 +1340,6 @@ namespace CharacterEditor
 			dataIndicies.Add("LAST", int.MaxValue);
 		}
 
-		// TEMP
-		public static string GetPropertyName(int id)
-		{
-			if (!itemStatCostsById.ContainsKey(id))
-			{
-				if (id == 0x1ff)
-				{
-					return "EOF";
-				}
-
-				return "UNKNOWN";
-			}
-
-			return itemStatCostsById[id].Stat;
-		}
 
 		public override string ToString()
 		{

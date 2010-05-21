@@ -5,13 +5,12 @@ using System.Text;
 using System.Collections;
 using BKSystem.IO;
 
-//TODO: Read information directly from ItemStatCost.txt so it's more compatible
 namespace CharacterEditor
 {
 	/// <summary>
 	/// Controls access to character's stats
 	/// </summary>
-	public class Stat : IEnumerable<KeyValuePair<Stat.StatTypes, uint>>
+	public class Stat
 	{
 		/// <summary>
 		/// Raw stat data from save file
@@ -20,15 +19,7 @@ namespace CharacterEditor
 		/// <summary>
 		/// Decoded stat values
 		/// </summary>
-		private Dictionary<StatTypes, uint> statValues = new Dictionary<StatTypes, uint>();
-		/// <summary>
-		/// Number of bits each stat requires
-		/// </summary>
-		private static Dictionary<StatTypes, int> statValueBitCounts = new Dictionary<StatTypes, int>();
-		/// <summary>
-		/// Specific stats that need to be shifted by the specified amount
-		/// </summary>
-		private static Dictionary<StatTypes, int> statValueBitShifts = new Dictionary<StatTypes, int>();
+		private Dictionary<int, int> statValues = new Dictionary<int, int>();
 		/// <summary>
 		/// Remaining bits that need to be written (Each a full byte)
 		/// </summary>
@@ -42,262 +33,193 @@ namespace CharacterEditor
 		/// </summary>
 		private int remainingBitsCount;
 
-		static Stat()
-		{
-			//TODO: Read from file
-			statValueBitCounts.Add(StatTypes.Strength, 11);
-			statValueBitCounts.Add(StatTypes.Energy, 11);
-			statValueBitCounts.Add(StatTypes.Dexterity, 11);
-			statValueBitCounts.Add(StatTypes.Vitality, 11);
-			statValueBitCounts.Add(StatTypes.StatPoints, 10);
-			statValueBitCounts.Add(StatTypes.SkillPoints, 8);
-			statValueBitCounts.Add(StatTypes.Hitpoints, 21);
-			statValueBitCounts.Add(StatTypes.BaseHitpoints, 21);
-			statValueBitCounts.Add(StatTypes.Mana, 21);
-			statValueBitCounts.Add(StatTypes.BaseMana, 21);
-			statValueBitCounts.Add(StatTypes.Stamina, 21);
-			statValueBitCounts.Add(StatTypes.BaseStamina, 21);
-			statValueBitCounts.Add(StatTypes.Level, 7);
-			statValueBitCounts.Add(StatTypes.Experience, 32);
-			statValueBitCounts.Add(StatTypes.Gold, 25);
-			statValueBitCounts.Add(StatTypes.GoldBank, 25);
-			statValueBitCounts.Add(StatTypes.KillCount, 32);
-			statValueBitCounts.Add(StatTypes.DeathCount, 32);
-
-			statValueBitShifts.Add(StatTypes.Hitpoints, 8);
-			statValueBitShifts.Add(StatTypes.BaseHitpoints, 8);
-			statValueBitShifts.Add(StatTypes.Mana, 8);
-			statValueBitShifts.Add(StatTypes.BaseMana, 8);
-			statValueBitShifts.Add(StatTypes.Stamina, 8);
-			statValueBitShifts.Add(StatTypes.BaseStamina, 8);
-		}
-
 		public Stat(byte[] statsBytes)
 		{
 			this.statsBytes = statsBytes;
 			ReadStats();
 		}
 
-		/// <summary>
-		/// Character Stat Types
-		/// </summary>
-		public enum StatTypes
-		{
-			Strength,
-			Energy,
-			Dexterity,
-			Vitality,
-			StatPoints,
-			SkillPoints,
-			Hitpoints,
-			BaseHitpoints,
-			Mana,
-			BaseMana,
-			Stamina,
-			BaseStamina,
-			Level,
-			Experience,
-			Gold,
-			GoldBank,
-			KillCount = 192,
-			DeathCount = 249,
-		}
-
-		/// <summary>
-		/// Get or set specified stat
-		/// </summary>
-		/// <param name="index">Type of stat to access. Non case sensitive string of a StatTypes type.</param>
-		/// <returns>Value of specified stat</returns>
-		public uint this[string index]
-		{
-			get
-			{
-				return this[(StatTypes)Enum.Parse(typeof(StatTypes), index, true)];
-			}
-			set
-			{
-				this[(StatTypes)Enum.Parse(typeof(StatTypes), index, true)] = value;
-			}
-		}
-
-		/// <summary>
-		/// Get or set specified stat
-		/// </summary>
-		/// <param name="index">Type of stat to access</param>
-		/// <returns>Value of specified stat</returns>
-		public uint this[StatTypes index]
-		{
-			get
-			{
-				if (statValues.ContainsKey(index))
-				{
-					return statValues[index];
-				}
-				else
-				{
-					return 0;
-				}
-			}
-			set
-			{
-				if (!statValues.ContainsKey(index))
-				{
-					statValues.Add(index, value);
-				}
-				else
-				{
-					statValues[index] = value;
-				}
-			}
-		}
-
 		// TODO: Get rid of all of these individual properties?
 		/// <summary>
 		/// Base value of strength
 		/// </summary>
-		public uint Strength
+		public int Strength
 		{
-			get { return this[StatTypes.Strength]; }
-			set { this[StatTypes.Strength] = value; }
+			get { return GetStatValue("strength"); }
+			set { SetStatValue("strength", value); }
 		}
 		/// <summary>
 		/// Base value of energy
 		/// </summary>
-		public uint Energy
+		public int Energy
 		{
-			get { return this[StatTypes.Energy]; }
-			set { this[StatTypes.Energy] = value; }
+			get { return GetStatValue("energy"); }
+			set { SetStatValue("energy", value); }
 		}
 		/// <summary>
 		/// Base value of dexterity
 		/// </summary>
-		public uint Dexterity
+		public int Dexterity
 		{
-			get { return this[StatTypes.Dexterity]; }
-			set { this[StatTypes.Dexterity] = value; }
+			get { return GetStatValue("dexterity"); }
+			set { SetStatValue("dexterity", value); }
 		}
 		/// <summary>
 		/// Base value of vitality
 		/// </summary>
-		public uint Vitality
+		public int Vitality
 		{
-			get { return this[StatTypes.Vitality]; }
-			set { this[StatTypes.Vitality] = value; }
+			get { return GetStatValue("vitality"); }
+			set { SetStatValue("vitality", value); }
 		}
 		/// <summary>
 		/// Number of unallocated stat points
 		/// </summary>
-		public uint StatPoints
+		public int StatPoints
 		{
-			get { return this[StatTypes.StatPoints]; }
-			set { this[StatTypes.StatPoints] = value; }
+			get { return GetStatValue("statpts"); }
+			set { SetStatValue("statpts", value); }
 		}
 		/// <summary>
 		/// Number of unallocated skill points
 		/// </summary>
-		public uint SkillPoints
+		public int SkillPoints
 		{
-			get { return this[StatTypes.SkillPoints]; }
-			set { this[StatTypes.SkillPoints] = value; }
+			get { return GetStatValue("newskills"); }
+			set { SetStatValue("newskills", value); }
 		}
 		/// <summary>
 		/// Current value of hitpoints
 		/// </summary>
 		/// <remarks>Current value is usually higher than base value</remarks>
-		public uint Hitpoints
+		public int Hitpoints
 		{
-			get { return this[StatTypes.Hitpoints]; }
-			set { this[StatTypes.Hitpoints] = value; }
+			get { return GetStatValue("hitpoints"); }
+			set { SetStatValue("hitpoints", value); }
 		}
 		/// <summary>
 		/// Base value of hitpoints
 		/// </summary>
-		public uint BaseHitpoints
+		public int BaseHitpoints
 		{
-			get { return this[StatTypes.BaseHitpoints]; }
-			set { this[StatTypes.BaseHitpoints] = value; }
+			get { return GetStatValue("maxhp"); }
+			set { SetStatValue("maxhp", value); }
 		}
 		/// <summary>
 		/// Current value of mana
 		/// </summary>
 		/// <remarks>Current value is usually higher than base value</remarks>
-		public uint Mana
+		public int Mana
 		{
-			get { return this[StatTypes.Mana]; }
-			set { this[StatTypes.Mana] = value; }
+			get { return GetStatValue("mana"); }
+			set { SetStatValue("mana", value); }
 		}
 		/// <summary>
 		/// Base value of mana
 		/// </summary>
-		public uint BaseMana
+		public int BaseMana
 		{
-			get { return this[StatTypes.BaseMana]; }
-			set { this[StatTypes.BaseMana] = value; }
+			get { return GetStatValue("maxmana"); }
+			set { SetStatValue("maxmana", value); }
 		}
 		/// <summary>
 		/// Current value of stamina.
 		/// </summary>
 		/// <remarks>Current value is usually higher than base value</remarks>
-		public uint Stamina
+		public int Stamina
 		{
-			get { return this[StatTypes.Stamina]; }
-			set { this[StatTypes.Stamina] = value; }
+			get { return GetStatValue("stamina"); }
+			set { SetStatValue("stamina", value); }
 		}
 		/// <summary>
 		/// Base value of stamina
 		/// </summary>
-		public uint BaseStamina
+		public int BaseStamina
 		{
-			get { return this[StatTypes.BaseStamina]; }
-			set { this[StatTypes.BaseStamina] = value; }
+			get { return GetStatValue("maxstamina"); }
+			set { SetStatValue("maxstamina", value); }
 		}
 		/// <summary>
 		/// Character's level
 		/// </summary>
-		public uint Level
+		public int Level
 		{
-			get { return this[StatTypes.Level]; }
-			set { this[StatTypes.Level] = value; }
+			get { return GetStatValue("level"); }
+			set { SetStatValue("level", value); }
 		}
 		/// <summary>
 		/// Number of experience points character has
 		/// </summary>
 		public uint Experience
 		{
-			get { return this[StatTypes.Experience]; }
-			set { this[StatTypes.Experience] = value; }
+			get { return (uint)GetStatValue("experience"); }
+			set { SetStatValue("experience", (int)value); }
 		}
 		/// <summary>
 		/// Amount of gold character has in inventory
 		/// </summary>
 		public uint Gold
 		{
-			get { return this[StatTypes.Gold]; }
-			set { this[StatTypes.Gold] = value; }
+			get { return (uint)GetStatValue("gold"); }
+			set { SetStatValue("gold", (int)value); }
 		}
 		/// <summary>
 		/// Amount of gold character has in the bank
 		/// </summary>
 		public uint GoldBank
 		{
-			get { return this[StatTypes.GoldBank]; }
-			set { this[StatTypes.GoldBank] = value; }
+			get { return (uint)GetStatValue("goldbank"); }
+			set { SetStatValue("goldbank", (int)value); }
 		}
 		/// <summary>
 		/// Number of kills
 		/// </summary>
-		public uint KillCount
+		public int KillCount
 		{
-			get { return this[StatTypes.KillCount]; }
-			set { this[StatTypes.KillCount] = value; }
+			get { return GetStatValue("kill_counter"); }
+			set { SetStatValue("kill_counter", value); }
 		}
 		/// <summary>
 		/// Times character has died
 		/// </summary>
-		public uint DeathCount
+		public int DeathCount
 		{
-			get { return this[StatTypes.DeathCount]; }
-			set { this[StatTypes.DeathCount] = value; }
+			get { return GetStatValue("death_counter"); }
+			set { SetStatValue("death_counter", value); }
+		}
+
+		/// <summary>
+		/// Gets the specified stat's value
+		/// </summary>
+		/// <param name="name">Name of stat</param>
+		/// <returns>Value of stat or 0 if stat is not present</returns>
+		private int GetStatValue(string name)
+		{
+			int statId = ItemDefs.ItemStatCostsByName[name].ID;
+
+			if(!statValues.ContainsKey(statId))
+			{
+				return 0;
+			}
+
+			return statValues[statId];
+		}
+
+		/// <summary>
+		/// Sets the specified stat to a given value or do nothing if stat is not present
+		/// </summary>
+		/// <param name="name">Name of stat</param>
+		/// <param name="value">Value to set stat to</param>
+		private void SetStatValue(string name, int value)
+		{
+			int statId = ItemDefs.ItemStatCostsByName[name].ID;
+
+			if (!statValues.ContainsKey(statId))
+			{
+				return;
+			}
+
+			statValues[statId] = value;
 		}
 
 		/// <summary>
@@ -317,13 +239,13 @@ namespace CharacterEditor
 			while (br.Position < br.BitCount)
 			{
 				// ID of stat (See ItemStatCost.txt)
-				StatTypes statIndex = (StatTypes)br.Read(9);
+				int statIndex = (int)br.Read(9);
 				// Value contains this many bits (See CSvBits in ItemStatCost.txt)
 				int statValueBits = 0;
 				// Value needs to be shifted by this amount
 				int valShift = 0;
 
-				if (!statValueBitCounts.ContainsKey(statIndex))
+				if (statIndex == 0x1ff)
 				{
 					br.Position -= 9;
 					remainingBytes = new byte[((br.BitCount - br.Position) / 8)];
@@ -342,19 +264,15 @@ namespace CharacterEditor
 					break;
 				}
 
-				statValueBits = statValueBitCounts[statIndex];
+				statValueBits = ItemDefs.ItemStatCostsById[statIndex].CSvBits;
 				if (statValueBits == 0)
 				{
 					break;
 				}
 
-				// Get the shift value if it exists (Used on health/mana/stamina stats)
-				if (statValueBitShifts.ContainsKey(statIndex))
-				{
-					valShift = statValueBitShifts[statIndex];
-				}
+				valShift = ItemDefs.ItemStatCostsById[(int)statIndex].ValShift; 
 
-				uint statValue = br.Read(statValueBits);
+				int statValue = (int)br.Read(statValueBits);
 				if (!statValues.ContainsKey(statIndex))
 				{
 					statValues.Add(statIndex, (statValue >> valShift));
@@ -378,11 +296,11 @@ namespace CharacterEditor
 				bits.Write(Utils.ReverseBits((uint)stat.Key, 9), 0, 9);
 
 				int valShift = 0;
-				int bitCount = statValueBitCounts[stat.Key];
+				int bitCount = ItemDefs.ItemStatCostsById[stat.Key].CSvBits;
 
-				if (statValueBitShifts.ContainsKey(stat.Key))
+				if (ItemDefs.ItemStatCostsById.ContainsKey(stat.Key))
 				{
-					valShift = statValueBitShifts[stat.Key];
+					valShift = ItemDefs.ItemStatCostsById[stat.Key].ValShift;
 				}
 
 				bits.Write(Utils.ReverseBits((uint)((stat.Value << valShift)), bitCount), 0, bitCount);
@@ -401,23 +319,5 @@ namespace CharacterEditor
 
 			return Utils.ReverseByteArrayBits(bits.ToByteArray());
 		}
-
-		#region IEnumerable<KeyValuePair<StatTypes,uint>> Members
-
-		public IEnumerator<KeyValuePair<Stat.StatTypes, uint>> GetEnumerator()
-		{
-			return statValues.GetEnumerator();
-		}
-
-		#endregion
-
-		#region IEnumerable Members
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return statValues.GetEnumerator();
-		}
-
-		#endregion
 	}
 }
