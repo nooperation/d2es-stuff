@@ -88,16 +88,25 @@ namespace CharacterEditor
 			}
 		}
 
-		public struct PropertyInfo
+		public class PropertyInfo
 		{
-			public int ID;
-			public int Value;
-			public int ParamValue;
-			public bool IsAdditionProperty;
+			public int ID { get; set; }
+
+			public string PropertyName
+			{
+				get
+				{
+					return GetPropertyName(ID);
+				}
+			}
+
+			public int Value { get; set; }
+			public int ParamValue { get; set; }
+			public bool IsAdditionalProperty { get; set; }
 
 			public override string ToString()
 			{
-				return string.Format("[{0}] {1} -> {2} [{3}]", ID, GetPropertyName(ID), Value, ParamValue);
+				return string.Format("[{0}] {1} -> {2} [{3}]", ID, PropertyName, Value, ParamValue);
 			}
 		}
 
@@ -519,10 +528,12 @@ namespace CharacterEditor
 			ReadItemStatCost();
 		}
 
-		static Dictionary<string, ItemStatCost> itemStatCostsByName = new Dictionary<string, ItemStatCost>();
-		static Dictionary<int, ItemStatCost> itemStatCostsById = new Dictionary<int, ItemStatCost>();
-		static Dictionary<int, int> itemStatCostsBits = new Dictionary<int, int>();
+		static private Dictionary<string, ItemStatCost> itemStatCostsByName = new Dictionary<string, ItemStatCost>();
+		static private Dictionary<int, ItemStatCost> itemStatCostsById = new Dictionary<int, ItemStatCost>();
 
+		/// <summary>
+		/// Read ItemStatCost data
+		/// </summary>
 		private static void ReadItemStatCost()
 		{
 			DelimitedFileEngine itemStatCostCsv = new DelimitedFileEngine(typeof(ItemStatCost));
@@ -530,21 +541,6 @@ namespace CharacterEditor
 
 			itemStatCostsByName = statCosts.ToDictionary(v => v.Stat, v => v);
 			itemStatCostsById = statCosts.ToDictionary(v => v.ID, v => v);
-
-			itemStatCostsBits = new Dictionary<int, int>();
-
-			foreach (var item in itemStatCostsByName)
-			{
-				itemStatCostsBits.Add(item.Value.ID, GetBitCount(item.Key));
-			}
-		}
-
-		private static int GetBitCount(string statName)
-		{
-			ItemStatCost stat = itemStatCostsByName[statName];
-			int bitCount = stat.SaveBits;
-
-			return bitCount;
 		}
 
 		public Item(byte[] itemData)
@@ -814,19 +810,32 @@ namespace CharacterEditor
 			//   saves (2,369) will succeed until this point unless they have invalid items
 			//   that need to be rebuilt/deleted.
 
-			//ReadPropertyList(properties);
+			// TODO: Non-magical charms can't be parsed yet
+			if (ItemDefs.IsCharm(ItemCode))
+			{
+				switch (Quality)
+				{
+					case ItemQuality.Unknown:
+					case ItemQuality.Inferior:
+					case ItemQuality.Normal:
+					case ItemQuality.Superior:
+						return;
+				}
+			}
+
+			ReadPropertyList(properties);
 
 			/*
 			if (Quality == ItemQuality.Set)
 			{
 				int numberOfSetProperties = (int)GetDataValue("NumberOfSetProperties");
 
-				while(propertiesSet.Count <= numberOfSetProperties)
+				while(propertiesSet.Count < numberOfSetProperties)
 				{
 					ReadPropertyList(propertiesSet);
 				}
-			}
-			
+			}*/
+			/*
 			if (IsRuneword)
 			{
 				ReadPropertyList(propertiesRuneword);
@@ -863,7 +872,7 @@ namespace CharacterEditor
 			ItemStatCost statCost = itemStatCostsById[currentPropertyID];
 			PropertyInfo currentPropertyInfo = new PropertyInfo() ;
 
-			currentPropertyInfo.IsAdditionProperty = isAdditional;
+			currentPropertyInfo.IsAdditionalProperty = isAdditional;
 			currentPropertyInfo.ID = currentPropertyID;
 			currentPropertyInfo.Value = (int)br.Read(statCost.SaveBits) - statCost.SaveAdd;
 
@@ -1184,6 +1193,7 @@ namespace CharacterEditor
 				WriteItemProperty(bs, item);
 			}
 
+			/*
 			foreach (var item in propertiesSet)
 			{
 				WriteItemProperty(bs, item);
@@ -1194,6 +1204,7 @@ namespace CharacterEditor
 			{
 				WriteItemProperty(bs, item);
 			}
+			*/
 
 			if (remainingBytes != null)
 			{
@@ -1227,7 +1238,7 @@ namespace CharacterEditor
 
 			int fixedValue = property.Value + statCost.SaveAdd;
 
-			if (!property.IsAdditionProperty)
+			if (!property.IsAdditionalProperty)
 			{
 				bs.Write(Utils.ReverseBits((uint)property.ID, 9), 0, 9);
 			}
@@ -1351,6 +1362,16 @@ namespace CharacterEditor
 		// TEMP
 		public static string GetPropertyName(int id)
 		{
+			if (!itemStatCostsById.ContainsKey(id))
+			{
+				if (id == 0x1ff)
+				{
+					return "EOF";
+				}
+
+				return "UNKNOWN";
+			}
+
 			return itemStatCostsById[id].Stat;
 		}
 

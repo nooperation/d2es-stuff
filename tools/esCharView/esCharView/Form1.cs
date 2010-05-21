@@ -78,6 +78,8 @@ namespace esCharView
 			textBoxName.DataBindings.Clear();
 			characterBindingSource.Clear();
 			statBindingSource.Clear();
+			itemBindingSource.Clear();
+			dataGridViewItemProperties.DataSource = null;
 
 			textBoxUnknownFlags.DataBindings.Add("Text", playerData.Character, "UnknownFlags");
 			textBoxName.DataBindings.Add("Text", playerData.Character, "Name");
@@ -274,11 +276,10 @@ namespace esCharView
 				listBoxItemEditorSockets.Items.Add(socket);
 			}
 
-			textBoxItemEditor.Text = sb.ToString();
-			textBoxItemEditor.Select(0, 0);
-
 			itemBindingSource.Clear();
 			itemBindingSource.Add(itemToEdit);
+
+			dataGridViewItemProperties.DataSource = itemToEdit.Properties;
 
 			tabControl1.SelectTab(2);
 		}
@@ -286,7 +287,7 @@ namespace esCharView
 		private void ClearItemEditor()
 		{
 			itemToEdit = null;
-			textBoxItemEditor.Clear();
+			dataGridViewItemProperties.DataSource = null;
 			listBoxItemEditorSockets.Items.Clear();
 		}
 
@@ -308,6 +309,45 @@ namespace esCharView
 		private void buttonItemViewerRefresh_Click(object sender, EventArgs e)
 		{
 			OpenItemProperties(itemToEdit);
+		}
+
+
+		private void AddItemProperty()
+		{
+			itemToEdit.Properties.Insert(itemToEdit.Properties.Count - 1, new Item.PropertyInfo());
+		}
+		private void RemoveItemProperty(Item.PropertyInfo property)
+		{
+			itemToEdit.Properties.Remove(property);
+		}
+
+		private void buttonItemAddProperty_Click(object sender, EventArgs e)
+		{
+			if (itemToEdit == null)
+			{
+				return;
+			}
+
+			AddItemProperty();
+
+			dataGridViewItemProperties.DataSource = null;
+			dataGridViewItemProperties.DataSource = itemToEdit.Properties;
+		}
+
+		private void buttonItemDeleteProperty_Click(object sender, EventArgs e)
+		{
+			if (itemToEdit == null)
+			{
+				return;
+			}
+
+			foreach (DataGridViewRow item in dataGridViewItemProperties.SelectedRows)
+			{
+				RemoveItemProperty(item.DataBoundItem as Item.PropertyInfo);
+			}
+
+			dataGridViewItemProperties.DataSource = null;
+			dataGridViewItemProperties.DataSource = itemToEdit.Properties;
 		}
 	}
 }
