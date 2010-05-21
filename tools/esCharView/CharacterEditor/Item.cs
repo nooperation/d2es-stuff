@@ -382,7 +382,6 @@ namespace CharacterEditor
 			get { return GetDataBoolean("ClassFlag"); }
 			set { SetData("ClassFlag", value); }
 		}
-
 		public uint ClassInfo
 		{
 			get { return GetDataValue("ClassInfo"); }
@@ -413,7 +412,6 @@ namespace CharacterEditor
 			get { return GetDataValue("MonsterId"); }
 			set { SetData("MonsterId", value); }
 		}
-
 		public uint EarClass
 		{
 			get { return GetDataValue("EarClass"); }
@@ -427,7 +425,7 @@ namespace CharacterEditor
 		public string EarName
 		{
 			get { return (string)GetDataObject("EarName"); }
-			set { SetData("EarName", value.Length > 17 ? value.Substring(0, 17) : value); }
+			protected set { SetData("EarName", value.Length > 17 ? value.Substring(0, 17) : value); }
 		}
 		public string PersonalizedName
 		{
@@ -688,6 +686,10 @@ namespace CharacterEditor
 					break;
 
 				case ItemQuality.Normal:
+					if (ItemDefs.IsCharm(ItemCode))
+					{
+						ReadData("CharmData", 12);
+					}
 					if (ItemDefs.IsScrollOrTome(ItemCode))
 					{
 						ReadData("SpellId", 5);
@@ -787,40 +789,22 @@ namespace CharacterEditor
 				ReadData("NumberOfSetProperties", 5);
 			}
 
-			// TODO: Majority of saves will fail when reading properties. All of the tested
-			//   saves (2,369) will succeed until this point unless they have invalid items
-			//   that need to be rebuilt/deleted.
-
-			// TODO: Non-magical charms can't be parsed yet
-			if (ItemDefs.IsCharm(ItemCode))
-			{
-				switch (Quality)
-				{
-					case ItemQuality.Unknown:
-					case ItemQuality.Inferior:
-					case ItemQuality.Normal:
-					case ItemQuality.Superior:
-						return;
-				}
-			}
-
 			ReadPropertyList(properties);
 
-			/*
 			if (Quality == ItemQuality.Set)
 			{
 				int numberOfSetProperties = (int)GetDataValue("NumberOfSetProperties");
 
-				while(propertiesSet.Count < numberOfSetProperties)
+				while (br.BitCount - br.Position > 9)
 				{
 					ReadPropertyList(propertiesSet);
 				}
-			}*/
-			/*
+			}
+
 			if (IsRuneword)
 			{
 				ReadPropertyList(propertiesRuneword);
-			}*/
+			}
 		}
 
 		/// <summary>
@@ -866,23 +850,23 @@ namespace CharacterEditor
 
 			switch (statCost.Stat)
 			{
-				case "item_maxdamage_percent": // TODO: Untested
+				case "item_maxdamage_percent":
 					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["item_mindamage_percent"].ID, true);
 					break;
 				case "firemindam":
 					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["firemaxdam"].ID, true);
 					break;
-				case "lightmindam": // TODO: Untested
+				case "lightmindam":
 					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["lightmaxdam"].ID, true);
 					break;
-				case "magicmindam": // TODO: Untested
+				case "magicmindam":
 					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["magicmaxdam"].ID, true);
 					break;
-				case "coldmindam": // TODO: Untested
+				case "coldmindam":
 					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["coldmaxdam"].ID, true);
 					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["coldlength"].ID, true);
 					break;
-				case "poisonmindam": // TODO: Untested
+				case "poisonmindam":
 					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["poisonmaxdam"].ID, true);
 					ReadPropertyData(propertyList, ItemDefs.ItemStatCostsByName["poisonlength"].ID, true);
 					break;
@@ -917,16 +901,17 @@ namespace CharacterEditor
 		/// </summary>
 		private void ReadRemainingBits()
 		{
-			int remainingByteCount = (int)(br.BitCount - br.Position) / 8;
+			int paddingBitCount = GetPaddingBitCount();
+			int remainingByteCount = (int)((int)(br.BitCount - br.Position) - paddingBitCount) / 8;
 
 			if (remainingByteCount > 0)
 			{
 				remainingBytes = br.ReadBytes(remainingByteCount);
 			}
 
-			if (br.BitCount - br.Position > 0)
+			if ((br.BitCount - br.Position) - paddingBitCount > 0)
 			{
-				ReadData("LAST", (int)(br.BitCount - br.Position));
+				ReadData("LAST", (int)(br.BitCount - br.Position) - paddingBitCount);
 			}
 		}
 
@@ -980,6 +965,11 @@ namespace CharacterEditor
 			dataEntries.Add(data.Name, data);
 		}
 
+		/// <summary>
+		/// Reads a null terminated string from the BitStream
+		/// </summary>
+		/// <param name="name">Name of property to store data in</param>
+		/// <param name="characterCount">Number of characters to read</param>
 		private void ReadString(string name, int bitsPerChar)
 		{
 			ItemData data = new ItemData();
@@ -1089,6 +1079,32 @@ namespace CharacterEditor
 		}
 
 		/// <summary>
+		/// Gets the number of bits used for 0 padding to set the remaining bits in last byte to 8
+		/// </summary>
+		/// <returns>Number of bits used for padding</returns>
+		private int GetPaddingBitCount()
+		{
+			long brPos = br.Position;
+
+			if (!IsSimpleItem)
+			{
+				br.Position -= 9;
+				while (br.Position > 0)
+				{
+					if (br.Read(9) == 0x1ff)
+					{
+						br.Position = brPos;
+						return (int)(br.BitCount - br.Position);
+					}
+					br.Position -= 10;
+				}
+			}
+
+			br.Position = brPos;
+			return 0;
+		}
+
+		/// <summary>
 		/// Converts specified item into item format for save file
 		/// </summary>
 		/// <returns>Byte representation of item for save file</returns>
@@ -1174,29 +1190,43 @@ namespace CharacterEditor
 				WriteItemProperty(bs, item);
 			}
 
-			/*
 			foreach (var item in propertiesSet)
 			{
 				WriteItemProperty(bs, item);
 			}
 
-			// TODO: Untested! probably missing ending/starting 0x1ff
 			foreach (var item in propertiesRuneword)
 			{
 				WriteItemProperty(bs, item);
 			}
-			*/
 
-			if (remainingBytes != null)
+			// Some simple items do have remaining data such as the soulstone
+			if (IsSimpleItem)
 			{
-				bs.Write(Utils.ReverseByteArrayBits(remainingBytes));
+				//TODO: Enable renaming of ear and personlized names?
+				if (remainingBytes != null)
+				{
+					bs.Write(Utils.ReverseByteArrayBits(remainingBytes));
+				}
+
+				if (dataEntries.ContainsKey("LAST"))
+				{
+					var lastEntry = dataEntries["LAST"];
+					uint value = Utils.ReverseBits((uint)lastEntry.Value, lastEntry.BitCount);
+					bs.Write((uint)value, 0, lastEntry.BitCount);
+				}
 			}
-
-			if (dataEntries.ContainsKey("LAST"))
+			else
 			{
-				var lastEntry = dataEntries["LAST"];
-				uint value = Utils.ReverseBits((uint)lastEntry.Value, lastEntry.BitCount);
-				bs.Write((uint)value, 0, lastEntry.BitCount);
+				// Fill the last byte with 0 if it's not already full
+				if ((bs.Position % 8) != 0)
+				{
+					int bitsToAdd = 8 - (int)(bs.Position % 8);
+					if (bitsToAdd > 0)
+					{
+						bs.Write(0, 0, bitsToAdd);
+					}
+				}
 			}
 
 			return Utils.ReverseByteArrayBits(bs.ToByteArray());
@@ -1330,7 +1360,7 @@ namespace CharacterEditor
 			dataIndicies.Add("Quantity", index++);
 			dataIndicies.Add("SocketCount", index++);
 
-			dataIndicies.Add("UnknownCharmData", index++);
+
 
 			dataIndicies.Add("NumberOfSetProperties", index++);
 
@@ -1339,7 +1369,6 @@ namespace CharacterEditor
 			// Very last data
 			dataIndicies.Add("LAST", int.MaxValue);
 		}
-
 
 		public override string ToString()
 		{

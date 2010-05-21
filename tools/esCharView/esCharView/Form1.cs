@@ -80,6 +80,8 @@ namespace esCharView
 			statBindingSource.Clear();
 			itemBindingSource.Clear();
 			dataGridViewItemProperties.DataSource = null;
+			dataGridViewItemRunewordProperties.DataSource = null;
+			dataGridViewItemSetProperties.DataSource = null;
 
 			textBoxUnknownFlags.DataBindings.Add("Text", playerData.Character, "UnknownFlags");
 			textBoxName.DataBindings.Add("Text", playerData.Character, "Name");
@@ -279,7 +281,7 @@ namespace esCharView
 			itemBindingSource.Clear();
 			itemBindingSource.Add(itemToEdit);
 
-			dataGridViewItemProperties.DataSource = itemToEdit.Properties;
+			RefreshItemPropertiesGrid();
 
 			tabControl1.SelectTab(2);
 		}
@@ -288,6 +290,8 @@ namespace esCharView
 		{
 			itemToEdit = null;
 			dataGridViewItemProperties.DataSource = null;
+			dataGridViewItemRunewordProperties.DataSource = null;
+			dataGridViewItemSetProperties.DataSource = null;
 			listBoxItemEditorSockets.Items.Clear();
 		}
 
@@ -314,24 +318,60 @@ namespace esCharView
 
 		private void AddItemProperty()
 		{
-			itemToEdit.Properties.Insert(itemToEdit.Properties.Count - 1, new Item.PropertyInfo());
+			if (tabControlItemProperties.SelectedTab == tabPageItemProperties)
+			{
+				itemToEdit.Properties.Insert(itemToEdit.Properties.Count - 1, new Item.PropertyInfo());
+			}
+			else if (tabControlItemProperties.SelectedTab == tabPageItemSetProperties)
+			{
+				itemToEdit.PropertiesSet.Insert(itemToEdit.PropertiesSet.Count - 1, new Item.PropertyInfo());
+			}
+			else if (tabControlItemProperties.SelectedTab == tabPageItemRunewordProperties)
+			{
+				itemToEdit.PropertiesRuneword.Insert(itemToEdit.PropertiesRuneword.Count - 1, new Item.PropertyInfo());
+			}
 		}
-		private void RemoveItemProperty(Item.PropertyInfo property)
+
+		private void RemoveItemProperty()
 		{
-			itemToEdit.Properties.Remove(property);
+			if (tabControlItemProperties.SelectedTab == tabPageItemProperties)
+			{
+				foreach (DataGridViewRow item in dataGridViewItemProperties.SelectedRows)
+				{
+					itemToEdit.Properties.Remove(item.DataBoundItem as Item.PropertyInfo);
+				}
+			}
+			else if (tabControlItemProperties.SelectedTab == tabPageItemSetProperties)
+			{
+				foreach (DataGridViewRow item in dataGridViewItemSetProperties.SelectedRows)
+				{
+					itemToEdit.PropertiesSet.Remove(item.DataBoundItem as Item.PropertyInfo);
+				}
+			}
+			else if (tabControlItemProperties.SelectedTab == tabPageItemRunewordProperties)
+			{
+				foreach (DataGridViewRow item in dataGridViewItemRunewordProperties.SelectedRows)
+				{
+					itemToEdit.PropertiesRuneword.Remove(item.DataBoundItem as Item.PropertyInfo);
+				}
+			}			
 		}
 
 		private void buttonItemAddProperty_Click(object sender, EventArgs e)
 		{
-			if (itemToEdit == null)
-			{
-				return;
-			}
-
 			AddItemProperty();
+			RefreshItemPropertiesGrid();
+		}
 
+		private void RefreshItemPropertiesGrid()
+		{
 			dataGridViewItemProperties.DataSource = null;
+			dataGridViewItemRunewordProperties.DataSource = null;
+			dataGridViewItemSetProperties.DataSource = null;
+
 			dataGridViewItemProperties.DataSource = itemToEdit.Properties;
+			dataGridViewItemRunewordProperties.DataSource = itemToEdit.PropertiesRuneword;
+			dataGridViewItemSetProperties.DataSource = itemToEdit.PropertiesSet;
 		}
 
 		private void buttonItemDeleteProperty_Click(object sender, EventArgs e)
@@ -341,13 +381,8 @@ namespace esCharView
 				return;
 			}
 
-			foreach (DataGridViewRow item in dataGridViewItemProperties.SelectedRows)
-			{
-				RemoveItemProperty(item.DataBoundItem as Item.PropertyInfo);
-			}
-
-			dataGridViewItemProperties.DataSource = null;
-			dataGridViewItemProperties.DataSource = itemToEdit.Properties;
+			RemoveItemProperty();
+			RefreshItemPropertiesGrid();
 		}
 	}
 }

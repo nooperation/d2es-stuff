@@ -234,6 +234,8 @@ namespace CharacterEditor
 
 			bool hasCorpseData = false;
 
+			//TODO: Trust item count header and use it to detect player/corpse/merc/golem sections
+
 			// Player inventory data ends with "JM\x00\x00" or "JM\x01\x00"
 			playerInventoryStart = 0;
 			for (int i = playerInventoryStart + 5; i < inventoryBytes.Length; i++)
@@ -292,11 +294,11 @@ namespace CharacterEditor
 				}
 			}
 
-			// Merc inventory data is everything between "jf" and "kf"
+			// Merc inventory data is everything between "jf" and "kf", start searching for "kf" from end of file
 			mercInventoryStart = corpseInventoryStart + corpseInventoryLength + 2;
-			for (int i = mercInventoryStart; i < inventoryBytes.Length - 1; i++)
+			for (int i = inventoryBytes.Length-3; i > mercInventoryStart; i--)
 			{
-				if (inventoryBytes[i] == 'k' && inventoryBytes[i + 1] == 'f')
+				if (inventoryBytes[i] == 'k' && inventoryBytes[i + 1] == 'f' && (inventoryBytes[i+2] == 0 || inventoryBytes[i+2] == 1))
 				{
 					mercInventoryLength = i - mercInventoryStart;
 					break;

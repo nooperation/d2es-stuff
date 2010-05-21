@@ -50,15 +50,6 @@
 			this.tabPageGeneral = new System.Windows.Forms.TabPage();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.dataGridViewCharacter = new System.Windows.Forms.DataGridView();
-			this.dataGridViewStats = new System.Windows.Forms.DataGridView();
-			this.tabPageInventoryEditor = new System.Windows.Forms.TabPage();
-			this.tabPageItemEditor = new System.Windows.Forms.TabPage();
-			this.dataGridViewItemProperties = new System.Windows.Forms.DataGridView();
-			this.buttonItemViewerRefresh = new System.Windows.Forms.Button();
-			this.dataGridView1 = new System.Windows.Forms.DataGridView();
-			this.buttonRemoveSocket = new System.Windows.Forms.Button();
-			this.listBoxItemEditorSockets = new System.Windows.Forms.ListBox();
-			this.checkBoxSkipFailedData = new System.Windows.Forms.CheckBox();
 			this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.hardcoreDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.diedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -72,6 +63,7 @@
 			this.mercenaryTypeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.mercenaryExpDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.characterBindingSource = new System.Windows.Forms.BindingSource(this.components);
+			this.dataGridViewStats = new System.Windows.Forms.DataGridView();
 			this.strengthDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.energyDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dexterityDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -91,6 +83,13 @@
 			this.killCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.deathCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.statBindingSource = new System.Windows.Forms.BindingSource(this.components);
+			this.tabPageInventoryEditor = new System.Windows.Forms.TabPage();
+			this.tabPageItemEditor = new System.Windows.Forms.TabPage();
+			this.buttonItemDeleteProperty = new System.Windows.Forms.Button();
+			this.buttonItemAddProperty = new System.Windows.Forms.Button();
+			this.dataGridViewItemProperties = new System.Windows.Forms.DataGridView();
+			this.buttonItemViewerRefresh = new System.Windows.Forms.Button();
+			this.dataGridView1 = new System.Windows.Forms.DataGridView();
 			this.isEquippedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.isInSocketDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.isIdentifiedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -160,8 +159,15 @@
 			this.suffix1DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.suffix2DataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.itemBindingSource = new System.Windows.Forms.BindingSource(this.components);
-			this.buttonItemAddProperty = new System.Windows.Forms.Button();
-			this.buttonItemDeleteProperty = new System.Windows.Forms.Button();
+			this.buttonRemoveSocket = new System.Windows.Forms.Button();
+			this.listBoxItemEditorSockets = new System.Windows.Forms.ListBox();
+			this.checkBoxSkipFailedData = new System.Windows.Forms.CheckBox();
+			this.tabControlItemProperties = new System.Windows.Forms.TabControl();
+			this.tabPageItemProperties = new System.Windows.Forms.TabPage();
+			this.tabPageItemSetProperties = new System.Windows.Forms.TabPage();
+			this.tabPageItemRunewordProperties = new System.Windows.Forms.TabPage();
+			this.dataGridViewItemSetProperties = new System.Windows.Forms.DataGridView();
+			this.dataGridViewItemRunewordProperties = new System.Windows.Forms.DataGridView();
 			this.tabControlInventory.SuspendLayout();
 			this.tabPageInventoryPlayer.SuspendLayout();
 			this.tabPageInventoryCorpse.SuspendLayout();
@@ -174,14 +180,20 @@
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewCharacter)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.characterBindingSource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewStats)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.statBindingSource)).BeginInit();
 			this.tabPageInventoryEditor.SuspendLayout();
 			this.tabPageItemEditor.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemProperties)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.characterBindingSource)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.statBindingSource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.itemBindingSource)).BeginInit();
+			this.tabControlItemProperties.SuspendLayout();
+			this.tabPageItemProperties.SuspendLayout();
+			this.tabPageItemSetProperties.SuspendLayout();
+			this.tabPageItemRunewordProperties.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemSetProperties)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemRunewordProperties)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// buttonLoadCharacter
@@ -433,201 +445,6 @@
 			this.dataGridViewCharacter.Size = new System.Drawing.Size(618, 128);
 			this.dataGridViewCharacter.TabIndex = 0;
 			// 
-			// dataGridViewStats
-			// 
-			this.dataGridViewStats.AutoGenerateColumns = false;
-			this.dataGridViewStats.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridViewStats.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.strengthDataGridViewTextBoxColumn,
-            this.energyDataGridViewTextBoxColumn,
-            this.dexterityDataGridViewTextBoxColumn,
-            this.vitalityDataGridViewTextBoxColumn,
-            this.statPointsDataGridViewTextBoxColumn,
-            this.skillPointsDataGridViewTextBoxColumn,
-            this.hitpointsDataGridViewTextBoxColumn,
-            this.baseHitpointsDataGridViewTextBoxColumn,
-            this.manaDataGridViewTextBoxColumn,
-            this.baseManaDataGridViewTextBoxColumn,
-            this.staminaDataGridViewTextBoxColumn,
-            this.baseStaminaDataGridViewTextBoxColumn,
-            this.levelDataGridViewTextBoxColumn,
-            this.experienceDataGridViewTextBoxColumn,
-            this.goldDataGridViewTextBoxColumn,
-            this.goldBankDataGridViewTextBoxColumn,
-            this.killCountDataGridViewTextBoxColumn,
-            this.deathCountDataGridViewTextBoxColumn});
-			this.dataGridViewStats.DataSource = this.statBindingSource;
-			this.dataGridViewStats.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.dataGridViewStats.Location = new System.Drawing.Point(0, 0);
-			this.dataGridViewStats.Name = "dataGridViewStats";
-			this.dataGridViewStats.Size = new System.Drawing.Size(618, 138);
-			this.dataGridViewStats.TabIndex = 1;
-			// 
-			// tabPageInventoryEditor
-			// 
-			this.tabPageInventoryEditor.Controls.Add(this.tabControlInventory);
-			this.tabPageInventoryEditor.Controls.Add(this.buttonRemoveItem);
-			this.tabPageInventoryEditor.Location = new System.Drawing.Point(4, 22);
-			this.tabPageInventoryEditor.Name = "tabPageInventoryEditor";
-			this.tabPageInventoryEditor.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageInventoryEditor.Size = new System.Drawing.Size(624, 276);
-			this.tabPageInventoryEditor.TabIndex = 1;
-			this.tabPageInventoryEditor.Text = "Inventory";
-			this.tabPageInventoryEditor.UseVisualStyleBackColor = true;
-			// 
-			// tabPageItemEditor
-			// 
-			this.tabPageItemEditor.Controls.Add(this.buttonItemDeleteProperty);
-			this.tabPageItemEditor.Controls.Add(this.buttonItemAddProperty);
-			this.tabPageItemEditor.Controls.Add(this.dataGridViewItemProperties);
-			this.tabPageItemEditor.Controls.Add(this.buttonItemViewerRefresh);
-			this.tabPageItemEditor.Controls.Add(this.dataGridView1);
-			this.tabPageItemEditor.Controls.Add(this.buttonRemoveSocket);
-			this.tabPageItemEditor.Controls.Add(this.listBoxItemEditorSockets);
-			this.tabPageItemEditor.Location = new System.Drawing.Point(4, 22);
-			this.tabPageItemEditor.Name = "tabPageItemEditor";
-			this.tabPageItemEditor.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageItemEditor.Size = new System.Drawing.Size(624, 276);
-			this.tabPageItemEditor.TabIndex = 2;
-			this.tabPageItemEditor.Text = "ItemViewer";
-			this.tabPageItemEditor.UseVisualStyleBackColor = true;
-			// 
-			// dataGridViewItemProperties
-			// 
-			this.dataGridViewItemProperties.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)));
-			this.dataGridViewItemProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridViewItemProperties.Location = new System.Drawing.Point(3, 12);
-			this.dataGridViewItemProperties.Name = "dataGridViewItemProperties";
-			this.dataGridViewItemProperties.Size = new System.Drawing.Size(463, 181);
-			this.dataGridViewItemProperties.TabIndex = 7;
-			// 
-			// buttonItemViewerRefresh
-			// 
-			this.buttonItemViewerRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonItemViewerRefresh.Location = new System.Drawing.Point(541, 12);
-			this.buttonItemViewerRefresh.Name = "buttonItemViewerRefresh";
-			this.buttonItemViewerRefresh.Size = new System.Drawing.Size(75, 23);
-			this.buttonItemViewerRefresh.TabIndex = 6;
-			this.buttonItemViewerRefresh.Text = "Refresh";
-			this.buttonItemViewerRefresh.UseVisualStyleBackColor = true;
-			this.buttonItemViewerRefresh.Click += new System.EventHandler(this.buttonItemViewerRefresh_Click);
-			// 
-			// dataGridView1
-			// 
-			this.dataGridView1.AutoGenerateColumns = false;
-			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.isEquippedDataGridViewCheckBoxColumn,
-            this.isInSocketDataGridViewCheckBoxColumn,
-            this.isIdentifiedDataGridViewCheckBoxColumn,
-            this.isSwitchInDataGridViewCheckBoxColumn,
-            this.isSwitchOutDataGridViewCheckBoxColumn,
-            this.isBrokenDataGridViewCheckBoxColumn,
-            this.isSocketedDataGridViewCheckBoxColumn,
-            this.isPotionDataGridViewCheckBoxColumn,
-            this.isStoreItemDataGridViewCheckBoxColumn,
-            this.isNotInSocketDataGridViewCheckBoxColumn,
-            this.isEarDataGridViewCheckBoxColumn,
-            this.isStarterItemDataGridViewCheckBoxColumn,
-            this.isSimpleItemDataGridViewCheckBoxColumn,
-            this.isEtherealDataGridViewCheckBoxColumn,
-            this.isPersonalizedDataGridViewCheckBoxColumn,
-            this.isGambleDataGridViewCheckBoxColumn,
-            this.isRunewordDataGridViewCheckBoxColumn,
-            this.locationDataGridViewTextBoxColumn,
-            this.positionOnBodyDataGridViewTextBoxColumn,
-            this.positionXDataGridViewTextBoxColumn,
-            this.positionYDataGridViewTextBoxColumn,
-            this.storageIdDataGridViewTextBoxColumn,
-            this.itemCodeDataGridViewTextBoxColumn,
-            this.goldAmountSmallDataGridViewTextBoxColumn,
-            this.goldAmountLargeDataGridViewTextBoxColumn,
-            this.socketsFilledDataGridViewTextBoxColumn,
-            this.idDataGridViewTextBoxColumn,
-            this.levelDataGridViewTextBoxColumn1,
-            this.qualityDataGridViewTextBoxColumn,
-            this.hasGraphicDataGridViewCheckBoxColumn,
-            this.graphicDataGridViewTextBoxColumn,
-            this.uniqueSetIdDataGridViewTextBoxColumn,
-            this.defenseDataGridViewTextBoxColumn,
-            this.maxDurabilityDataGridViewTextBoxColumn,
-            this.durabilityDataGridViewTextBoxColumn,
-            this.isIndestructableDataGridViewCheckBoxColumn,
-            this.socketCountDataGridViewTextBoxColumn,
-            this.quantityDataGridViewTextBoxColumn,
-            this.randomFlagDataGridViewCheckBoxColumn,
-            this.unknownGoldFlagDataGridViewCheckBoxColumn,
-            this.classFlagDataGridViewCheckBoxColumn,
-            this.classInfoDataGridViewTextBoxColumn,
-            this.inferiorQualityTypeDataGridViewTextBoxColumn,
-            this.superiorQualityTypeDataGridViewTextBoxColumn,
-            this.charmDataDataGridViewTextBoxColumn,
-            this.spellIdDataGridViewTextBoxColumn,
-            this.monsterIdDataGridViewTextBoxColumn,
-            this.earClassDataGridViewTextBoxColumn,
-            this.earLevelDataGridViewTextBoxColumn,
-            this.earNameDataGridViewTextBoxColumn,
-            this.personalizedNameDataGridViewTextBoxColumn,
-            this.runewordIdDataGridViewTextBoxColumn,
-            this.prefixNameIdDataGridViewTextBoxColumn,
-            this.suffixNameIdDataGridViewTextBoxColumn,
-            this.prefixFlag0DataGridViewCheckBoxColumn,
-            this.prefixFlag1DataGridViewCheckBoxColumn,
-            this.prefixFlag2DataGridViewCheckBoxColumn,
-            this.suffixFlag0DataGridViewCheckBoxColumn,
-            this.suffixFlag1DataGridViewCheckBoxColumn,
-            this.suffixFlag2DataGridViewCheckBoxColumn,
-            this.magicPrefixDataGridViewTextBoxColumn,
-            this.magicSuffixDataGridViewTextBoxColumn,
-            this.prefix0DataGridViewTextBoxColumn,
-            this.prefix1DataGridViewTextBoxColumn,
-            this.prefix2DataGridViewTextBoxColumn,
-            this.suffix0DataGridViewTextBoxColumn,
-            this.suffix1DataGridViewTextBoxColumn,
-            this.suffix2DataGridViewTextBoxColumn});
-			this.dataGridView1.DataSource = this.itemBindingSource;
-			this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.dataGridView1.Location = new System.Drawing.Point(3, 199);
-			this.dataGridView1.Name = "dataGridView1";
-			this.dataGridView1.Size = new System.Drawing.Size(618, 74);
-			this.dataGridView1.TabIndex = 5;
-			// 
-			// buttonRemoveSocket
-			// 
-			this.buttonRemoveSocket.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonRemoveSocket.Location = new System.Drawing.Point(541, 41);
-			this.buttonRemoveSocket.Name = "buttonRemoveSocket";
-			this.buttonRemoveSocket.Size = new System.Drawing.Size(75, 23);
-			this.buttonRemoveSocket.TabIndex = 3;
-			this.buttonRemoveSocket.Text = "Del Socket";
-			this.buttonRemoveSocket.UseVisualStyleBackColor = true;
-			this.buttonRemoveSocket.Click += new System.EventHandler(this.buttonRemoveSocket_Click);
-			// 
-			// listBoxItemEditorSockets
-			// 
-			this.listBoxItemEditorSockets.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.listBoxItemEditorSockets.Font = new System.Drawing.Font("Lucida Console", 9.75F);
-			this.listBoxItemEditorSockets.FormattingEnabled = true;
-			this.listBoxItemEditorSockets.Location = new System.Drawing.Point(472, 72);
-			this.listBoxItemEditorSockets.Name = "listBoxItemEditorSockets";
-			this.listBoxItemEditorSockets.Size = new System.Drawing.Size(149, 121);
-			this.listBoxItemEditorSockets.TabIndex = 2;
-			this.listBoxItemEditorSockets.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
-			// 
-			// checkBoxSkipFailedData
-			// 
-			this.checkBoxSkipFailedData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkBoxSkipFailedData.AutoSize = true;
-			this.checkBoxSkipFailedData.Location = new System.Drawing.Point(255, 15);
-			this.checkBoxSkipFailedData.Name = "checkBoxSkipFailedData";
-			this.checkBoxSkipFailedData.Size = new System.Drawing.Size(99, 17);
-			this.checkBoxSkipFailedData.TabIndex = 16;
-			this.checkBoxSkipFailedData.Text = "Skip failed data";
-			this.checkBoxSkipFailedData.UseVisualStyleBackColor = true;
-			// 
 			// nameDataGridViewTextBoxColumn
 			// 
 			this.nameDataGridViewTextBoxColumn.DataPropertyName = "Name";
@@ -707,6 +524,36 @@
 			// characterBindingSource
 			// 
 			this.characterBindingSource.DataSource = typeof(CharacterEditor.Character);
+			// 
+			// dataGridViewStats
+			// 
+			this.dataGridViewStats.AutoGenerateColumns = false;
+			this.dataGridViewStats.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridViewStats.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.strengthDataGridViewTextBoxColumn,
+            this.energyDataGridViewTextBoxColumn,
+            this.dexterityDataGridViewTextBoxColumn,
+            this.vitalityDataGridViewTextBoxColumn,
+            this.statPointsDataGridViewTextBoxColumn,
+            this.skillPointsDataGridViewTextBoxColumn,
+            this.hitpointsDataGridViewTextBoxColumn,
+            this.baseHitpointsDataGridViewTextBoxColumn,
+            this.manaDataGridViewTextBoxColumn,
+            this.baseManaDataGridViewTextBoxColumn,
+            this.staminaDataGridViewTextBoxColumn,
+            this.baseStaminaDataGridViewTextBoxColumn,
+            this.levelDataGridViewTextBoxColumn,
+            this.experienceDataGridViewTextBoxColumn,
+            this.goldDataGridViewTextBoxColumn,
+            this.goldBankDataGridViewTextBoxColumn,
+            this.killCountDataGridViewTextBoxColumn,
+            this.deathCountDataGridViewTextBoxColumn});
+			this.dataGridViewStats.DataSource = this.statBindingSource;
+			this.dataGridViewStats.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dataGridViewStats.Location = new System.Drawing.Point(0, 0);
+			this.dataGridViewStats.Name = "dataGridViewStats";
+			this.dataGridViewStats.Size = new System.Drawing.Size(618, 138);
+			this.dataGridViewStats.TabIndex = 1;
 			// 
 			// strengthDataGridViewTextBoxColumn
 			// 
@@ -819,6 +666,157 @@
 			// statBindingSource
 			// 
 			this.statBindingSource.DataSource = typeof(CharacterEditor.Stat);
+			// 
+			// tabPageInventoryEditor
+			// 
+			this.tabPageInventoryEditor.Controls.Add(this.tabControlInventory);
+			this.tabPageInventoryEditor.Controls.Add(this.buttonRemoveItem);
+			this.tabPageInventoryEditor.Location = new System.Drawing.Point(4, 22);
+			this.tabPageInventoryEditor.Name = "tabPageInventoryEditor";
+			this.tabPageInventoryEditor.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageInventoryEditor.Size = new System.Drawing.Size(624, 276);
+			this.tabPageInventoryEditor.TabIndex = 1;
+			this.tabPageInventoryEditor.Text = "Inventory";
+			this.tabPageInventoryEditor.UseVisualStyleBackColor = true;
+			// 
+			// tabPageItemEditor
+			// 
+			this.tabPageItemEditor.Controls.Add(this.tabControlItemProperties);
+			this.tabPageItemEditor.Controls.Add(this.buttonItemDeleteProperty);
+			this.tabPageItemEditor.Controls.Add(this.buttonItemAddProperty);
+			this.tabPageItemEditor.Controls.Add(this.buttonItemViewerRefresh);
+			this.tabPageItemEditor.Controls.Add(this.dataGridView1);
+			this.tabPageItemEditor.Controls.Add(this.buttonRemoveSocket);
+			this.tabPageItemEditor.Controls.Add(this.listBoxItemEditorSockets);
+			this.tabPageItemEditor.Location = new System.Drawing.Point(4, 22);
+			this.tabPageItemEditor.Name = "tabPageItemEditor";
+			this.tabPageItemEditor.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageItemEditor.Size = new System.Drawing.Size(624, 276);
+			this.tabPageItemEditor.TabIndex = 2;
+			this.tabPageItemEditor.Text = "ItemViewer";
+			this.tabPageItemEditor.UseVisualStyleBackColor = true;
+			// 
+			// buttonItemDeleteProperty
+			// 
+			this.buttonItemDeleteProperty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonItemDeleteProperty.Location = new System.Drawing.Point(472, 41);
+			this.buttonItemDeleteProperty.Name = "buttonItemDeleteProperty";
+			this.buttonItemDeleteProperty.Size = new System.Drawing.Size(63, 23);
+			this.buttonItemDeleteProperty.TabIndex = 9;
+			this.buttonItemDeleteProperty.Text = "Del Prop";
+			this.buttonItemDeleteProperty.UseVisualStyleBackColor = true;
+			this.buttonItemDeleteProperty.Click += new System.EventHandler(this.buttonItemDeleteProperty_Click);
+			// 
+			// buttonItemAddProperty
+			// 
+			this.buttonItemAddProperty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonItemAddProperty.Location = new System.Drawing.Point(472, 12);
+			this.buttonItemAddProperty.Name = "buttonItemAddProperty";
+			this.buttonItemAddProperty.Size = new System.Drawing.Size(63, 23);
+			this.buttonItemAddProperty.TabIndex = 8;
+			this.buttonItemAddProperty.Text = "Add Prop";
+			this.buttonItemAddProperty.UseVisualStyleBackColor = true;
+			this.buttonItemAddProperty.Click += new System.EventHandler(this.buttonItemAddProperty_Click);
+			// 
+			// dataGridViewItemProperties
+			// 
+			this.dataGridViewItemProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridViewItemProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dataGridViewItemProperties.Location = new System.Drawing.Point(3, 3);
+			this.dataGridViewItemProperties.Name = "dataGridViewItemProperties";
+			this.dataGridViewItemProperties.Size = new System.Drawing.Size(449, 149);
+			this.dataGridViewItemProperties.TabIndex = 7;
+			// 
+			// buttonItemViewerRefresh
+			// 
+			this.buttonItemViewerRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonItemViewerRefresh.Location = new System.Drawing.Point(541, 12);
+			this.buttonItemViewerRefresh.Name = "buttonItemViewerRefresh";
+			this.buttonItemViewerRefresh.Size = new System.Drawing.Size(75, 23);
+			this.buttonItemViewerRefresh.TabIndex = 6;
+			this.buttonItemViewerRefresh.Text = "Refresh";
+			this.buttonItemViewerRefresh.UseVisualStyleBackColor = true;
+			this.buttonItemViewerRefresh.Click += new System.EventHandler(this.buttonItemViewerRefresh_Click);
+			// 
+			// dataGridView1
+			// 
+			this.dataGridView1.AutoGenerateColumns = false;
+			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.isEquippedDataGridViewCheckBoxColumn,
+            this.isInSocketDataGridViewCheckBoxColumn,
+            this.isIdentifiedDataGridViewCheckBoxColumn,
+            this.isSwitchInDataGridViewCheckBoxColumn,
+            this.isSwitchOutDataGridViewCheckBoxColumn,
+            this.isBrokenDataGridViewCheckBoxColumn,
+            this.isSocketedDataGridViewCheckBoxColumn,
+            this.isPotionDataGridViewCheckBoxColumn,
+            this.isStoreItemDataGridViewCheckBoxColumn,
+            this.isNotInSocketDataGridViewCheckBoxColumn,
+            this.isEarDataGridViewCheckBoxColumn,
+            this.isStarterItemDataGridViewCheckBoxColumn,
+            this.isSimpleItemDataGridViewCheckBoxColumn,
+            this.isEtherealDataGridViewCheckBoxColumn,
+            this.isPersonalizedDataGridViewCheckBoxColumn,
+            this.isGambleDataGridViewCheckBoxColumn,
+            this.isRunewordDataGridViewCheckBoxColumn,
+            this.locationDataGridViewTextBoxColumn,
+            this.positionOnBodyDataGridViewTextBoxColumn,
+            this.positionXDataGridViewTextBoxColumn,
+            this.positionYDataGridViewTextBoxColumn,
+            this.storageIdDataGridViewTextBoxColumn,
+            this.itemCodeDataGridViewTextBoxColumn,
+            this.goldAmountSmallDataGridViewTextBoxColumn,
+            this.goldAmountLargeDataGridViewTextBoxColumn,
+            this.socketsFilledDataGridViewTextBoxColumn,
+            this.idDataGridViewTextBoxColumn,
+            this.levelDataGridViewTextBoxColumn1,
+            this.qualityDataGridViewTextBoxColumn,
+            this.hasGraphicDataGridViewCheckBoxColumn,
+            this.graphicDataGridViewTextBoxColumn,
+            this.uniqueSetIdDataGridViewTextBoxColumn,
+            this.defenseDataGridViewTextBoxColumn,
+            this.maxDurabilityDataGridViewTextBoxColumn,
+            this.durabilityDataGridViewTextBoxColumn,
+            this.isIndestructableDataGridViewCheckBoxColumn,
+            this.socketCountDataGridViewTextBoxColumn,
+            this.quantityDataGridViewTextBoxColumn,
+            this.randomFlagDataGridViewCheckBoxColumn,
+            this.unknownGoldFlagDataGridViewCheckBoxColumn,
+            this.classFlagDataGridViewCheckBoxColumn,
+            this.classInfoDataGridViewTextBoxColumn,
+            this.inferiorQualityTypeDataGridViewTextBoxColumn,
+            this.superiorQualityTypeDataGridViewTextBoxColumn,
+            this.charmDataDataGridViewTextBoxColumn,
+            this.spellIdDataGridViewTextBoxColumn,
+            this.monsterIdDataGridViewTextBoxColumn,
+            this.earClassDataGridViewTextBoxColumn,
+            this.earLevelDataGridViewTextBoxColumn,
+            this.earNameDataGridViewTextBoxColumn,
+            this.personalizedNameDataGridViewTextBoxColumn,
+            this.runewordIdDataGridViewTextBoxColumn,
+            this.prefixNameIdDataGridViewTextBoxColumn,
+            this.suffixNameIdDataGridViewTextBoxColumn,
+            this.prefixFlag0DataGridViewCheckBoxColumn,
+            this.prefixFlag1DataGridViewCheckBoxColumn,
+            this.prefixFlag2DataGridViewCheckBoxColumn,
+            this.suffixFlag0DataGridViewCheckBoxColumn,
+            this.suffixFlag1DataGridViewCheckBoxColumn,
+            this.suffixFlag2DataGridViewCheckBoxColumn,
+            this.magicPrefixDataGridViewTextBoxColumn,
+            this.magicSuffixDataGridViewTextBoxColumn,
+            this.prefix0DataGridViewTextBoxColumn,
+            this.prefix1DataGridViewTextBoxColumn,
+            this.prefix2DataGridViewTextBoxColumn,
+            this.suffix0DataGridViewTextBoxColumn,
+            this.suffix1DataGridViewTextBoxColumn,
+            this.suffix2DataGridViewTextBoxColumn});
+			this.dataGridView1.DataSource = this.itemBindingSource;
+			this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.dataGridView1.Location = new System.Drawing.Point(3, 199);
+			this.dataGridView1.Name = "dataGridView1";
+			this.dataGridView1.Size = new System.Drawing.Size(618, 74);
+			this.dataGridView1.TabIndex = 5;
 			// 
 			// isEquippedDataGridViewCheckBoxColumn
 			// 
@@ -1233,27 +1231,105 @@
 			// 
 			this.itemBindingSource.DataSource = typeof(CharacterEditor.Item);
 			// 
-			// buttonItemAddProperty
+			// buttonRemoveSocket
 			// 
-			this.buttonItemAddProperty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonItemAddProperty.Location = new System.Drawing.Point(472, 12);
-			this.buttonItemAddProperty.Name = "buttonItemAddProperty";
-			this.buttonItemAddProperty.Size = new System.Drawing.Size(63, 23);
-			this.buttonItemAddProperty.TabIndex = 8;
-			this.buttonItemAddProperty.Text = "Add Prop";
-			this.buttonItemAddProperty.UseVisualStyleBackColor = true;
-			this.buttonItemAddProperty.Click += new System.EventHandler(this.buttonItemAddProperty_Click);
+			this.buttonRemoveSocket.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonRemoveSocket.Location = new System.Drawing.Point(541, 41);
+			this.buttonRemoveSocket.Name = "buttonRemoveSocket";
+			this.buttonRemoveSocket.Size = new System.Drawing.Size(75, 23);
+			this.buttonRemoveSocket.TabIndex = 3;
+			this.buttonRemoveSocket.Text = "Del Socket";
+			this.buttonRemoveSocket.UseVisualStyleBackColor = true;
+			this.buttonRemoveSocket.Click += new System.EventHandler(this.buttonRemoveSocket_Click);
 			// 
-			// buttonItemDeleteProperty
+			// listBoxItemEditorSockets
 			// 
-			this.buttonItemDeleteProperty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonItemDeleteProperty.Location = new System.Drawing.Point(472, 41);
-			this.buttonItemDeleteProperty.Name = "buttonItemDeleteProperty";
-			this.buttonItemDeleteProperty.Size = new System.Drawing.Size(63, 23);
-			this.buttonItemDeleteProperty.TabIndex = 9;
-			this.buttonItemDeleteProperty.Text = "Del Prop";
-			this.buttonItemDeleteProperty.UseVisualStyleBackColor = true;
-			this.buttonItemDeleteProperty.Click += new System.EventHandler(this.buttonItemDeleteProperty_Click);
+			this.listBoxItemEditorSockets.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.listBoxItemEditorSockets.Font = new System.Drawing.Font("Lucida Console", 9.75F);
+			this.listBoxItemEditorSockets.FormattingEnabled = true;
+			this.listBoxItemEditorSockets.Location = new System.Drawing.Point(472, 72);
+			this.listBoxItemEditorSockets.Name = "listBoxItemEditorSockets";
+			this.listBoxItemEditorSockets.Size = new System.Drawing.Size(149, 121);
+			this.listBoxItemEditorSockets.TabIndex = 2;
+			this.listBoxItemEditorSockets.DoubleClick += new System.EventHandler(this.listBoxInventory_DoubleClick);
+			// 
+			// checkBoxSkipFailedData
+			// 
+			this.checkBoxSkipFailedData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.checkBoxSkipFailedData.AutoSize = true;
+			this.checkBoxSkipFailedData.Location = new System.Drawing.Point(255, 15);
+			this.checkBoxSkipFailedData.Name = "checkBoxSkipFailedData";
+			this.checkBoxSkipFailedData.Size = new System.Drawing.Size(99, 17);
+			this.checkBoxSkipFailedData.TabIndex = 16;
+			this.checkBoxSkipFailedData.Text = "Skip failed data";
+			this.checkBoxSkipFailedData.UseVisualStyleBackColor = true;
+			// 
+			// tabControlItemProperties
+			// 
+			this.tabControlItemProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.tabControlItemProperties.Controls.Add(this.tabPageItemProperties);
+			this.tabControlItemProperties.Controls.Add(this.tabPageItemSetProperties);
+			this.tabControlItemProperties.Controls.Add(this.tabPageItemRunewordProperties);
+			this.tabControlItemProperties.Location = new System.Drawing.Point(3, 12);
+			this.tabControlItemProperties.Name = "tabControlItemProperties";
+			this.tabControlItemProperties.SelectedIndex = 0;
+			this.tabControlItemProperties.Size = new System.Drawing.Size(463, 181);
+			this.tabControlItemProperties.TabIndex = 10;
+			// 
+			// tabPageItemProperties
+			// 
+			this.tabPageItemProperties.Controls.Add(this.dataGridViewItemProperties);
+			this.tabPageItemProperties.Location = new System.Drawing.Point(4, 22);
+			this.tabPageItemProperties.Name = "tabPageItemProperties";
+			this.tabPageItemProperties.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageItemProperties.Size = new System.Drawing.Size(455, 155);
+			this.tabPageItemProperties.TabIndex = 0;
+			this.tabPageItemProperties.Text = "General";
+			this.tabPageItemProperties.UseVisualStyleBackColor = true;
+			// 
+			// tabPageItemSetProperties
+			// 
+			this.tabPageItemSetProperties.Controls.Add(this.dataGridViewItemSetProperties);
+			this.tabPageItemSetProperties.Location = new System.Drawing.Point(4, 22);
+			this.tabPageItemSetProperties.Name = "tabPageItemSetProperties";
+			this.tabPageItemSetProperties.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageItemSetProperties.Size = new System.Drawing.Size(455, 155);
+			this.tabPageItemSetProperties.TabIndex = 1;
+			this.tabPageItemSetProperties.Text = "Set";
+			this.tabPageItemSetProperties.UseVisualStyleBackColor = true;
+			// 
+			// tabPageItemRunewordProperties
+			// 
+			this.tabPageItemRunewordProperties.Controls.Add(this.dataGridViewItemRunewordProperties);
+			this.tabPageItemRunewordProperties.Location = new System.Drawing.Point(4, 22);
+			this.tabPageItemRunewordProperties.Name = "tabPageItemRunewordProperties";
+			this.tabPageItemRunewordProperties.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageItemRunewordProperties.Size = new System.Drawing.Size(455, 155);
+			this.tabPageItemRunewordProperties.TabIndex = 2;
+			this.tabPageItemRunewordProperties.Text = "Runeword";
+			this.tabPageItemRunewordProperties.UseVisualStyleBackColor = true;
+			// 
+			// dataGridViewItemSetProperties
+			// 
+			this.dataGridViewItemSetProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridViewItemSetProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dataGridViewItemSetProperties.Location = new System.Drawing.Point(3, 3);
+			this.dataGridViewItemSetProperties.Name = "dataGridViewItemSetProperties";
+			this.dataGridViewItemSetProperties.Size = new System.Drawing.Size(449, 149);
+			this.dataGridViewItemSetProperties.TabIndex = 0;
+			// 
+			// dataGridViewItemRunewordProperties
+			// 
+			this.dataGridViewItemRunewordProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridViewItemRunewordProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dataGridViewItemRunewordProperties.Location = new System.Drawing.Point(3, 3);
+			this.dataGridViewItemRunewordProperties.Name = "dataGridViewItemRunewordProperties";
+			this.dataGridViewItemRunewordProperties.Size = new System.Drawing.Size(449, 149);
+			this.dataGridViewItemRunewordProperties.TabIndex = 0;
 			// 
 			// Form1
 			// 
@@ -1282,14 +1358,20 @@
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
 			this.splitContainer1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewCharacter)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.characterBindingSource)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewStats)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.statBindingSource)).EndInit();
 			this.tabPageInventoryEditor.ResumeLayout(false);
 			this.tabPageItemEditor.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemProperties)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.characterBindingSource)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.statBindingSource)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.itemBindingSource)).EndInit();
+			this.tabControlItemProperties.ResumeLayout(false);
+			this.tabPageItemProperties.ResumeLayout(false);
+			this.tabPageItemSetProperties.ResumeLayout(false);
+			this.tabPageItemRunewordProperties.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemSetProperties)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemRunewordProperties)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -1430,6 +1512,12 @@
 		private System.Windows.Forms.DataGridView dataGridViewItemProperties;
 		private System.Windows.Forms.Button buttonItemDeleteProperty;
 		private System.Windows.Forms.Button buttonItemAddProperty;
+		private System.Windows.Forms.TabControl tabControlItemProperties;
+		private System.Windows.Forms.TabPage tabPageItemProperties;
+		private System.Windows.Forms.TabPage tabPageItemSetProperties;
+		private System.Windows.Forms.DataGridView dataGridViewItemSetProperties;
+		private System.Windows.Forms.TabPage tabPageItemRunewordProperties;
+		private System.Windows.Forms.DataGridView dataGridViewItemRunewordProperties;
 
 	}
 }
