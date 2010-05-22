@@ -115,7 +115,7 @@ namespace CharacterEditor
 		private List<Item> sockets = new List<Item>();
 		private static Dictionary<string, int> dataIndicies = new Dictionary<string, int>();
 		private Dictionary<string, ItemData> dataEntries = new Dictionary<string, ItemData>();
-		private BitReader br;
+		private BitStream bs;
 		private byte[] remainingBytes;
 
 		/// <summary>
@@ -525,7 +525,7 @@ namespace CharacterEditor
 
 		public Item(byte[] itemData)
 		{
-			br = new BitReader(itemData);
+			bs = new BitStream(itemData);
 
 			ReadItemData();
 			ReadRemainingBits();
@@ -579,7 +579,7 @@ namespace CharacterEditor
 		/// </summary>
 		private void ReadItemDataSimple()
 		{
-			br.SkipBits(16); // "JM" header
+			bs.SkipBits(16); // "JM" header
 
 			ReadData("IsEquipped", 1);
 			ReadData("Unknown0", 2);
@@ -795,7 +795,7 @@ namespace CharacterEditor
 			{
 				int numberOfSetProperties = (int)GetDataValue("NumberOfSetProperties");
 
-				while (br.BitCount - br.Position > 9)
+				while (bs.RemainingBits > 9)
 				{
 					ReadPropertyList(propertiesSet);
 				}
@@ -815,7 +815,7 @@ namespace CharacterEditor
 		{
 			while (true)
 			{
-				int currentPropertyID = (int)br.Read(9);
+				int currentPropertyID = (int)bs.ReadReversed(9);
 				if (currentPropertyID == 0x1ff)
 				{
 					propertyList.Add(new PropertyInfo() { ID = currentPropertyID });
@@ -839,11 +839,11 @@ namespace CharacterEditor
 
 			currentPropertyInfo.IsAdditionalProperty = isAdditional;
 			currentPropertyInfo.ID = currentPropertyID;
-			currentPropertyInfo.Value = (int)br.Read(statCost.SaveBits) - statCost.SaveAdd;
+			currentPropertyInfo.Value = (int)bs.ReadReversed(statCost.SaveBits) - statCost.SaveAdd;
 
 			if (statCost.SaveParamBits > 0)
 			{
-				currentPropertyInfo.ParamValue = (int)br.Read(statCost.SaveParamBits);
+				currentPropertyInfo.ParamValue = (int)bs.ReadReversed(statCost.SaveParamBits);
 			}
 
 			propertyList.Add(currentPropertyInfo);
@@ -902,16 +902,16 @@ namespace CharacterEditor
 		private void ReadRemainingBits()
 		{
 			int paddingBitCount = GetPaddingBitCount();
-			int remainingByteCount = (int)((int)(br.BitCount - br.Position) - paddingBitCount) / 8;
+			int remainingByteCount = (int)((int)(bs.RemainingBits) - paddingBitCount) / 8;
 
 			if (remainingByteCount > 0)
 			{
-				remainingBytes = br.ReadBytes(remainingByteCount);
+				remainingBytes = bs.ReadReversedBytes(remainingByteCount);
 			}
 
-			if ((br.BitCount - br.Position) - paddingBitCount > 0)
+			if ((bs.RemainingBits) - paddingBitCount > 0)
 			{
-				ReadData("LAST", (int)(br.BitCount - br.Position) - paddingBitCount);
+				ReadData("LAST", (int)(bs.RemainingBits) - paddingBitCount);
 			}
 		}
 
@@ -931,7 +931,7 @@ namespace CharacterEditor
 
 			data.Index = dataIndicies[name];
 			data.BitCount = bitCount;
-			data.Value = br.Read(bitCount);
+			data.Value = bs.ReadReversed(bitCount);
 			data.Name = name;
 
 			dataEntries.Add(data.Name, data);
@@ -953,13 +953,13 @@ namespace CharacterEditor
 			}
 
 			data.Index = dataIndicies[name];
-			data.Value = br.ReadString(characterCount, bitsPerChar);
+			data.Value = bs.ReadReversedString(characterCount, bitsPerChar);
 			data.BitCount = (data.Value as string).Length * bitsPerChar;
 			data.Name = name;
 
 			if (skipFollowingByte)
 			{
-				br.ReadByte();
+				bs.ReadReversedByte();
 			}
 
 			dataEntries.Add(data.Name, data);
@@ -980,35 +980,11 @@ namespace CharacterEditor
 			}
 
 			data.Index = dataIndicies[name];
-			data.Value = br.ReadString(bitsPerChar);
+			data.Value = bs.ReadReversedString(bitsPerChar);
 			data.BitCount = (data.Value as string).Length * bitsPerChar;
 			data.Name = name;
 
 			dataEntries.Add(data.Name, data);
-		}
-
-		/// <summary>
-		/// Writes the specified item property to a given BitStream
-		/// </summary>
-		/// <param name="name">Name of property to write</param>
-		/// <param name="stream">BitStream to write property to</param>
-		private void WriteData(string name, BitStream stream)
-		{
-			if (dataEntries.ContainsKey(name))
-			{
-				throw new ApplicationException("Key not found in item data");
-			}
-
-			ItemData data = dataEntries[name];
-
-			if (data.Value is string)
-			{
-				stream.Write((data.Value as string).ToCharArray());
-			}
-			else if (data.Value is ValueType)
-			{
-				stream.Write((uint)data.Value, 0, data.BitCount);
-			}
 		}
 
 		/// <summary>
@@ -1084,23 +1060,23 @@ namespace CharacterEditor
 		/// <returns>Number of bits used for padding</returns>
 		private int GetPaddingBitCount()
 		{
-			long brPos = br.Position;
+			long brPos = bs.Position;
 
 			if (!IsSimpleItem)
 			{
-				br.Position -= 9;
-				while (br.Position > 0)
+				bs.Position -= 9;
+				while (bs.Position > 0)
 				{
-					if (br.Read(9) == 0x1ff)
+					if (bs.ReadReversed(9) == 0x1ff)
 					{
-						br.Position = brPos;
-						return (int)(br.BitCount - br.Position);
+						bs.Position = brPos;
+						return (int)(bs.RemainingBits);
 					}
-					br.Position -= 10;
+					bs.Position -= 10;
 				}
 			}
 
-			br.Position = brPos;
+			bs.Position = brPos;
 			return 0;
 		}
 
@@ -1112,8 +1088,8 @@ namespace CharacterEditor
 		{
 			BitStream bs = new BitStream();
 
-			bs.Write(Utils.ReverseBits('J', 8), 0, 8);
-			bs.Write(Utils.ReverseBits('M', 8), 0, 8);
+			bs.WriteReversed('J', 8);
+			bs.WriteReversed('M', 8);
 
 			var ordered = dataEntries.OrderBy(n => n.Value.Index);
 
@@ -1127,18 +1103,17 @@ namespace CharacterEditor
 					{
 						foreach (var ch in value)
 						{
-							bs.Write(Utils.ReverseBits(ch, 8), 0, 8);
+							bs.WriteReversed(ch, 8);
 						}
-						// This is odd, Reverse(32) = 4, but file wants 2
-						bs.Write(Utils.ReverseBits(0x10, 7), 0, 8);
+						bs.WriteReversed(' ', 8);
 					}
 					else if (item.Key == "EarName" || item.Key == "PersonalizedName")
 					{
 						foreach (var ch in value)
 						{
-							bs.Write(Utils.ReverseBits(ch, 7), 0, 7);
+							bs.WriteReversed(ch, 7);
 						}
-						bs.Write((byte)0, 0, 7);
+						bs.WriteReversed(0, 7);
 					}
 					else
 					{
@@ -1162,13 +1137,11 @@ namespace CharacterEditor
 							value += (uint)ItemDefs.ItemStatCostsByName["armorclass"].SaveAdd;
 						}
 
-						value = Utils.ReverseBits(value, item.Value.BitCount);
-						bs.Write(value, 0, item.Value.BitCount);
+						bs.WriteReversed(value, item.Value.BitCount);
 					}
 					else if (valueType == TypeCode.Int32)
 					{
-						uint value = Utils.ReverseBits((uint)((int)item.Value.Value), item.Value.BitCount);
-						bs.Write(value, 0, item.Value.BitCount);
+						bs.WriteReversed((uint)((int)item.Value.Value), item.Value.BitCount);
 					}
 					else if (valueType == TypeCode.Boolean)
 					{
@@ -1206,14 +1179,13 @@ namespace CharacterEditor
 				//TODO: Enable renaming of ear and personlized names?
 				if (remainingBytes != null)
 				{
-					bs.Write(Utils.ReverseByteArrayBits(remainingBytes));
+					bs.WriteReversed(remainingBytes);
 				}
 
 				if (dataEntries.ContainsKey("LAST"))
 				{
 					var lastEntry = dataEntries["LAST"];
-					uint value = Utils.ReverseBits((uint)lastEntry.Value, lastEntry.BitCount);
-					bs.Write((uint)value, 0, lastEntry.BitCount);
+					bs.WriteReversed((uint)lastEntry.Value, lastEntry.BitCount);
 				}
 			}
 			else
@@ -1224,12 +1196,12 @@ namespace CharacterEditor
 					int bitsToAdd = 8 - (int)(bs.Position % 8);
 					if (bitsToAdd > 0)
 					{
-						bs.Write(0, 0, bitsToAdd);
+						bs.WriteReversed(0, bitsToAdd);
 					}
 				}
 			}
 
-			return Utils.ReverseByteArrayBits(bs.ToByteArray());
+			return bs.ToReversedByteArray();
 		}
 
 		/// <summary>
@@ -1241,7 +1213,7 @@ namespace CharacterEditor
 		{
 			if (property.ID == 0x1ff)
 			{
-				bs.Write(Utils.ReverseBits((uint)property.ID, 9), 0, 9);
+				bs.WriteReversed(property.ID, 9);
 				return;
 			}
 
@@ -1251,14 +1223,14 @@ namespace CharacterEditor
 
 			if (!property.IsAdditionalProperty)
 			{
-				bs.Write(Utils.ReverseBits((uint)property.ID, 9), 0, 9);
+				bs.WriteReversed(property.ID, 9);
 			}
 
-			bs.Write(Utils.ReverseBits((uint)fixedValue, statCost.SaveBits), 0, statCost.SaveBits);
+			bs.WriteReversed(fixedValue, statCost.SaveBits);
 
 			if (statCost.SaveParamBits > 0)
 			{
-				bs.Write(Utils.ReverseBits((uint)property.ParamValue, statCost.SaveParamBits), 0, statCost.SaveParamBits);
+				bs.WriteReversed(property.ParamValue, statCost.SaveParamBits);
 			}
 		}
 

@@ -230,16 +230,16 @@ namespace CharacterEditor
 		/// Source: http://phrozenkeep.hugelaser.com/forum/viewtopic.php?f=8&t=9011&start=50
 		private void ReadStats()
 		{
-			BitReader br = new BitReader(statsBytes);
+			BitStream bs = new BitStream(statsBytes);
 
 			// Skip header bytes
-			br.SkipBits(8);
-			br.SkipBits(8);
+			bs.SkipBits(8);
+			bs.SkipBits(8);
 
-			while (br.Position < br.BitCount)
+			while (bs.RemainingBits >= 9)
 			{
 				// ID of stat (See ItemStatCost.txt)
-				int statIndex = (int)br.Read(9);
+				int statIndex = (int)bs.ReadReversed(9);
 				// Value contains this many bits (See CSvBits in ItemStatCost.txt)
 				int statValueBits = 0;
 				// Value needs to be shifted by this amount
@@ -247,18 +247,18 @@ namespace CharacterEditor
 
 				if (statIndex == 0x1ff)
 				{
-					br.Position -= 9;
-					remainingBytes = new byte[((br.BitCount - br.Position) / 8)];
+					bs.Position -= 9;
+					remainingBytes = new byte[(bs.RemainingBits / 8)];
 
 					for (int i = 0; i < remainingBytes.Length; i++)
 					{
-						remainingBytes[i] = br.ReadByte();
+						remainingBytes[i] = bs.ReadReversedByte();
 					}
 
-					remainingBitsCount = (int)(br.BitCount - br.Position);
+					remainingBitsCount = (int)(bs.RemainingBits);
 					if (remainingBitsCount > 0)
 					{
-						remainingBits = (byte)br.Read(remainingBitsCount);
+						remainingBits = (byte)bs.ReadReversed(remainingBitsCount);
 					}
 
 					break;
@@ -272,7 +272,7 @@ namespace CharacterEditor
 
 				valShift = ItemDefs.ItemStatCostsById[(int)statIndex].ValShift; 
 
-				int statValue = (int)br.Read(statValueBits);
+				int statValue = (int)bs.ReadReversed(statValueBits);
 				if (!statValues.ContainsKey(statIndex))
 				{
 					statValues.Add(statIndex, (statValue >> valShift));
@@ -288,12 +288,12 @@ namespace CharacterEditor
 		{
 			BitStream bits = new BitStream();
 
-			bits.Write(Utils.ReverseBits('g', 8), 0, 8);
-			bits.Write(Utils.ReverseBits('f', 8), 0, 8);
+			bits.WriteReversed('g', 8);
+			bits.WriteReversed('f', 8);
 
 			foreach (var stat in statValues)
 			{
-				bits.Write(Utils.ReverseBits((uint)stat.Key, 9), 0, 9);
+				bits.WriteReversed(stat.Key, 9);
 
 				int valShift = 0;
 				int bitCount = ItemDefs.ItemStatCostsById[stat.Key].CSvBits;
@@ -303,21 +303,21 @@ namespace CharacterEditor
 					valShift = ItemDefs.ItemStatCostsById[stat.Key].ValShift;
 				}
 
-				bits.Write(Utils.ReverseBits((uint)((stat.Value << valShift)), bitCount), 0, bitCount);
+				bits.WriteReversed((uint)((stat.Value << valShift)), bitCount);
 			}
 
 			// These last 2 bytes seem to be some sort of terminator?
 			if (remainingBytes != null)
 			{
-				bits.Write(Utils.ReverseByteArrayBits(remainingBytes));
+				bits.WriteReversed(remainingBytes);
 			}
 
 			if (remainingBitsCount > 0)
 			{
-				bits.Write(Utils.ReverseBits(remainingBits, remainingBitsCount), 0, remainingBitsCount);
+				bits.WriteReversed(remainingBits, remainingBitsCount);
 			}
 
-			return Utils.ReverseByteArrayBits(bits.ToByteArray());
+			return bits.ToReversedByteArray();
 		}
 	}
 }

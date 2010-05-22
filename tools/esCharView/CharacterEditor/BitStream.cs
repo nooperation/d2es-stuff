@@ -598,7 +598,7 @@ namespace BKSystem.IO
 		///		The current stream is closed.
 		///	</exception>
 		///	<exception cref="System.ArgumentOutOfRangeException">
-		///		The position is set to a negative value or position + 1 is geater than
+		///		The position is set to a negative value or position is geater than
 		///		<see cref="Length"/>.
 		///	</exception>
 		/// <remarks>
@@ -630,7 +630,8 @@ namespace BKSystem.IO
 
 				uint uiRequestedPosition = (uint)value;
 
-				if(_uiBitBuffer_Length < uiRequestedPosition + 1)
+				// Modification: Position can be set to Length
+				if(_uiBitBuffer_Length < uiRequestedPosition)
 					throw new ArgumentOutOfRangeException("value", BitStreamResources.GetString("ArgumentOutOfRange_InvalidPosition"));
 
 				_uiBitBuffer_Index = uiRequestedPosition >> BitBuffer_SizeOfElement_Shift;
@@ -6253,5 +6254,165 @@ namespace BKSystem.IO
 
 		#endregion
 
+		#region Crappy modifications
+
+		public long RemainingBits
+		{
+			get { return Length - Position; }
+		}
+
+		public BitStream(byte[] bits) : this()
+		{
+			if (bits == null)
+				throw new ArgumentNullException("bits", BitStreamResources.GetString("ArgumentNull_BitBuffer"));
+
+			Write(ReverseByteArrayBits(bits), 0, (int)bits.Length);
+			Position = 0;
+		}
+
+		public void WriteReversed(uint bits, int bitCount)
+		{
+			Write(ReverseBits(bits, bitCount), 0, bitCount);
+		}
+		public void WriteReversed(int bits, int bitCount)
+		{
+			Write(ReverseBits((uint)bits, bitCount), 0, bitCount);
+		}
+		public void WriteReversed(byte[] bits)
+		{
+			Write(ReverseByteArrayBits(bits));
+		}
+
+		public uint ReadReversed(int bitCount)
+		{
+			uint val;
+
+			if (Read(out val, 0, bitCount) != bitCount)
+			{
+				throw new IndexOutOfRangeException();
+			}
+
+			return ReverseBits(val, bitCount);
+		}
+
+		public byte[] ReadReversedBytes(int byteCount)
+		{
+			byte[] bytes = new byte[byteCount];
+
+			if (Read(bytes, 0, byteCount) != byteCount*8)
+			{
+				throw new IndexOutOfRangeException();
+			}
+
+			return ReverseByteArrayBits(bytes);
+		}
+
+		public byte ReadReversedByte()
+		{
+			int val = ReadByte();
+
+			if (val < 0)
+			{
+				throw new IndexOutOfRangeException();
+			}
+
+			return ReverseByteBits((byte)val);
+		}
+
+		public byte[] ToReversedByteArray()
+		{
+			return ReverseByteArrayBits(ToByteArray());
+		}
+
+		public void SkipBits(int bitCount)
+		{
+			Position += bitCount;
+		}
+
+		public string ReadReversedString(int bitsPerCharacter)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			while(true)
+			{
+				char ch = (char)ReadReversed(bitsPerCharacter);
+
+				if (ch == 0)
+				{
+					break;
+				}
+
+				sb.Append(ch);
+			}
+
+			return sb.ToString();
+		}
+
+		public string ReadReversedString(int characterCount, int bitsPerCharacter)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < characterCount; i++)
+			{
+				sb.Append((char)ReadReversed(bitsPerCharacter));
+			}
+
+			return sb.ToString();
+		}
+
+		/// <summary>
+		/// Reverse bits of a value up to 32 bits
+		/// </summary>
+		/// <param name="val">Value to reverse</param>
+		/// <param name="bitCount">Number of bits in val</param>
+		/// <returns>Reversed value in 32 bits</returns>
+		/// <see cref="http://www.cs.utk.edu/~vose/c-stuff/bithacks.html#IntegerLog"/>
+		public static uint ReverseBits(uint val, int bitCount)
+		{
+			uint v = val; // 32-bit word to reverse bit order
+
+			// swap odd and even bits
+			v = ((v >> 1) & 0x55555555) | ((v & 0x55555555) << 1);
+			// swap consecutive pairs
+			v = ((v >> 2) & 0x33333333) | ((v & 0x33333333) << 2);
+			// swap nibbles ... 
+			v = ((v >> 4) & 0x0F0F0F0F) | ((v & 0x0F0F0F0F) << 4);
+			// swap bytes
+			v = ((v >> 8) & 0x00FF00FF) | ((v & 0x00FF00FF) << 8);
+			// swap 2-byte long pairs
+			v = (v >> 16) | (v << 16);
+
+			return (v >> (32 - bitCount));
+		}
+
+		/// <summary>
+		/// Reverse the order of bits in a byte ( 10001101 -> 10110001 )
+		/// </summary>
+		/// <param name="val">Byte to reverse bits of</param>
+		/// <returns>Byte with reversed bits</returns>
+		/// <see cref="http://www.cs.utk.edu/~vose/c-stuff/bithacks.html#ReverseByteWith32Bits"/>
+		public static byte ReverseByteBits(byte val)
+		{
+			return (byte)(((val * 0x0802LU & 0x22110LU) | (val * 0x8020LU & 0x88440LU)) * 0x10101LU >> 16);
+		}
+
+		/// <summary>
+		/// Reverse the bits in each byte of the array
+		/// </summary>
+		/// <param name="bytes">Array of bytes to reverse</param>
+		/// <returns>New array containing modified bytes</returns>
+		public static byte[] ReverseByteArrayBits(byte[] bytes)
+		{
+			byte[] reversedBits = new byte[bytes.Length];
+
+			for (int i = 0; i < bytes.Length; i++)
+			{
+				reversedBits[i] = ReverseByteBits(bytes[i]);
+			}
+
+			return reversedBits;
+		}
+
+		#endregion
 	}
 }
