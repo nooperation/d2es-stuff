@@ -56,7 +56,6 @@
     <Compile Include="SaveReader.cs" />
     <Compile Include="Skill.cs" />
     <Compile Include="Stat.cs" />
-    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AllItems.txt">
