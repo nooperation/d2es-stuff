@@ -296,9 +296,9 @@ namespace CharacterEditor
 
 			// Merc inventory data is everything between "jf" and "kf", start searching for "kf" from end of file
 			mercInventoryStart = corpseInventoryStart + corpseInventoryLength + 2;
-			for (int i = inventoryBytes.Length-3; i > mercInventoryStart; i--)
+			for (int i = inventoryBytes.Length - 3; i > mercInventoryStart; i--)
 			{
-				if (inventoryBytes[i] == 'k' && inventoryBytes[i + 1] == 'f' && (inventoryBytes[i+2] == 0 || inventoryBytes[i+2] == 1))
+				if (inventoryBytes[i] == 'k' && inventoryBytes[i + 1] == 'f' && (inventoryBytes[i + 2] == 0 || inventoryBytes[i + 2] == 1))
 				{
 					mercInventoryLength = i - mercInventoryStart;
 					break;

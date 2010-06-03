@@ -5,10 +5,11 @@ using System.Collections;
 using System.Linq;
 using BKSystem.IO;
 using System.IO;
+using System.ComponentModel;
 
 namespace CharacterEditor
 {
-	public class Item
+	public class Item : INotifyPropertyChanged
 	{
 		public enum ItemQuality
 		{
@@ -87,9 +88,20 @@ namespace CharacterEditor
 			}
 		}
 
-		public class PropertyInfo
+		public class PropertyInfo : INotifyPropertyChanged
 		{
-			public int ID { get; set; }
+			private int id;
+
+			public int ID
+			{
+				get { return id; }
+				set
+				{
+					id = value;
+					OnPropertyChange("ID");
+					OnPropertyChange("PropertyName");
+				}
+			}
 
 			public string PropertyName
 			{
@@ -107,6 +119,20 @@ namespace CharacterEditor
 			{
 				return string.Format("[{0}] {1} -> {2} [{3}]", ID, PropertyName, Value, ParamValue);
 			}
+
+			#region INotifyPropertyChanged Members
+
+			public event PropertyChangedEventHandler PropertyChanged;
+
+			private void OnPropertyChange(string propertyName)
+			{
+				if (PropertyChanged != null)
+				{
+					PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+				}
+			}
+
+			#endregion
 		}
 
 		private List<PropertyInfo> properties = new List<PropertyInfo>();
@@ -121,6 +147,7 @@ namespace CharacterEditor
 		/// <summary>
 		/// List of items stored in item's sockets
 		/// </summary>
+		[Display(AutoGenerateField = false)]
 		public List<Item> Sockets
 		{
 			get { return sockets; }
@@ -128,6 +155,7 @@ namespace CharacterEditor
 		/// <summary>
 		/// Item properties
 		/// </summary>
+		[Display(AutoGenerateField = false)]
 		public List<PropertyInfo> Properties
 		{
 			get { return properties; }
@@ -135,6 +163,7 @@ namespace CharacterEditor
 		/// <summary>
 		/// Set bonuses for wearing multiple parts
 		/// </summary>
+		[Display(AutoGenerateField = false)]
 		public List<PropertyInfo> PropertiesSet
 		{
 			get { return propertiesSet; }
@@ -142,6 +171,7 @@ namespace CharacterEditor
 		/// <summary>
 		/// Runeword properties
 		/// </summary>
+		[Display(AutoGenerateField = false)]
 		public List<PropertyInfo> PropertiesRuneword
 		{
 			get { return propertiesRuneword; }
@@ -264,6 +294,7 @@ namespace CharacterEditor
 
 		#region ExtendedProperties
 
+		// TODO: use SetData ?
 		public string ItemCode
 		{
 			get
@@ -624,14 +655,14 @@ namespace CharacterEditor
 
 			if (EarName.Trim().Length == 0)
 			{
-				throw new ApplicationException("Invalid Ear: Blank ear name");
+				throw new Exception("Invalid Ear: Blank ear name");
 			}
 
 			foreach (char ch in EarName)
 			{
 				if (!Char.IsLetterOrDigit(ch) && ch != '-' && ch != '_')
 				{
-					throw new ApplicationException("Invalid Ear: Ear name contains invalid characters");
+					throw new Exception("Invalid Ear: Ear name contains invalid characters");
 				}
 			}
 
@@ -926,7 +957,7 @@ namespace CharacterEditor
 
 			if (!dataIndicies.ContainsKey(name))
 			{
-				throw new ApplicationException("ReadData: Invalid property name specified");
+				throw new Exception("ReadData: Invalid property name specified");
 			}
 
 			data.Index = dataIndicies[name];
@@ -949,7 +980,7 @@ namespace CharacterEditor
 
 			if (!dataIndicies.ContainsKey(name))
 			{
-				throw new ApplicationException("ReadString: Invalid property name specified");
+				throw new Exception("ReadString: Invalid property name specified");
 			}
 
 			data.Index = dataIndicies[name];
@@ -976,7 +1007,7 @@ namespace CharacterEditor
 
 			if (!dataIndicies.ContainsKey(name))
 			{
-				throw new ApplicationException("ReadString: Invalid property name specified");
+				throw new Exception("ReadString: Invalid property name specified");
 			}
 
 			data.Index = dataIndicies[name];
@@ -1052,6 +1083,7 @@ namespace CharacterEditor
 			}
 
 			dataEntries[name].Value = value;
+			OnPropertyChange(name);
 		}
 
 		/// <summary>
@@ -1117,7 +1149,7 @@ namespace CharacterEditor
 					}
 					else
 					{
-						throw new ApplicationException("Unknown string type in item data");
+						throw new Exception("Unknown string type in item data");
 					}
 				}
 				else if (item.Value.Value is ValueType)
@@ -1149,12 +1181,12 @@ namespace CharacterEditor
 					}
 					else
 					{
-						throw new ApplicationException("Invalid ValueType!");
+						throw new Exception("Invalid ValueType!");
 					}
 				}
 				else
 				{
-					throw new ApplicationException("Invalid data type in item dataEntries");
+					throw new Exception("Invalid data type in item dataEntries");
 				}
 			}
 
@@ -1365,5 +1397,19 @@ namespace CharacterEditor
 
 			return sb.ToString();
 		}
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		private void OnPropertyChange(string propertyName)
+		{
+			if (PropertyChanged != null)
+			{
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+
+		#endregion
 	}
 }

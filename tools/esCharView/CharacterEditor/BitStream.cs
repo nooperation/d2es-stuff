@@ -64,8 +64,6 @@ namespace BKSystem.IO
 	///		<c>public static implicit operator BitStream(MemoryStream bits);</c><br></br>
 	///		<c>public static implicit operator MemoryStream(BitStream bits);</c><br></br>
 	///		<c>public static implicit operator BitStream(FileStream bits);</c><br></br>
-	///		<c>public static implicit operator BitStream(BufferedStream bits);</c><br></br>
-	///		<c>public static implicit operator BufferedStream(BitStream bits);</c><br></br>
 	///		<c>public static implicit operator BitStream(NetworkStream bits);</c><br></br>
 	///		<c>public static implicit operator BitStream(CryptoStream bits);</c><br></br>
 	///		<br></br>
@@ -6136,58 +6134,6 @@ namespace BKSystem.IO
 				throw new ArgumentNullException("bits", BitStreamResources.GetString("ArgumentNull_FileStream"));
 
 			return new BitStream((Stream)bits);
-		}
-		/// <summary>
-		///		Converts a <see cref="BufferedStream"/> object to a new instance of the
-		///		<see cref="BitStream"/> class.
-		/// </summary>
-		/// <exception cref="System.ArgumentNullException">
-		///		<i>bits</i> is a null reference (<b>Nothing</b> in Visual Basic).
-		/// </exception>
-		/// <remarks>
-		///		.
-		/// </remarks>
-		/// <param name="bits">
-		///		A <see cref="BufferedStream"/> object to convert.
-		/// </param>
-		/// <returns>
-		///		A <see cref="BitStream"/> object representing the new instance of the
-		///		<see cref="BitStream"/> class.
-		/// </returns>
-		/// <seealso cref="BufferedStream"/>
-		/// <seealso cref="BitStream"/>
-		public static implicit operator BitStream(BufferedStream bits)
-		{
-			if(bits == null)
-				throw new ArgumentNullException("bits", BitStreamResources.GetString("ArgumentNull_BufferedStream"));
-
-			return new BitStream((Stream)bits);
-		}
-		/// <summary>
-		///		Converts a <see cref="BitStream"/> object to a new instance of the
-		///		<see cref="BufferedStream"/> class.
-		/// </summary>
-		/// <exception cref="System.ArgumentNullException">
-		///		<i>bits</i> is a null reference (<b>Nothing</b> in Visual Basic).
-		/// </exception>
-		/// <remarks>
-		///		.
-		/// </remarks>
-		/// <param name="bits">
-		///		A <see cref="BitStream"/> object to convert.
-		/// </param>
-		/// <returns>
-		///		A <see cref="MemoryStream"/> object representing the new instance of
-		///		the <see cref="BufferedStream"/> class.
-		/// </returns>
-		/// <seealso cref="BitStream"/>
-		/// <seealso cref="BufferedStream"/>
-		public static implicit operator BufferedStream(BitStream bits)
-		{
-			if(bits == null)
-				throw new ArgumentNullException("bits", BitStreamResources.GetString("ArgumentNull_BitStream"));
-
-			return new BufferedStream((MemoryStream)bits);
 		}
 		/// <summary>
 		///		Converts a <see cref="NetworkStream"/> object to a new instance of the

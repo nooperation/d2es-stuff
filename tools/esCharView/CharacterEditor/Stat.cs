@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 using BKSystem.IO;
+using System.ComponentModel;
 
 namespace CharacterEditor
 {
 	/// <summary>
 	/// Controls access to character's stats
 	/// </summary>
-	public class Stat
+	public class Stat : INotifyPropertyChanged
 	{
 		/// <summary>
 		/// Raw stat data from save file
@@ -46,7 +47,11 @@ namespace CharacterEditor
 		public int Strength
 		{
 			get { return GetStatValue("strength"); }
-			set { SetStatValue("strength", value); }
+			set
+			{
+				SetStatValue("strength", value);
+				OnPropertyChange("Strength");
+			}
 		}
 		/// <summary>
 		/// Base value of energy
@@ -54,7 +59,11 @@ namespace CharacterEditor
 		public int Energy
 		{
 			get { return GetStatValue("energy"); }
-			set { SetStatValue("energy", value); }
+			set
+			{
+				SetStatValue("energy", value);
+				OnPropertyChange("Energy");
+			}
 		}
 		/// <summary>
 		/// Base value of dexterity
@@ -62,7 +71,11 @@ namespace CharacterEditor
 		public int Dexterity
 		{
 			get { return GetStatValue("dexterity"); }
-			set { SetStatValue("dexterity", value); }
+			set
+			{
+				SetStatValue("dexterity", value);
+				OnPropertyChange("Dexterity");
+			}
 		}
 		/// <summary>
 		/// Base value of vitality
@@ -70,7 +83,11 @@ namespace CharacterEditor
 		public int Vitality
 		{
 			get { return GetStatValue("vitality"); }
-			set { SetStatValue("vitality", value); }
+			set
+			{
+				SetStatValue("vitality", value);
+				OnPropertyChange("Vitality");
+			}
 		}
 		/// <summary>
 		/// Number of unallocated stat points
@@ -78,7 +95,11 @@ namespace CharacterEditor
 		public int StatPoints
 		{
 			get { return GetStatValue("statpts"); }
-			set { SetStatValue("statpts", value); }
+			set
+			{
+				SetStatValue("statpts", value);
+				OnPropertyChange("StatPoints");
+			}
 		}
 		/// <summary>
 		/// Number of unallocated skill points
@@ -86,7 +107,11 @@ namespace CharacterEditor
 		public int SkillPoints
 		{
 			get { return GetStatValue("newskills"); }
-			set { SetStatValue("newskills", value); }
+			set
+			{
+				SetStatValue("newskills", value);
+				OnPropertyChange("SkillPoints");
+			}
 		}
 		/// <summary>
 		/// Current value of hitpoints
@@ -95,7 +120,11 @@ namespace CharacterEditor
 		public int Hitpoints
 		{
 			get { return GetStatValue("hitpoints"); }
-			set { SetStatValue("hitpoints", value); }
+			set
+			{
+				SetStatValue("hitpoints", value);
+				OnPropertyChange("Hitpoints");
+			}
 		}
 		/// <summary>
 		/// Base value of hitpoints
@@ -103,7 +132,11 @@ namespace CharacterEditor
 		public int BaseHitpoints
 		{
 			get { return GetStatValue("maxhp"); }
-			set { SetStatValue("maxhp", value); }
+			set
+			{
+				SetStatValue("maxhp", value);
+				OnPropertyChange("BaseHitpoints");
+			}
 		}
 		/// <summary>
 		/// Current value of mana
@@ -112,7 +145,11 @@ namespace CharacterEditor
 		public int Mana
 		{
 			get { return GetStatValue("mana"); }
-			set { SetStatValue("mana", value); }
+			set
+			{
+				SetStatValue("mana", value);
+				OnPropertyChange("Mana");
+			}
 		}
 		/// <summary>
 		/// Base value of mana
@@ -120,7 +157,11 @@ namespace CharacterEditor
 		public int BaseMana
 		{
 			get { return GetStatValue("maxmana"); }
-			set { SetStatValue("maxmana", value); }
+			set
+			{
+				SetStatValue("maxmana", value);
+				OnPropertyChange("BaseMana");
+			}
 		}
 		/// <summary>
 		/// Current value of stamina.
@@ -129,7 +170,11 @@ namespace CharacterEditor
 		public int Stamina
 		{
 			get { return GetStatValue("stamina"); }
-			set { SetStatValue("stamina", value); }
+			set
+			{
+				SetStatValue("stamina", value);
+				OnPropertyChange("Stamina");
+			}
 		}
 		/// <summary>
 		/// Base value of stamina
@@ -137,7 +182,11 @@ namespace CharacterEditor
 		public int BaseStamina
 		{
 			get { return GetStatValue("maxstamina"); }
-			set { SetStatValue("maxstamina", value); }
+			set
+			{
+				SetStatValue("maxstamina", value);
+				OnPropertyChange("BaseStamina");
+			}
 		}
 		/// <summary>
 		/// Character's level
@@ -145,7 +194,11 @@ namespace CharacterEditor
 		public int Level
 		{
 			get { return GetStatValue("level"); }
-			set { SetStatValue("level", value); }
+			set
+			{
+				SetStatValue("level", value);
+				OnPropertyChange("Level");
+			}
 		}
 		/// <summary>
 		/// Number of experience points character has
@@ -153,7 +206,11 @@ namespace CharacterEditor
 		public uint Experience
 		{
 			get { return (uint)GetStatValue("experience"); }
-			set { SetStatValue("experience", (int)value); }
+			set
+			{
+				SetStatValue("experience", (int)value);
+				OnPropertyChange("Experience");
+			}
 		}
 		/// <summary>
 		/// Amount of gold character has in inventory
@@ -161,7 +218,11 @@ namespace CharacterEditor
 		public uint Gold
 		{
 			get { return (uint)GetStatValue("gold"); }
-			set { SetStatValue("gold", (int)value); }
+			set
+			{
+				SetStatValue("gold", (int)value);
+				OnPropertyChange("Gold");
+			}
 		}
 		/// <summary>
 		/// Amount of gold character has in the bank
@@ -169,7 +230,11 @@ namespace CharacterEditor
 		public uint GoldBank
 		{
 			get { return (uint)GetStatValue("goldbank"); }
-			set { SetStatValue("goldbank", (int)value); }
+			set
+			{
+				SetStatValue("goldbank", (int)value);
+				OnPropertyChange("GoldBank");
+			}
 		}
 		/// <summary>
 		/// Number of kills
@@ -177,7 +242,11 @@ namespace CharacterEditor
 		public int KillCount
 		{
 			get { return GetStatValue("kill_counter"); }
-			set { SetStatValue("kill_counter", value); }
+			set
+			{
+				SetStatValue("kill_counter", value);
+				OnPropertyChange("KillCount");
+			}
 		}
 		/// <summary>
 		/// Times character has died
@@ -185,7 +254,11 @@ namespace CharacterEditor
 		public int DeathCount
 		{
 			get { return GetStatValue("death_counter"); }
-			set { SetStatValue("death_counter", value); }
+			set
+			{
+				SetStatValue("death_counter", value);
+				OnPropertyChange("DeathCount");
+			}
 		}
 
 		/// <summary>
@@ -197,7 +270,7 @@ namespace CharacterEditor
 		{
 			int statId = ItemDefs.ItemStatCostsByName[name].ID;
 
-			if(!statValues.ContainsKey(statId))
+			if (!statValues.ContainsKey(statId))
 			{
 				return 0;
 			}
@@ -270,7 +343,7 @@ namespace CharacterEditor
 					break;
 				}
 
-				valShift = ItemDefs.ItemStatCostsById[(int)statIndex].ValShift; 
+				valShift = ItemDefs.ItemStatCostsById[(int)statIndex].ValShift;
 
 				int statValue = (int)bs.ReadReversed(statValueBits);
 				if (!statValues.ContainsKey(statIndex))
@@ -319,5 +392,19 @@ namespace CharacterEditor
 
 			return bits.ToReversedByteArray();
 		}
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		private void OnPropertyChange(string propertyName)
+		{
+			if (PropertyChanged != null)
+			{
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+
+		#endregion
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using Utils;
 
 namespace CharacterEditor
 {
@@ -24,10 +25,6 @@ namespace CharacterEditor
 		/// Character's skills
 		/// </summary>
 		private Skill skill;
-		/// <summary>
-		/// Path of save file
-		/// </summary>
-		private string filePath;
 		/// <summary>
 		/// Unmodified character data from save file
 		/// </summary>
@@ -105,30 +102,29 @@ namespace CharacterEditor
 		}
 
 		/// <summary>
-		/// Creates a new SaveReader and begins to read and decode character data
+		/// Creates a new SaveReader with specified save file bytes and begins to process the data
 		/// </summary>
-		/// <param name="path">Path of save file</param>
-		public SaveReader(string path)
+		/// <param name="rawCharacterData">Raw bytes from save file</param>
+		public SaveReader(byte[] rawCharacterData)
 		{
-			Read(path);
+			Read(rawCharacterData);
 		}
 
 		/// <summary>
 		/// Read character save from disk
 		/// </summary>
 		/// <param name="filePath">Path of save file</param>
-		public void Read(string filePath)
+		public void Read(byte[] rawCharacterData)
 		{
-			this.filePath = filePath;
-
-			ReadHeaders();
+			ReadHeaders(rawCharacterData);
 		}
+
 
 		/// <summary>
 		/// Saves player data to specified path
 		/// </summary>
 		/// <param name="filePath">Path to save character data as</param>
-		public void Write(string filePath, bool skipFailedData)
+		public void Write(Stream saveFile, bool skipFailedData)
 		{
 			byte[] characterBytes = (skipFailedData && FailedCharacterDecoding) ? OriginalCharacterBytes : Character.GetCharacterBytes();
 			byte[] statsBytes = Stat.GetStatBytes();
@@ -143,27 +139,22 @@ namespace CharacterEditor
 
 			FixHeaders(ref rawCharacterData);
 
-			File.WriteAllBytes(filePath, rawCharacterData);
-		}
+			using (BinaryWriter bw = new BinaryWriter(saveFile))
+			{
+				bw.Write(rawCharacterData);
+			}
 
-		/// <summary>
-		/// Saves the player data to original file
-		/// </summary>
-		public void Write(bool skipFailedData)
-		{
-			Write(filePath, skipFailedData);
+			//File.WriteAllBytes(filePath, rawCharacterData);
 		}
 
 		/// <summary>
 		/// Splits character data into several sections for easier parsing
 		/// </summary>
-		private void ReadHeaders()
+		private void ReadHeaders(byte[] rawCharacterData)
 		{
 			OriginalCharacterBytes = null;
 			OriginalSkillBytes = null;
 			OriginalInventoryBytes = null;
-
-			byte[] rawCharacterData = File.ReadAllBytes(filePath);
 
 			byte[] statBytes = GetStatBytes(rawCharacterData);
 			byte[] characterBytes = GetCharacterBytes(rawCharacterData);
@@ -349,7 +340,7 @@ namespace CharacterEditor
 				}
 			}
 
-			throw new ApplicationException("End of stat list not found!");
+			throw new Exception("End of stat list not found!");
 		}
 	}
 }

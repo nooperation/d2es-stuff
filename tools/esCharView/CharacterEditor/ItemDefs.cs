@@ -4,7 +4,8 @@ using System.Text;
 using System.IO;
 using System.Collections;
 using System.Linq;
-using FileHelpers;
+using Utils;
+//using FileHelpers;
 
 namespace CharacterEditor
 {
@@ -34,22 +35,7 @@ namespace CharacterEditor
 
 		static ItemDefs()
 		{
-			if (!File.Exists("AllItems.txt"))
-			{
-				throw new ApplicationException("Failed to locate AllItems.txt, unable to get item descriptions");
-			}
-
-			if (!File.Exists("ItemGroups.txt"))
-			{
-				throw new ApplicationException("Failed to locate ItemGroups.txt");
-			}
-
-			if (!File.Exists("Sets.txt"))
-			{
-				throw new ApplicationException("Failed to locate Sets.txt");
-			}
-
-			String[] fileContents = File.ReadAllLines("AllItems.txt");
+			List<String> fileContents = ResourceUtils.ReadAllLines("SilverlightCharacterEditor", "Resources/AllItems.txt");
 
 			foreach (String str in fileContents)
 			{
@@ -80,7 +66,7 @@ namespace CharacterEditor
 
 			ReadItemCodeSet(itemCodeSets, "ItemGroups.txt");
 
-			foreach (string str in File.ReadAllLines("Sets.txt"))
+			foreach (string str in ResourceUtils.ReadAllLines("SilverlightCharacterEditor", "Resources/Sets.txt"))
 			{
 				string itemCode = str.Substring(0, 3);
 
@@ -96,8 +82,7 @@ namespace CharacterEditor
 		/// </summary>
 		private static void ReadItemStatCost()
 		{
-			DelimitedFileEngine itemStatCostCsv = new DelimitedFileEngine(typeof(ItemStatCost));
-			ItemStatCost[] statCosts = (ItemStatCost[])itemStatCostCsv.ReadFile("ItemStatCost.txt");
+			List<ItemStatCost> statCosts = ItemStatCost.Read(ResourceUtils.OpenResourceText("SilverlightCharacterEditor", "Resources/ItemStatCost.txt"));
 
 			itemStatCostsByName = statCosts.ToDictionary(v => v.Stat, v => v);
 			itemStatCostsById = statCosts.ToDictionary(v => v.ID, v => v);
@@ -232,7 +217,7 @@ namespace CharacterEditor
 		/// </example>
 		public static void ReadItemCodeSet(Dictionary<string, HashSet<string>> itemCodeSets, string filePath)
 		{
-			string[] lines = File.ReadAllLines(filePath);
+			List<string> lines = ResourceUtils.ReadAllLines("SilverlightCharacterEditor", "Resources/" + filePath);
 			HashSet<string> currentSection = null;
 
 			foreach (var line in lines)

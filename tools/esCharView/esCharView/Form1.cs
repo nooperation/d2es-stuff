@@ -31,7 +31,9 @@ namespace esCharView
 			}
 
 			this.Text = "D2ES Save Fix - " + Path.GetFileName(savePath);
-			ProcessCharacter(savePath);
+			byte[] rawCharacterBytes = File.ReadAllBytes(savePath);
+
+			ProcessCharacter(rawCharacterBytes);
 			buttonSave.Enabled = true;
 		}
 
@@ -43,11 +45,11 @@ namespace esCharView
 			}
 		}
 
-		private void ProcessCharacter(string filePath)
+		private void ProcessCharacter(byte[] rawCharacterBytes)
 		{
 			playerData = new SaveReader();
 
-			playerData.Read(filePath);
+			playerData.Read(rawCharacterBytes);
 
 			if (playerData.FailedCharacterDecoding)
 			{
@@ -182,7 +184,10 @@ namespace esCharView
 
 			if (saveFileDialog1.ShowDialog() == DialogResult.OK)
 			{
-				playerData.Write(saveFileDialog1.FileName, checkBoxSkipFailedData.Checked);
+				using (Stream saveFileStream = saveFileDialog1.OpenFile())
+				{
+					playerData.Write(saveFileStream, checkBoxSkipFailedData.Checked);
+				}
 			}
 		}
 

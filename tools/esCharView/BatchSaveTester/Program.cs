@@ -35,7 +35,7 @@ namespace BatchSaveTester
 
 				try
 				{
-					currentSave = new SaveReader(fileNames[i]);
+					currentSave = new SaveReader(File.ReadAllBytes(fileNames[i]));
 				}
 				catch (IndexOutOfRangeException)
 				{

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Collections;
+using System.ComponentModel;
 
 namespace CharacterEditor
 {
-	public class Character
+	public class Character : INotifyPropertyChanged
 	{
 		private byte[] characterBytes;
 		private byte characterFlags;
@@ -32,16 +33,18 @@ namespace CharacterEditor
 		{
 			get
 			{
-				return ASCIIEncoding.ASCII.GetString(characterBytes, 0x14, 16);
+				string name = UnicodeEncoding.UTF8.GetString(characterBytes, 0x14, 16);
+				return name.Substring(0, name.IndexOf('\0'));
 			}
 			set
 			{
 				byte[] paddedName = new byte[16];
-				byte[] newName = ASCIIEncoding.ASCII.GetBytes(value);
+				byte[] newName = UnicodeEncoding.UTF8.GetBytes(value);
 
 				//15 instead of 16 to keep trailing null character
 				Array.Copy(newName, paddedName, newName.Length < 15 ? newName.Length : 15);
 				Array.Copy(paddedName, 0, characterBytes, 0x14, paddedName.Length);
+				OnPropertyChange("Name");
 			}
 		}
 
@@ -64,6 +67,7 @@ namespace CharacterEditor
 				{
 					characterFlags &= 0xfb;
 				}
+				OnPropertyChange("Hardcore");
 			}
 		}
 
@@ -86,6 +90,7 @@ namespace CharacterEditor
 				{
 					characterFlags &= 0xf7;
 				}
+				OnPropertyChange("Died");
 			}
 		}
 
@@ -108,6 +113,7 @@ namespace CharacterEditor
 				{
 					characterFlags &= 0xDF;
 				}
+				OnPropertyChange("Expansion");
 			}
 		}
 
@@ -124,6 +130,7 @@ namespace CharacterEditor
 			{
 				characterFlags &= 0x2C;
 				characterFlags |= value;
+				OnPropertyChange("UnknownFlags");
 			}
 		}
 
@@ -133,7 +140,11 @@ namespace CharacterEditor
 		public byte Progression
 		{
 			get { return characterBytes[37]; }
-			set { characterBytes[37] = value; }
+			set
+			{
+				characterBytes[37] = value;
+				OnPropertyChange("Progression");
+			}
 		}
 
 		/// <summary>
@@ -142,7 +153,11 @@ namespace CharacterEditor
 		public CharacterClass Class
 		{
 			get { return (CharacterClass)characterBytes[40]; }
-			set { characterBytes[40] = (byte)value; }
+			set
+			{
+				characterBytes[40] = (byte)value;
+				OnPropertyChange("Class");
+			}
 		}
 
 		/// <summary>
@@ -151,7 +166,11 @@ namespace CharacterEditor
 		public byte LevelDisplay
 		{
 			get { return characterBytes[43]; }
-			set { characterBytes[43] = value; }
+			set
+			{
+				characterBytes[43] = value;
+				OnPropertyChange("LevelDisplay");
+			}
 		}
 
 		/// <summary>
@@ -218,5 +237,19 @@ namespace CharacterEditor
 
 			return characterBytes;
 		}
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		private void OnPropertyChange(string propertyName)
+		{
+			if (PropertyChanged != null)
+			{
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+
+		#endregion
 	}
 }
