@@ -4,11 +4,23 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
+#if SILVERLIGHT
+using System.Windows.Resources;
+using System.Windows;
+#endif
+
 // Utils for the silverlight app
-namespace Utils
+namespace CharacterEditor
 {
 	public class StringUtils
 	{
+		/// <summary>
+		/// Convert a string value into specified type. If string is null or empty, 
+		/// default value of type is returned (null for non-value types)
+		/// </summary>
+		/// <param name="value">String to parse for value</param>
+		/// <param name="t">Type of value</param>
+		/// <returns>Value of specified string for a given type</returns>
 		public static object ConvertFromString(string value, Type t)
 		{
 			if (value.Length == 0)
@@ -41,7 +53,19 @@ namespace Utils
 	{
 		public static Stream OpenResource(string assemblyName, string resourcePath)
 		{
+#if SILVERLIGHT
+			Uri resourceUri = new Uri(string.Format("{0};component/{1}", assemblyName, resourcePath), UriKind.Relative);
+			StreamResourceInfo sri = Application.GetResourceStream(resourceUri);
+
+			if (sri == null)
+			{
+				throw new FileNotFoundException("Failed to read file: " + resourceUri);
+			}
+
+			return sri.Stream;
+#else
 			return File.Open(resourcePath, FileMode.Open);
+#endif
 		}
 
 		public static StreamReader OpenResourceText(string assemblyName, string resourcePath)
@@ -84,14 +108,5 @@ namespace Utils
 				return br.ReadBytes((int)br.BaseStream.Length);
 			}
 		}
-	}
-}
-
-// Very temporary until the silverlight frontend stops using Auto generated fields
-namespace CharacterEditor
-{
-	class DisplayAttribute : Attribute
-	{
-		public bool AutoGenerateField { get; set; }
 	}
 }

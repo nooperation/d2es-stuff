@@ -64,7 +64,6 @@ namespace BKSystem.IO
 	///		<c>public static implicit operator BitStream(MemoryStream bits);</c><br></br>
 	///		<c>public static implicit operator MemoryStream(BitStream bits);</c><br></br>
 	///		<c>public static implicit operator BitStream(FileStream bits);</c><br></br>
-	///		<c>public static implicit operator BitStream(NetworkStream bits);</c><br></br>
 	///		<c>public static implicit operator BitStream(CryptoStream bits);</c><br></br>
 	///		<br></br>
 	///		[20051124]: Added <c>public virtual <see cref="byte"/> [] ToByteArray();</c> method.<br></br>
@@ -6132,37 +6131,6 @@ namespace BKSystem.IO
 		{
 			if(bits == null)
 				throw new ArgumentNullException("bits", BitStreamResources.GetString("ArgumentNull_FileStream"));
-
-			return new BitStream((Stream)bits);
-		}
-		/// <summary>
-		///		Converts a <see cref="NetworkStream"/> object to a new instance of the
-		///		<see cref="BitStream"/> class.
-		/// </summary>
-		/// <exception cref="System.ArgumentNullException">
-		///		<i>bits</i> is a null reference (<b>Nothing</b> in Visual Basic).
-		/// </exception>
-		/// <remarks>
-		///		This operator allows implicit casting from an instance of a
-		///		<see cref="NetworkStream"/> object to a new instance of a
-		///		<see cref="BitStream"/> object. No equivalent operator has been made
-		///		available that allows implicit casting from an instance of a
-		///		<see cref="BitStream"/> object to a new instance of a
-		///		<see cref="NetworkStream"/> object.
-		/// </remarks>
-		/// <param name="bits">
-		///		A <see cref="NetworkStream"/> object to convert.
-		/// </param>
-		/// <returns>
-		///		A <see cref="BitStream"/> object representing the new instance of the
-		///		<see cref="BitStream"/> class.
-		/// </returns>
-		/// <seealso cref="NetworkStream"/>
-		/// <seealso cref="BitStream"/>
-		public static implicit operator BitStream(NetworkStream bits)
-		{
-			if(bits == null)
-				throw new ArgumentNullException("bits", BitStreamResources.GetString("ArgumentNull_NetworkStream"));
 
 			return new BitStream((Stream)bits);
 		}

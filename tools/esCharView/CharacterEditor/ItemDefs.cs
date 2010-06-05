@@ -4,8 +4,6 @@ using System.Text;
 using System.IO;
 using System.Collections;
 using System.Linq;
-using Utils;
-//using FileHelpers;
 
 namespace CharacterEditor
 {
@@ -35,7 +33,7 @@ namespace CharacterEditor
 
 		static ItemDefs()
 		{
-			List<String> fileContents = ResourceUtils.ReadAllLines("SilverlightCharacterEditor", "Resources/AllItems.txt");
+			List<String> fileContents = ResourceUtils.ReadAllLines("CharacterEditor.Silverlight", "Resources/AllItems.txt");
 
 			foreach (String str in fileContents)
 			{
@@ -66,7 +64,7 @@ namespace CharacterEditor
 
 			ReadItemCodeSet(itemCodeSets, "ItemGroups.txt");
 
-			foreach (string str in ResourceUtils.ReadAllLines("SilverlightCharacterEditor", "Resources/Sets.txt"))
+			foreach (string str in ResourceUtils.ReadAllLines("CharacterEditor.Silverlight", "Resources/Sets.txt"))
 			{
 				string itemCode = str.Substring(0, 3);
 
@@ -82,7 +80,7 @@ namespace CharacterEditor
 		/// </summary>
 		private static void ReadItemStatCost()
 		{
-			List<ItemStatCost> statCosts = ItemStatCost.Read(ResourceUtils.OpenResourceText("SilverlightCharacterEditor", "Resources/ItemStatCost.txt"));
+			List<ItemStatCost> statCosts = ItemStatCost.Read(ResourceUtils.OpenResourceText("CharacterEditor.Silverlight", "Resources/ItemStatCost.txt"));
 
 			itemStatCostsByName = statCosts.ToDictionary(v => v.Stat, v => v);
 			itemStatCostsById = statCosts.ToDictionary(v => v.ID, v => v);
@@ -217,7 +215,7 @@ namespace CharacterEditor
 		/// </example>
 		public static void ReadItemCodeSet(Dictionary<string, HashSet<string>> itemCodeSets, string filePath)
 		{
-			List<string> lines = ResourceUtils.ReadAllLines("SilverlightCharacterEditor", "Resources/" + filePath);
+			List<string> lines = ResourceUtils.ReadAllLines("CharacterEditor.Silverlight", "Resources/" + filePath);
 			HashSet<string> currentSection = null;
 
 			foreach (var line in lines)

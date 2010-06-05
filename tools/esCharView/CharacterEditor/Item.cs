@@ -147,7 +147,6 @@ namespace CharacterEditor
 		/// <summary>
 		/// List of items stored in item's sockets
 		/// </summary>
-		[Display(AutoGenerateField = false)]
 		public List<Item> Sockets
 		{
 			get { return sockets; }
@@ -155,7 +154,6 @@ namespace CharacterEditor
 		/// <summary>
 		/// Item properties
 		/// </summary>
-		[Display(AutoGenerateField = false)]
 		public List<PropertyInfo> Properties
 		{
 			get { return properties; }
@@ -163,7 +161,6 @@ namespace CharacterEditor
 		/// <summary>
 		/// Set bonuses for wearing multiple parts
 		/// </summary>
-		[Display(AutoGenerateField = false)]
 		public List<PropertyInfo> PropertiesSet
 		{
 			get { return propertiesSet; }
@@ -171,7 +168,6 @@ namespace CharacterEditor
 		/// <summary>
 		/// Runeword properties
 		/// </summary>
-		[Display(AutoGenerateField = false)]
 		public List<PropertyInfo> PropertiesRuneword
 		{
 			get { return propertiesRuneword; }
@@ -473,9 +469,16 @@ namespace CharacterEditor
 
 		#region Affix
 
-		public uint PrefixNameId { get; set; }
-		public uint SuffixNameId { get; set; }
-
+		public uint PrefixNameId
+		{
+			get { return GetDataValue("PrefixNameId"); }
+			set { SetData("PrefixNameId", value); }
+		}
+		public uint SuffixNameId
+		{
+			get { return GetDataValue("SuffixNameId"); }
+			set { SetData("SuffixNameId", value); }
+		}
 		public bool PrefixFlag0
 		{
 			get { return GetDataBoolean("PrefixFlag0"); }
