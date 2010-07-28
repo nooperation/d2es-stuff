@@ -31,9 +31,18 @@ namespace CharacterEditor
 			get { return itemStatCostsById; }
 		}
 
-		static ItemDefs()
+		// TODO: Temp fix! Get rid of static class and move to singleton based on current resource
+		//  set (es300_r6d, rot_1.a3.1, etc)
+		public static void LoadItemDefs()
 		{
-			List<String> fileContents = ResourceUtils.ReadAllLines("CharacterEditor.Silverlight", "Resources/AllItems.txt");
+			// Temp!
+			itemDescriptions = new Dictionary<string, string>();
+			setDescriptions = new Dictionary<string, string>();
+			itemCodeSets = new Dictionary<string, HashSet<string>>();
+			itemStatCostsByName = new Dictionary<string, ItemStatCost>();
+			itemStatCostsById = new Dictionary<int, ItemStatCost>();
+
+			List<String> fileContents = Resources.Instance.ReadAllLines("AllItems.txt");
 
 			foreach (String str in fileContents)
 			{
@@ -64,7 +73,7 @@ namespace CharacterEditor
 
 			ReadItemCodeSet(itemCodeSets, "ItemGroups.txt");
 
-			foreach (string str in ResourceUtils.ReadAllLines("CharacterEditor.Silverlight", "Resources/Sets.txt"))
+			foreach (string str in Resources.Instance.ReadAllLines("Sets.txt"))
 			{
 				string itemCode = str.Substring(0, 3);
 
@@ -75,12 +84,17 @@ namespace CharacterEditor
 			ReadItemStatCost();
 		}
 
+		static ItemDefs()
+		{
+			//LoadItemDefs(); // TODO: No more static class
+		}
+
 		/// <summary>
 		/// Read ItemStatCost data
 		/// </summary>
 		private static void ReadItemStatCost()
 		{
-			List<ItemStatCost> statCosts = ItemStatCost.Read(ResourceUtils.OpenResourceText("CharacterEditor.Silverlight", "Resources/ItemStatCost.txt"));
+			List<ItemStatCost> statCosts = ItemStatCost.Read(Resources.Instance.OpenResourceText("ItemStatCost.txt"));
 
 			itemStatCostsByName = statCosts.ToDictionary(v => v.Stat, v => v);
 			itemStatCostsById = statCosts.ToDictionary(v => v.ID, v => v);
@@ -215,7 +229,7 @@ namespace CharacterEditor
 		/// </example>
 		public static void ReadItemCodeSet(Dictionary<string, HashSet<string>> itemCodeSets, string filePath)
 		{
-			List<string> lines = ResourceUtils.ReadAllLines("CharacterEditor.Silverlight", "Resources/" + filePath);
+			List<string> lines = Resources.Instance.ReadAllLines(filePath);
 			HashSet<string> currentSection = null;
 
 			foreach (var line in lines)

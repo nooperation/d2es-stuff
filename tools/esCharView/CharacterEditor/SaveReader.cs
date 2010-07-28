@@ -95,9 +95,10 @@ namespace CharacterEditor
 		/// <summary>
 		/// Creates a new SaveReader
 		/// </summary>
-		public SaveReader()
+		public SaveReader(string resourceSet)
 		{
-
+			Resources.Instance.ResourceSet = resourceSet;
+			ItemDefs.LoadItemDefs();
 		}
 
 		/// <summary>

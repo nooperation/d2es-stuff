@@ -604,8 +604,11 @@ namespace CharacterEditor
 				ReadData("Unknown9", 32);
 			}
 
-			// Type specific extended data
-			ReadItemDataExtendedSpecific();
+		//	if (Resources.Instance.ResourceSet == "es300_r6d")
+			{
+				// Type specific extended data
+				ReadItemDataExtendedSpecific();
+			}
 		}
 
 		/// <summary>
@@ -779,7 +782,7 @@ namespace CharacterEditor
 			}
 			if (IsPersonalized)
 			{
-				ReadString("PersonalizedName", 7);
+				ReadString("PersonalizedName", 7); //TODO: 15 in ROT?
 			}
 		}
 
@@ -790,17 +793,19 @@ namespace CharacterEditor
 		{
 			if (ItemDefs.IsArmor(ItemCode))
 			{
-				ReadData("Defense", 12);
+				ReadData("Defense", ItemDefs.ItemStatCostsByName["armorclass"].SaveBits); // TODO: Changed for ROT
 				Defense -= (uint)ItemDefs.ItemStatCostsByName["armorclass"].SaveAdd;
 			}
 
 			if (ItemDefs.IsWeapon(ItemCode) || ItemDefs.IsArmor(ItemCode))
 			{
-				ReadData("MaxDurability", 8);
+				ReadData("MaxDurability", ItemDefs.ItemStatCostsByName["maxdurability"].SaveBits);
+				MaxDurability -= (uint)ItemDefs.ItemStatCostsByName["maxdurability"].SaveAdd;
 
 				if (MaxDurability != 0)
 				{
-					ReadData("Durability", 8);
+					ReadData("Durability", ItemDefs.ItemStatCostsByName["durability"].SaveBits);
+					Durability -= (uint)ItemDefs.ItemStatCostsByName["durability"].SaveAdd;
 				}
 				else
 				{
@@ -1167,9 +1172,17 @@ namespace CharacterEditor
 					{
 						uint value = (uint)item.Value.Value;
 
-						if (item.Key == "Defense")
+						if (item.Key == "Defense" )
 						{
 							value += (uint)ItemDefs.ItemStatCostsByName["armorclass"].SaveAdd;
+						}
+						else if (item.Key == "MaxDurability")
+						{
+							value += (uint)ItemDefs.ItemStatCostsByName["maxdurability"].SaveAdd;
+						}
+						else if (item.Key == "Durability")
+						{
+							value += (uint)ItemDefs.ItemStatCostsByName["durability"].SaveAdd;
 						}
 
 						bs.WriteReversed(value, item.Value.BitCount);

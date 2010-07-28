@@ -85,9 +85,15 @@
 			this.statBindingSource = new System.Windows.Forms.BindingSource(this.components);
 			this.tabPageInventoryEditor = new System.Windows.Forms.TabPage();
 			this.tabPageItemEditor = new System.Windows.Forms.TabPage();
+			this.tabControlItemProperties = new System.Windows.Forms.TabControl();
+			this.tabPageItemProperties = new System.Windows.Forms.TabPage();
+			this.dataGridViewItemProperties = new System.Windows.Forms.DataGridView();
+			this.tabPageItemSetProperties = new System.Windows.Forms.TabPage();
+			this.dataGridViewItemSetProperties = new System.Windows.Forms.DataGridView();
+			this.tabPageItemRunewordProperties = new System.Windows.Forms.TabPage();
+			this.dataGridViewItemRunewordProperties = new System.Windows.Forms.DataGridView();
 			this.buttonItemDeleteProperty = new System.Windows.Forms.Button();
 			this.buttonItemAddProperty = new System.Windows.Forms.Button();
-			this.dataGridViewItemProperties = new System.Windows.Forms.DataGridView();
 			this.buttonItemViewerRefresh = new System.Windows.Forms.Button();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
 			this.isEquippedDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -162,12 +168,7 @@
 			this.buttonRemoveSocket = new System.Windows.Forms.Button();
 			this.listBoxItemEditorSockets = new System.Windows.Forms.ListBox();
 			this.checkBoxSkipFailedData = new System.Windows.Forms.CheckBox();
-			this.tabControlItemProperties = new System.Windows.Forms.TabControl();
-			this.tabPageItemProperties = new System.Windows.Forms.TabPage();
-			this.tabPageItemSetProperties = new System.Windows.Forms.TabPage();
-			this.tabPageItemRunewordProperties = new System.Windows.Forms.TabPage();
-			this.dataGridViewItemSetProperties = new System.Windows.Forms.DataGridView();
-			this.dataGridViewItemRunewordProperties = new System.Windows.Forms.DataGridView();
+			this.comboBoxResourceSet = new System.Windows.Forms.ComboBox();
 			this.tabControlInventory.SuspendLayout();
 			this.tabPageInventoryPlayer.SuspendLayout();
 			this.tabPageInventoryCorpse.SuspendLayout();
@@ -185,15 +186,15 @@
 			((System.ComponentModel.ISupportInitialize)(this.statBindingSource)).BeginInit();
 			this.tabPageInventoryEditor.SuspendLayout();
 			this.tabPageItemEditor.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemProperties)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.itemBindingSource)).BeginInit();
 			this.tabControlItemProperties.SuspendLayout();
 			this.tabPageItemProperties.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemProperties)).BeginInit();
 			this.tabPageItemSetProperties.SuspendLayout();
-			this.tabPageItemRunewordProperties.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemSetProperties)).BeginInit();
+			this.tabPageItemRunewordProperties.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemRunewordProperties)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.itemBindingSource)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// buttonLoadCharacter
@@ -696,6 +697,80 @@
 			this.tabPageItemEditor.Text = "ItemViewer";
 			this.tabPageItemEditor.UseVisualStyleBackColor = true;
 			// 
+			// tabControlItemProperties
+			// 
+			this.tabControlItemProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.tabControlItemProperties.Controls.Add(this.tabPageItemProperties);
+			this.tabControlItemProperties.Controls.Add(this.tabPageItemSetProperties);
+			this.tabControlItemProperties.Controls.Add(this.tabPageItemRunewordProperties);
+			this.tabControlItemProperties.Location = new System.Drawing.Point(3, 12);
+			this.tabControlItemProperties.Name = "tabControlItemProperties";
+			this.tabControlItemProperties.SelectedIndex = 0;
+			this.tabControlItemProperties.Size = new System.Drawing.Size(463, 181);
+			this.tabControlItemProperties.TabIndex = 10;
+			// 
+			// tabPageItemProperties
+			// 
+			this.tabPageItemProperties.Controls.Add(this.dataGridViewItemProperties);
+			this.tabPageItemProperties.Location = new System.Drawing.Point(4, 22);
+			this.tabPageItemProperties.Name = "tabPageItemProperties";
+			this.tabPageItemProperties.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageItemProperties.Size = new System.Drawing.Size(455, 155);
+			this.tabPageItemProperties.TabIndex = 0;
+			this.tabPageItemProperties.Text = "General";
+			this.tabPageItemProperties.UseVisualStyleBackColor = true;
+			// 
+			// dataGridViewItemProperties
+			// 
+			this.dataGridViewItemProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridViewItemProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dataGridViewItemProperties.Location = new System.Drawing.Point(3, 3);
+			this.dataGridViewItemProperties.Name = "dataGridViewItemProperties";
+			this.dataGridViewItemProperties.Size = new System.Drawing.Size(449, 149);
+			this.dataGridViewItemProperties.TabIndex = 7;
+			// 
+			// tabPageItemSetProperties
+			// 
+			this.tabPageItemSetProperties.Controls.Add(this.dataGridViewItemSetProperties);
+			this.tabPageItemSetProperties.Location = new System.Drawing.Point(4, 22);
+			this.tabPageItemSetProperties.Name = "tabPageItemSetProperties";
+			this.tabPageItemSetProperties.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageItemSetProperties.Size = new System.Drawing.Size(455, 155);
+			this.tabPageItemSetProperties.TabIndex = 1;
+			this.tabPageItemSetProperties.Text = "Set";
+			this.tabPageItemSetProperties.UseVisualStyleBackColor = true;
+			// 
+			// dataGridViewItemSetProperties
+			// 
+			this.dataGridViewItemSetProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridViewItemSetProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dataGridViewItemSetProperties.Location = new System.Drawing.Point(3, 3);
+			this.dataGridViewItemSetProperties.Name = "dataGridViewItemSetProperties";
+			this.dataGridViewItemSetProperties.Size = new System.Drawing.Size(449, 149);
+			this.dataGridViewItemSetProperties.TabIndex = 0;
+			// 
+			// tabPageItemRunewordProperties
+			// 
+			this.tabPageItemRunewordProperties.Controls.Add(this.dataGridViewItemRunewordProperties);
+			this.tabPageItemRunewordProperties.Location = new System.Drawing.Point(4, 22);
+			this.tabPageItemRunewordProperties.Name = "tabPageItemRunewordProperties";
+			this.tabPageItemRunewordProperties.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPageItemRunewordProperties.Size = new System.Drawing.Size(455, 155);
+			this.tabPageItemRunewordProperties.TabIndex = 2;
+			this.tabPageItemRunewordProperties.Text = "Runeword";
+			this.tabPageItemRunewordProperties.UseVisualStyleBackColor = true;
+			// 
+			// dataGridViewItemRunewordProperties
+			// 
+			this.dataGridViewItemRunewordProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridViewItemRunewordProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dataGridViewItemRunewordProperties.Location = new System.Drawing.Point(3, 3);
+			this.dataGridViewItemRunewordProperties.Name = "dataGridViewItemRunewordProperties";
+			this.dataGridViewItemRunewordProperties.Size = new System.Drawing.Size(449, 149);
+			this.dataGridViewItemRunewordProperties.TabIndex = 0;
+			// 
 			// buttonItemDeleteProperty
 			// 
 			this.buttonItemDeleteProperty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -717,15 +792,6 @@
 			this.buttonItemAddProperty.Text = "Add Prop";
 			this.buttonItemAddProperty.UseVisualStyleBackColor = true;
 			this.buttonItemAddProperty.Click += new System.EventHandler(this.buttonItemAddProperty_Click);
-			// 
-			// dataGridViewItemProperties
-			// 
-			this.dataGridViewItemProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridViewItemProperties.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.dataGridViewItemProperties.Location = new System.Drawing.Point(3, 3);
-			this.dataGridViewItemProperties.Name = "dataGridViewItemProperties";
-			this.dataGridViewItemProperties.Size = new System.Drawing.Size(449, 149);
-			this.dataGridViewItemProperties.TabIndex = 7;
 			// 
 			// buttonItemViewerRefresh
 			// 
@@ -1117,6 +1183,7 @@
 			this.earNameDataGridViewTextBoxColumn.DataPropertyName = "EarName";
 			this.earNameDataGridViewTextBoxColumn.HeaderText = "EarName";
 			this.earNameDataGridViewTextBoxColumn.Name = "earNameDataGridViewTextBoxColumn";
+			this.earNameDataGridViewTextBoxColumn.ReadOnly = true;
 			// 
 			// personalizedNameDataGridViewTextBoxColumn
 			// 
@@ -1266,76 +1333,21 @@
 			this.checkBoxSkipFailedData.Text = "Skip failed data";
 			this.checkBoxSkipFailedData.UseVisualStyleBackColor = true;
 			// 
-			// tabControlItemProperties
+			// comboBoxResourceSet
 			// 
-			this.tabControlItemProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.tabControlItemProperties.Controls.Add(this.tabPageItemProperties);
-			this.tabControlItemProperties.Controls.Add(this.tabPageItemSetProperties);
-			this.tabControlItemProperties.Controls.Add(this.tabPageItemRunewordProperties);
-			this.tabControlItemProperties.Location = new System.Drawing.Point(3, 12);
-			this.tabControlItemProperties.Name = "tabControlItemProperties";
-			this.tabControlItemProperties.SelectedIndex = 0;
-			this.tabControlItemProperties.Size = new System.Drawing.Size(463, 181);
-			this.tabControlItemProperties.TabIndex = 10;
-			// 
-			// tabPageItemProperties
-			// 
-			this.tabPageItemProperties.Controls.Add(this.dataGridViewItemProperties);
-			this.tabPageItemProperties.Location = new System.Drawing.Point(4, 22);
-			this.tabPageItemProperties.Name = "tabPageItemProperties";
-			this.tabPageItemProperties.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageItemProperties.Size = new System.Drawing.Size(455, 155);
-			this.tabPageItemProperties.TabIndex = 0;
-			this.tabPageItemProperties.Text = "General";
-			this.tabPageItemProperties.UseVisualStyleBackColor = true;
-			// 
-			// tabPageItemSetProperties
-			// 
-			this.tabPageItemSetProperties.Controls.Add(this.dataGridViewItemSetProperties);
-			this.tabPageItemSetProperties.Location = new System.Drawing.Point(4, 22);
-			this.tabPageItemSetProperties.Name = "tabPageItemSetProperties";
-			this.tabPageItemSetProperties.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageItemSetProperties.Size = new System.Drawing.Size(455, 155);
-			this.tabPageItemSetProperties.TabIndex = 1;
-			this.tabPageItemSetProperties.Text = "Set";
-			this.tabPageItemSetProperties.UseVisualStyleBackColor = true;
-			// 
-			// tabPageItemRunewordProperties
-			// 
-			this.tabPageItemRunewordProperties.Controls.Add(this.dataGridViewItemRunewordProperties);
-			this.tabPageItemRunewordProperties.Location = new System.Drawing.Point(4, 22);
-			this.tabPageItemRunewordProperties.Name = "tabPageItemRunewordProperties";
-			this.tabPageItemRunewordProperties.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageItemRunewordProperties.Size = new System.Drawing.Size(455, 155);
-			this.tabPageItemRunewordProperties.TabIndex = 2;
-			this.tabPageItemRunewordProperties.Text = "Runeword";
-			this.tabPageItemRunewordProperties.UseVisualStyleBackColor = true;
-			// 
-			// dataGridViewItemSetProperties
-			// 
-			this.dataGridViewItemSetProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridViewItemSetProperties.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.dataGridViewItemSetProperties.Location = new System.Drawing.Point(3, 3);
-			this.dataGridViewItemSetProperties.Name = "dataGridViewItemSetProperties";
-			this.dataGridViewItemSetProperties.Size = new System.Drawing.Size(449, 149);
-			this.dataGridViewItemSetProperties.TabIndex = 0;
-			// 
-			// dataGridViewItemRunewordProperties
-			// 
-			this.dataGridViewItemRunewordProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridViewItemRunewordProperties.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.dataGridViewItemRunewordProperties.Location = new System.Drawing.Point(3, 3);
-			this.dataGridViewItemRunewordProperties.Name = "dataGridViewItemRunewordProperties";
-			this.dataGridViewItemRunewordProperties.Size = new System.Drawing.Size(449, 149);
-			this.dataGridViewItemRunewordProperties.TabIndex = 0;
+			this.comboBoxResourceSet.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboBoxResourceSet.FormattingEnabled = true;
+			this.comboBoxResourceSet.Location = new System.Drawing.Point(360, 13);
+			this.comboBoxResourceSet.Name = "comboBoxResourceSet";
+			this.comboBoxResourceSet.Size = new System.Drawing.Size(107, 21);
+			this.comboBoxResourceSet.TabIndex = 17;
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(632, 343);
+			this.Controls.Add(this.comboBoxResourceSet);
 			this.Controls.Add(this.checkBoxSkipFailedData);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.label2);
@@ -1346,6 +1358,7 @@
 			this.MinimumSize = new System.Drawing.Size(600, 250);
 			this.Name = "Form1";
 			this.Text = "D2ES Save Fix";
+			this.Load += new System.EventHandler(this.Form1_Load);
 			this.tabControlInventory.ResumeLayout(false);
 			this.tabPageInventoryPlayer.ResumeLayout(false);
 			this.tabPageInventoryCorpse.ResumeLayout(false);
@@ -1363,15 +1376,15 @@
 			((System.ComponentModel.ISupportInitialize)(this.statBindingSource)).EndInit();
 			this.tabPageInventoryEditor.ResumeLayout(false);
 			this.tabPageItemEditor.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemProperties)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.itemBindingSource)).EndInit();
 			this.tabControlItemProperties.ResumeLayout(false);
 			this.tabPageItemProperties.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemProperties)).EndInit();
 			this.tabPageItemSetProperties.ResumeLayout(false);
-			this.tabPageItemRunewordProperties.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemSetProperties)).EndInit();
+			this.tabPageItemRunewordProperties.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridViewItemRunewordProperties)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.itemBindingSource)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -1518,6 +1531,7 @@
 		private System.Windows.Forms.DataGridView dataGridViewItemSetProperties;
 		private System.Windows.Forms.TabPage tabPageItemRunewordProperties;
 		private System.Windows.Forms.DataGridView dataGridViewItemRunewordProperties;
+		private System.Windows.Forms.ComboBox comboBoxResourceSet;
 
 	}
 }

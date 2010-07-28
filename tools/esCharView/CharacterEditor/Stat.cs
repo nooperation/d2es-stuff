@@ -241,11 +241,21 @@ namespace CharacterEditor
 		/// </summary>
 		public int KillCount
 		{
-			get { return GetStatValue("kill_counter"); }
+			get 
+			{
+				if (Resources.Instance.ResourceSet == "es300_r6d")
+				{
+					return GetStatValue("kill_counter");
+				}
+				return 0;
+			}
 			set
 			{
-				SetStatValue("kill_counter", value);
-				OnPropertyChange("KillCount");
+				if (Resources.Instance.ResourceSet == "es300_r6d")
+				{
+					SetStatValue("kill_counter", value);
+					OnPropertyChange("KillCount");
+				}
 			}
 		}
 		/// <summary>
@@ -253,11 +263,21 @@ namespace CharacterEditor
 		/// </summary>
 		public int DeathCount
 		{
-			get { return GetStatValue("death_counter"); }
+			get 
+			{
+				if (Resources.Instance.ResourceSet == "es300_r6d")
+				{
+					return GetStatValue("death_counter");
+				}
+				return 0;
+			}
 			set
 			{
-				SetStatValue("death_counter", value);
-				OnPropertyChange("DeathCount");
+				if (Resources.Instance.ResourceSet == "es300_r6d")
+				{
+					SetStatValue("death_counter", value);
+					OnPropertyChange("DeathCount");
+				}
 			}
 		}
 

@@ -47,7 +47,7 @@ namespace esCharView
 
 		private void ProcessCharacter(byte[] rawCharacterBytes)
 		{
-			playerData = new SaveReader();
+			playerData = new SaveReader(comboBoxResourceSet.Text);
 
 			playerData.Read(rawCharacterBytes);
 
@@ -388,6 +388,12 @@ namespace esCharView
 
 			RemoveItemProperty();
 			RefreshItemPropertiesGrid();
+		}
+
+		private void Form1_Load(object sender, EventArgs e)
+		{
+			comboBoxResourceSet.Items.AddRange(Resources.GetResourceSets().ToArray());
+			comboBoxResourceSet.SelectedItem = comboBoxResourceSet.Items[1];
 		}
 	}
 }

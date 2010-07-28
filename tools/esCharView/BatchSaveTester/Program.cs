@@ -15,6 +15,12 @@ namespace BatchSaveTester
 			//TestAllFiles(@"D:\files\usr\var\charbackup");
 		}
 
+		struct ItemData
+		{
+			public string FileName;
+			public Item Item;
+		}
+
 		private static void TestAllFiles(string path)
 		{
 			string invalidSavePath = path + "\\invalid\\";
@@ -27,15 +33,27 @@ namespace BatchSaveTester
 			List<string> invalidPropsSaves = new List<string>();
 			List<string> invalidDecodeSaves = new List<string>();
 
+			Dictionary<uint, List<ItemData>> itemIds = new Dictionary<uint, List<ItemData>>();
+
 			string[] fileNames = Directory.GetFiles(path);
 
 			for (int i = 0; i < fileNames.Length; i++)
 			{
-				SaveReader currentSave = null;
+				SaveReader currentSave = new SaveReader("es300_r6d");
 
 				try
 				{
-					currentSave = new SaveReader(File.ReadAllBytes(fileNames[i]));
+					currentSave.Read(File.ReadAllBytes(fileNames[i]));
+
+					foreach (var item in currentSave.Inventory.PlayerItems)
+					{
+						if (!itemIds.ContainsKey(item.Id))
+						{
+							itemIds[item.Id] = new List<ItemData>();
+						}
+
+						itemIds[item.Id].Add(new ItemData() { FileName = fileNames[i], Item = item });
+					}
 				}
 				catch (IndexOutOfRangeException)
 				{
@@ -74,6 +92,19 @@ namespace BatchSaveTester
 			MoveInvalidSaves(invalidItemSaves, invalidItemPath);
 			MoveInvalidSaves(invalidPropsSaves, invalidPropsPath);
 			MoveInvalidSaves(invalidDecodeSaves, invalidDecodePath);
+
+			Console.WriteLine("Searching for duplicate ids:");
+			var dupes = (from n in itemIds where n.Key > 0 && n.Value.Count > 1 select n).ToList();
+
+			foreach (var item in dupes)
+			{
+				Console.WriteLine("Item {0}:", item.Key);
+				foreach (var dupe in item.Value)
+				{
+					Console.WriteLine("\t{0} -> {1}", dupe.FileName, dupe.Item.ToString());
+				}
+				Console.WriteLine();
+			}
 		}
 
 		private static void MoveInvalidSaves(List<string> invalidSaves, string path)

@@ -73,6 +73,9 @@
     <Compile Include="..\CharacterEditor\ItemStatCost.cs">
       <Link>ItemStatCost.cs</Link>
     </Compile>
+    <Compile Include="..\CharacterEditor\Resources.cs">
+      <Link>Resources.cs</Link>
+    </Compile>
     <Compile Include="..\CharacterEditor\SaveReader.cs">
       <Link>SaveReader.cs</Link>
     </Compile>
@@ -93,22 +96,33 @@
       <DependentUpon>BitStream.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Resource Include="..\CharacterEditor\Resources\AllItems.txt">
-      <Link>Resources\AllItems.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Resource Include="..\CharacterEditor\Resources\es300_R6D\AllItems.txt">
+      <Link>Resources\es300_R6D\AllItems.txt</Link>
     </Resource>
-    <Resource Include="..\CharacterEditor\Resources\ItemGroups.txt">
-      <Link>Resources\ItemGroups.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Resource Include="..\CharacterEditor\Resources\es300_R6D\ItemGroups.txt">
+      <Link>Resources\es300_R6D\ItemGroups.txt</Link>
     </Resource>
-    <Resource Include="..\CharacterEditor\Resources\ItemStatCost.txt">
-      <Link>Resources\ItemStatCost.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Resource Include="..\CharacterEditor\Resources\es300_R6D\ItemStatCost.txt">
+      <Link>Resources\es300_R6D\ItemStatCost.txt</Link>
     </Resource>
-    <Resource Include="..\CharacterEditor\Resources\Sets.txt">
-      <Link>Resources\Sets.txt</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Resource Include="..\CharacterEditor\Resources\es300_R6D\Sets.txt">
+      <Link>Resources\es300_R6D\Sets.txt</Link>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\CharacterEditor\Resources\RoT_1.A3.1\AllItems.txt">
+      <Link>Resources\RoT_1.A3.1\AllItems.txt</Link>
+    </Resource>
+    <Resource Include="..\CharacterEditor\Resources\RoT_1.A3.1\ItemGroups.txt">
+      <Link>Resources\RoT_1.A3.1\ItemGroups.txt</Link>
+    </Resource>
+    <Resource Include="..\CharacterEditor\Resources\RoT_1.A3.1\ItemStatCost.txt">
+      <Link>Resources\RoT_1.A3.1\ItemStatCost.txt</Link>
+    </Resource>
+    <Resource Include="..\CharacterEditor\Resources\RoT_1.A3.1\Sets.txt">
+      <Link>Resources\RoT_1.A3.1\Sets.txt</Link>
     </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />

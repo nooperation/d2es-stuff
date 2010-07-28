@@ -23,6 +23,9 @@ namespace esCharView.Silverlight
 		public MainPage()
 		{
 			InitializeComponent();
+
+			comboBoxResourceSets.ItemsSource = CharacterEditor.Resources.GetResourceSets();
+			comboBoxResourceSets.SelectedIndex = 0;
 		}
 
 		private void LoadSave(FileInfo saveFile)
@@ -37,7 +40,9 @@ namespace esCharView.Silverlight
 
 		private void ProcessCharacter(byte[] rawCharacterbytes)
 		{
-			playerData = new SaveReader();
+			CharacterEditor.Resources.Instance.ResourceSet = (string)comboBoxResourceSets.SelectedItem;
+
+			playerData = new SaveReader(comboBoxResourceSets.SelectedItem.ToString());
 
 			playerData.Read(rawCharacterbytes);
 
