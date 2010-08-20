@@ -300,11 +300,16 @@ namespace CharacterEditor
 					return "ear";
 				}
 
-				return dataEntries["ItemCode"].Value as string;
+				return GetDataObject("ItemCode") as string;
+				//return dataEntries["ItemCode"].Value as string;
 			}
 			set
 			{
-				dataEntries["ItemCode"].Value = value.Substring(0, 3);
+				if (value.Length < 3)
+				{
+					return;
+				}
+				SetData("ItemCode", value.Substring(0, 3));
 			}
 		}
 

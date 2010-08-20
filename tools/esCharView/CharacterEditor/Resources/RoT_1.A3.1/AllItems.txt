@@ -1,16 +1,819 @@
-!@1	Evil Eye of the Clawstorm
-!@2	Evil Eye of the Landmass
-!@3	Evil Eye of the Glowing Blob
-!@4	Evil Eye of the Fairy Witch
-!@5	Evil Eye of the Bane Hunter
-!@6	Dogma of Suffering
-!@7	Dogma of Pain
-!@8	Dogma of Hatred
-!@9	Dogma of Terror
-!@A	Dogma of Destruction
-!@B	Signet of Skill
-!@c	Wisdom: -- Baal --
-!0@	Kite Shield (Immortal)
+gps	Rancid Gas Potion
+ops	Oil Potion
+gpm	Choking Gas Potion
+opm	Exploding Potion
+gpl	Strangling Gas Potion
+opl	Fulminating Potion
+d33	Decoy Gidbinn
+g33	The Gidbinn
+leg	Wirt's Leg
+hdm	Horadric Malus
+hfh	Hell Forge Hammer
+hst	Horadric Staff
+msf	Shaft of the Horadric Staff
+qf1	Khalim's Flail
+qf2	Khalim's Will
+tax	Throwing Axe
+bsd	Broad Sword
+vou	Voulge
+4@A	Angel Star (1)
+5@A	Angel Star (2)
+6@A	Angel Star (3)
+7@A	Angel Star (4)
+8@A	Angel Star (5)
+9@A	Angel Star (6)
+1@B	Angel Star (Sacred)
+115	Axe (1)
+183	Axe (2)
+251	Axe (3)
+319	Axe (4)
+387	Axe (5)
+455	Axe (6)
+16@	Axe (Sacred)
+7@5	Backsword (1)
+8@5	Backsword (2)
+9@5	Backsword (3)
+1@6	Backsword (4)
+2@6	Backsword (5)
+3@6	Backsword (6)
+4@6	Backsword (Sacred)
+150	Balanced Axe (1)
+218	Balanced Axe (2)
+286	Balanced Axe (3)
+354	Balanced Axe (4)
+422	Balanced Axe (5)
+490	Balanced Axe (6)
+51@	Balanced Axe (Sacred)
+148	Balanced Knife (1)
+216	Balanced Knife (2)
+284	Balanced Knife (3)
+352	Balanced Knife (4)
+420	Balanced Knife (5)
+488	Balanced Knife (6)
+49@	Balanced Knife (Sacred)
+156	Bardiche (1)
+224	Bardiche (2)
+292	Bardiche (3)
+360	Bardiche (4)
+428	Bardiche (5)
+496	Bardiche (6)
+57@	Bardiche (Sacred)
+110	Bastard Sword (1)
+178	Bastard Sword (2)
+246	Bastard Sword (3)
+314	Bastard Sword (4)
+382	Bastard Sword (5)
+450	Bastard Sword (6)
+11@	Bastard Sword (Sacred)
+121	Battle Axe (1)
+189	Battle Axe (2)
+257	Battle Axe (3)
+325	Battle Axe (4)
+393	Battle Axe (5)
+461	Battle Axe (6)
+22@	Battle Axe (Sacred)
+154	Battle Staff (1)
+222	Battle Staff (2)
+290	Battle Staff (3)
+358	Battle Staff (4)
+426	Battle Staff (5)
+494	Battle Staff (6)
+55@	Battle Staff (Sacred)
+145	Blade (1)
+213	Blade (2)
+281	Blade (3)
+349	Blade (4)
+417	Blade (5)
+485	Blade (6)
+46@	Blade (Sacred)
+j25	Blade Talons (1)
+j42	Blade Talons (2)
+j59	Blade Talons (3)
+j76	Blade Talons (4)
+j93	Blade Talons (5)
+o20	Blade Talons (6)
+95@	Blade Talons (Sacred)
+l12	Bone Wand (1)
+l16	Bone Wand (2)
+l20	Bone Wand (3)
+l24	Bone Wand (4)
+l28	Bone Wand (5)
+l32	Bone Wand (6)
+71@	Bone Wand (Sacred)
+8@8	Bonebreaker (1)
+9@8	Bonebreaker (2)
+1@9	Bonebreaker (3)
+2@9	Bonebreaker (4)
+3@9	Bonebreaker (5)
+4@9	Bonebreaker (6)
+5@9	Bonebreaker (Sacred)
+139	Brandistock (1)
+207	Brandistock (2)
+275	Brandistock (3)
+343	Brandistock (4)
+411	Brandistock (5)
+479	Brandistock (6)
+40@	Brandistock (Sacred)
+120	Broad Axe (1)
+188	Broad Axe (2)
+256	Broad Axe (3)
+324	Broad Axe (4)
+392	Broad Axe (5)
+460	Broad Axe (6)
+21@	Broad Axe (Sacred)
+104	Broad Sword (1)
+172	Broad Sword (2)
+240	Broad Sword (3)
+308	Broad Sword (4)
+376	Broad Sword (5)
+444	Broad Sword (6)
+05@	Broad Sword (Sacred)
+3@7	Bronze Sword (1)
+4@7	Bronze Sword (2)
+5@7	Bronze Sword (3)
+6@7	Bronze Sword (4)
+7@7	Bronze Sword (5)
+8@7	Bronze Sword (6)
+9@7	Bronze Sword (Sacred)
+j23	Cestus (1)
+j40	Cestus (2)
+j57	Cestus (3)
+j74	Cestus (4)
+j91	Cestus (5)
+o18	Cestus (6)
+93@	Cestus (Sacred)
+j13	Clasped Orb (1)
+j30	Clasped Orb (2)
+j47	Clasped Orb (3)
+j64	Clasped Orb (4)
+j81	Clasped Orb (5)
+j98	Clasped Orb (6)
+83@	Clasped Orb (Sacred)
+j24	Claws (1)
+j41	Claws (2)
+j58	Claws (3)
+j75	Claws (4)
+j92	Claws (5)
+o19	Claws (6)
+94@	Claws (Sacred)
+108	Claymore (1)
+176	Claymore (2)
+244	Claymore (3)
+312	Claymore (4)
+380	Claymore (5)
+448	Claymore (6)
+09@	Claymore (Sacred)
+124	Club (1)
+192	Club (2)
+260	Club (3)
+328	Club (4)
+396	Club (5)
+464	Club (6)
+25@	Club (Sacred)
+163	Composite Bow (1)
+231	Composite Bow (2)
+299	Composite Bow (3)
+367	Composite Bow (4)
+435	Composite Bow (5)
+503	Composite Bow (6)
+64@	Composite Bow (Sacred)
+1@1	Compound Bow (1)
+2@1	Compound Bow (2)
+3@1	Compound Bow (3)
+4@1	Compound Bow (4)
+5@1	Compound Bow (5)
+6@1	Compound Bow (6)
+7@1	Compound Bow (Sacred)
+l53	Crossbow (1)
+l57	Crossbow (2)
+l61	Crossbow (3)
+l65	Crossbow (4)
+l69	Crossbow (5)
+l73	Crossbow (6)
+77@	Crossbow (Sacred)
+113	Crystal Sword (1)
+181	Crystal Sword (2)
+249	Crystal Sword (3)
+317	Crystal Sword (4)
+385	Crystal Sword (5)
+453	Crystal Sword (6)
+14@	Crystal Sword (Sacred)
+142	Dagger (1)
+210	Dagger (2)
+278	Dagger (3)
+346	Dagger (4)
+414	Dagger (5)
+482	Dagger (6)
+43@	Dagger (Sacred)
+5@D	Dart Thrower (1)
+6@D	Dart Thrower (2)
+7@D	Dart Thrower (3)
+8@D	Dart Thrower (4)
+9@D	Dart Thrower (5)
+1@E	Dart Thrower (6)
+2@E	Dart Thrower (Sacred)
+143	Dirk (1)
+211	Dirk (2)
+279	Dirk (3)
+347	Dirk (4)
+415	Dirk (5)
+483	Dirk (6)
+44@	Dirk (Sacred)
+116	Double Axe (1)
+184	Double Axe (2)
+252	Double Axe (3)
+320	Double Axe (4)
+388	Double Axe (5)
+456	Double Axe (6)
+17@	Double Axe (Sacred)
+j14	Jared's Stone (1)
+j31	Jared's Stone (2)
+j48	Jared's Stone (3)
+j65	Jared's Stone (4)
+j82	Jared's Stone (5)
+j99	Jared's Stone (6)
+84@	Jared's Stone (Sacred)
+j10	Eagle Orb (1)
+j27	Eagle Orb (2)
+j44	Eagle Orb (3)
+j61	Eagle Orb (4)
+j78	Eagle Orb (5)
+j95	Eagle Orb (6)
+80@	Eagle Orb (Sacred)
+103	Falchion (1)
+171	Falchion (2)
+239	Falchion (3)
+307	Falchion (4)
+375	Falchion (5)
+443	Falchion (6)
+04@	Falchion (Sacred)
+128	Flail (1)
+196	Flail (2)
+264	Flail (3)
+332	Flail (4)
+400	Flail (5)
+468	Flail (6)
+29@	Flail (Sacred)
+111	Flamberge (1)
+179	Flamberge (2)
+247	Flamberge (3)
+315	Flamberge (4)
+383	Flamberge (5)
+451	Flamberge (6)
+12@	Flamberge (Sacred)
+147	Flying Knife (1)
+215	Flying Knife (2)
+283	Flying Knife (3)
+351	Flying Knife (4)
+419	Flying Knife (5)
+487	Flying Knife (6)
+48@	Flying Knife (Sacred)
+123	Giant Axe (1)
+191	Giant Axe (2)
+259	Giant Axe (3)
+327	Giant Axe (4)
+395	Giant Axe (5)
+463	Giant Axe (6)
+24@	Giant Axe (Sacred)
+109	Giant Sword (1)
+177	Giant Sword (2)
+245	Giant Sword (3)
+313	Giant Sword (4)
+381	Giant Sword (5)
+449	Giant Sword (6)
+10@	Giant Sword (Sacred)
+135	Glaive (1)
+203	Glaive (2)
+271	Glaive (3)
+339	Glaive (4)
+407	Glaive (5)
+475	Glaive (6)
+36@	Glaive (Sacred)
+153	Gnarled Staff (1)
+221	Gnarled Staff (2)
+289	Gnarled Staff (3)
+357	Gnarled Staff (4)
+425	Gnarled Staff (5)
+493	Gnarled Staff (6)
+54@	Gnarled Staff (Sacred)
+6@9	Goedendag (1)
+7@9	Goedendag (2)
+8@9	Goedendag (3)
+9@9	Goedendag (4)
+1@A	Goedendag (5)
+2@A	Goedendag (6)
+3@A	Goedendag (Sacred)
+130	Grand Scepter (1)
+198	Grand Scepter (2)
+266	Grand Scepter (3)
+334	Grand Scepter (4)
+402	Grand Scepter (5)
+470	Grand Scepter (6)
+31@	Grand Scepter (Sacred)
+122	Great Axe (1)
+190	Great Axe (2)
+258	Great Axe (3)
+326	Great Axe (4)
+394	Great Axe (5)
+462	Great Axe (6)
+23@	Great Axe (Sacred)
+l36	Great Maul (1)
+l39	Great Maul (2)
+l42	Great Maul (3)
+l45	Great Maul (4)
+l48	Great Maul (5)
+l51	Great Maul (6)
+75@	Great Maul (Sacred)
+112	Great Sword (1)
+180	Great Sword (2)
+248	Great Sword (3)
+316	Great Sword (4)
+384	Great Sword (5)
+452	Great Sword (6)
+13@	Great Sword (Sacred)
+l13	Grim Wand (1)
+l17	Grim Wand (2)
+l21	Grim Wand (3)
+l25	Grim Wand (4)
+l29	Grim Wand (5)
+l33	Grim Wand (6)
+72@	Grim Wand (Sacred)
+159	Halberd (1)
+227	Halberd (2)
+295	Halberd (3)
+363	Halberd (4)
+431	Halberd (5)
+499	Halberd (6)
+60@	Halberd (Sacred)
+114	Hand Axe (1)
+182	Hand Axe (2)
+250	Hand Axe (3)
+318	Hand Axe (4)
+386	Hand Axe (5)
+454	Hand Axe (6)
+15@	Hand Axe (Sacred)
+9@B	Hand of God (1)
+1@C	Hand of God (2)
+2@C	Hand of God (3)
+3@C	Hand of God (4)
+4@C	Hand of God (5)
+5@C	Hand of God (6)
+6@C	Hand of God (Sacred)
+j22	Hatchet Hands (1)
+j39	Hatchet Hands (2)
+j56	Hatchet Hands (3)
+j73	Hatchet Hands (4)
+j90	Hatchet Hands (5)
+o17	Hatchet Hands (6)
+92@	Hatchet Hands (Sacred)
+l54	Heavy Crossbow (1)
+l58	Heavy Crossbow (2)
+l62	Heavy Crossbow (3)
+l66	Heavy Crossbow (4)
+l70	Heavy Crossbow (5)
+l74	Heavy Crossbow (6)
+78@	Heavy Crossbow (Sacred)
+161	Hunter's Bow (1)
+229	Hunter's Bow (2)
+297	Hunter's Bow (3)
+365	Hunter's Bow (4)
+433	Hunter's Bow (5)
+501	Hunter's Bow (6)
+62@	Hunter's Bow (Sacred)
+5@6	Ida (1)
+6@6	Ida (2)
+7@6	Ida (3)
+8@6	Ida (4)
+9@6	Ida (5)
+1@7	Ida (6)
+2@7	Ida (Sacred)
+132	Javelin (1)
+200	Javelin (2)
+268	Javelin (3)
+336	Javelin (4)
+404	Javelin (5)
+472	Javelin (6)
+33@	Javelin (Sacred)
+j20	Katar (1)
+j37	Katar (2)
+j54	Katar (3)
+j71	Katar (4)
+j88	Katar (5)
+o15	Katar (6)
+90@	Katar (Sacred)
+1@8	Kriegsmesser (1)
+2@8	Kriegsmesser (2)
+3@8	Kriegsmesser (3)
+4@8	Kriegsmesser (4)
+5@8	Kriegsmesser (5)
+6@8	Kriegsmesser (6)
+7@8	Kriegsmesser (Sacred)
+144	Kriss (1)
+212	Kriss (2)
+280	Kriss (3)
+348	Kriss (4)
+416	Kriss (5)
+484	Kriss (6)
+45@	Kriss (Sacred)
+119	Large Axe (1)
+187	Large Axe (2)
+255	Large Axe (3)
+323	Large Axe (4)
+391	Large Axe (5)
+459	Large Axe (6)
+20@	Large Axe (Sacred)
+l52	Light Crossbow (1)
+l56	Light Crossbow (2)
+l60	Light Crossbow (3)
+l64	Light Crossbow (4)
+l68	Light Crossbow (5)
+l72	Light Crossbow (6)
+76@	Light Crossbow (Sacred)
+165	Long Battle Bow (1)
+233	Long Battle Bow (2)
+301	Long Battle Bow (3)
+369	Long Battle Bow (4)
+437	Long Battle Bow (5)
+505	Long Battle Bow (6)
+66@	Long Battle Bow (Sacred)
+162	Long Bow (1)
+230	Long Bow (2)
+298	Long Bow (3)
+366	Long Bow (4)
+434	Long Bow (5)
+502	Long Bow (6)
+63@	Long Bow (Sacred)
+152	Long Staff (1)
+220	Long Staff (2)
+288	Long Staff (3)
+356	Long Staff (4)
+424	Long Staff (5)
+492	Long Staff (6)
+53@	Long Staff (Sacred)
+105	Long Sword (1)
+173	Long Sword (2)
+241	Long Sword (3)
+309	Long Sword (4)
+377	Long Sword (5)
+445	Long Sword (6)
+06@	Long Sword (Sacred)
+167	Long War Bow (1)
+235	Long War Bow (2)
+303	Long War Bow (3)
+371	Long War Bow (4)
+439	Long War Bow (5)
+507	Long War Bow (6)
+68@	Long War Bow (Sacred)
+126	Mace (1)
+194	Mace (2)
+262	Mace (3)
+330	Mace (4)
+398	Mace (5)
+466	Mace (6)
+27@	Mace (Sacred)
+j19	Maiden Javelin (1)
+j36	Maiden Javelin (2)
+j53	Maiden Javelin (3)
+j70	Maiden Javelin (4)
+j87	Maiden Javelin (5)
+o14	Maiden Javelin (6)
+89@	Maiden Javelin (Sacred)
+j18	Maiden Pike (1)
+j35	Maiden Pike (2)
+j52	Maiden Pike (3)
+j69	Maiden Pike (4)
+j86	Maiden Pike (5)
+o13	Maiden Pike (6)
+88@	Maiden Pike (Sacred)
+j17	Maiden Spear (1)
+x34	Maiden Spear (2)
+j51	Maiden Spear (3)
+j68	Maiden Spear (4)
+j85	Maiden Spear (5)
+o12	Maiden Spear (6)
+87@	Maiden Spear (Sacred)
+6@2	Maple Bow (1)
+7@2	Maple Bow (2)
+8@2	Maple Bow (3)
+9@2	Maple Bow (4)
+1@3	Maple Bow (5)
+2@3	Maple Bow (6)
+3@3	Maple Bow (Sacred)
+l35	Maul (1)
+l38	Maul (2)
+l41	Maul (3)
+l44	Maul (4)
+l47	Maul (5)
+l50	Maul (6)
+74@	Maul (Sacred)
+117	Military Pick (1)
+185	Military Pick (2)
+253	Military Pick (3)
+321	Military Pick (4)
+389	Military Pick (5)
+457	Military Pick (6)
+18@	Military Pick (Sacred)
+127	Morning Star (1)
+195	Morning Star (2)
+263	Morning Star (3)
+331	Morning Star (4)
+399	Morning Star (5)
+467	Morning Star (6)
+28@	Morning Star (Sacred)
+7@C	Needle Crossbow (1)
+8@C	Needle Crossbow (2)
+9@C	Needle Crossbow (3)
+1@D	Needle Crossbow (4)
+2@D	Needle Crossbow (5)
+3@D	Needle Crossbow (6)
+4@D	Needle Crossbow (Sacred)
+141	Pike (1)
+209	Pike (2)
+277	Pike (3)
+345	Pike (4)
+413	Pike (5)
+481	Pike (6)
+42@	Pike (Sacred)
+133	Pilum (1)
+201	Pilum (2)
+269	Pilum (3)
+337	Pilum (4)
+405	Pilum (5)
+473	Pilum (6)
+34@	Pilum (Sacred)
+158	Scythe (1)
+226	Scythe (2)
+294	Scythe (3)
+362	Scythe (4)
+430	Scythe (5)
+498	Scythe (6)
+59@	Scythe (Sacred)
+2@4	Recurve Bow (1)
+3@4	Recurve Bow (2)
+4@4	Recurve Bow (3)
+5@4	Recurve Bow (4)
+6@4	Recurve Bow (5)
+7@4	Recurve Bow (6)
+8@4	Recurve Bow (Sacred)
+j16	Reflex Bow (1)
+j33	Reflex Bow (2)
+j50	Reflex Bow (3)
+j67	Reflex Bow (4)
+j84	Reflex Bow (5)
+o11	Reflex Bow (6)
+86@	Reflex Bow (Sacred)
+l55	Repeating Crossbow (1)
+l59	Repeating Crossbow (2)
+l63	Repeating Crossbow (3)
+l67	Repeating Crossbow (4)
+l71	Repeating Crossbow (5)
+l75	Repeating Crossbow (6)
+79@	Repeating Crossbow (Sacred)
+102	Saber (1)
+170	Saber (2)
+238	Saber (3)
+306	Saber (4)
+374	Saber (5)
+442	Saber (6)
+03@	Saber (Sacred)
+j11	Sacred Globe (1)
+j28	Sacred Globe (2)
+j45	Sacred Globe (3)
+j62	Sacred Globe (4)
+j79	Sacred Globe (5)
+j96	Sacred Globe (6)
+81@	Sacred Globe (Sacred)
+129	Scepter (1)
+197	Scepter (2)
+265	Scepter (3)
+333	Scepter (4)
+401	Scepter (5)
+469	Scepter (6)
+30@	Scepter (Sacred)
+101	Scimitar (1)
+169	Scimitar (2)
+237	Scimitar (3)
+305	Scimitar (4)
+373	Scimitar (5)
+441	Scimitar (6)
+02@	Scimitar (Sacred)
+j26	Scissors Katar (1)
+j43	Scissors Katar (2)
+j60	Scissors Katar (3)
+j77	Scissors Katar (4)
+j94	Scissors Katar (5)
+o21	Scissors Katar (6)
+96@	Scissors Katar (Sacred)
+8@1	Serpent Bow (1)
+9@1	Serpent Bow (2)
+1@2	Serpent Bow (3)
+2@2	Serpent Bow (4)
+3@2	Serpent Bow (5)
+4@2	Serpent Bow (6)
+5@2	Serpent Bow (Sacred)
+164	Short Battle Bow (1)
+232	Short Battle Bow (2)
+300	Short Battle Bow (3)
+368	Short Battle Bow (4)
+436	Short Battle Bow (5)
+504	Short Battle Bow (6)
+65@	Short Battle Bow (Sacred)
+160	Short Bow (1)
+228	Short Bow (2)
+296	Short Bow (3)
+364	Short Bow (4)
+432	Short Bow (5)
+500	Short Bow (6)
+61@	Short Bow (Sacred)
+134	Short Spear (1)
+202	Short Spear (2)
+270	Short Spear (3)
+338	Short Spear (4)
+406	Short Spear (5)
+474	Short Spear (6)
+35@	Short Spear (Sacred)
+151	Short Staff (1)
+219	Short Staff (2)
+287	Short Staff (3)
+355	Short Staff (4)
+423	Short Staff (5)
+491	Short Staff (6)
+52@	Short Staff (Sacred)
+100	Short Sword (1)
+168	Short Sword (2)
+236	Short Sword (3)
+304	Short Sword (4)
+372	Short Sword (5)
+440	Short Sword (6)
+01@	Short Sword (Sacred)
+166	Short War Bow (1)
+234	Short War Bow (2)
+302	Short War Bow (3)
+370	Short War Bow (4)
+438	Short War Bow (5)
+506	Short War Bow (6)
+67@	Short War Bow (Sacred)
+j12	Smoked Sphere (1)
+j29	Smoked Sphere (2)
+j46	Smoked Sphere (3)
+j63	Smoked Sphere (4)
+j80	Smoked Sphere (5)
+j97	Smoked Sphere (6)
+82@	Smoked Sphere (Sacred)
+9@4	Spatha (1)
+1@5	Spatha (2)
+2@5	Spatha (3)
+3@5	Spatha (4)
+4@5	Spatha (5)
+5@5	Spatha (6)
+6@5	Spatha (Sacred)
+137	Spear (1)
+205	Spear (2)
+273	Spear (3)
+341	Spear (4)
+409	Spear (5)
+477	Spear (6)
+38@	Spear (Sacred)
+140	Spetum (1)
+208	Spetum (2)
+276	Spetum (3)
+344	Spetum (4)
+412	Spetum (5)
+480	Spetum (6)
+41@	Spetum (Sacred)
+125	Spiked Club (1)
+193	Spiked Club (2)
+261	Spiked Club (3)
+329	Spiked Club (4)
+397	Spiked Club (5)
+465	Spiked Club (6)
+26@	Spiked Club (Sacred)
+j15	Stag Bow (1)
+j32	Stag Bow (2)
+j49	Stag Bow (3)
+j66	Stag Bow (4)
+j83	Stag Bow (5)
+o10	Stag Bow (6)
+85@	Stag Bow (Sacred)
+3@E	Stinger Crossbow (1)
+4@E	Stinger Crossbow (2)
+5@E	Stinger Crossbow (3)
+6@E	Stinger Crossbow (4)
+7@E	Stinger Crossbow (5)
+8@E	Stinger Crossbow (6)
+9@E	Stinger Crossbow (Sacred)
+149	Throwing Axe (1)
+217	Throwing Axe (2)
+285	Throwing Axe (3)
+353	Throwing Axe (4)
+421	Throwing Axe (5)
+489	Throwing Axe (6)
+50@	Throwing Axe (Sacred)
+146	Throwing Knife (1)
+214	Throwing Knife (2)
+282	Throwing Knife (3)
+350	Throwing Knife (4)
+418	Throwing Knife (5)
+486	Throwing Knife (6)
+47@	Throwing Knife (Sacred)
+136	Throwing Spear (1)
+204	Throwing Spear (2)
+272	Throwing Spear (3)
+340	Throwing Spear (4)
+408	Throwing Spear (5)
+476	Throwing Spear (6)
+37@	Throwing Spear (Sacred)
+1@F	Trebuchet (1)
+2@F	Trebuchet (2)
+3@F	Trebuchet (3)
+4@F	Trebuchet (4)
+5@F	Trebuchet (5)
+6@F	Trebuchet (6)
+7@F	Trebuchet (Sacred)
+138	Trident (1)
+206	Trident (2)
+274	Trident (3)
+342	Trident (4)
+410	Trident (5)
+478	Trident (6)
+39@	Trident (Sacred)
+107	Two-Handed Sword (1)
+175	Two-Handed Sword (2)
+243	Two-Handed Sword (3)
+311	Two-Handed Sword (4)
+379	Two-Handed Sword (5)
+447	Two-Handed Sword (6)
+08@	Two-Handed Sword (Sacred)
+4@3	Viper Bow (1)
+5@3	Viper Bow (2)
+6@3	Viper Bow (3)
+7@3	Viper Bow (4)
+8@3	Viper Bow (5)
+9@3	Viper Bow (6)
+1@4	Viper Bow (Sacred)
+157	Voulge (1)
+225	Voulge (2)
+293	Voulge (3)
+361	Voulge (4)
+429	Voulge (5)
+497	Voulge (6)
+58@	Voulge (Sacred)
+l10	Wand (1)
+l14	Wand (2)
+l18	Wand (3)
+l22	Wand (4)
+l26	Wand (5)
+l30	Wand (6)
+69@	Wand (Sacred)
+118	War Axe (1)
+186	War Axe (2)
+254	War Axe (3)
+322	War Axe (4)
+390	War Axe (5)
+458	War Axe (6)
+1@@	War Axe (Sacred)
+l34	War Hammer (1)
+l37	War Hammer (2)
+l40	War Hammer (3)
+l43	War Hammer (4)
+l46	War Hammer (5)
+l49	War Hammer (6)
+73@	War Hammer (Sacred)
+131	War Scepter (1)
+199	War Scepter (2)
+267	War Scepter (3)
+335	War Scepter (4)
+403	War Scepter (5)
+471	War Scepter (6)
+32@	War Scepter (Sacred)
+155	War Staff (1)
+223	War Staff (2)
+291	War Staff (3)
+359	War Staff (4)
+427	War Staff (5)
+495	War Staff (6)
+56@	War Staff (Sacred)
+106	War Sword (1)
+174	War Sword (2)
+242	War Sword (3)
+310	War Sword (4)
+378	War Sword (5)
+446	War Sword (6)
+07@	War Sword (Sacred)
+j21	Wrist Blade (1)
+j38	Wrist Blade (2)
+j55	Wrist Blade (3)
+j72	Wrist Blade (4)
+j89	Wrist Blade (5)
+o16	Wrist Blade (6)
+91@	Wrist Blade (Sacred)
+l11	Yew Wand (1)
+l15	Yew Wand (2)
+l19	Yew Wand (3)
+l23	Yew Wand (4)
+l27	Yew Wand (5)
+l31	Yew Wand (6)
+70@	Yew Wand (Sacred)
 !01	Naginata (1)
 !02	Naginata (2)
 !03	Naginata (3)
@@ -20,8 +823,6 @@
 !07	Naginata (Sacred)
 !08	Raptor Scythe (1)
 !09	Raptor Scythe (2)
-!1!	Warp Blade (3)
-!1@	Balanced Knife (Immortal)
 !10	Raptor Scythe (3)
 !11	Raptor Scythe (4)
 !12	Raptor Scythe (5)
@@ -32,8 +833,6 @@
 !17	Bonesplitter (3)
 !18	Bonesplitter (4)
 !19	Bonesplitter (5)
-!2!	Warp Blade (4)
-!2@	Crystal Sword (Immortal)
 !20	Bonesplitter (6)
 !21	Bonesplitter (Sacred)
 !22	Mammen Axe (1)
@@ -43,9 +842,8 @@
 !26	Mammen Axe (5)
 !27	Mammen Axe (6)
 !28	Mammen Axe (Sacred)
+19@	Hammerhead Axe (1)
 !29	Hammerhead Axe (2)
-!3!	Warp Blade (5)
-!3@	Scissors Katar (Immortal)
 !30	Hammerhead Axe (3)
 !31	Hammerhead Axe (4)
 !32	Hammerhead Axe (5)
@@ -56,8 +854,6 @@
 !37	Ono (3)
 !38	Ono (4)
 !39	Ono (5)
-!4!	Warp Blade (6)
-!4@	War Scepter (Immortal)
 !40	Ono (6)
 !41	Ono (Sacred)
 !42	Valaska (1)
@@ -68,8 +864,6 @@
 !47	Valaska (6)
 !48	Valaska (Sacred)
 !49	Labrys (1)
-!5!	Warp Blade (Sacred)
-!5@	Yew Wand (Immortal)
 !50	Labrys (2)
 !51	Labrys (3)
 !52	Labrys (4)
@@ -80,7 +874,6 @@
 !57	Flamen Staff (2)
 !58	Flamen Staff (3)
 !59	Flamen Staff (4)
-!6@	Long War Bow (Immortal)
 !60	Flamen Staff (5)
 !61	Flamen Staff (6)
 !62	Flamen Staff (Sacred)
@@ -91,7 +884,6 @@
 !67	Marrow Staff (5)
 !68	Marrow Staff (6)
 !69	Marrow Staff (Sacred)
-!7@	Throwing Axe (Immortal)
 !70	Hexblade (1)
 !71	Hexblade (2)
 !72	Hexblade (3)
@@ -102,7 +894,6 @@
 !77	Spirit Edge (1)
 !78	Spirit Edge (2)
 !79	Spirit Edge (3)
-!8@	throwing Spear (Immortal)
 !80	Spirit Edge (4)
 !81	Spirit Edge (5)
 !82	Spirit Edge (6)
@@ -113,7 +904,6 @@
 !87	Holy Lance (4)
 !88	Holy Lance (5)
 !89	Holy Lance (6)
-!9@	Bone Helm (Immortal)
 !90	Holy Lance (Sacred)
 !91	Tepoztopilli (1)
 !92	Tepoztopilli (2)
@@ -124,13 +914,1406 @@
 !97	Tepoztopilli (Sacred)
 !98	Warp Blade (1)
 !99	Warp Blade (2)
-!e@	Scythe (Immortal)
-!q@	Light Plate (Immortal)
-!r@	War Axe (Immortal)
+!1!	Warp Blade (3)
+!2!	Warp Blade (4)
+!3!	Warp Blade (5)
+!4!	Warp Blade (6)
+!5!	Warp Blade (Sacred)
+!1@	Balanced Knife (Immortal)
+!2@	Crystal Sword (Immortal)
+!3@	Scissors Katar (Immortal)
+!4@	War Scepter (Immortal)
+!5@	Yew Wand (Immortal)
+!6@	Long War Bow (Immortal)
+!7@	Throwing Axe (Immortal)
+!8@	throwing Spear (Immortal)
 !t@	Naginata (Immortal)
-!w@	Thorn of Teror
-!z@	Admin Charm
-$$a	Dungeon Uberquest 1
+!e@	Scythe (Immortal)
+!r@	War Axe (Immortal)
+crn	Crown
+fld	Field Plate
+hbt	Greaves
+hgl	Gauntlets
+tow	Tower Shield
+w23	Aerin Shield (1)
+w43	Aerin Shield (2)
+w63	Aerin Shield (3)
+w83	Aerin Shield (4)
+e13	Aerin Shield (5)
+e33	Aerin Shield (6)
+@60	Aerin Shield (Sacred)
+614	Ancient Armor (1)
+660	Ancient Armor (2)
+706	Ancient Armor (3)
+752	Ancient Armor (4)
+798	Ancient Armor (5)
+844	Ancient Armor (6)
+@15	Ancient Armor (Sacred)
+w12	Antlers (1)
+w32	Antlers (2)
+w52	Antlers (3)
+w72	Antlers (4)
+w92	Antlers (5)
+e22	Antlers (6)
+@49	Antlers (Sacred)
+8@N	Aspis (1)
+9@N	Aspis (2)
+1@O	Aspis (3)
+2@O	Aspis (4)
+3@O	Aspis (5)
+4@O	Aspis (6)
+5@O	Aspis (Sacred)
+w18	Assault Helmet (1)
+w38	Assault Helmet (2)
+w58	Assault Helmet (3)
+w78	Assault Helmet (4)
+w98	Assault Helmet (5)
+e28	Assault Helmet (6)
+@55	Assault Helmet (Sacred)
+01!	Athulua's Hand (1)
+02!	Athulua's Hand (2)
+03!	Athulua's Hand (3)
+04!	Athulua's Hand (4)
+05!	Athulua's Hand (5)
+06!	Athulua's Hand (6)
+07!	Athulua's Hand (Sacred)
+w19	Avenger Guard (1)
+w39	Avenger Guard (2)
+w59	Avenger Guard (3)
+w79	Avenger Guard (4)
+w99	Avenger Guard (5)
+e29	Avenger Guard (6)
+@56	Avenger Guard (Sacred)
+4@I	Banded Plate (1)
+5@I	Banded Plate (2)
+6@I	Banded Plate (3)
+7@I	Banded Plate (4)
+8@I	Banded Plate (5)
+9@I	Banded Plate (6)
+1@J	Banded Plate (Sacred)
+629	Belt (1)
+675	Belt (2)
+721	Belt (3)
+767	Belt (4)
+813	Belt (5)
+859	Belt (6)
+@30	Belt (Sacred)
+50!	Blackguard Helm (1)
+51!	Blackguard Helm (2)
+52!	Blackguard Helm (3)
+53!	Blackguard Helm (4)
+54!	Blackguard Helm (5)
+55!	Blackguard Helm (6)
+56!	Blackguard Helm (Sacred)
+4@P	Bladed Shield (1)
+5@P	Bladed Shield (2)
+6@P	Bladed Shield (3)
+7@P	Bladed Shield (4)
+8@P	Bladed Shield (5)
+9@P	Bladed Shield (6)
+1@Q	Bladed Shield (Sacred)
+645	Bone Helm (1)
+691	Bone Helm (2)
+737	Bone Helm (3)
+783	Bone Helm (4)
+829	Bone Helm (5)
+875	Bone Helm (6)
+@46	Bone Helm (Sacred)
+642	Bone Shield (1)
+688	Bone Shield (2)
+734	Bone Shield (3)
+780	Bone Shield (4)
+826	Bone Shield (5)
+872	Bone Shield (6)
+@43	Bone Shield (Sacred)
+637	Boots (1)
+683	Boots (2)
+729	Boots (3)
+775	Boots (4)
+821	Boots (5)
+867	Boots (6)
+@38	Boots (Sacred)
+607	Breast Plate (1)
+653	Breast Plate (2)
+699	Breast Plate (3)
+745	Breast Plate (4)
+791	Breast Plate (5)
+837	Breast Plate (6)
+@08	Breast Plate (Sacred)
+29!	Bronze Shield (1)
+30!	Bronze Shield (2)
+31!	Bronze Shield (3)
+32!	Bronze Shield (4)
+33!	Bronze Shield (5)
+34!	Bronze Shield (6)
+35!	Bronze Shield (Sacred)
+621	Buckler (1)
+667	Buckler (2)
+713	Buckler (3)
+759	Buckler (4)
+805	Buckler (5)
+851	Buckler (6)
+@22	Buckler (Sacred)
+22!	Bull Shield (1)
+23!	Bull Shield (2)
+24!	Bull Shield (3)
+25!	Bull Shield (4)
+26!	Bull Shield (5)
+27!	Bull Shield (6)
+28!	Bull Shield (Sacred)
+615	Cap (1)
+661	Cap (2)
+707	Cap (3)
+753	Cap (4)
+799	Cap (5)
+845	Cap (6)
+@16	Cap (Sacred)
+2@J	Ceremonial Armor (1)
+3@J	Ceremonial Armor (2)
+4@J	Ceremonial Armor (3)
+5@J	Ceremonial Armor (4)
+6@J	Ceremonial Armor (5)
+7@J	Ceremonial Armor (6)
+8@J	Ceremonial Armor (Sacred)
+7@K	Cervelliere (1)
+8@K	Cervelliere (2)
+9@K	Cervelliere (3)
+1@L	Cervelliere (4)
+2@L	Cervelliere (5)
+3@L	Cervelliere (6)
+4@L	Cervelliere (Sacred)
+639	Chain Boots (1)
+685	Chain Boots (2)
+731	Chain Boots (3)
+777	Chain Boots (4)
+823	Chain Boots (5)
+869	Chain Boots (6)
+@40	Chain Boots (Sacred)
+634	Chain Gloves (1)
+680	Chain Gloves (2)
+726	Chain Gloves (3)
+772	Chain Gloves (4)
+818	Chain Gloves (5)
+864	Chain Gloves (6)
+@35	Chain Gloves (Sacred)
+606	Chain Mail (1)
+652	Chain Mail (2)
+698	Chain Mail (3)
+744	Chain Mail (4)
+790	Chain Mail (5)
+836	Chain Mail (6)
+@07	Chain Mail (Sacred)
+k01	Circlet (1)
+k05	Circlet (2)
+k09	Circlet (3)
+k13	Circlet (4)
+k17	Circlet (5)
+k21	Circlet (6)
+@67	Circlet (Sacred)
+k02	Coronet (1)
+k06	Coronet (2)
+k10	Coronet (3)
+k14	Coronet (4)
+k18	Coronet (5)
+k22	Coronet (6)
+@68	Coronet (Sacred)
+620	Crown (1)
+666	Crown (2)
+712	Crown (3)
+758	Crown (4)
+804	Crown (5)
+850	Crown (6)
+@21	Crown (Sacred)
+w24	Crown Shield (1)
+w44	Crown Shield (2)
+w64	Crown Shield (3)
+w84	Crown Shield (4)
+e14	Crown Shield (5)
+e34	Crown Shield (6)
+@61	Crown Shield (Sacred)
+w29	Demon Head (1)
+w49	Demon Head (2)
+w69	Demon Head (3)
+w89	Demon Head (4)
+e19	Demon Head (5)
+e39	Demon Head (6)
+@66	Demon Head (Sacred)
+k04	Diadem (1)
+k08	Diadem (2)
+k12	Diadem (3)
+k16	Diadem (4)
+k20	Diadem (5)
+k24	Diadem (6)
+@70	Diadem (Sacred)
+5@L	Einherjar Helm (1)
+6@L	Einherjar Helm (2)
+7@L	Einherjar Helm (3)
+8@L	Einherjar Helm (4)
+9@L	Einherjar Helm (5)
+1@M	Einherjar Helm (6)
+2@M	Einherjar Helm (Sacred)
+w13	Falcon Mask (1)
+w33	Falcon Mask (2)
+w53	Falcon Mask (3)
+w73	Falcon Mask (4)
+w93	Falcon Mask (5)
+e23	Falcon Mask (6)
+@50	Falcon Mask (Sacred)
+w16	Fanged Helm (1)
+w36	Fanged Helm (2)
+w56	Fanged Helm (3)
+w76	Fanged Helm (4)
+w96	Fanged Helm (5)
+e26	Fanged Helm (6)
+@53	Fanged Helm (Sacred)
+610	Field Plate (1)
+656	Field Plate (2)
+702	Field Plate (3)
+748	Field Plate (4)
+794	Field Plate (5)
+840	Field Plate (6)
+@11	Field Plate (Sacred)
+618	Full Helm (1)
+664	Full Helm (2)
+710	Full Helm (3)
+756	Full Helm (4)
+802	Full Helm (5)
+848	Full Helm (6)
+@19	Full Helm (Sacred)
+613	Full Plate Mail (1)
+659	Full Plate Mail (2)
+705	Full Plate Mail (3)
+751	Full Plate Mail (4)
+797	Full Plate Mail (5)
+843	Full Plate Mail (6)
+@14	Full Plate Mail (Sacred)
+1@G	Gambeson (1)
+2@G	Gambeson (2)
+3@G	Gambeson (3)
+4@G	Gambeson (4)
+5@G	Gambeson (5)
+6@G	Gambeson (6)
+7@G	Gambeson (Sacred)
+w28	Gargoyle Head (1)
+w48	Gargoyle Head (2)
+w68	Gargoyle Head (3)
+w88	Gargoyle Head (4)
+e18	Gargoyle Head (5)
+e38	Gargoyle Head (6)
+@65	Gargoyle Head (Sacred)
+636	Gauntlets (1)
+682	Gauntlets (2)
+728	Gauntlets (3)
+774	Gauntlets (4)
+820	Gauntlets (5)
+866	Gauntlets (6)
+@37	Gauntlets (Sacred)
+36!	Gilded Shield (1)
+37!	Gilded Shield (2)
+38!	Gilded Shield (3)
+39!	Gilded Shield (4)
+40!	Gilded Shield (5)
+41!	Gilded Shield (6)
+42!	Gilded Shield (Sacred)
+612	Gothic Plate (1)
+658	Gothic Plate (2)
+704	Gothic Plate (3)
+750	Gothic Plate (4)
+796	Gothic Plate (5)
+842	Gothic Plate (6)
+@13	Gothic Plate (Sacred)
+626	Gothic Shield (1)
+672	Gothic Shield (2)
+718	Gothic Shield (3)
+764	Gothic Shield (4)
+810	Gothic Shield (5)
+856	Gothic Shield (6)
+@27	Gothic Shield (Sacred)
+619	Great Helm (1)
+665	Great Helm (2)
+711	Great Helm (3)
+757	Great Helm (4)
+803	Great Helm (5)
+849	Great Helm (6)
+@20	Great Helm (Sacred)
+641	Greaves (1)
+687	Greaves (2)
+733	Greaves (3)
+779	Greaves (4)
+825	Greaves (5)
+871	Greaves (6)
+@42	Greaves (Sacred)
+602	Hard Leather Armor (1)
+648	Hard Leather Armor (2)
+694	Hard Leather Armor (3)
+740	Hard Leather Armor (4)
+786	Hard Leather Armor (5)
+832	Hard Leather Armor (6)
+@03	Hard Leather Armor (Sacred)
+w11	Hawk Helm (1)
+w31	Hawk Helm (2)
+w51	Hawk Helm (3)
+w71	Hawk Helm (4)
+w91	Hawk Helm (5)
+e21	Hawk Helm (6)
+@48	Hawk Helm (Sacred)
+630	Heavy Belt (1)
+676	Heavy Belt (2)
+722	Heavy Belt (3)
+768	Heavy Belt (4)
+814	Heavy Belt (5)
+860	Heavy Belt (6)
+@31	Heavy Belt (Sacred)
+638	Heavy Boots (1)
+684	Heavy Boots (2)
+730	Heavy Boots (3)
+776	Heavy Boots (4)
+822	Heavy Boots (5)
+868	Heavy Boots (6)
+@39	Heavy Boots (Sacred)
+633	Heavy Gloves (1)
+679	Heavy Gloves (2)
+725	Heavy Gloves (3)
+771	Heavy Gloves (4)
+817	Heavy Gloves (5)
+863	Heavy Gloves (6)
+@34	Heavy Gloves (Sacred)
+617	Helm (1)
+663	Helm (2)
+709	Helm (3)
+755	Helm (4)
+801	Helm (5)
+847	Helm (6)
+@18	Helm (Sacred)
+w22	Heraldic Shield (1)
+w42	Heraldic Shield (2)
+w62	Heraldic Shield (3)
+w82	Heraldic Shield (4)
+e12	Heraldic Shield (5)
+e32	Heraldic Shield (6)
+@59	Heraldic Shield (Sacred)
+w17	Horned Helm (1)
+w37	Horned Helm (2)
+w57	Horned Helm (3)
+w77	Horned Helm (4)
+w97	Horned Helm (5)
+e27	Horned Helm (6)
+@54	Horned Helm (Sacred)
+43!	Hundsgugel (1)
+44!	Hundsgugel (2)
+45!	Hundsgugel (3)
+46!	Hundsgugel (4)
+47!	Hundsgugel (5)
+48!	Hundsgugel (6)
+49!	Hundsgugel (Sacred)
+w15	Jawbone Cap (1)
+w35	Jawbone Cap (2)
+w55	Jawbone Cap (3)
+w75	Jawbone Cap (4)
+w95	Jawbone Cap (5)
+e25	Jawbone Cap (6)
+@52	Jawbone Cap (Sacred)
+6@H	Kazarghand (1)
+7@H	Kazarghand (2)
+8@H	Kazarghand (3)
+9@H	Kazarghand (4)
+1@I	Kazarghand (5)
+2@I	Kazarghand (6)
+3@I	Kazarghand (Sacred)
+624	Kite Shield (1)
+670	Kite Shield (2)
+716	Kite Shield (3)
+762	Kite Shield (4)
+808	Kite Shield (5)
+854	Kite Shield (6)
+@25	Kite Shield (Sacred)
+8@G	Lamellar Armor (1)
+9@G	Lamellar Armor (2)
+1@H	Lamellar Armor (3)
+2@H	Lamellar Armor (4)
+3@H	Lamellar Armor (5)
+4@H	Lamellar Armor (6)
+5@H	Lamellar Armor (Sacred)
+623	Large Shield (1)
+669	Large Shield (2)
+715	Large Shield (3)
+761	Large Shield (4)
+807	Large Shield (5)
+853	Large Shield (6)
+@24	Large Shield (Sacred)
+601	Leather Armor (1)
+647	Leather Armor (2)
+693	Leather Armor (3)
+739	Leather Armor (4)
+785	Leather Armor (5)
+831	Leather Armor (6)
+@02	Leather Armor (Sacred)
+632	Leather Gloves (1)
+678	Leather Gloves (2)
+724	Leather Gloves (3)
+770	Leather Gloves (4)
+816	Leather Gloves (5)
+862	Leather Gloves (6)
+@33	Leather Gloves (Sacred)
+628	Light Belt (1)
+674	Light Belt (2)
+720	Light Belt (3)
+766	Light Belt (4)
+812	Light Belt (5)
+858	Light Belt (6)
+@29	Light Belt (Sacred)
+635	Light Gauntlets (1)
+681	Light Gauntlets (2)
+727	Light Gauntlets (3)
+773	Light Gauntlets (4)
+819	Light Gauntlets (5)
+865	Light Gauntlets (6)
+@36	Light Gauntlets (Sacred)
+611	Light Plate (1)
+657	Light Plate (2)
+703	Light Plate (3)
+749	Light Plate (4)
+795	Light Plate (5)
+841	Light Plate (6)
+@12	Light Plate (Sacred)
+640	Light Plated Boots (1)
+686	Light Plated Boots (2)
+732	Light Plated Boots (3)
+778	Light Plated Boots (4)
+824	Light Plated Boots (5)
+870	Light Plated Boots (6)
+@41	Light Plated Boots (Sacred)
+644	Mask (1)
+690	Mask (2)
+736	Mask (3)
+782	Mask (4)
+828	Mask (5)
+874	Mask (6)
+@45	Mask (Sacred)
+9@J	Morion (1)
+1@K	Morion (2)
+2@K	Morion (3)
+3@K	Morion (4)
+4@K	Morion (5)
+5@K	Morion (6)
+6@K	Morion (Sacred)
+1@N	Parma (1)
+2@N	Parma (2)
+3@N	Parma (3)
+4@N	Parma (4)
+5@N	Parma (5)
+6@N	Parma (6)
+7@N	Parma (Sacred)
+08!	Phoenix Shield (1)
+09!	Phoenix Shield (2)
+10!	Phoenix Shield (3)
+11!	Phoenix Shield (4)
+12!	Phoenix Shield (5)
+13!	Phoenix Shield (6)
+14!	Phoenix Shield (Sacred)
+609	Plate Mail (1)
+655	Plate Mail (2)
+701	Plate Mail (3)
+747	Plate Mail (4)
+793	Plate Mail (5)
+839	Plate Mail (6)
+@10	Plate Mail (Sacred)
+631	Plated Belt (1)
+677	Plated Belt (2)
+723	Plated Belt (3)
+769	Plated Belt (4)
+815	Plated Belt (5)
+861	Plated Belt (6)
+@32	Plated Belt (Sacred)
+w25	Preserved Head (1)
+w45	Preserved Head (2)
+w65	Preserved Head (3)
+w85	Preserved Head (4)
+e15	Preserved Head (5)
+e35	Preserved Head (6)
+@62	Preserved Head (Sacred)
+600	Quilted Armor (1)
+646	Quilted Armor (2)
+692	Quilted Armor (3)
+738	Quilted Armor (4)
+784	Quilted Armor (5)
+830	Quilted Armor (6)
+@01	Quilted Armor (Sacred)
+604	Ring Mail (1)
+650	Ring Mail (2)
+696	Ring Mail (3)
+742	Ring Mail (4)
+788	Ring Mail (5)
+834	Ring Mail (6)
+@05	Ring Mail (Sacred)
+w21	Rondache (1)
+w41	Rondache (2)
+w61	Rondache (3)
+w81	Rondache (4)
+e11	Rondache (5)
+e31	Rondache (6)
+@58	Rondache (Sacred)
+627	Sash (1)
+673	Sash (2)
+719	Sash (3)
+765	Sash (4)
+811	Sash (5)
+857	Sash (6)
+@28	Sash (Sacred)
+605	Scale Mail (1)
+651	Scale Mail (2)
+697	Scale Mail (3)
+743	Scale Mail (4)
+789	Scale Mail (5)
+835	Scale Mail (6)
+@06	Scale Mail (Sacred)
+15!	Setzschild (1)
+16!	Setzschild (2)
+17!	Setzschild (3)
+18!	Setzschild (4)
+19!	Setzschild (5)
+20!	Setzschild (6)
+21!	Setzschild (Sacred)
+616	Skull Cap (1)
+662	Skull Cap (2)
+708	Skull Cap (3)
+754	Skull Cap (4)
+800	Skull Cap (5)
+846	Skull Cap (6)
+@17	Skull Cap (Sacred)
+622	Small Shield (1)
+668	Small Shield (2)
+714	Small Shield (3)
+760	Small Shield (4)
+806	Small Shield (5)
+852	Small Shield (6)
+@23	Small Shield (Sacred)
+3@M	Spangenhelm (1)
+4@M	Spangenhelm (2)
+5@M	Spangenhelm (3)
+6@M	Spangenhelm (4)
+7@M	Spangenhelm (5)
+8@M	Spangenhelm (6)
+9@M	Spangenhelm (Sacred)
+643	Spiked Shield (1)
+689	Spiked Shield (2)
+735	Spiked Shield (3)
+781	Spiked Shield (4)
+827	Spiked Shield (5)
+873	Spiked Shield (6)
+@44	Spiked Shield (Sacred)
+w14	Spirit Mask (1)
+w34	Spirit Mask (2)
+w54	Spirit Mask (3)
+w74	Spirit Mask (4)
+w94	Spirit Mask (5)
+e24	Spirit Mask (6)
+@51	Spirit Mask (Sacred)
+608	Splint Mail (1)
+654	Splint Mail (2)
+700	Splint Mail (3)
+746	Splint Mail (4)
+792	Splint Mail (5)
+838	Splint Mail (6)
+@09	Splint Mail (Sacred)
+603	Studded Leather (1)
+649	Studded Leather (2)
+695	Studded Leather (3)
+741	Studded Leather (4)
+787	Studded Leather (5)
+833	Studded Leather (6)
+@04	Studded Leather (Sacred)
+w20	Targe (1)
+w40	Targe (2)
+w60	Targe (3)
+w80	Targe (4)
+e10	Targe (5)
+e30	Targe (6)
+@57	Targe (Sacred)
+k03	Tiara (1)
+k07	Tiara (2)
+k11	Tiara (3)
+k15	Tiara (4)
+k19	Tiara (5)
+k23	Tiara (6)
+@69	Tiara (Sacred)
+6@O	Totem Shield (1)
+7@O	Totem Shield (2)
+8@O	Totem Shield (3)
+9@O	Totem Shield (4)
+1@P	Totem Shield (5)
+2@P	Totem Shield (6)
+3@P	Totem Shield (Sacred)
+625	Tower Shield (1)
+671	Tower Shield (2)
+717	Tower Shield (3)
+763	Tower Shield (4)
+809	Tower Shield (5)
+855	Tower Shield (6)
+@26	Tower Shield (Sacred)
+w27	Unraveller Head (1)
+w47	Unraveller Head (2)
+w67	Unraveller Head (3)
+w87	Unraveller Head (4)
+e17	Unraveller Head (5)
+e37	Unraveller Head (6)
+@64	Unraveller Head (Sacred)
+w10	Wolf Head (1)
+w30	Wolf Head (2)
+w50	Wolf Head (3)
+w70	Wolf Head (4)
+w90	Wolf Head (5)
+e20	Wolf Head (6)
+@47	Wolf Head (Sacred)
+w26	Zombie Head (1)
+w46	Zombie Head (2)
+w66	Zombie Head (3)
+w86	Zombie Head (4)
+e16	Zombie Head (5)
+e36	Zombie Head (6)
+@63	Zombie Head (Sacred)
+!9@	Bone Helm (Immortal)
+!0@	Kite Shield (Immortal)
+!q@	Light Plate (Immortal)
+elx	Elixir
+hpo	FLYING POLAR BUFFALO ERROR
+mpo	FLYING POLAR BUFFALO ERROR
+hpf	FLYING POLAR BUFFALO ERROR
+mpf	FLYING POLAR BUFFALO ERROR
+vps	Stamina Potion
+yps	Antidote Potion
+rvs	Rejuvenation Potion
+rvl	Full Rejuvenation Potion
+wms	Thawing Potion
+tbk	Tome of Town Portal
+ibk	Tome of Identify
+amu	Amulet
+vip	Top of the Horadric Staff
+rin	Ring
+gld	Gold
+bks	Scroll of Inifuss
+bkd	Key to the Cairn Stones
+aqv	Arrow Quiver
+tch	Torch
+cqv	Bolt Quiver
+tsc	Scroll of Town Portal
+isc	Scroll of Identify
+hrt	Heart
+brz	Brain
+jaw	Jawbone
+eyz	Eye
+hrn	Horn
+tal	Tail
+flg	Flag
+fng	Fang
+qll	Quill
+sol	Soul
+scz	Scalp
+spe	Spleen
+key	Key
+luv	The Black Tower Key
+xyz	Potion of Life
+j34	A Jade Figurine
+g34	The Golden Bird
+bbb	Lam Esen's Tome
+box	Horadric Cube
+tr1	Horadric Scroll
+mss	Mephisto's Soulstone
+ass	Book of Skill
+qey	Khalim's Eye
+qhr	Khalim's Heart
+qbr	Khalim's Brain
+ear	Ear
+gcv	Chipped Amethyst
+gfv	Flawed Amethyst
+gsv	Amethyst
+gzv	Flawless Amethyst
+gpv	Perfect Amethyst
+gcy	Chipped Topaz
+gfy	Flawed Topaz
+gsy	Topaz
+gly	Flawless Topaz
+gpy	Perfect Topaz
+gcb	Chipped Sapphire
+gfb	Flawed Sapphire
+gsb	Sapphire
+glb	Flawless Sapphire
+gpb	Perfect Sapphire
+gcg	Chipped Emerald
+gfg	Flawed Emerald
+gsg	Emerald
+glg	Flawless Emerald
+gpg	Perfect Emerald
+gcr	Chipped Ruby
+gfr	Flawed Ruby
+gsr	Ruby
+glr	Flawless Ruby
+gpr	Perfect Ruby
+gcw	Chipped Diamond
+gfw	Flawed Diamond
+gsw	Diamond
+glw	Flawless Diamond
+gpw	Perfect Diamond
+hp1	Minor Healing Potion
+hp2	Light Healing Potion
+hp3	Healing Potion
+hp4	Greater Healing Potion
+hp5	Super Healing Potion
+mp1	Minor Mana Potion
+mp2	Light Mana Potion
+mp3	Mana Potion
+mp4	Greater Mana Potion
+mp5	Super Mana Potion
+skc	Chipped Skull
+skf	Flawed Skull
+sku	Skull
+skl	Flawless Skull
+skz	Perfect Skull
+hrb	Herb
+cm1	WARNING: HACKED ITEM - Small Charm
+cm2	WARNING: HACKED ITEM - Large Charm
+cm3	WARNING: HACKED ITEM - Grand Charm
+rps	FLYING POLAR BUFFALO ERROR
+rpl	FLYING POLAR BUFFALO ERROR
+bps	FLYING POLAR BUFFALO ERROR
+bpl	FLYING POLAR BUFFALO ERROR
+r01	El Rune
+r02	Eld Rune
+r03	Tir Rune
+r04	Nef Rune
+r05	Eth Rune
+r06	Ith Rune
+r07	Tal Rune
+r08	Ral Rune
+r09	Ort Rune
+r10	Thul Rune
+r11	Amn Rune
+r12	Sol Rune
+r13	Shael Rune
+r14	Dol Rune
+r15	Hel Rune
+r16	Io Rune
+r17	Lum Rune
+r18	Ko Rune
+r19	Fal Rune
+r20	Lem Rune
+r21	Pul Rune
+r22	Um Rune
+r23	Mal Rune
+r24	Ist Rune
+r25	Gul Rune
+r26	Vex Rune
+r27	Ohm Rune
+r28	Lo Rune
+r29	Sur Rune
+r30	Ber Rune
+r31	Jah Rune
+r32	Cham Rune
+r33	Zod Rune
+jew	Jewel
+ice	Malah's Potion
+0sc	Scroll of Knowledge
+tr2	Scroll of Resistance
+dr1	Amulet
+dr2	Amulet
+dr3	Amulet
+dr4	Amulet
+dr5	Amulet
+ba1	Amulet
+ba2	Amulet
+ba3	Amulet
+ba4	Amulet
+ba5	Amulet
+pa1	Amulet
+pa2	Amulet
+pa3	Amulet
+pa4	Amulet
+pa5	Amulet
+ne1	Amulet
+ne2	Amulet
+ne3	Amulet
+ne4	Amulet
+ne5	Amulet
+dr6	Amulet
+dr7	Amulet
+dr8	Amulet
+dr9	Amulet
+dra	Amulet
+ba6	Amulet
+ba7	Amulet
+ba8	Amulet
+ba9	Amulet
+baa	Amulet
+pa6	Amulet
+pa7	Amulet
+pa8	Amulet
+pa9	Amulet
+paa	Amulet
+ne6	Amulet
+ne7	Amulet
+ne8	Amulet
+ne9	Amulet
+nea	Amulet
+drb	Amulet
+drc	Amulet
+drd	Amulet
+dre	Amulet
+drf	Amulet
+bab	Amulet
+bac	Amulet
+bad	Amulet
+bae	Amulet
+baf	Amulet
+pab	Amulet
+pac	Amulet
+pad	Amulet
+pae	Amulet
+paf	Amulet
+neb	Amulet
+neg	Amulet
+ned	Amulet
+nee	Amulet
+nef	Amulet
+ktr	Amulet
+wrb	Amulet
+axf	Amulet
+ces	Amulet
+clw	Amulet
+btl	Amulet
+skr	Amulet
+9ar	Amulet
+9wb	Amulet
+9xf	Amulet
+9cs	Amulet
+9lw	Amulet
+9tw	Amulet
+9qr	Amulet
+7ar	Amulet
+7wb	Amulet
+7xf	Amulet
+7cs	Amulet
+7lw	Amulet
+7tw	Amulet
+7qr	Amulet
+ob1	Amulet
+ob2	Amulet
+ob3	Amulet
+ob4	Amulet
+ob5	Amulet
+am1	Amulet
+am2	Amulet
+am3	Amulet
+am4	Amulet
+am5	Amulet
+ob6	Amulet
+ob7	Amulet
+ob8	Amulet
+ob9	Amulet
+oba	Amulet
+am6	Amulet
+am7	Amulet
+am8	Amulet
+am9	Amulet
+ama	Amulet
+obb	Amulet
+obc	Amulet
+obd	Amulet
+obe	Amulet
+obf	Amulet
+amb	Amulet
+amc	Amulet
+amd	Amulet
+ame	Amulet
+amf	Amulet
+zen	Thanks for playing
+eo7	Elixir of Fire
+eo8	Elixir of Cold
+eo9	Elixir of Lightning
+ey1	Elixir of Poison
+ey2	Elixir of Experience
+ey3	Elixir of Greed
+ey4	Elixir of Wealth
+ey5	Elixir of Strength
+ey6	Elixir of Dexterity
+ey7	Elixir of Energy
+ey8	Elixir of Vitality
+ey9	Elixir of Adrenaline
+et1	Elixir of Concentration
+0g7	Elixir of Power
+0g8	Elixir of Love
+0g0	Elixir of Greater Experience
+0g1	Elixir of Greater Greed
+0g2	Elixir of Greater Wealth
+0g3	Elixir of Greater Strength
+0g4	Elixir of Greater Dexterity
+0g5	Elixir of Greater Energy
+0g6	Elixir of Greater Vitality
+vic	Victim's Heart
+mec	Meditation Candle
+abu	Do Not Use Ethereal Items Idiot
+s0m	Book of Summoning
+a55	Optical Detector
+a56	Azmodan's Heart
+a57	Visions of Akarat
+a58	Scroll of Kings
+a59	Laser Focus Crystal
+a60	The Butcher's Tooth
+a61	Sacred Worldstone Key
+a66	Idol of Vanity
+a67	Spirit of Damnation
+a68	Horazon's Focus
+yq1	Sunless Crystal Bird
+yq2	Six Angel Bag
+yq7	Hard Mode Charm
+yq8	Zakarum's Ear
+yqx	Spirit Trance Herb
+yqe	Moon of the Spider
+x0x	Eternal Bone Pile
+x1x	Sunstone of Fire
+x2x	Sunstone of Ice
+x3x	Sunstone of Thunder
+x4x	Sunstone of the Gods
+2x5	Alpha Brain
+2x6	Beta Brain
+2x7	Gamma Brain
+2x8	Delta Brain
+2x9	Epsilon Brain
+adi	Legacy of Blood
+0u1	Hammer of the Taan Judges
+x01	Sacred Sunstone
+x02	Shadow Vortex
+x03	Worldstone Orb
+x04	Caoi Dulra Fruit
+x05	Soulstone Shard
+x06	Eye of Divinity
+x07	Nexus Crystal
+yo1	Chipped Rainbow Stone
+yo2	Flawed Rainbow Stone
+yo3	Rainbow Stone
+yo4	Flawless Rainbow Stone
+yo5	Perfect Rainbow Stone
+r34	Sha Rune
+r35	Lah Rune
+r36	Kur Rune
+r37	Ix Rune
+r38	Thur Rune
+r39	Nas Rune
+r40	Ath Rune
+r41	Kra Rune
+r42	Vith Rune
+r43	No Rune
+r44	Yul Rune
+r45	Thai Rune
+r46	Rha Rune
+r47	Xar Rune
+r48	Nih Rune
+r49	Lai Rune
+r50	On Rune
+r51	Great Rune - Taha Rune
+r52	Great Rune - Ghal Rune
+r53	Great Rune - Qor Rune
+qus	Cube Reagent (1/4) - Regular Arcane Crystal
+qut	Cube Reagent (2/4) - Glowing Arcane Crystal
+qux	Cube Reagent (3/4) - Brilliant Arcane Crystal
+quy	Cube Reagent (4/4) - Dazzling Arcane Crystal
+A0+	Creepy Shrine (10 Charges)
+A1+	Creepy Shrine (9 Charges)
+A2+	Creepy Shrine (8 Charges)
+A3+	Creepy Shrine (7 Charges)
+A4+	Creepy Shrine (6 Charges)
+A5+	Creepy Shrine (5 Charges)
+A6+	Creepy Shrine (4 Charges)
+A7+	Creepy Shrine (3 Charges)
+A8+	Creepy Shrine (2 Charges)
+A9+	Creepy Shrine (1 Charge)
+B0+	Abandoned Shrine (10 Charges)
+B1+	Abandoned Shrine (9 Charges)
+B2+	Abandoned Shrine (8 Charges)
+B3+	Abandoned Shrine (7 Charges)
+B4+	Abandoned Shrine (6 Charges)
+B5+	Abandoned Shrine (5 Charges)
+B6+	Abandoned Shrine (4 Charges)
+B7+	Abandoned Shrine (3 Charges)
+B8+	Abandoned Shrine (2 Charges)
+B9+	Abandoned Shrine (1 Charge)
+C0+	Quiet Shrine (10 Charges)
+C1+	Quiet Shrine (9 Charges)
+C2+	Quiet Shrine (8 Charges)
+C3+	Quiet Shrine (7 Charges)
+C4+	Quiet Shrine (6 Charges)
+C5+	Quiet Shrine (5 Charges)
+C6+	Quiet Shrine (4 Charges)
+C7+	Quiet Shrine (3 Charges)
+C8+	Quiet Shrine (2 Charges)
+C9+	Quiet Shrine (1 Charge)
+D0+	Eerie Shrine (10 Charges)
+D1+	Eerie Shrine (9 Charges)
+D2+	Eerie Shrine (8 Charges)
+D3+	Eerie Shrine (7 Charges)
+D4+	Eerie Shrine (6 Charges)
+D5+	Eerie Shrine (5 Charges)
+D6+	Eerie Shrine (4 Charges)
+D7+	Eerie Shrine (3 Charges)
+D8+	Eerie Shrine (2 Charges)
+D9+	Eerie Shrine (1 Charge)
+E0+	Weird Shrine (10 Charges)
+E1+	Weird Shrine (9 Charges)
+E2+	Weird Shrine (8 Charges)
+E3+	Weird Shrine (7 Charges)
+E4+	Weird Shrine (6 Charges)
+E5+	Weird Shrine (5 Charges)
+E6+	Weird Shrine (4 Charges)
+E7+	Weird Shrine (3 Charges)
+E8+	Weird Shrine (2 Charges)
+E9+	Weird Shrine (1 Charge)
+F0+	Gloomy Shrine (10 Charges)
+F1+	Gloomy Shrine (9 Charges)
+F2+	Gloomy Shrine (8 Charges)
+F3+	Gloomy Shrine (7 Charges)
+F4+	Gloomy Shrine (6 Charges)
+F5+	Gloomy Shrine (5 Charges)
+F6+	Gloomy Shrine (4 Charges)
+F7+	Gloomy Shrine (3 Charges)
+F8+	Gloomy Shrine (2 Charges)
+F9+	Gloomy Shrine (1 Charge)
+G0+	Tainted Shrine (10 Charges)
+G1+	Tainted Shrine (9 Charges)
+G2+	Tainted Shrine (8 Charges)
+G3+	Tainted Shrine (7 Charges)
+G4+	Tainted Shrine (6 Charges)
+G5+	Tainted Shrine (5 Charges)
+G6+	Tainted Shrine (4 Charges)
+G7+	Tainted Shrine (3 Charges)
+G8+	Tainted Shrine (2 Charges)
+G9+	Tainted Shrine (1 Charge)
+H0+	Fascinating Shrine (10 Charges)
+H1+	Fascinating Shrine (9 Charges)
+H2+	Fascinating Shrine (8 Charges)
+H3+	Fascinating Shrine (7 Charges)
+H4+	Fascinating Shrine (6 Charges)
+H5+	Fascinating Shrine (5 Charges)
+H6+	Fascinating Shrine (4 Charges)
+H7+	Fascinating Shrine (3 Charges)
+H8+	Fascinating Shrine (2 Charges)
+H9+	Fascinating Shrine (1 Charge)
+I0+	Ornate Shrine (10 Charges)
+I1+	Ornate Shrine (9 Charges)
+I2+	Ornate Shrine (8 Charges)
+I3+	Ornate Shrine (7 Charges)
+I4+	Ornate Shrine (6 Charges)
+I5+	Ornate Shrine (5 Charges)
+I6+	Ornate Shrine (4 Charges)
+I7+	Ornate Shrine (3 Charges)
+I8+	Ornate Shrine (2 Charges)
+I9+	Ornate Shrine (1 Charge)
+J0+	Sacred Shrine (10 Charges)
+J1+	Sacred Shrine (9 Charges)
+J2+	Sacred Shrine (8 Charges)
+J3+	Sacred Shrine (7 Charges)
+J4+	Sacred Shrine (6 Charges)
+J5+	Sacred Shrine (5 Charges)
+J6+	Sacred Shrine (4 Charges)
+J7+	Sacred Shrine (3 Charges)
+J8+	Sacred Shrine (2 Charges)
+J9+	Sacred Shrine (1 Charge)
+K0+	Shimmering Shrine (10 Charges)
+K1+	Shimmering Shrine (9 Charges)
+K2+	Shimmering Shrine (8 Charges)
+K3+	Shimmering Shrine (7 Charges)
+K4+	Shimmering Shrine (6 Charges)
+K5+	Shimmering Shrine (5 Charges)
+K6+	Shimmering Shrine (4 Charges)
+K7+	Shimmering Shrine (3 Charges)
+K8+	Shimmering Shrine (2 Charges)
+K9+	Shimmering Shrine (1 Charge)
+L0+	Mysterious Shrine (10 Charges)
+L1+	Mysterious Shrine (9 Charges)
+L2+	Mysterious Shrine (8 Charges)
+L3+	Mysterious Shrine (7 Charges)
+L4+	Mysterious Shrine (6 Charges)
+L5+	Mysterious Shrine (5 Charges)
+L6+	Mysterious Shrine (4 Charges)
+L7+	Mysterious Shrine (3 Charges)
+L8+	Mysterious Shrine (2 Charges)
+L9+	Mysterious Shrine (1 Charge)
+M0+	Spiritual Shrine (10 Charges)
+M1+	Spiritual Shrine (9 Charges)
+M2+	Spiritual Shrine (8 Charges)
+M3+	Spiritual Shrine (7 Charges)
+M4+	Spiritual Shrine (6 Charges)
+M5+	Spiritual Shrine (5 Charges)
+M6+	Spiritual Shrine (4 Charges)
+M7+	Spiritual Shrine (3 Charges)
+M8+	Spiritual Shrine (2 Charges)
+M9+	Spiritual Shrine (1 Charge)
+N0+	Magical Shrine (10 Charges)
+N1+	Magical Shrine (9 Charges)
+N2+	Magical Shrine (8 Charges)
+N3+	Magical Shrine (7 Charges)
+N4+	Magical Shrine (6 Charges)
+N5+	Magical Shrine (5 Charges)
+N6+	Magical Shrine (4 Charges)
+N7+	Magical Shrine (3 Charges)
+N8+	Magical Shrine (2 Charges)
+N9+	Magical Shrine (1 Charge)
+O0+	Enchanted Shrine (10 Charges)
+O1+	Enchanted Shrine (9 Charges)
+O2+	Enchanted Shrine (8 Charges)
+O3+	Enchanted Shrine (7 Charges)
+O4+	Enchanted Shrine (6 Charges)
+O5+	Enchanted Shrine (5 Charges)
+O6+	Enchanted Shrine (4 Charges)
+O7+	Enchanted Shrine (3 Charges)
+O8+	Enchanted Shrine (2 Charges)
+O9+	Enchanted Shrine (1 Charge)
+P0+	Divine Shrine (10 Charges)
+P1+	Divine Shrine (9 Charges)
+P2+	Divine Shrine (8 Charges)
+P3+	Divine Shrine (7 Charges)
+P4+	Divine Shrine (6 Charges)
+P5+	Divine Shrine (5 Charges)
+P6+	Divine Shrine (4 Charges)
+P7+	Divine Shrine (3 Charges)
+P8+	Divine Shrine (2 Charges)
+P9+	Divine Shrine (1 Charge)
+Q0+	Hidden Shrine (10 Charges)
+Q1+	Hidden Shrine (9 Charges)
+Q2+	Hidden Shrine (8 Charges)
+Q3+	Hidden Shrine (7 Charges)
+Q4+	Hidden Shrine (6 Charges)
+Q5+	Hidden Shrine (5 Charges)
+Q6+	Hidden Shrine (4 Charges)
+Q7+	Hidden Shrine (3 Charges)
+Q8+	Hidden Shrine (2 Charges)
+Q9+	Hidden Shrine (1 Charge)
+R0+	Stone Shrine (10 Charges)
+R1+	Stone Shrine (9 Charges)
+R2+	Stone Shrine (8 Charges)
+R3+	Stone Shrine (7 Charges)
+R4+	Stone Shrine (6 Charges)
+R5+	Stone Shrine (5 Charges)
+R6+	Stone Shrine (4 Charges)
+R7+	Stone Shrine (3 Charges)
+R8+	Stone Shrine (2 Charges)
+R9+	Stone Shrine (1 Charge)
+S0+	Religious Shrine (10 Charges)
+S1+	Religious Shrine (9 Charges)
+S2+	Religious Shrine (8 Charges)
+S3+	Religious Shrine (7 Charges)
+S4+	Religious Shrine (6 Charges)
+S5+	Religious Shrine (5 Charges)
+S6+	Religious Shrine (4 Charges)
+S7+	Religious Shrine (3 Charges)
+S8+	Religious Shrine (2 Charges)
+S9+	Religious Shrine (1 Charge)
+T0+	Cryptic Shrine (10 Charges)
+T1+	Cryptic Shrine (9 Charges)
+T2+	Cryptic Shrine (8 Charges)
+T3+	Cryptic Shrine (7 Charges)
+T4+	Cryptic Shrine (6 Charges)
+T5+	Cryptic Shrine (5 Charges)
+T6+	Cryptic Shrine (4 Charges)
+T7+	Cryptic Shrine (3 Charges)
+T8+	Cryptic Shrine (2 Charges)
+T9+	Cryptic Shrine (1 Charge)
+&01	Mystic Orb
+&02	Mystic Orb
+&03	Mystic Orb
+&04	Mystic Orb
+&45	Mystic Orb
+&11	Mystic Orb
+&17	Mystic Orb
+&18	Mystic Orb
+&19	Mystic Orb
+&20	Mystic Orb
+&05	Mystic Orb
+&06	Mystic Orb
+&07	Mystic Orb
+&08	Mystic Orb
+&09	Mystic Orb
+&10	Mystic Orb
+&12	Mystic Orb
+&13	Mystic Orb
+&14	Mystic Orb
+&15	Mystic Orb
+&16	Mystic Orb
+&41	Mystic Orb
+&42	Mystic Orb
+&43	Mystic Orb
+&44	Mystic Orb
+&21	Mystic Orb
+&22	Mystic Orb
+&23	Mystic Orb
+&24	Mystic Orb
+&25	Mystic Orb
+&26	Mystic Orb
+&27	Mystic Orb
+&28	Mystic Orb
+&29	Mystic Orb
+&30	Mystic Orb
+&46	Mystic Orb
+&47	Mystic Orb
+&48	Mystic Orb
+&49	Mystic Orb
+&50	Mystic Orb
+&51	Mystic Orb
+&52	Mystic Orb
+&53	Mystic Orb
+&54	Mystic Orb
+&55	Mystic Orb
+&31	Mystic Orb
+&32	Mystic Orb
+&33	Mystic Orb
+&34	Mystic Orb
+&35	Mystic Orb
+&36	Mystic Orb
+&37	Mystic Orb
+&38	Mystic Orb
+&39	Mystic Orb
+&40	Mystic Orb
+&56	Mystic Orb
+&57	Mystic Orb
+&58	Mystic Orb
+&59	Mystic Orb
+&60	Mystic Orb
+&61	Mystic Orb
+&62	Mystic Orb
+&63	Mystic Orb
+&64	Mystic Orb
+&65	Mystic Orb
+qmu	Amulet (Sacred)
+qin	Ring (Sacred)
+qqv	Arrow Quiver (Sacred)
+qqc	Bolt Quiver (Sacred)
+zkw	Signet of Gold
+zku	Signet of Experience
+zkq	Signet of Learning
+zkx	Greater Signet of Gold
+zky	Greater Signet of Learning
+zkr	Greater Signet of Experience
+01-	Pearl of Wisdom
+02-	Pearl of Wisdom
+03-	Pearl of Wisdom
+04-	Pearl of Wisdom
+05-	Pearl of Wisdom
+06-	Pearl of Wisdom
+07-	Pearl of Wisdom
+08-	Pearl of Wisdom
+09-	Pearl of Wisdom
+10-	Pearl of Wisdom
+11-	Pearl of Wisdom
+12-	Pearl of Wisdom
+13-	Pearl of Wisdom
+14-	Pearl of Wisdom
+15-	Pearl of Wisdom
+16-	Pearl of Wisdom
+17-	Pearl of Wisdom
+18-	Pearl of Wisdom
+19-	Pearl of Wisdom
+20-	Pearl of Wisdom
+21-	Pearl of Wisdom
+22-	Pearl of Wisdom
+23-	Pearl of Wisdom
+24-	Pearl of Wisdom
+25-	Pearl of Wisdom
+26-	Pearl of Wisdom
+27-	Pearl of Wisdom
+28-	Pearl of Wisdom
+29-	Pearl of Wisdom
+30-	Pearl of Wisdom
+31-	Pearl of Wisdom
+32-	Pearl of Wisdom
+33-	Pearl of Wisdom
+34-	Pearl of Wisdom
+35-	Pearl of Wisdom
+36-	Pearl of Wisdom
+37-	Pearl of Wisdom
+38-	Pearl of Wisdom
+39-	Pearl of Wisdom
+40-	Pearl of Wisdom
+41-	Pearl of Wisdom
+42-	Pearl of Wisdom
+43-	Pearl of Wisdom
+44-	Pearl of Wisdom
+45-	Pearl of Wisdom
+46-	Pearl of Wisdom
+47-	Pearl of Wisdom
+48-	Pearl of Wisdom
+49-	Pearl of Wisdom
+50-	Pearl of Wisdom
+zka	Signet of Gold
+zkb	Signet of Experience
+zkc	Signet of Learning
+zkd	Greater Signet of Gold
+zke	Greater Signet of Learning
+zkf	Greater Signet of Experience
+01+	Mystic Orb
+02+	Mystic Orb
+03+	Mystic Orb
+04+	Mystic Orb
+45+	Mystic Orb
+11+	Mystic Orb
+17+	Mystic Orb
+18+	Mystic Orb
+19+	Mystic Orb
+20+	Mystic Orb
+05+	Mystic Orb
+06+	Mystic Orb
+07+	Mystic Orb
+08+	Mystic Orb
+09+	Mystic Orb
+10+	Mystic Orb
+12+	Mystic Orb
+13+	Mystic Orb
+14+	Mystic Orb
+15+	Mystic Orb
+16+	Mystic Orb
+41+	Mystic Orb
+42+	Mystic Orb
+43+	Mystic Orb
+44+	Mystic Orb
+21+	Mystic Orb
+22+	Mystic Orb
+23+	Mystic Orb
+24+	Mystic Orb
+25+	Mystic Orb
+26+	Mystic Orb
+27+	Mystic Orb
+28+	Mystic Orb
+29+	Mystic Orb
+30+	Mystic Orb
+46+	Mystic Orb
+47+	Mystic Orb
+48+	Mystic Orb
+49+	Mystic Orb
+50+	Mystic Orb
+51+	Mystic Orb
+52+	Mystic Orb
+53+	Mystic Orb
+54+	Mystic Orb
+55+	Mystic Orb
+31+	Mystic Orb
+32+	Mystic Orb
+33+	Mystic Orb
+34+	Mystic Orb
+35+	Mystic Orb
+36+	Mystic Orb
+37+	Mystic Orb
+38+	Mystic Orb
+39+	Mystic Orb
+40+	Mystic Orb
+56+	Mystic Orb
+57+	Mystic Orb
+58+	Mystic Orb
+59+	Mystic Orb
+60+	Mystic Orb
+61+	Mystic Orb
+62+	Mystic Orb
+63+	Mystic Orb
+64+	Mystic Orb
+65+	Mystic Orb
+qul	Arcane Shards
+quz	Boom!
 &66	Mystic Orb - Kara's Trinket
 &67	Mystic Orb - Monsterball
 &68	Mystic Orb - Heart of Frost
@@ -151,76 +2334,54 @@ $$a	Dungeon Uberquest 1
 &83	Mystic Orb - Nor Tiraj's Flaming Sphere
 &84	Mystic Orb - The Demon Core
 &85	Mystic Orb - Uldyssian's Spirit
-@01	Quilted Armor (Sacred)
-@02	Leather Armor (Sacred)
-@03	Hard Leather Armor (Sacred)
-@04	Studded Leather (Sacred)
-@05	Ring Mail (Sacred)
-@06	Scale Mail (Sacred)
-@07	Chain Mail (Sacred)
-@08	Breast Plate (Sacred)
-@09	Splint Mail (Sacred)
-@10	Plate Mail (Sacred)
-@11	Field Plate (Sacred)
-@12	Light Plate (Sacred)
-@13	Gothic Plate (Sacred)
-@14	Full Plate Mail (Sacred)
-@15	Ancient Armor (Sacred)
-@16	Cap (Sacred)
-@17	Skull Cap (Sacred)
-@18	Helm (Sacred)
-@19	Full Helm (Sacred)
-@20	Great Helm (Sacred)
-@21	Crown (Sacred)
-@22	Buckler (Sacred)
-@23	Small Shield (Sacred)
-@24	Large Shield (Sacred)
-@25	Kite Shield (Sacred)
-@26	Tower Shield (Sacred)
-@27	Gothic Shield (Sacred)
-@28	Sash (Sacred)
-@29	Light Belt (Sacred)
-@30	Belt (Sacred)
-@31	Heavy Belt (Sacred)
-@32	Plated Belt (Sacred)
-@33	Leather Gloves (Sacred)
-@34	Heavy Gloves (Sacred)
-@35	Chain Gloves (Sacred)
-@36	Light Gauntlets (Sacred)
-@37	Gauntlets (Sacred)
-@38	Boots (Sacred)
-@39	Heavy Boots (Sacred)
-@40	Chain Boots (Sacred)
-@41	Light Plated Boots (Sacred)
-@42	Greaves (Sacred)
-@43	Bone Shield (Sacred)
-@44	Spiked Shield (Sacred)
-@45	Mask (Sacred)
-@46	Bone Helm (Sacred)
-@47	Wolf Head (Sacred)
-@48	Hawk Helm (Sacred)
-@49	Antlers (Sacred)
-@50	Falcon Mask (Sacred)
-@51	Spirit Mask (Sacred)
-@52	Jawbone Cap (Sacred)
-@53	Fanged Helm (Sacred)
-@54	Horned Helm (Sacred)
-@55	Assault Helmet (Sacred)
-@56	Avenger Guard (Sacred)
-@57	Targe (Sacred)
-@58	Rondache (Sacred)
-@59	Heraldic Shield (Sacred)
-@60	Aerin Shield (Sacred)
-@61	Crown Shield (Sacred)
-@62	Preserved Head (Sacred)
-@63	Zombie Head (Sacred)
-@64	Unraveller Head (Sacred)
-@65	Gargoyle Head (Sacred)
-@66	Demon Head (Sacred)
-@67	Circlet (Sacred)
-@68	Coronet (Sacred)
-@69	Tiara (Sacred)
-@70	Diadem (Sacred)
+lok	Crystalline Flame Medallion
+99-	Pearl of Wisdom
+z1+	Mystic Orb
+z2+	Mystic Orb
+z3+	Mystic Orb
+z4+	Mystic Orb
+z5+	Mystic Orb
+&a1	Mystic Orb
+&a2	Mystic Orb
+&a3	Mystic Orb
+&a4	Mystic Orb
+&a5	Mystic Orb
+g$a	Chipped Onyx
+g$b	Flawed Onyx
+g$c	Onyx
+g$d	Flawless Onyx
+g$e	Perfect Onyx
+9$a	Chipped Bloodstone
+9$b	Flawed Bloodstone
+9$c	Bloodstone
+9$d	Flawless Bloodstone
+9$e	Perfect Bloodstone
+7$a	Chipped Turquoise
+7$b	Flawed Turquoise
+7$c	Turquoise
+7$d	Flawless Turquoise
+7$e	Perfect Turquoise
+5$a	Chipped Amber
+5$b	Flawed Amber
+5$c	Amber
+5$d	Flawless Amber
+5$e	Perfect Amber
+az!	Fool's Gold
+aq!	Silver Seal of Ureh
+ab!	Astrogha's Venom Stinger
+qum	Arcane Crystal
+k@k	The Book of Lies
+l@l	Skinrender's Sigil
+m@m	Spinecracker's Sigil
+o@o	Eyegouger's Sigil
+p@p	Fleshcutter's Sigil
+q@q	Bonehexer's Sigil
+r@r	Ring of the Five
+s@s	Assur's Bane
+t@t	Demonsbane
+u@v	I Am Rich
+98-	Pearl of Wisdom
+b@b	Goodberry
 µ01	Lord Aldric Jitan Trophy
 µ02	Legacy of Blood Trophy
 µ03	Judgement Day Trophy
@@ -235,2604 +2396,32 @@ $$a	Dungeon Uberquest 1
 µ12	Azmodan Trophy
 µ13	MCS Trophy
 µ14	Brother Laz Trophy
-µ5µ	Elixir of Miraculous Experience
-µ6µ	Scroll of Passage
-0++	Mystic Orb
-01-	Wisdom: -- Players X --
-01!	Athulua's Hand (1)
-01@	Short Sword (Sacred)
-01+	+1 to Strength
-02-	Wisdom: -- Defense Penalty --
-02!	Athulua's Hand (2)
-02@	Scimitar (Sacred)
-02+	+1 to Dexterity
-03-	Wisdom: -- Damage Bonuses --
-03!	Athulua's Hand (3)
-03@	Saber (Sacred)
-03+	+1 to Energy
-04-	Wisdom: -- Dungeon Uberquests --
-04!	Athulua's Hand (4)
-04@	Falchion (Sacred)
-04+	+1 to Vitality
-05-	Wisdom: -- Summoning Uberquests --
-05!	Athulua's Hand (5)
-05@	Broad Sword (Sacred)
-05+	+1% to Fire Spell Damage
-06-	Wisdom: -- Uberlevels --
-06!	Athulua's Hand (6)
-06@	Long Sword (Sacred)
-06+	+1% to Cold Spell Damage
-07-	Wisdom: -- Hard Mode Charm --
-07!	Athulua's Hand (Sacred)
-07@	War Sword (Sacred)
-07+	+1% to Lightning Spell Damage
-08-	Wisdom: -- Elite Monsters --
-08!	Phoenix Shield (1)
-08@	Two-Handed Sword (Sacred)
-08+	+1% to Poison Spell Damage
-09-	Wisdom: -- Crafting Points --
-09!	Phoenix Shield (2)
-09@	Claymore (Sacred)
-09+	+1% to Physical/Magic Spell Damage
-0g0	Elixir of Greater Experience
-0g1	Elixir of Greater Greed
-0g2	Elixir of Greater Wealth
-0g3	Elixir of Greater Strength
-0g4	Elixir of Greater Dexterity
-0g5	Elixir of Greater Energy
-0g6	Elixir of Greater Vitality
-0g7	Elixir of Power
-0g8	Elixir of Love
-0k0	Hint: Assault on Arreat
-0k1	Hint: Creature of Flame
-0k2	Hint: Infernal Machine
-0k3	Hint: Death Projector
-0k4	Hint: Azmodan
-0k5	Hint: Rathma Square
-0k6	Hint: Cathedral of Vanity
-0k7	Hint: The Butcher
-0k8	Hint: Akarat
-0k9	Hint: Binding of Baal
-0l0	x
-0l1	Hint: Aldric Jitan
-0l2	Hint: Legacy of Blood
-0l3	Hint: Kurast 3000 BA
-0l4	x
-0l5	x
-0l6	x
-0l7	x
-0l8	x
-0l9	x
-0m1	x
-0m2	x
-0m3	x
-0m4	x
-0m5	x
-0sc	Scroll of Knowledge
-0u1	Hammer of the Taan Judges
-0u2	Weighted Companion Cube
-1@@	War Axe (Sacred)
-1@1	Compound Bow (1)
-1@2	Serpent Bow (3)
-1@3	Maple Bow (5)
-1@4	Viper Bow (Sacred)
-1@5	Spatha (2)
-1@6	Backsword (4)
-1@7	Ida (6)
-1@8	Kriegsmesser (1)
-1@9	Bonebreaker (3)
-1@A	Goedendag (5)
-1@B	Angel Star (Sacred)
-1@C	Hand of God (2)
-1@D	Needle Crossbow (4)
-1@E	Dart Thrower (6)
-1@F	Trebuchet (1)
-1@G	Gambeson (1)
-1@H	Lamellar Armor (3)
-1@I	Kazarghand (5)
-1@J	Banded Plate (Sacred)
-1@K	Morion (2)
-1@L	Cervelliere (4)
-1@M	Einherjar Helm (6)
-1@N	Parma (1)
-1@O	Aspis (3)
-1@P	Totem Shield (5)
-1@Q	Bladed Shield (Sacred)
-10-	Wisdom: -- Ennead Challenge --
-10!	Phoenix Shield (3)
-10@	Giant Sword (Sacred)
-10+	Damage Reduced by 1
-100	Short Sword (1)
-101	Scimitar (1)
-102	Saber (1)
-103	Falchion (1)
-104	Broad Sword (1)
-105	Long Sword (1)
-106	War Sword (1)
-107	Two-Handed Sword (1)
-108	Claymore (1)
-109	Giant Sword (1)
-11-	Wisdom: -- Dragon Challenge --
-11!	Phoenix Shield (4)
-11@	Bastard Sword (Sacred)
-11+	Regenerate Mana 2%
-110	Bastard Sword (1)
-111	Flamberge (1)
-112	Great Sword (1)
-113	Crystal Sword (1)
-114	Hand Axe (1)
-115	Axe (1)
-116	Double Axe (1)
-117	Military Pick (1)
-118	War Axe (1)
-119	Large Axe (1)
-12-	Wisdom: -- Heroic Bosses --
-12!	Phoenix Shield (5)
-12@	Flamberge (Sacred)
-12+	+1% Bonus to Summoned Minion Damage
-120	Broad Axe (1)
-121	Battle Axe (1)
-122	Great Axe (1)
-123	Giant Axe (1)
-124	Club (1)
-125	Spiked Club (1)
-126	Mace (1)
-127	Morning Star (1)
-128	Flail (1)
-129	Scepter (1)
-13-	Wisdom: -- Level Challenge --
-13!	Phoenix Shield (6)
-13@	Great Sword (Sacred)
-13+	+1% Bonus to Summoned Minion Life
-130	Grand Scepter (1)
-131	War Scepter (1)
-132	Javelin (1)
-133	Pilum (1)
-134	Short Spear (1)
-135	Glaive (1)
-136	Throwing Spear (1)
-137	Spear (1)
-138	Trident (1)
-139	Brandistock (1)
-14-	Wisdom: -- Black Road Challenge --
-14!	Phoenix Shield (Sacred)
-14@	Crystal Sword (Sacred)
-14+	+1% Bonus to Summoned Minion Resistances
-140	Spetum (1)
-141	Pike (1)
-142	Dagger (1)
-143	Dirk (1)
-144	Kriss (1)
-145	Blade (1)
-146	Throwing Knife (1)
-147	Flying Knife (1)
-148	Balanced Knife (1)
-149	Throwing Axe (1)
-15-	Wisdom: -- Upgrading Runes and Gems --
-15!	Setzschild (1)
-15@	Hand Axe (Sacred)
-15+	3% Extra Gold from Monsters
-150	Balanced Axe (1)
-151	Short Staff (1)
-152	Long Staff (1)
-153	Gnarled Staff (1)
-154	Battle Staff (1)
-155	War Staff (1)
-156	Bardiche (1)
-157	Voulge (1)
-158	Scythe (1)
-159	Halberd (1)
-16-	Wisdom: -- Unsocketing --
-16!	Setzschild (2)
-16@	Axe (Sacred)
-16+	2% Better Chance of Getting Magic Items
-160	Short Bow (1)
-161	Hunter's Bow (1)
-162	Long Bow (1)
-163	Composite Bow (1)
-164	Short Battle Bow (1)
-165	Long Battle Bow (1)
-166	Short War Bow (1)
-167	Long War Bow (1)
-168	Short Sword (2)
-169	Scimitar (2)
-17-	Wisdom: -- Chaos Reroll Recipes --
-17!	Setzschild (3)
-17@	Double Axe (Sacred)
-17+	3% Bonus to Poison Skill Duration
-170	Saber (2)
-171	Falchion (2)
-172	Broad Sword (2)
-173	Long Sword (2)
-174	War Sword (2)
-175	Two-Handed Sword (2)
-176	Claymore (2)
-177	Giant Sword (2)
-178	Bastard Sword (2)
-179	Flamberge (2)
-18-	Wisdom: -- Shrines and Crafting --
-18!	Setzschild (4)
-18@	Military Pick (Sacred)
-18+	+1 to Wyrd
-180	Great Sword (2)
-181	Crystal Sword (2)
-182	Hand Axe (2)
-183	Axe (2)
-184	Double Axe (2)
-185	Military Pick (2)
-186	War Axe (2)
-187	Large Axe (2)
-188	Broad Axe (2)
-189	Battle Axe (2)
-19-	Wisdom: -- Affix Bonus Recipes --
-19!	Setzschild (5)
-19@	Hammerhead Axe (1)
-19+	+10 Defense
-190	Great Axe (2)
-191	Giant Axe (2)
-192	Club (2)
-193	Spiked Club (2)
-194	Mace (2)
-195	Morning Star (2)
-196	Flail (2)
-197	Scepter (2)
-198	Grand Scepter (2)
-199	War Scepter (2)
-2@1	Compound Bow (2)
-2@2	Serpent Bow (4)
-2@3	Maple Bow (6)
-2@4	Recurve Bow (1)
-2@5	Spatha (3)
-2@6	Backsword (5)
-2@7	Ida (Sacred)
-2@8	Kriegsmesser (2)
-2@9	Bonebreaker (4)
-2@A	Goedendag (6)
-2@C	Hand of God (3)
-2@D	Needle Crossbow (5)
-2@E	Dart Thrower (Sacred)
-2@F	Trebuchet (2)
-2@G	Gambeson (2)
-2@H	Lamellar Armor (4)
-2@I	Kazarghand (6)
-2@J	Ceremonial Armor (1)
-2@K	Morion (3)
-2@L	Cervelliere (5)
-2@M	Einherjar Helm (Sacred)
-2@N	Parma (2)
-2@O	Aspis (4)
-2@P	Totem Shield (6)
-20-	Wisdom: -- Creature of Flame --
-20!	Setzschild (6)
-20@	Large Axe (Sacred)
-20+	1% Chance to cast level 3 Thunder Hammer when you Kill an Enemy
-200	Javelin (2)
-201	Pilum (2)
-202	Short Spear (2)
-203	Glaive (2)
-204	Throwing Spear (2)
-205	Spear (2)
-206	Trident (2)
-207	Brandistock (2)
-208	Spetum (2)
-209	Pike (2)
-21-	Wisdom: -- Infernal Machine --
-21!	Setzschild (Sacred)
-21@	Broad Axe (Sacred)
-21+	Fire Resist +5%
-210	Dagger (2)
-211	Dirk (2)
-212	Kriss (2)
-213	Blade (2)
-214	Throwing Knife (2)
-215	Flying Knife (2)
-216	Balanced Knife (2)
-217	Throwing Axe (2)
-218	Balanced Axe (2)
-219	Short Staff (2)
-22-	Wisdom: -- Death Projector --
-22!	Bull Shield (1)
-22@	Battle Axe (Sacred)
-22+	Cold Resist +5%
-220	Long Staff (2)
-221	Gnarled Staff (2)
-222	Battle Staff (2)
-223	War Staff (2)
-224	Bardiche (2)
-225	Voulge (2)
-226	Scythe (2)
-227	Halberd (2)
-228	Short Bow (2)
-229	Hunter's Bow (2)
-23-	Wisdom: -- Azmodan --
-23!	Bull Shield (2)
-23@	Great Axe (Sacred)
-23+	Lightning Resist +5%
-230	Long Bow (2)
-231	Composite Bow (2)
-232	Short Battle Bow (2)
-233	Long Battle Bow (2)
-234	Short War Bow (2)
-235	Long War Bow (2)
-236	Short Sword (3)
-237	Scimitar (3)
-238	Saber (3)
-239	Falchion (3)
-24-	Wisdom: -- Rathma Square --
-24!	Bull Shield (3)
-24@	Giant Axe (Sacred)
-24+	Poison Resist +5%
-240	Broad Sword (3)
-241	Long Sword (3)
-242	War Sword (3)
-243	Two-Handed Sword (3)
-244	Claymore (3)
-245	Giant Sword (3)
-246	Bastard Sword (3)
-247	Flamberge (3)
-248	Great Sword (3)
-249	Crystal Sword (3)
-25-	Wisdom: -- Cathedral of Vanity --
-25!	Bull Shield (4)
-25@	Club (Sacred)
-25+	2% Curse Length Reduction
-250	Hand Axe (3)
-251	Axe (3)
-252	Double Axe (3)
-253	Military Pick (3)
-254	War Axe (3)
-255	Large Axe (3)
-256	Broad Axe (3)
-257	Battle Axe (3)
-258	Great Axe (3)
-259	Giant Axe (3)
-26-	Wisdom: -- Toraja --
-26!	Bull Shield (5)
-26@	Spiked Club (Sacred)
-26+	+15% Enhanced Defense
-260	Club (3)
-261	Spiked Club (3)
-262	Mace (3)
-263	Morning Star (3)
-264	Flail (3)
-265	Scepter (3)
-266	Grand Scepter (3)
-267	War Scepter (3)
-268	Javelin (3)
-269	Pilum (3)
-27-	Wisdom: -- The Butcher --
-27!	Bull Shield (6)
-27@	Mace (Sacred)
-27+	Total Character Defense Plus 1%
-270	Short Spear (3)
-271	Glaive (3)
-272	Throwing Spear (3)
-273	Spear (3)
-274	Trident (3)
-275	Brandistock (3)
-276	Spetum (3)
-277	Pike (3)
-278	Dagger (3)
-279	Dirk (3)
-28-	Wisdom: -- The Binding of Baal --
-28!	Bull Shield (Sacred)
-28@	Morning Star (Sacred)
-28+	+2 to Life when Struck
-280	Kriss (3)
-281	Blade (3)
-282	Throwing Knife (3)
-283	Flying Knife (3)
-284	Balanced Knife (3)
-285	Throwing Axe (3)
-286	Balanced Axe (3)
-287	Short Staff (3)
-288	Long Staff (3)
-289	Gnarled Staff (3)
-29-	Wisdom: -- Assault on Mount Arreat --
-29!	Bronze Shield (1)
-29@	Flail (Sacred)
-29+	+2 to Mana when Struck
-290	Battle Staff (3)
-291	War Staff (3)
-292	Bardiche (3)
-293	Voulge (3)
-294	Scythe (3)
-295	Halberd (3)
-296	Short Bow (3)
-297	Hunter's Bow (3)
-298	Long Bow (3)
-299	Composite Bow (3)
-2ax	Double Axe
-2hs	Two-Handed Sword
-2x5	Alpha Brain
-2x6	Beta Brain
-2x7	Gamma Brain
-2x8	Delta Brain
-2x9	Epsilon Brain
-3@1	Compound Bow (3)
-3@2	Serpent Bow (5)
-3@3	Maple Bow (Sacred)
-3@4	Recurve Bow (2)
-3@5	Spatha (4)
-3@6	Backsword (6)
-3@7	Bronze Sword (1)
-3@8	Kriegsmesser (3)
-3@9	Bonebreaker (5)
-3@A	Goedendag (Sacred)
-3@C	Hand of God (4)
-3@D	Needle Crossbow (6)
-3@E	Stinger Crossbow (1)
-3@F	Trebuchet (3)
-3@G	Gambeson (3)
-3@H	Lamellar Armor (5)
-3@I	Kazarghand (Sacred)
-3@J	Ceremonial Armor (2)
-3@K	Morion (4)
-3@L	Cervelliere (6)
-3@M	Spangenhelm (1)
-3@N	Parma (3)
-3@O	Aspis (5)
-3@P	Totem Shield (Sacred)
-30-	Wisdom: -- Akarat --
-30!	Bronze Shield (2)
-30@	Scepter (Sacred)
-30+	1% Uninterruptable Attack
-300	Short Battle Bow (3)
-301	Long Battle Bow (3)
-302	Short War Bow (3)
-303	Long War Bow (3)
-304	Short Sword (4)
-305	Scimitar (4)
-306	Saber (4)
-307	Falchion (4)
-308	Broad Sword (4)
-309	Long Sword (4)
-31-	Wisdom: -- Lord Aldric Jitan --
-31!	Bronze Shield (3)
-31@	Grand Scepter (Sacred)
-31+	+1% Experience Gained
-310	War Sword (4)
-311	Two-Handed Sword (4)
-312	Claymore (4)
-313	Giant Sword (4)
-314	Bastard Sword (4)
-315	Flamberge (4)
-316	Great Sword (4)
-317	Crystal Sword (4)
-318	Hand Axe (4)
-319	Axe (4)
-32-	Wisdom: -- Legacy of Blood --
-32!	Bronze Shield (4)
-32@	War Scepter (Sacred)
-32+	2% Life Stolen per Hit
-320	Double Axe (4)
-321	Military Pick (4)
-322	War Axe (4)
-323	Large Axe (4)
-324	Broad Axe (4)
-325	Battle Axe (4)
-326	Great Axe (4)
-327	Giant Axe (4)
-328	Club (4)
-329	Spiked Club (4)
-33-	Wisdom: -- Judgement Day --
-33!	Bronze Shield (5)
-33@	Javelin (Sacred)
-33+	2% Mana Stolen per Hit
-330	Mace (4)
-331	Morning Star (4)
-332	Flail (4)
-333	Scepter (4)
-334	Grand Scepter (4)
-335	War Scepter (4)
-336	Javelin (4)
-337	Pilum (4)
-338	Short Spear (4)
-339	Glaive (4)
-34-	Wisdom: -- Inarius' Revenge (hidden) --
-34!	Bronze Shield (6)
-34@	Pilum (Sacred)
-34+	1% Chance to cast level 3 Celerity on Attack
-340	Throwing Spear (4)
-341	Spear (4)
-342	Trident (4)
-343	Brandistock (4)
-344	Spetum (4)
-345	Pike (4)
-346	Dagger (4)
-347	Dirk (4)
-348	Kriss (4)
-349	Blade (4)
-35-	Wisdom: -- Kurast 3000 BA --
-35!	Bronze Shield (Sacred)
-35@	Short Spear (Sacred)
-35+	25% Bonus to Attack Rating
-350	Throwing Knife (4)
-351	Flying Knife (4)
-352	Balanced Knife (4)
-353	Throwing Axe (4)
-354	Balanced Axe (4)
-355	Short Staff (4)
-356	Long Staff (4)
-357	Gnarled Staff (4)
-358	Battle Staff (4)
-359	War Staff (4)
-36-	Wisdom: -- Island of the Sunless Sea --
-36!	Gilded Shield (1)
-36@	Glaive (Sacred)
-36+	+15% Enhanced Damage
-360	Bardiche (4)
-361	Voulge (4)
-362	Scythe (4)
-363	Halberd (4)
-364	Short Bow (4)
-365	Hunter's Bow (4)
-366	Long Bow (4)
-367	Composite Bow (4)
-368	Short Battle Bow (4)
-369	Long Battle Bow (4)
-37-	Wisdom: -- Khalimgrad --
-37!	Gilded Shield (2)
-37@	Throwing Spear (Sacred)
-37+	+10 to Maximum Damage
-370	Short War Bow (4)
-371	Long War Bow (4)
-372	Short Sword (5)
-373	Scimitar (5)
-374	Saber (5)
-375	Falchion (5)
-376	Broad Sword (5)
-377	Long Sword (5)
-378	War Sword (5)
-379	Two-Handed Sword (5)
-38-	Wisdom: -- Tran Athulua --
-38!	Gilded Shield (3)
-38@	Spear (Sacred)
-38+	Adds Stun Attack: 0.2 seconds
-380	Claymore (5)
-381	Giant Sword (5)
-382	Bastard Sword (5)
-383	Flamberge (5)
-384	Great Sword (5)
-385	Crystal Sword (5)
-386	Hand Axe (5)
-387	Axe (5)
-388	Double Axe (5)
-389	Military Pick (5)
-39-	Wisdom: -- Fauztinville --
-39!	Gilded Shield (4)
-39@	Trident (Sacred)
-39+	1% Chance of Crushing Blow
-390	War Axe (5)
-391	Large Axe (5)
-392	Broad Axe (5)
-393	Battle Axe (5)
-394	Great Axe (5)
-395	Giant Axe (5)
-396	Club (5)
-397	Spiked Club (5)
-398	Mace (5)
-399	Morning Star (5)
-4@1	Compound Bow (4)
-4@2	Serpent Bow (6)
-4@3	Viper Bow (1)
-4@4	Recurve Bow (3)
-4@5	Spatha (5)
-4@6	Backsword (Sacred)
-4@7	Bronze Sword (2)
-4@8	Kriegsmesser (4)
-4@9	Bonebreaker (6)
-4@A	Angel Star (1)
-4@C	Hand of God (5)
-4@D	Needle Crossbow (Sacred)
-4@E	Stinger Crossbow (2)
-4@F	Trebuchet (4)
-4@G	Gambeson (4)
-4@H	Lamellar Armor (6)
-4@I	Banded Plate (1)
-4@J	Ceremonial Armor (3)
-4@K	Morion (5)
-4@L	Cervelliere (Sacred)
-4@M	Spangenhelm (2)
-4@N	Parma (4)
-4@O	Aspis (6)
-4@P	Bladed Shield (1)
-40-	Wisdom: -- Kingdom of Shadow --
-40!	Gilded Shield (5)
-40@	Brandistock (Sacred)
-40+	5% Open Wounds
-400	Flail (5)
-401	Scepter (5)
-402	Grand Scepter (5)
-403	War Scepter (5)
-404	Javelin (5)
-405	Pilum (5)
-406	Short Spear (5)
-407	Glaive (5)
-408	Throwing Spear (5)
-409	Spear (5)
-41-	Wisdom: -- Ghosts of Old Bremmtown --
-41!	Gilded Shield (6)
-41@	Spetum (Sacred)
-41+	-1% to Enemy Fire Resistance
-410	Trident (5)
-411	Brandistock (5)
-412	Spetum (5)
-413	Pike (5)
-414	Dagger (5)
-415	Dirk (5)
-416	Kriss (5)
-417	Blade (5)
-418	Throwing Knife (5)
-419	Flying Knife (5)
-42-	Wisdom: -- Documentation --
-42!	Gilded Shield (Sacred)
-42@	Pike (Sacred)
-42+	-1% to Enemy Cold Resistance
-420	Balanced Knife (5)
-421	Throwing Axe (5)
-422	Balanced Axe (5)
-423	Short Staff (5)
-424	Long Staff (5)
-425	Gnarled Staff (5)
-426	Battle Staff (5)
-427	War Staff (5)
-428	Bardiche (5)
-429	Voulge (5)
-43-	Wisdom: -- Heroic Levels --
-43!	Hundsgugel (1)
-43@	Dagger (Sacred)
-43+	-1% to Enemy Lightning Resistance
-430	Scythe (5)
-431	Halberd (5)
-432	Short Bow (5)
-433	Hunter's Bow (5)
-434	Long Bow (5)
-435	Composite Bow (5)
-436	Short Battle Bow (5)
-437	Long Battle Bow (5)
-438	Short War Bow (5)
-439	Long War Bow (5)
-44-	Wisdom: -- Shield Auras --
-44!	Hundsgugel (2)
-44@	Dirk (Sacred)
-44+	-1% to Enemy Poison Resistance
-440	Short Sword (6)
-441	Scimitar (6)
-442	Saber (6)
-443	Falchion (6)
-444	Broad Sword (6)
-445	Long Sword (6)
-446	War Sword (6)
-447	Two-Handed Sword (6)
-448	Claymore (6)
-449	Giant Sword (6)
-45-	Wisdom: -- Drop Bias --
-45!	Hundsgugel (3)
-45@	Kriss (Sacred)
-45+	+5 Crafting Points
-450	Bastard Sword (6)
-451	Flamberge (6)
-452	Great Sword (6)
-453	Crystal Sword (6)
-454	Hand Axe (6)
-455	Axe (6)
-456	Double Axe (6)
-457	Military Pick (6)
-458	War Axe (6)
-459	Large Axe (6)
-46-	Wisdom: -- Honorific Items --
-46!	Hundsgugel (4)
-46@	Blade (Sacred)
-46+	+2% Damage when Using a Healing Potion
-460	Broad Axe (6)
-461	Battle Axe (6)
-462	Great Axe (6)
-463	Giant Axe (6)
-464	Club (6)
-465	Spiked Club (6)
-466	Mace (6)
-467	Morning Star (6)
-468	Flail (6)
-469	Scepter (6)
-47-	Wisdom: -- Book of Summoning --
-47!	Hundsgugel (5)
-47@	Throwing Knife (Sacred)
-47+	Requirements -1%
-470	Grand Scepter (6)
-471	War Scepter (6)
-472	Javelin (6)
-473	Pilum (6)
-474	Short Spear (6)
-475	Glaive (6)
-476	Throwing Spear (6)
-477	Spear (6)
-478	Trident (6)
-479	Brandistock (6)
-48-	Wisdom: -- Sacred Items --
-48!	Hundsgugel (6)
-48@	Flying Knife (Sacred)
-48+	1% Increased Healing Rate from Potions
-480	Spetum (6)
-481	Pike (6)
-482	Dagger (6)
-483	Dirk (6)
-484	Kriss (6)
-485	Blade (6)
-486	Throwing Knife (6)
-487	Flying Knife (6)
-488	Balanced Knife (6)
-489	Throwing Axe (6)
-49-	Wisdom: -- Sacred Uniques and Sets --
-49!	Hundsgugel (Sacred)
-49@	Balanced Knife (Sacred)
-49+	5% Damage Reflected
-490	Balanced Axe (6)
-491	Short Staff (6)
-492	Long Staff (6)
-493	Gnarled Staff (6)
-494	Battle Staff (6)
-495	War Staff (6)
-496	Bardiche (6)
-497	Voulge (6)
-498	Scythe (6)
-499	Halberd (6)
-5$a	Chipped Amber
-5$b	Flawed Amber
-5$c	Amber
-5$d	Flawless Amber
-5$e	Perfect Amber
-5@1	Compound Bow (5)
-5@2	Serpent Bow (Sacred)
-5@3	Viper Bow (2)
-5@4	Recurve Bow (4)
-5@5	Spatha (6)
-5@6	Ida (1)
-5@7	Bronze Sword (3)
-5@8	Kriegsmesser (5)
-5@9	Bonebreaker (Sacred)
-5@A	Angel Star (2)
-5@C	Hand of God (6)
-5@D	Dart Thrower (1)
-5@E	Stinger Crossbow (3)
-5@F	Trebuchet (5)
-5@G	Gambeson (5)
-5@H	Lamellar Armor (Sacred)
-5@I	Banded Plate (2)
-5@J	Ceremonial Armor (4)
-5@K	Morion (6)
-5@L	Einherjar Helm (1)
-5@M	Spangenhelm (3)
-5@N	Parma (5)
-5@O	Aspis (Sacred)
-5@P	Bladed Shield (2)
-50-	Wisdom: -- Item Tiers --
-50!	Blackguard Helm (1)
-50@	Throwing Axe (Sacred)
-50+	2% Faster Block Rate
-500	Short Bow (6)
-501	Hunter's Bow (6)
-502	Long Bow (6)
-503	Composite Bow (6)
-504	Short Battle Bow (6)
-505	Long Battle Bow (6)
-506	Short War Bow (6)
-507	Long War Bow (6)
-51!	Blackguard Helm (2)
-51@	Balanced Axe (Sacred)
-51+	2% Faster Run/Walk
-52!	Blackguard Helm (3)
-52@	Short Staff (Sacred)
-52+	2% Faster Hit Recovery
-53!	Blackguard Helm (4)
-53@	Long Staff (Sacred)
-53+	Regenerate Life +5
-54!	Blackguard Helm (5)
-54@	Gnarled Staff (Sacred)
-54+	1% Reanimate As: Fallen One
-55!	Blackguard Helm (6)
-55@	Battle Staff (Sacred)
-55+	1% Chance to cast level 1 Teleport when Struck
-56!	Blackguard Helm (Sacred)
-56@	War Staff (Sacred)
-56+	1% Chance to cast level 4 Spike Nova on Attack
-57@	Bardiche (Sacred)
-57+	1% Chance to cast level 3 Hex on Attack
-58@	Voulge (Sacred)
-58+	1% Chance to cast level 6 Crucify on Attack
-59@	Scythe (Sacred)
-59+	1% Chance to cast level 8 Doom on Attack
-6@1	Compound Bow (6)
-6@2	Maple Bow (1)
-6@3	Viper Bow (3)
-6@4	Recurve Bow (5)
-6@5	Spatha (Sacred)
-6@6	Ida (2)
-6@7	Bronze Sword (4)
-6@8	Kriegsmesser (6)
-6@9	Goedendag (1)
-6@A	Angel Star (3)
-6@C	Hand of God (Sacred)
-6@D	Dart Thrower (2)
-6@E	Stinger Crossbow (4)
-6@F	Trebuchet (6)
-6@G	Gambeson (6)
-6@H	Kazarghand (1)
-6@I	Banded Plate (3)
-6@J	Ceremonial Armor (5)
-6@K	Morion (Sacred)
-6@L	Einherjar Helm (2)
-6@M	Spangenhelm (4)
-6@N	Parma (6)
-6@O	Totem Shield (1)
-6@P	Bladed Shield (3)
-60@	Halberd (Sacred)
-60+	+5 Life on Striking in Melee
-600	Quilted Armor (1)
-601	Leather Armor (1)
-602	Hard Leather Armor (1)
-603	Studded Leather (1)
-604	Ring Mail (1)
-605	Scale Mail (1)
-606	Chain Mail (1)
-607	Breast Plate (1)
-608	Splint Mail (1)
-609	Plate Mail (1)
-61@	Short Bow (Sacred)
-61+	+5 Mana on Striking in Melee
-610	Field Plate (1)
-611	Light Plate (1)
-612	Gothic Plate (1)
-613	Full Plate Mail (1)
-614	Ancient Armor (1)
-615	Cap (1)
-616	Skull Cap (1)
-617	Helm (1)
-618	Full Helm (1)
-619	Great Helm (1)
-62@	Hunter's Bow (Sacred)
-62+	+2 Energy Factor to Spell Damage
-620	Crown (1)
-621	Buckler (1)
-622	Small Shield (1)
-623	Large Shield (1)
-624	Kite Shield (1)
-625	Tower Shield (1)
-626	Gothic Shield (1)
-627	Sash (1)
-628	Light Belt (1)
-629	Belt (1)
-63@	Long Bow (Sacred)
-63+	Enhanced Weapon Damage Plus 5%
-630	Heavy Belt (1)
-631	Plated Belt (1)
-632	Leather Gloves (1)
-633	Heavy Gloves (1)
-634	Chain Gloves (1)
-635	Light Gauntlets (1)
-636	Gauntlets (1)
-637	Boots (1)
-638	Heavy Boots (1)
-639	Chain Boots (1)
-64@	Composite Bow (Sacred)
-64+	2% Faster Cast Rate
-640	Light Plated Boots (1)
-641	Greaves (1)
-642	Bone Shield (1)
-643	Spiked Shield (1)
-644	Mask (1)
-645	Bone Helm (1)
-646	Quilted Armor (2)
-647	Leather Armor (2)
-648	Hard Leather Armor (2)
-649	Studded Leather (2)
-65@	Short Battle Bow (Sacred)
-65+	2% Increased Attack Speed
-650	Ring Mail (2)
-651	Scale Mail (2)
-652	Chain Mail (2)
-653	Breast Plate (2)
-654	Splint Mail (2)
-655	Plate Mail (2)
-656	Field Plate (2)
-657	Light Plate (2)
-658	Gothic Plate (2)
-659	Full Plate Mail (2)
-66@	Long Battle Bow (Sacred)
-66+	+10 Required Level...
-660	Ancient Armor (2)
-661	Cap (2)
-662	Skull Cap (2)
-663	Helm (2)
-664	Full Helm (2)
-665	Great Helm (2)
-666	Crown (2)
-667	Buckler (2)
-668	Small Shield (2)
-669	Large Shield (2)
-67@	Short War Bow (Sacred)
-670	Kite Shield (2)
-671	Tower Shield (2)
-672	Gothic Shield (2)
-673	Sash (2)
-674	Light Belt (2)
-675	Belt (2)
-676	Heavy Belt (2)
-677	Plated Belt (2)
-678	Leather Gloves (2)
-679	Heavy Gloves (2)
-68@	Long War Bow (Sacred)
-680	Chain Gloves (2)
-681	Light Gauntlets (2)
-682	Gauntlets (2)
-683	Boots (2)
-684	Heavy Boots (2)
-685	Chain Boots (2)
-686	Light Plated Boots (2)
-687	Greaves (2)
-688	Bone Shield (2)
-689	Spiked Shield (2)
-69@	Wand (Sacred)
-690	Mask (2)
-691	Bone Helm (2)
-692	Quilted Armor (3)
-693	Leather Armor (3)
-694	Hard Leather Armor (3)
-695	Studded Leather (3)
-696	Ring Mail (3)
-697	Scale Mail (3)
-698	Chain Mail (3)
-699	Breast Plate (3)
-6bs	Shillelagh
-6cb	Great Bow
-6cs	Elder Staff
-6hb	Blade Bow
-6hx	Colossus Crossbow
-6l7	Crusader Bow
-6lb	Shadow Bow
-6ls	Stalagmite
-6lw	Hydra Bow
-6lx	Pellet Bow
-6mx	Gorgon Crossbow
-6rx	Demon Crossbow
-6s7	Diamond Bow
-6sb	Spider Bow
-6ss	Walking Stick
-6sw	Ward Bow
-6ws	Archon Staff
-7$a	Chipped Turquoise
-7$b	Flawed Turquoise
-7$c	Turquoise
-7$d	Flawless Turquoise
-7$e	Perfect Turquoise
-7@1	Compound Bow (Sacred)
-7@2	Maple Bow (2)
-7@3	Viper Bow (4)
-7@4	Recurve Bow (6)
-7@5	Backsword (1)
-7@6	Ida (3)
-7@7	Bronze Sword (5)
-7@8	Kriegsmesser (Sacred)
-7@9	Goedendag (2)
-7@A	Angel Star (4)
-7@C	Needle Crossbow (1)
-7@D	Dart Thrower (3)
-7@E	Stinger Crossbow (5)
-7@F	Trebuchet (Sacred)
-7@G	Gambeson (Sacred)
-7@H	Kazarghand (2)
-7@I	Banded Plate (4)
-7@J	Ceremonial Armor (6)
-7@K	Cervelliere (1)
-7@L	Einherjar Helm (3)
-7@M	Spangenhelm (5)
-7@N	Parma (Sacred)
-7@O	Totem Shield (2)
-7@P	Bladed Shield (4)
-70@	Yew Wand (Sacred)
-700	Splint Mail (3)
-701	Plate Mail (3)
-702	Field Plate (3)
-703	Light Plate (3)
-704	Gothic Plate (3)
-705	Full Plate Mail (3)
-706	Ancient Armor (3)
-707	Cap (3)
-708	Skull Cap (3)
-709	Helm (3)
-71@	Bone Wand (Sacred)
-71+	+10 Required Level..
-710	Full Helm (3)
-711	Great Helm (3)
-712	Crown (3)
-713	Buckler (3)
-714	Small Shield (3)
-715	Large Shield (3)
-716	Kite Shield (3)
-717	Tower Shield (3)
-718	Gothic Shield (3)
-719	Sash (3)
-72-	Wisdom: -- Sacred Uniques and Sets --
-72@	Grim Wand (Sacred)
-720	Light Belt (3)
-721	Belt (3)
-722	Heavy Belt (3)
-723	Plated Belt (3)
-724	Leather Gloves (3)
-725	Heavy Gloves (3)
-726	Chain Gloves (3)
-727	Light Gauntlets (3)
-728	Gauntlets (3)
-729	Boots (3)
-72a	Ettin Axe
-72h	Legend Sword
-73@	War Hammer (Sacred)
-730	Heavy Boots (3)
-731	Chain Boots (3)
-732	Light Plated Boots (3)
-733	Greaves (3)
-734	Bone Shield (3)
-735	Spiked Shield (3)
-736	Mask (3)
-737	Bone Helm (3)
-738	Quilted Armor (4)
-739	Leather Armor (4)
-74@	Maul (Sacred)
-740	Hard Leather Armor (4)
-741	Studded Leather (4)
-742	Ring Mail (4)
-743	Scale Mail (4)
-744	Chain Mail (4)
-745	Breast Plate (4)
-746	Splint Mail (4)
-747	Plate Mail (4)
-748	Field Plate (4)
-749	Light Plate (4)
-75@	Great Maul (Sacred)
-750	Gothic Plate (4)
-751	Full Plate Mail (4)
-752	Ancient Armor (4)
-753	Cap (4)
-754	Skull Cap (4)
-755	Helm (4)
-756	Full Helm (4)
-757	Great Helm (4)
-758	Crown (4)
-759	Buckler (4)
-76@	Light Crossbow (Sacred)
-760	Small Shield (4)
-761	Large Shield (4)
-762	Kite Shield (4)
-763	Tower Shield (4)
-764	Gothic Shield (4)
-765	Sash (4)
-766	Light Belt (4)
-767	Belt (4)
-768	Heavy Belt (4)
-769	Plated Belt (4)
-77@	Crossbow (Sacred)
-770	Leather Gloves (4)
-771	Heavy Gloves (4)
-772	Chain Gloves (4)
-773	Light Gauntlets (4)
-774	Gauntlets (4)
-775	Boots (4)
-776	Heavy Boots (4)
-777	Chain Boots (4)
-778	Light Plated Boots (4)
-779	Greaves (4)
-78@	Heavy Crossbow (Sacred)
-780	Bone Shield (4)
-781	Spiked Shield (4)
-782	Mask (4)
-783	Bone Helm (4)
-784	Quilted Armor (5)
-785	Leather Armor (5)
-786	Hard Leather Armor (5)
-787	Studded Leather (5)
-788	Ring Mail (5)
-789	Scale Mail (5)
-79@	Repeating Crossbow (Sacred)
-790	Chain Mail (5)
-791	Breast Plate (5)
-792	Splint Mail (5)
-793	Plate Mail (5)
-794	Field Plate (5)
-795	Light Plate (5)
-796	Gothic Plate (5)
-797	Full Plate Mail (5)
-798	Ancient Armor (5)
-799	Cap (5)
-7ar	Suwayyah
-7ax	Small Crescent
-7b7	Champion Sword
-7b8	Winged Axe
-7ba	Silver-edged Axe
-7bk	Winged Knife
-7bl	Legend Spike
-7br	Mancatcher
-7bs	Conquest Sword
-7bt	Decapitator
-7bw	Lich Wand
-7cl	Truncheon
-7cm	Highland Blade
-7cr	Phase Blade
-7cs	Battle Cestus
-7dg	Bone Knife
-7di	Mithril Point
-7fb	Colossus Sword
-7fc	Hydra Edge
-7fl	Scourge
-7ga	Champion Axe
-7gd	Colossus Blade
-7gi	Glorious Axe
-7gl	Ghost Glaive
-7gm	Thunder Maul
-7gs	Balrog Blade
-7gw	Unearthed Wand
-7h7	Great Poleaxe
-7ha	Tomahawk
-7ja	Hyperion Javelin
-7kr	Fanged Knife
-7la	Feral Axe
-7ls	Cryptic Sword
-7lw	Feral Claws
-7m7	Ogre Maul
-7ma	Reinforced Mace
-7mp	War Spike
-7mt	Devil Star
-7o7	Ogre Axe
-7p7	War Pike
-7pa	Cryptic Axe
-7pi	Stygian Pilum
-7qr	Scissors Suwayyah
-7qs	Seraph Rod
-7s7	Balrog Spear
-7s8	Thresher
-7sb	Elegant Blade
-7sc	Mighty Scepter
-7sm	Ataghan
-7sp	Tyrant Club
-7sr	Hyperion Spear
-7ss	Falcata
-7st	Ghost Spear
-7ta	Flying Axe
-7tk	Flying Knife
-7tr	Stygian Pike
-7ts	Winged Harpoon
-7tw	Runic Talons
-7vo	Colossus Voulge
-7wa	Berserker Axe
-7wb	Wrist Sword
-7wc	Giant Thresher
-7wd	Mythical Sword
-7wh	Legendary Mallet
-7wn	Polished Wand
-7ws	Caduceus
-7xf	War Fist
-7yw	Ghost Wand
-8@1	Serpent Bow (1)
-8@2	Maple Bow (3)
-8@3	Viper Bow (5)
-8@4	Recurve Bow (Sacred)
-8@5	Backsword (2)
-8@6	Ida (4)
-8@7	Bronze Sword (6)
-8@8	Bonebreaker (1)
-8@9	Goedendag (3)
-8@A	Angel Star (5)
-8@C	Needle Crossbow (2)
-8@D	Dart Thrower (4)
-8@E	Stinger Crossbow (6)
-8@G	Lamellar Armor (1)
-8@H	Kazarghand (3)
-8@I	Banded Plate (5)
-8@J	Ceremonial Armor (Sacred)
-8@K	Cervelliere (2)
-8@L	Einherjar Helm (4)
-8@M	Spangenhelm (6)
-8@N	Aspis (1)
-8@O	Totem Shield (3)
-8@P	Bladed Shield (5)
-80@	Eagle Orb (Sacred)
-800	Skull Cap (5)
-801	Helm (5)
-802	Full Helm (5)
-803	Great Helm (5)
-804	Crown (5)
-805	Buckler (5)
-806	Small Shield (5)
-807	Large Shield (5)
-808	Kite Shield (5)
-809	Tower Shield (5)
-81@	Sacred Globe (Sacred)
-810	Gothic Shield (5)
-811	Sash (5)
-812	Light Belt (5)
-813	Belt (5)
-814	Heavy Belt (5)
-815	Plated Belt (5)
-816	Leather Gloves (5)
-817	Heavy Gloves (5)
-818	Chain Gloves (5)
-819	Light Gauntlets (5)
-82@	Smoked Sphere (Sacred)
-820	Gauntlets (5)
-821	Boots (5)
-822	Heavy Boots (5)
-823	Chain Boots (5)
-824	Light Plated Boots (5)
-825	Greaves (5)
-826	Bone Shield (5)
-827	Spiked Shield (5)
-828	Mask (5)
-829	Bone Helm (5)
-83@	Clasped Orb (Sacred)
-830	Quilted Armor (6)
-831	Leather Armor (6)
-832	Hard Leather Armor (6)
-833	Studded Leather (6)
-834	Ring Mail (6)
-835	Scale Mail (6)
-836	Chain Mail (6)
-837	Breast Plate (6)
-838	Splint Mail (6)
-839	Plate Mail (6)
-84@	Jared's Stone (Sacred)
-840	Field Plate (6)
-841	Light Plate (6)
-842	Gothic Plate (6)
-843	Full Plate Mail (6)
-844	Ancient Armor (6)
-845	Cap (6)
-846	Skull Cap (6)
-847	Helm (6)
-848	Full Helm (6)
-849	Great Helm (6)
-85@	Stag Bow (Sacred)
-850	Crown (6)
-851	Buckler (6)
-852	Small Shield (6)
-853	Large Shield (6)
-854	Kite Shield (6)
-855	Tower Shield (6)
-856	Gothic Shield (6)
-857	Sash (6)
-858	Light Belt (6)
-859	Belt (6)
-86@	Reflex Bow (Sacred)
-860	Heavy Belt (6)
-861	Plated Belt (6)
-862	Leather Gloves (6)
-863	Heavy Gloves (6)
-864	Chain Gloves (6)
-865	Light Gauntlets (6)
-866	Gauntlets (6)
-867	Boots (6)
-868	Heavy Boots (6)
-869	Chain Boots (6)
-87@	Maiden Spear (Sacred)
-870	Light Plated Boots (6)
-871	Greaves (6)
-872	Bone Shield (6)
-873	Spiked Shield (6)
-874	Mask (6)
-875	Bone Helm (6)
-88@	Maiden Pike (Sacred)
-89@	Maiden Javelin (Sacred)
-8bs	Gothic Staff
-8cb	Double Bow
-8cs	Cedar Staff
-8hb	Razor Bow
-8hx	Ballista
-8l8	Large Siege Bow
-8lb	Cedar Bow
-8ls	Quarterstaff
-8lw	Gothic Bow
-8lx	Arbalest
-8mx	Siege Crossbow
-8rx	Chu-Ko-Nu
-8s8	Short Siege Bow
-8sb	Edge Bow
-8ss	Jo Staff
-8sw	Rune Bow
-8ws	Rune Staff
-9$a	Chipped Bloodstone
-9$b	Flawed Bloodstone
-9$c	Bloodstone
-9$d	Flawless Bloodstone
-9$e	Perfect Bloodstone
-9@1	Serpent Bow (2)
-9@2	Maple Bow (4)
-9@3	Viper Bow (6)
-9@4	Spatha (1)
-9@5	Backsword (3)
-9@6	Ida (5)
-9@7	Bronze Sword (Sacred)
-9@8	Bonebreaker (2)
-9@9	Goedendag (4)
-9@A	Angel Star (6)
-9@B	Hand of God (1)
-9@C	Needle Crossbow (3)
-9@D	Dart Thrower (5)
-9@E	Stinger Crossbow (Sacred)
-9@G	Lamellar Armor (2)
-9@H	Kazarghand (4)
-9@I	Banded Plate (6)
-9@J	Morion (1)
-9@K	Cervelliere (3)
-9@L	Einherjar Helm (5)
-9@M	Spangenhelm (Sacred)
-9@N	Aspis (2)
-9@O	Totem Shield (4)
-9@P	Bladed Shield (6)
-90@	Katar (Sacred)
-91@	Wrist Blade (Sacred)
-92@	Hatchet Hands (Sacred)
-92a	Twin Axe
-92h	Espandon
-93@	Cestus (Sacred)
-94@	Claws (Sacred)
-95@	Blade Talons (Sacred)
-96@	Scissors Katar (Sacred)
-98-	Wisdom: -- Duncraig (bonus uberquest) --
-99-	-- Cluey the Paperclip --
-9ar	Quhab
-9ax	Cleaver
-9b7	Lochaber Axe
-9b8	Hurlbat
-9b9	Gothic Sword
-9ba	Bearded Axe
-9bk	War Dart
-9bl	Stiletto
-9br	War Fork
-9bs	Battle Sword
-9bt	Tabar
-9bw	Tomb Wand
-9cl	Cudgel
-9cm	Dacian Falx
-9cr	Dimensional Blade
-9cs	Hand Scythe
-9dg	Poignard
-9di	Rondel
-9fb	Zweihander
-9fc	Tulwar
-9fl	Knout
-9ga	Gothic Axe
-9gd	Executioner Sword
-9gi	Ancient Axe
-9gl	Spiculum
-9gm	Martel de Fer
-9gs	Tusk Sword
-9gw	Grave Wand
-9h9	Bec-de-Corbin
-9ha	Hatchet
-9ja	War Javelin
-9kr	Cinquedeas
-9la	Military Axe
-9ls	Rune Sword
-9lw	Greater Claws
-9m9	War Club
-9ma	Flanged Mace
-9mp	Crowbill
-9mt	Jagged Star
-9p9	Lance
-9pa	Partizan
-9pi	Great Pilum
-9qr	Scissors Quhab
-9qs	Holy Water Sprinkler
-9s8	Battle Scythe
-9s9	Simbilan
-9sb	Shamshir
-9sc	Rune Scepter
-9sm	Cutlass
-9sp	Barbed Club
-9sr	War Spear
-9ss	Gladius
-9st	Yari
-9ta	Francisca
-9tk	Battle Dart
-9tr	Fuscina
-9ts	Harpoon
-9tw	Greater Talons
-9vo	Bill
-9wa	Naga
-9wb	Wrist Spike
-9wc	Grim Scythe
-9wd	Ancient Sword
-9wh	Battle Hammer
-9wn	Burnt Wand
-9ws	Divine Scepter
-9xf	Fascia
-9yw	Petrified Wand
-A0+	Creepy Shrine (10 Charges)
-A1+	Creepy Shrine (9 Charges)
-A2+	Creepy Shrine (8 Charges)
-A3+	Creepy Shrine (7 Charges)
-A4+	Creepy Shrine (6 Charges)
-A5+	Creepy Shrine (5 Charges)
-a55	Optical Detector
-a56	Azmodan's Heart
-a57	Visions of Akarat
-a58	Scroll of Kings
-a59	Laser Focus Crystal
-A6+	Creepy Shrine (4 Charges)
-a60	The Butcher's Tooth
-a61	Sacred Worldstone Key
-a66	Idol of Vanity
-a67	Spirit of Damnation
-a68	Horazon's Focus
-A7+	Creepy Shrine (3 Charges)
-a72	Healer's Light Key
-a73	Summoner's Shadow Key
-a74	Cleric's Order Key
-a75	Shaman's Chaos Key
-A8+	Creepy Shrine (2 Charges)
-A9+	Creepy Shrine (1 Charge)
-aar	Ancient Armor
-ab!	Astrogha's Venom Stinger
-abu	Do Not Use Ethereal Items Idiot
-adi	Legacy of Blood
-Air	Air
-am1	Stag Bow
-am2	Reflex Bow
-am3	Maiden Spear
-am4	Maiden Pike
-am5	Maiden Javelin
-am6	Ashwood Bow
-am7	Ceremonial Bow
-am8	Ceremonial Spear
-am9	Ceremonial Pike
-ama	Ceremonial Javelin
-amb	Matriarchal Bow
-amc	Grand Matron Bow
-amd	Matriarchal Spear
-ame	Matriarchal Pike
-amf	Matriarchal Javelin
-amu	Amulet
-aq!	Silver Seal of Ureh
-aqv	Arrow Quiver
-as1	Wraps
-as2	Knuckles
-as3	Slashers
-as4	Splay
-as5	Hook
-as6	Shank
-as7	Claws
-Asp	Asp
-ass	Book of Skill
-axe	Axe
-axf	Hatchet Hands
-az!	Fool's Gold
-b@b	Goodberry
-B0+	Abandoned Shrine (10 Charges)
-B1+	Abandoned Shrine (9 Charges)
-B2+	Abandoned Shrine (8 Charges)
-B3+	Abandoned Shrine (7 Charges)
-B4+	Abandoned Shrine (6 Charges)
-B5+	Abandoned Shrine (5 Charges)
-B6+	Abandoned Shrine (4 Charges)
-B7+	Abandoned Shrine (3 Charges)
-B8+	Abandoned Shrine (2 Charges)
-B9+	Abandoned Shrine (1 Charge)
-ba1	Jawbone Cap
-ba2	Fanged Helm
-ba3	Horned Helm
-ba4	Assault Helmet
-ba5	Avenger Guard
-ba6	Jawbone Visor
-ba7	Lion Helm
-ba8	Rage Mask
-ba9	Savage Helmet
-baa	Slayer Guard
-bab	Carnage Helm
-bac	Fury Visor
-bad	Destroyer Helm
-bae	Conqueror Crown
-baf	Guardian Crown
-bag	Bag
-bal	Balanced Axe
-bar	Bardiche
-bax	Broad Axe
-bbb	Lam Esen's Tome
-bed	Bed
-bhm	Bone Helm
-bkd	Key to the Cairn Stones
-bkf	Balanced Knife
-bks	Scroll of Inifuss
-bld	Blade
-box	Horadric Cube
-brn	Brandistock
-brs	Breast Plate
-brz	Brain
-bsd	Broad Sword
-bsh	Bone Shield
-bst	Battle Staff
-bsw	Bastard Sword
-btl	Blade Talons
-btx	Battle Axe
-buc	Buckler
-bwn	Bone Wand
-c@c	Moon Symbol
-C0+	Quiet Shrine (10 Charges)
-C1+	Quiet Shrine (9 Charges)
-C2+	Quiet Shrine (8 Charges)
-C3+	Quiet Shrine (7 Charges)
-C4+	Quiet Shrine (6 Charges)
-C5+	Quiet Shrine (5 Charges)
-C6+	Quiet Shrine (4 Charges)
-C7+	Quiet Shrine (3 Charges)
-C8+	Quiet Shrine (2 Charges)
-C9+	Quiet Shrine (1 Charge)
-cap	Cap
-cbw	Composite Bow
-ces	Cestus
-chn	Chain Mail
-ci0	Circlet
-ci1	Coronet
-ci2	Tiara
-ci3	Diadem
-clb	Club
-clm	Claymore
-clw	Claws
-cm1	WARNING: HACKED ITEM - Small Charm
-cm2	WARNING: HACKED ITEM - Large Charm
-cm3	WARNING: HACKED ITEM - Grand Charm
-cqv	Bolt Quiver
-crn	Crown
-crs	Crystal Sword
-cry	Cry
-cst	Gnarled Staff
-d@d	Moon Symbol
-D0+	Eerie Shrine (10 Charges)
-D1+	Eerie Shrine (9 Charges)
-D2+	Eerie Shrine (8 Charges)
-D3+	Eerie Shrine (7 Charges)
-d33	Decoy Gidbinn
-D4+	Eerie Shrine (6 Charges)
-D5+	Eerie Shrine (5 Charges)
-D6+	Eerie Shrine (4 Charges)
-D7+	Eerie Shrine (3 Charges)
-D8+	Eerie Shrine (2 Charges)
-D9+	Eerie Shrine (1 Charge)
-dgr	Dagger
-dir	Dirk
-dr1	Wolf Head
-dr2	Hawk Helm
-dr3	Antlers
-dr4	Falcon Mask
-dr5	Spirit Mask
-dr6	Alpha Helm
-dr7	Griffon Headdress
-dr8	Hunter's Guise
-dr9	Sacred Feathers
-dra	Totemic Mask
-drb	Blood Spirit
-drc	Sun Spirit
-drd	Earth Spirit
-dre	Sky Spirit
-drf	Dream Spirit
-DrQ	Dragon
-Dun	Dun
-e@e	Heart of Life
-E0+	Weird Shrine (10 Charges)
-E1+	Weird Shrine (9 Charges)
-e10	Targe (5)
-e11	Rondache (5)
-e12	Heraldic Shield (5)
-e13	Aerin Shield (5)
-e14	Crown Shield (5)
-e15	Preserved Head (5)
-e16	Zombie Head (5)
-e17	Unraveller Head (5)
-e18	Gargoyle Head (5)
-e19	Demon Head (5)
-E2+	Weird Shrine (8 Charges)
-e20	Wolf Head (6)
-e21	Hawk Helm (6)
-e22	Antlers (6)
-e23	Falcon Mask (6)
-e24	Spirit Mask (6)
-e25	Jawbone Cap (6)
-e26	Fanged Helm (6)
-e27	Horned Helm (6)
-e28	Assault Helmet (6)
-e29	Avenger Guard (6)
-E3+	Weird Shrine (7 Charges)
-e30	Targe (6)
-e31	Rondache (6)
-e32	Heraldic Shield (6)
-e33	Aerin Shield (6)
-e34	Crown Shield (6)
-e35	Preserved Head (6)
-e36	Zombie Head (6)
-e37	Unraveller Head (6)
-e38	Gargoyle Head (6)
-e39	Demon Head (6)
-E4+	Weird Shrine (6 Charges)
-E5+	Weird Shrine (5 Charges)
-E6+	Weird Shrine (4 Charges)
-E7+	Weird Shrine (3 Charges)
-E8+	Weird Shrine (2 Charges)
-E9+	Weird Shrine (1 Charge)
-Ea2	Ea
-ear	Ear
-Elf	Elf
-elx	Elixir
-Ema	Ema
-eo4	Spirit of Corruption
-eo6	Spirit of Celerity
-eo7	Elixir of Fire
-eo8	Elixir of Cold
-eo9	Elixir of Lightning
-Eos	Eos
-et0	Elixir of Elements
-et1	Elixir of Concentration
-eur	Dull Arcane Shards
-eus	Regular Arcane Shards
-eut	Glowing Arcane Shards
-eux	Brilliant Arcane Shards
-ey1	Elixir of Poison
-ey2	Elixir of Experience
-ey3	Elixir of Greed
-ey4	Elixir of Wealth
-ey5	Elixir of Strength
-ey6	Elixir of Dexterity
-ey7	Elixir of Energy
-ey8	Elixir of Vitality
-ey9	Elixir of Adrenaline
-eye	Eye
-eyz	Eye
-F0+	Gloomy Shrine (10 Charges)
-F1+	Gloomy Shrine (9 Charges)
-F2+	Gloomy Shrine (8 Charges)
-F3+	Gloomy Shrine (7 Charges)
-F4+	Gloomy Shrine (6 Charges)
-F5+	Gloomy Shrine (5 Charges)
-F6+	Gloomy Shrine (4 Charges)
-F7+	Gloomy Shrine (3 Charges)
-F8+	Gloomy Shrine (2 Charges)
-F9+	Gloomy Shrine (1 Charge)
-Fae	Fae
-fhl	Full Helm
-fla	Flail
-flb	Flamberge
-flc	Falchion
-fld	Field Plate
-flg	Flag
-fng	Fang
-Fog	Fog
-fu1	Potion of Stars
-fu2	Potion of Power
-ful	Full Plate Mail
-g$a	Chipped Onyx
-g$b	Flawed Onyx
-g$c	Onyx
-g$d	Flawless Onyx
-g$e	Perfect Onyx
-G0+	Tainted Shrine (10 Charges)
-G1+	Tainted Shrine (9 Charges)
-G2+	Tainted Shrine (8 Charges)
-G3+	Tainted Shrine (7 Charges)
-g33	The Gidbinn
-g34	The Golden Bird
-G4+	Tainted Shrine (6 Charges)
-G5+	Tainted Shrine (5 Charges)
-G6+	Tainted Shrine (4 Charges)
-G7+	Tainted Shrine (3 Charges)
-G8+	Tainted Shrine (2 Charges)
-G9+	Tainted Shrine (1 Charge)
-gax	Great Axe
-gb0	Flying Knife
-gcb	Chipped Sapphire
-gcg	Chipped Emerald
-gcr	Chipped Ruby
-gcv	Chipped Amethyst
-gcw	Chipped Diamond
-gcy	Chipped Topaz
-gfb	Flawed Sapphire
-gfg	Flawed Emerald
-gfr	Flawed Ruby
-gfv	Flawed Amethyst
-gfw	Flawed Diamond
-gfy	Flawed Topaz
-ghm	Great Helm
-gig	The Human Spirit
-gis	Giant Sword
-gix	Giant Axe
-glb	Flawless Sapphire
-gld	Gold
-glg	Flawless Emerald
-glr	Flawless Ruby
-glv	Glaive
-glw	Flawless Diamond
-gly	Flawless Topaz
-gma	Great Maul
-gok	Pearl of Wisdom
-gpb	Perfect Sapphire
-gpg	Perfect Emerald
-gpl	Strangling Gas Potion
-gpm	Choking Gas Potion
-gpr	Perfect Ruby
-gps	Rancid Gas Potion
-gpv	Perfect Amethyst
-gpw	Perfect Diamond
-gpy	Perfect Topaz
-gsb	Sapphire
-gsc	Grand Scepter
-gsd	Great Sword
-gsg	Emerald
-gsr	Ruby
-gsv	Amethyst
-gsw	Diamond
-gsy	Topaz
-gth	Gothic Plate
-gts	Gothic Shield
-Gut	Gut
-gwn	Grim Wand
-gzv	Flawless Amethyst
-H0+	Fascinating Shrine (10 Charges)
-H1+	Fascinating Shrine (9 Charges)
-H2+	Fascinating Shrine (8 Charges)
-H3+	Fascinating Shrine (7 Charges)
-H4+	Fascinating Shrine (6 Charges)
-H5+	Fascinating Shrine (5 Charges)
-H6+	Fascinating Shrine (4 Charges)
-H7+	Fascinating Shrine (3 Charges)
-H8+	Fascinating Shrine (2 Charges)
-H9+	Fascinating Shrine (1 Charge)
-hal	Halberd
-hax	Hand Axe
-hbl	Plated Belt
-hbt	Greaves
-hbw	Hunter's Bow
-hdm	Horadric Malus
-hew	Hew
-hfh	Hell Forge Hammer
-hgl	Gauntlets
-hla	Hard Leather Armor
-hlm	Helm
-Hog	Hog
-hp1	Minor Healing Potion
-hp2	Light Healing Potion
-hp3	Healing Potion
-hp4	Greater Healing Potion
-hp5	Super Healing Potion
-hrb	Herb
-hrn	Horn
-hrt	Heart
-hst	Horadric Staff
-hxb	Heavy Crossbow
-I0+	Ornate Shrine (10 Charges)
-I1+	Ornate Shrine (9 Charges)
-I2+	Ornate Shrine (8 Charges)
-I3+	Ornate Shrine (7 Charges)
-I4+	Ornate Shrine (6 Charges)
-I5+	Ornate Shrine (5 Charges)
-I6+	Ornate Shrine (4 Charges)
-I7+	Ornate Shrine (3 Charges)
-I8+	Ornate Shrine (2 Charges)
-I9+	Ornate Shrine (1 Charge)
-ibk	Tome of Identify
-ice	Malah's Potion
-Imp	Imp
-inf	Mithril Trigger
-isc	Scroll of Identify
-Iwa	Iwa
-J0+	Sacred Shrine (10 Charges)
-J1+	Sacred Shrine (9 Charges)
-j10	Eagle Orb (1)
-j11	Sacred Globe (1)
-j12	Smoked Sphere (1)
-j13	Clasped Orb (1)
-j14	Jared's Stone (1)
-j15	Stag Bow (1)
-j16	Reflex Bow (1)
-j17	Maiden Spear (1)
-j18	Maiden Pike (1)
-j19	Maiden Javelin (1)
-J2+	Sacred Shrine (8 Charges)
-j20	Katar (1)
-j21	Wrist Blade (1)
-j22	Hatchet Hands (1)
-j23	Cestus (1)
-j24	Claws (1)
-j25	Blade Talons (1)
-j26	Scissors Katar (1)
-j27	Eagle Orb (2)
-j28	Sacred Globe (2)
-j29	Smoked Sphere (2)
-J3+	Sacred Shrine (7 Charges)
-j30	Clasped Orb (2)
-j31	Jared's Stone (2)
-j32	Stag Bow (2)
-j33	Reflex Bow (2)
-j34	A Jade Figurine
-j35	Maiden Pike (2)
-j36	Maiden Javelin (2)
-j37	Katar (2)
-j38	Wrist Blade (2)
-j39	Hatchet Hands (2)
-J4+	Sacred Shrine (6 Charges)
-j40	Cestus (2)
-j41	Claws (2)
-j42	Blade Talons (2)
-j43	Scissors Katar (2)
-j44	Eagle Orb (3)
-j45	Sacred Globe (3)
-j46	Smoked Sphere (3)
-j47	Clasped Orb (3)
-j48	Jared's Stone (3)
-j49	Stag Bow (3)
-J5+	Sacred Shrine (5 Charges)
-j50	Reflex Bow (3)
-j51	Maiden Spear (3)
-j52	Maiden Pike (3)
-j53	Maiden Javelin (3)
-j54	Katar (3)
-j55	Wrist Blade (3)
-j56	Hatchet Hands (3)
-j57	Cestus (3)
-j58	Claws (3)
-j59	Blade Talons (3)
-J6+	Sacred Shrine (4 Charges)
-j60	Scissors Katar (3)
-j61	Eagle Orb (4)
-j62	Sacred Globe (4)
-j63	Smoked Sphere (4)
-j64	Clasped Orb (4)
-j65	Jared's Stone (4)
-j66	Stag Bow (4)
-j67	Reflex Bow (4)
-j68	Maiden Spear (4)
-j69	Maiden Pike (4)
-J7+	Sacred Shrine (3 Charges)
-j70	Maiden Javelin (4)
-j71	Katar (4)
-j72	Wrist Blade (4)
-j73	Hatchet Hands (4)
-j74	Cestus (4)
-j75	Claws (4)
-j76	Blade Talons (4)
-j77	Scissors Katar (4)
-j78	Eagle Orb (5)
-j79	Sacred Globe (5)
-J8+	Sacred Shrine (2 Charges)
-j80	Smoked Sphere (5)
-j81	Clasped Orb (5)
-j82	Jared's Stone (5)
-j83	Stag Bow (5)
-j84	Reflex Bow (5)
-j85	Maiden Spear (5)
-j86	Maiden Pike (5)
-j87	Maiden Javelin (5)
-j88	Katar (5)
-j89	Wrist Blade (5)
-J9+	Sacred Shrine (1 Charge)
-j90	Hatchet Hands (5)
-j91	Cestus (5)
-j92	Claws (5)
-j93	Blade Talons (5)
-j94	Scissors Katar (5)
-j95	Eagle Orb (6)
-j96	Sacred Globe (6)
-j97	Smoked Sphere (6)
-j98	Clasped Orb (6)
-j99	Jared's Stone (6)
-jar	Jar
-jav	Javelin
-jaw	Jawbone
-jew	Jewel
-Joy	Joy
-jug	Jug
-k@k	The Book of Lies
-K0+	Shimmering Shrine (10 Charges)
-k01	Circlet (1)
-k02	Coronet (1)
-k03	Tiara (1)
-k04	Diadem (1)
-k05	Circlet (2)
-k06	Coronet (2)
-k07	Tiara (2)
-k08	Diadem (2)
-k09	Circlet (3)
-K1+	Shimmering Shrine (9 Charges)
-k10	Coronet (3)
-k11	Tiara (3)
-k12	Diadem (3)
-k13	Circlet (4)
-k14	Coronet (4)
-k15	Tiara (4)
-k16	Diadem (4)
-k17	Circlet (5)
-k18	Coronet (5)
-k19	Tiara (5)
-K2+	Shimmering Shrine (8 Charges)
-k20	Diadem (5)
-k21	Circlet (6)
-k22	Coronet (6)
-k23	Tiara (6)
-k24	Diadem (6)
-K3+	Shimmering Shrine (7 Charges)
-K4+	Shimmering Shrine (6 Charges)
-K5+	Shimmering Shrine (5 Charges)
-K6+	Shimmering Shrine (4 Charges)
-K7+	Shimmering Shrine (3 Charges)
-K8+	Shimmering Shrine (2 Charges)
-K9+	Shimmering Shrine (1 Charge)
-Ker	Ker
-key	Key
-Key	Key
-kit	Kite Shield
-kri	Kris
-ktr	Katar
-l@l	Skinrender's Sigil
-L0+	Mysterious Shrine (10 Charges)
-L1+	Mysterious Shrine (9 Charges)
-l10	Wand (1)
-l11	Yew Wand (1)
-l12	Bone Wand (1)
-l13	Grim Wand (1)
-l14	Wand (2)
-l15	Yew Wand (2)
-l16	Bone Wand (2)
-l17	Grim Wand (2)
-l18	Wand (3)
-l19	Yew Wand (3)
-L2+	Mysterious Shrine (8 Charges)
-l20	Bone Wand (3)
-l21	Grim Wand (3)
-l22	Wand (4)
-l23	Yew Wand (4)
-l24	Bone Wand (4)
-l25	Grim Wand (4)
-l26	Wand (5)
-l27	Yew Wand (5)
-l28	Bone Wand (5)
-l29	Grim Wand (5)
-L3+	Mysterious Shrine (7 Charges)
-l30	Wand (6)
-l31	Yew Wand (6)
-l32	Bone Wand (6)
-l33	Grim Wand (6)
-l34	War Hammer (1)
-l35	Maul (1)
-l36	Great Maul (1)
-l37	War Hammer (2)
-l38	Maul (2)
-l39	Great Maul (2)
-L4+	Mysterious Shrine (6 Charges)
-l40	War Hammer (3)
-l41	Maul (3)
-l42	Great Maul (3)
-l43	War Hammer (4)
-l44	Maul (4)
-l45	Great Maul (4)
-l46	War Hammer (5)
-l47	Maul (5)
-l48	Great Maul (5)
-l49	War Hammer (6)
-L5+	Mysterious Shrine (5 Charges)
-l50	Maul (6)
-l51	Great Maul (6)
-l52	Light Crossbow (1)
-l53	Crossbow (1)
-l54	Heavy Crossbow (1)
-l55	Repeating Crossbow (1)
-l56	Light Crossbow (2)
-l57	Crossbow (2)
-l58	Heavy Crossbow (2)
-l59	Repeating Crossbow (2)
-L6+	Mysterious Shrine (4 Charges)
-l60	Light Crossbow (3)
-l61	Crossbow (3)
-l62	Heavy Crossbow (3)
-l63	Repeating Crossbow (3)
-l64	Light Crossbow (4)
-l65	Crossbow (4)
-l66	Heavy Crossbow (4)
-l67	Repeating Crossbow (4)
-l68	Light Crossbow (5)
-l69	Crossbow (5)
-L7+	Mysterious Shrine (3 Charges)
-l70	Heavy Crossbow (5)
-l71	Repeating Crossbow (5)
-l72	Light Crossbow (6)
-l73	Crossbow (6)
-l74	Heavy Crossbow (6)
-l75	Repeating Crossbow (6)
-L8+	Mysterious Shrine (2 Charges)
-L9+	Mysterious Shrine (1 Charge)
-lax	Large Axe
-lbb	Long Battle Bow
-lbl	Sash
-lbt	Boots
-lbw	Long Bow
-lea	Leather Armor
-leg	Wirt's Leg
-Ley	Ley
-lgl	Leather Gloves
-Loa	Loa
-lok	Crystalline Flame Medallion
-lrg	Large Shield
-lsd	Long Sword
-lst	Long Staff
-ltp	Light Plate
-luv	The Black Tower Key
-lwb	Long War Bow
-lxb	Light Crossbow
-m@m	Spinecracker's Sigil
-M0+	Spiritual Shrine (10 Charges)
-M1+	Spiritual Shrine (9 Charges)
-M2+	Spiritual Shrine (8 Charges)
-M3+	Spiritual Shrine (7 Charges)
-M4+	Spiritual Shrine (6 Charges)
-M5+	Spiritual Shrine (5 Charges)
-M6+	Spiritual Shrine (4 Charges)
-M7+	Spiritual Shrine (3 Charges)
-M8+	Spiritual Shrine (2 Charges)
-M9+	Spiritual Shrine (1 Charge)
-mac	Mace
-mar	Mar
-mau	Maul
-maw	Maw
-max	MAX
-MAX	MAX
-mbl	Belt
-mbt	Chain Boots
-mec	Meditation Candle
-mgl	Chain Gloves
-Moe	Moe
-mp1	Minor Mana Potion
-mp2	Light Mana Potion
-mp3	Mana Potion
-mp4	Greater Mana Potion
-mp5	Super Mana Potion
-mpi	Military Pick
-msf	Shaft of the Horadric Staff
-msk	Mask
-mss	Mephisto's Soulstone
-mst	Morning Star
-mxb	Crossbow
-N0+	Magical Shrine (10 Charges)
-N1+	Magical Shrine (9 Charges)
-N2+	Magical Shrine (8 Charges)
-N3+	Magical Shrine (7 Charges)
-N4+	Magical Shrine (6 Charges)
-N5+	Magical Shrine (5 Charges)
-N6+	Magical Shrine (4 Charges)
-N7+	Magical Shrine (3 Charges)
-N8+	Magical Shrine (2 Charges)
-N9+	Magical Shrine (1 Charge)
-ne1	Preserved Head
-ne2	Zombie Head
-ne3	Unraveller Head
-ne4	Gargoyle Head
-ne5	Demon Head
-ne6	Mummified Trophy
-ne7	Fetish Trophy
-ne8	Sexton Trophy
-ne9	Cantor Trophy
-nea	Hierophant Trophy
-neb	Minion Skull
-nec	Hellspawn Skull
-ned	Overseer Skull
-nee	Succubus Skull
-nef	Bloodlord Skull
-neg	Hellspawn Skull
-Nix	Nix
-Nyx	Nyx
-o@o	Eyegouger's Sigil
-O0+	Enchanted Shrine (10 Charges)
-O1+	Enchanted Shrine (9 Charges)
-o10	Stag Bow (6)
-o11	Reflex Bow (6)
-o12	Maiden Spear (6)
-o13	Maiden Pike (6)
-o14	Maiden Javelin (6)
-o15	Katar (6)
-o16	Wrist Blade (6)
-o17	Hatchet Hands (6)
-o18	Cestus (6)
-o19	Claws (6)
-O2+	Enchanted Shrine (8 Charges)
-o20	Blade Talons (6)
-o21	Scissors Katar (6)
-O3+	Enchanted Shrine (7 Charges)
-O4+	Enchanted Shrine (6 Charges)
-O5+	Enchanted Shrine (5 Charges)
-O6+	Enchanted Shrine (4 Charges)
-O7+	Enchanted Shrine (3 Charges)
-O8+	Enchanted Shrine (2 Charges)
-O9+	Enchanted Shrine (1 Charge)
-ob1	Eagle Orb
-ob2	Sacred Globe
-ob3	Smoked Sphere
-ob4	Clasped Orb
-ob5	Jared's Stone
-ob6	Glowing Orb
-ob7	Crystalline Globe
-ob8	Cloudy Sphere
-ob9	Sparkling Ball
-oba	Swirling Crystal
-obb	Heavenly Stone
-obc	Eldritch Orb
-obd	Demon Heart
-obe	Vortex Orb
-obf	Dimensional Shard
-opl	Fulminating Potion
-opm	Exploding Potion
-ops	Oil Potion
-Orb	Orb
-Orc	Orc
-p@p	Fleshcutter's Sigil
-P0+	Divine Shrine (10 Charges)
-P1+	Divine Shrine (9 Charges)
-P2+	Divine Shrine (8 Charges)
-P3+	Divine Shrine (7 Charges)
-P4+	Divine Shrine (6 Charges)
-P5+	Divine Shrine (5 Charges)
-P6+	Divine Shrine (4 Charges)
-P7+	Divine Shrine (3 Charges)
-P8+	Divine Shrine (2 Charges)
-P9+	Divine Shrine (1 Charge)
-pa1	Targe
-pa2	Rondache
-pa3	Heraldic Shield
-pa4	Aerin Shield
-pa5	Crown Shield
-pa6	Akaran Targe
-pa7	Akaran Rondache
-pa8	Protector Shield
-pa9	Gilded Shield
-paa	Royal Shield
-pab	Sacred Targe
-pac	Sacred Rondache
-pad	Kurast Shield
-pae	Zakarum Shield
-paf	Vortex Shield
-pax	Poleaxe
-pik	Pike
-pil	Pilum
-Pit	Pit
-plt	Plate Mail
-POW	Barbarian Captive
-pox	Pox
-pus	Pus
-q@q	Bonehexer's Sigil
-Q0+	Hidden Shrine (10 Charges)
-Q1+	Hidden Shrine (9 Charges)
-Q2+	Hidden Shrine (8 Charges)
-Q3+	Hidden Shrine (7 Charges)
-Q4+	Hidden Shrine (6 Charges)
-Q5+	Hidden Shrine (5 Charges)
-Q6+	Hidden Shrine (4 Charges)
-Q7+	Hidden Shrine (3 Charges)
-Q8+	Hidden Shrine (2 Charges)
-Q9+	Hidden Shrine (1 Charge)
-qbr	Khalim's Brain
-qey	Khalim's Eye
-qf1	Khalim's Flail
-qf2	Khalim's Will
-qhr	Khalim's Heart
-qin	Ring (Sacred)
-qll	Quill
-qmu	Amulet (Sacred)
-qqc	Bolt Quiver (Sacred)
-qqv	Arrow Quiver (Sacred)
-qui	Quilted Armor
-qul	Arcane Shards
-qum	Arcane Crystal
-qus	Regular Arcane Crystal
-qut	Glowing Arcane Crystal
-qux	Brilliant Arcane Crystal
-quy	Dazzling Arcane Crystal
-quz	Boom!
-r@r	Ring of the Five
-R0+	Stone Shrine (10 Charges)
-r01	El Rune
-r02	Eld Rune
-r03	Tir Rune
-r04	Nef Rune
-r05	Eth Rune
-r06	Ith Rune
-r07	Tal Rune
-r08	Ral Rune
-r09	Ort Rune
-R1+	Stone Shrine (9 Charges)
-r10	Thul Rune
-r11	Amn Rune
-r12	Sol Rune
-r13	Shael Rune
-r14	Dol Rune
-r15	Hel Rune
-r16	Io Rune
-r17	Lum Rune
-r18	Ko Rune
-r19	Fal Rune
-R2+	Stone Shrine (8 Charges)
-r20	Lem Rune
-r21	Pul Rune
-r22	Um Rune
-r23	Mal Rune
-r24	Ist Rune
-r25	Gul Rune
-r26	Vex Rune
-r27	Ohm Rune
-r28	Lo Rune
-r29	Sur Rune
-R3+	Stone Shrine (7 Charges)
-r30	Ber Rune
-r31	Jah Rune
-r32	Cham Rune
-r33	Zod Rune
-r34	Sha Rune
-r35	Lah Rune
-r36	Kur Rune
-r37	Ix Rune
-r38	Thur Rune
-r39	Nas Rune
-R4+	Stone Shrine (6 Charges)
-r40	Ath Rune
-r41	Kra Rune
-r42	Vith Rune
-r43	No Rune
-r44	Yul Rune
-r45	Thai Rune
-r46	Rha Rune
-r47	Xar Rune
-r48	Nih Rune
-r49	Lai Rune
-R5+	Stone Shrine (5 Charges)
-r50	On Rune
-r51	Taha Rune
-r52	Ghal Rune
-r53	Qor Rune
-r54	Krys Rune
-r55	Auhe Rune
-r56	Sha'ad Rune
-R6+	Stone Shrine (4 Charges)
-R7+	Stone Shrine (3 Charges)
-R8+	Stone Shrine (2 Charges)
-R9+	Stone Shrine (1 Charge)
-Ram	Ram
-Red	Red
-rin	Ring
-rip	Ripper
-rng	Ring Mail
-Roc	Roc
-Rod	Rod
-Rot	Rot
-rvl	Full Rejuvenation Potion
-rvs	Rejuvenation Potion
-rxb	Repeating Crossbow
-s@s	Assur's Bane
-S0+	Religious Shrine (10 Charges)
-s0m	Book of Summoning
-S1+	Religious Shrine (9 Charges)
-S2+	Religious Shrine (8 Charges)
-S3+	Religious Shrine (7 Charges)
-S4+	Religious Shrine (6 Charges)
-S5+	Religious Shrine (5 Charges)
-S6+	Religious Shrine (4 Charges)
-S7+	Religious Shrine (3 Charges)
-S8+	Religious Shrine (2 Charges)
-S9+	Religious Shrine (1 Charge)
-saw	Saw
-sbb	Short Battle Bow
-sbr	Sabre
-sbw	Short Bow
-scl	Scale Mail
-scm	Scimitar
-scp	Scepter
-scy	Scythe
-scz	Scalp
-Sin	Sin
-skc	Chipped Skull
-skf	Flawed Skull
-skl	Flawless Skull
-skp	Skull Cap
-skr	Scissors Katar
-sku	Skull
-Sky	Sky
-skz	Perfect Skull
-sml	Small Shield
-sol	Soul
-spc	Spiked Club
-spe	Spleen
-spk	Spiked Shield
-spl	Splint Mail
-spr	Spear
-spt	Spetum
-ssd	Short Sword
-ssp	Short Spear
-sst	Short Staff
-stu	Studded Leather
-Sun	Sun
-swb	Short War Bow
-t@t	Demonsbane
-T0+	Cryptic Shrine (10 Charges)
-T1+	Cryptic Shrine (9 Charges)
-T2+	Cryptic Shrine (8 Charges)
-T3+	Cryptic Shrine (7 Charges)
-T4+	Cryptic Shrine (6 Charges)
-T5+	Cryptic Shrine (5 Charges)
-T6+	Cryptic Shrine (4 Charges)
-T7+	Cryptic Shrine (3 Charges)
-T8+	Cryptic Shrine (2 Charges)
-T9+	Cryptic Shrine (1 Charge)
-tal	Tail
-Tao	Tao
-Tau	Tau
-tax	Throwing Axe
-tbk	Tome of Town Portal
-tbl	Heavy Belt
-tbt	Light Plated Boots
-tch	Torch
-tgl	Light Gauntlets
-Tin	Tin
-tkf	Throwing Knife
-toa	Belladonna Extract (Respec potion)
-tow	Tower Shield
-tr1	Horadric Scroll
-tr2	Scroll of Resistance
-tri	Trident
-tsc	Scroll of Town Portal
-tsp	Throwing Spear
-ttt	Concoction of Necromancy
-u@v	I Am Rich
-uap	Shako
-uar	Sacred Armor
-ucl	Loricated Mail
-uea	Wyrmhide
-uh9	Bone Visage
-uhb	Myrmidon Greaves
-uhc	Colossus Girdle
-uhf	Legendary Mallet
-uhg	Ogre Gauntlets
-uhl	Giant Conch
-uhm	Spired Helm
-uhn	Boneweave
-uit	Monarch
-ukp	Hydraskull
-ula	Scarab Husk
-ulb	Wyrmhide Boots
-ulc	Spiderweb Sash
-uld	Kraken Shell
-ulg	Bramble Mitts
-ulm	Armet
-ult	Hellforge Plate
-umb	Boneweave Boots
-umc	Mithril Coil
-umg	Vambraces
-uml	Luna
-ung	Diamond Mail
-uow	Aegis
-upk	Blade Barrier
-upl	Balrog Skin
-urg	Hyperion
-urn	Corona
-Urn	Urn
-urs	Great Hauberk
-Use	Use Gem
-ush	Troll Nest
-usk	Demonhead
-utb	Mirrored Boots
-utc	Troll Belt
-utg	Crusader Gauntlets
-uth	Lacquered Plate
-utp	Archon Plate
-uts	Ward
-utu	Wire Fleece
-uuc	Heater
-uui	Dusk Shroud
-uul	Shadow Plate
-uvb	Scarabshell Boots
-uvc	Vampirefang Belt
-uvg	Vampirebone Gloves
-vbl	Light Belt
-vbt	Heavy Boots
-vex	Vex
-vgl	Heavy Gloves
-vic	Victim's Heart
-vip	Top of the Horadric Staff
-vou	Voulge
-vps	Stamina Potion
 w@w	Cold Fusion Schematics
-w10	Wolf Head (1)
-w11	Hawk Helm (1)
-w12	Antlers (1)
-w13	Falcon Mask (1)
-w14	Spirit Mask (1)
-w15	Jawbone Cap (1)
-w16	Fanged Helm (1)
-w17	Horned Helm (1)
-w18	Assault Helmet (1)
-w19	Avenger Guard (1)
-w20	Targe (1)
-w21	Rondache (1)
-w22	Heraldic Shield (1)
-w23	Aerin Shield (1)
-w24	Crown Shield (1)
-w25	Preserved Head (1)
-w26	Zombie Head (1)
-w27	Unraveller Head (1)
-w28	Gargoyle Head (1)
-w29	Demon Head (1)
-w30	Wolf Head (2)
-w31	Hawk Helm (2)
-w32	Antlers (2)
-w33	Falcon Mask (2)
-w34	Spirit Mask (2)
-w35	Jawbone Cap (2)
-w36	Fanged Helm (2)
-w37	Horned Helm (2)
-w38	Assault Helmet (2)
-w39	Avenger Guard (2)
-w40	Targe (2)
-w41	Rondache (2)
-w42	Heraldic Shield (2)
-w43	Aerin Shield (2)
-w44	Crown Shield (2)
-w45	Preserved Head (2)
-w46	Zombie Head (2)
-w47	Unraveller Head (2)
-w48	Gargoyle Head (2)
-w49	Demon Head (2)
-w50	Wolf Head (3)
-w51	Hawk Helm (3)
-w52	Antlers (3)
-w53	Falcon Mask (3)
-w54	Spirit Mask (3)
-w55	Jawbone Cap (3)
-w56	Fanged Helm (3)
-w57	Horned Helm (3)
-w58	Assault Helmet (3)
-w59	Avenger Guard (3)
-w60	Targe (3)
-w61	Rondache (3)
-w62	Heraldic Shield (3)
-w63	Aerin Shield (3)
-w64	Crown Shield (3)
-w65	Preserved Head (3)
-w66	Zombie Head (3)
-w67	Unraveller Head (3)
-w68	Gargoyle Head (3)
-w69	Demon Head (3)
-w70	Wolf Head (4)
-w71	Hawk Helm (4)
-w72	Antlers (4)
-w73	Falcon Mask (4)
-w74	Spirit Mask (4)
-w75	Jawbone Cap (4)
-w76	Fanged Helm (4)
-w77	Horned Helm (4)
-w78	Assault Helmet (4)
-w79	Avenger Guard (4)
-w80	Targe (4)
-w81	Rondache (4)
-w82	Heraldic Shield (4)
-w83	Aerin Shield (4)
-w84	Crown Shield (4)
-w85	Preserved Head (4)
-w86	Zombie Head (4)
-w87	Unraveller Head (4)
-w88	Gargoyle Head (4)
-w89	Demon Head (4)
-w90	Wolf Head (5)
-w91	Hawk Helm (5)
-w92	Antlers (5)
-w93	Falcon Mask (5)
-w94	Spirit Mask (5)
-w95	Jawbone Cap (5)
-w96	Fanged Helm (5)
-w97	Horned Helm (5)
-w98	Assault Helmet (5)
-w99	Avenger Guard (5)
-wax	War Axe
-WCC	Weighted Companion Cube
-web	Web
-whm	War Hammer
-wms	Thawing Potion
-wnd	Wand
-wow	You can't see this sentence.
-wrb	Wrist Blade
-wsc	War Scythe
-wsd	War Sword
-wsp	War Scepter
-wst	War Staff
-wtb	Crucifix
 x@x	The Glorious Book of Median
-x01	Sacred Sunstone
-x02	Shadow Vortex
-x03	Worldstone Orb
-x04	Caoi Dulra Fruit
-x05	Soulstone Shard
-x06	Eye of Divinity
-x07	Nexus Crystal
-x0x	Eternal Bone Pile
-x1x	Sunstone of Fire
-x2x	Sunstone of Ice
-x34	Maiden Spear (2)
-x3x	Sunstone of Thunder
-x4x	Sunstone of the Gods
-x5x	Hax!
-xap	War Hat
-xar	Ornate Plate
-xcl	Tigulated Mail
-xea	Serpentskin Armor
-xg0	Elixir of Damnation
-xh9	Grim Helm
-xhb	War Boots
-xhg	War Gauntlets
-xhl	Basinet
-xhm	Winged Helm
-xhn	Mesh Armor
-xit	Dragon Shield
-xkp	Sallet
-xla	Demonhide Armor
-xlb	Demonhide Boots
-xld	Sharktooth Armor
-xlg	Demonhide Gloves
-xlm	Casque
-xlt	Templar Coat
-xmb	Mesh Boots
-xmg	Heavy Bracers
-xml	Round Shield
-xng	Linked Mail
-xow	Pavise
-xpk	Barbed Shield
-xpl	Russet Armor
-xrg	Scutum
-xrn	Grand Crown
-xrs	Cuirass
-xsh	Grim Shield
-xsk	Death Mask
-xtb	Battle Boots
-xtg	Battle Gauntlets
-xth	Embossed Plate
-xtp	Mage Plate
-xts	Ancient Shield
-xtu	Trellised Armor
-xuc	Defender
-xui	Ghost Armor
-xul	Chaos Armor
-xvb	Sharkskin Boots
-xvg	Sharkskin Gloves
-xyz	Potion of Life
-yo1	Chipped Rainbow Stone
-yo2	Flawed Rainbow Stone
-yo3	Rainbow Stone
-yo4	Flawless Rainbow Stone
-yo5	Perfect Rainbow Stone
-yps	Antidote Potion
-yq1	Sunless Crystal Bird
-yq2	Six Angel Bag
-yq7	Hard Mode Charm
-yq8	Zakarum's Ear
-yqe	Moon of the Spider
-yqx	Spirit Trance Herb
-ywn	Yew Wand
-z@z	wealthy and powerful...
-z1+	+1% to Buff/Debuff/Cold Skill Duration
-z2+	Poison Length Reduced by 2%
-z3+	+1 to Summon Daystar
-z4+	+1 to Summon Shredder
-z5+	+1 to Summon Bane Monster
-zen	Thanks for playing statue
-Zen	Zen
-zhb	War Belt
-zkq	Signet of Learning
-zkr	Greater Signet of Experience
-zks	Book of Might
-zkt	Book of Power
-zku	Signet of Experience
-zkw	Signet of Gold
-zkx	Greater Signet of Gold
-zky	Greater Signet of Learning
-zlb	Demonhide Sash
-zmb	Mesh Belt
+r54	Great Rune - Krys Rune
+r55	Great Rune - Auhe Rune
+r56	Great Rune - Sha'ad Rune
 zog	Life Pack
 zoh	Energy Pack
-ztb	Battle Belt
-zvb	Sharkskin Belt
+c@c	Moon Symbol
+toa	Belladonna Extract
+!@1	Evil Eye of the Clawstorm
+!@2	Evil Eye of the Landmass
+!@3	Evil Eye of the Glowing Blob
+!@4	Evil Eye of the Fairy Witch
+!@5	Evil Eye of the Bane Hunter
+!@6	Dogma of Suffering
+!@7	Dogma of Pain
+!@8	Dogma of Hatred
+!@9	Dogma of Terror
+!@A	Dogma of Destruction
+!@B	Signet of Skill
+!@c	Pearl of Wisdom
+pk1	FLYING POLAR BUFFALO ERROR
+pk2	FLYING POLAR BUFFALO ERROR
+pk3	FLYING POLAR BUFFALO ERROR
+dhn	FLYING POLAR BUFFALO ERROR
+bey	FLYING POLAR BUFFALO ERROR
+mbr	FLYING POLAR BUFFALO ERROR
+!w@	Thorn of Teror
+!z@	Admin Charm

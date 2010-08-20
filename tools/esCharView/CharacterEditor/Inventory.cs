@@ -171,20 +171,10 @@ namespace CharacterEditor
 					}
 					else
 					{
+						
 						// There is currently no way to make a runeword a non runeword, we have to
 						//   move all the good socketed items into a corpse and delete the runeword item
 						// TODO: Should move to a new function, called when IsRuneword is set to false
-						if (unknownCorpseData.Length == 0)
-						{
-							// I don't know what the 12 bytes are, but 0 seems to work
-							unknownCorpseData = new byte[12];
-						}
-
-						if (unknownCorpseData[2] == 0)
-						{
-							// This byte has to be flagged to make the corpse appear, might be corpse count
-							unknownCorpseData[2] = 1;
-						}
 
 						for (int i = 0; i < item.Sockets.Count; i++)
 						{
@@ -449,6 +439,18 @@ namespace CharacterEditor
 			// Dump corpse data
 			if (corpseItems.Count > 0)
 			{
+				if (unknownCorpseData.Length == 0)
+				{
+					// I don't know what the 12 bytes are, but 0 seems to work
+					unknownCorpseData = new byte[12];
+				}
+
+				if (unknownCorpseData[2] == 0)
+				{
+					// This byte has to be flagged to make the corpse appear, might be corpse count
+					unknownCorpseData[2] = 1;
+				}
+
 				inventoryBytes.AddRange(unknownCorpseData);
 				inventoryBytes.AddRange(magic);
 				inventoryBytes.AddRange(BitConverter.GetBytes((short)corpseItems.Count));

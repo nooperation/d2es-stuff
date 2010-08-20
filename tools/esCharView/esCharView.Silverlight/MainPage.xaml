@@ -84,6 +84,10 @@
                     </controls:TabControl>
                     <Button Grid.Row="1" Grid.Column="2" Margin="6"  Content="View Item" Height="23" Name="buttonViewItem" Width="75" Click="buttonViewItem_Click" />
                     <Button Grid.Row="1" Grid.Column="0" Margin="6"  Content="Remove" Height="23" Name="buttonRemoveItem"  Width="75" Click="buttonRemoveItem_Click" />
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Margin="6" Content="Import" Height="23" Name="buttonImportItem" Width="75" Click="buttonImportItem_Click" />
+                        <Button Margin="6" Content="Export" Height="23" Name="buttonExportItem" Width="75" Click="buttonExportItem_Click" />
+                    </StackPanel>
                 </Grid>
             </controls:TabItem>
             <controls:TabItem Header="Item Viewer" Name="tabPageItemEditor">

@@ -271,6 +271,28 @@ namespace esCharView.Silverlight
 			}
 		}
 
+		private ListBox GetCurrentItemListbox()
+		{
+			if (tabControlInventory.SelectedItem == tabPageInventoryPlayer)
+			{
+				return listBoxInventory;
+			}
+			else if (tabControlInventory.SelectedItem == tabPageInventoryCorpse)
+			{
+				return listBoxCorpseInventory;
+			}
+			else if (tabControlInventory.SelectedItem == tabPageInventoryMerc)
+			{
+				return listBoxMercInventory;
+			}
+			else if (tabControlInventory.SelectedItem == tabPageInventoryGolem)
+			{
+				return listBoxGolemInventory;
+			}
+
+			throw new Exception("Invalid state for tabControlInventory");
+		}
+
 		private void buttonRemoveSocket_Click(object sender, RoutedEventArgs e)
 		{
 			if (listBoxItemEditorSockets.SelectedIndex < 0)
@@ -331,6 +353,60 @@ namespace esCharView.Silverlight
 			{
 				removeSelectedItems();
 			}
+		}
+
+		private void buttonExportItem_Click(object sender, RoutedEventArgs e)
+		{
+			ListBox source = GetCurrentItemListbox();
+
+			if (source == null || source.SelectedItems == null)
+			{
+				return;
+			}
+
+			ExportSelectedItem(source.SelectedItem as Item);
+		}
+
+		private void ExportSelectedItem(Item item)
+		{
+			SaveFileDialog sfd = new SaveFileDialog();
+			
+			if(sfd.ShowDialog() == true)
+			{
+				using (BinaryWriter bw = new BinaryWriter(sfd.OpenFile()))
+				{
+					bw.Write(item.GetItemBytes());
+				}				
+			}
+		}
+
+		private void buttonImportItem_Click(object sender, RoutedEventArgs e)
+		{
+			ListBox source = GetCurrentItemListbox();
+
+			if (source == null || source.SelectedItems == null)
+			{
+				return;
+			}
+
+			ImportItem();
+		}
+
+		private void ImportItem()
+		{
+			OpenFileDialog ofd = new OpenFileDialog();
+
+			if (ofd.ShowDialog() == true)
+			{
+				using (BinaryReader br = new BinaryReader(ofd.File.OpenRead()))
+				{
+					byte[] itemData = new byte[ofd.File.Length];
+					br.Read(itemData, 0, itemData.Length);
+					playerData.Inventory.CorpseItems.Add(new Item(itemData));
+				}
+			}
+
+			RefreshInventory();
 		}
 	}
 }
