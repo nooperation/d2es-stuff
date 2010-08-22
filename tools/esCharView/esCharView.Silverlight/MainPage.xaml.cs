@@ -44,24 +44,39 @@ namespace esCharView.Silverlight
 
 			playerData = new SaveReader(comboBoxResourceSets.SelectedItem.ToString());
 
-			playerData.Read(rawCharacterbytes);
+			try
+			{
+				playerData.Read(rawCharacterbytes);
+			}
+			catch (Exception ex)
+			{
+				new ErrorWindow(ex.Message, true);
+				return;
+			}
+
+			string errorString = "";
 
 			if (playerData.FailedCharacterDecoding)
 			{
-				MessageBox.Show("Failed character decoding");
+				errorString += "Failed character decoding\n";
 			}
 			if (playerData.FailedInventoryDecoding)
 			{
-				MessageBox.Show("Failed inventory decoding");
+				errorString += "Failed inventory decoding";
 			}
 			if (playerData.FailedSkillDecoding)
 			{
-				MessageBox.Show("Failed skill decoding");
+				errorString += "Failed skill decoding";
+			}
+
+			if(errorString.Length > 0)
+			{
+				ErrorWindow errorWindow = new ErrorWindow(errorString, true);
 			}
 
 			if (playerData.Inventory.FailedItemCount > 0)
 			{
-				MessageBox.Show(string.Format("Failed to read {0} items. These items will not be included when saving character", playerData.Inventory.FailedItemCount));
+				new ErrorWindow(string.Format("Failed to read {0} items. These items will not be included when saving character", playerData.Inventory.FailedItemCount));
 			}
 
 			dataGridViewCharacter.ItemsSource = new List<Character>() { playerData.Character };

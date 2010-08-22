@@ -42,17 +42,15 @@
             <controls:TabItem Header="General" Name="tabPageGeneral" >
                 <Grid Name="generalGrid" >
                     <Grid.RowDefinitions>
-                        <RowDefinition MinHeight="67" />
-                        <RowDefinition MinHeight="67" />
+                        <RowDefinition Height="23"/>
+                        <RowDefinition MinHeight="67"/>
+                        <RowDefinition Height="23"/>
+                        <RowDefinition MinHeight="67"/>
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0">
-                        <TextBlock>General</TextBlock>
-                        <data:DataGrid AutoGenerateColumns="True" Name="dataGridViewCharacter"  />
-                    </StackPanel>
-                    <StackPanel Grid.Row="1">
-                        <TextBlock>Stats</TextBlock>
-                        <data:DataGrid AutoGenerateColumns="True" Name="dataGridViewStats" />
-                    </StackPanel>
+                    <TextBlock Grid.Row="0" VerticalAlignment="Center" TextAlignment="Center">General</TextBlock>
+                    <data:DataGrid  Grid.Row="1" AutoGenerateColumns="True" Name="dataGridViewCharacter"  />
+                    <TextBlock  Grid.Row="2" VerticalAlignment="Center" TextAlignment="Center">Stats</TextBlock>
+                    <data:DataGrid  Grid.Row="3" AutoGenerateColumns="True" Name="dataGridViewStats" />
                 </Grid>
             </controls:TabItem>
             <controls:TabItem Header="Inventory" Name="tabPageInventory">
