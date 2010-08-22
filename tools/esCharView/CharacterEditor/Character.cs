@@ -223,6 +223,11 @@ namespace CharacterEditor
 		/// <param name="characterBytes">Raw character bytes from save file</param>
 		public Character(byte[] characterBytes)
 		{
+			if (characterBytes[0] != 0x55 || characterBytes[1] != 0xAA || characterBytes[2] != 0x55 || characterBytes[3] != 0xAA)
+			{
+				throw new Exception("CharacterByte data missing 0x55AA55AA header");
+			}
+
 			this.characterBytes = characterBytes;
 			characterFlags = characterBytes[0x24];
 		}

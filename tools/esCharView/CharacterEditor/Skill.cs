@@ -48,6 +48,11 @@ namespace CharacterEditor
 		/// <remarks>Skill data exists between the end of stat data and beginning of item data</remarks>
 		public Skill(byte[] skillBytes)
 		{
+			if (skillBytes[0] != 'i' || skillBytes[1] != 'f')
+			{
+				throw new Exception("SkillByte data missing if header");
+			}
+
 			this.skillBytes = skillBytes;
 		}
 

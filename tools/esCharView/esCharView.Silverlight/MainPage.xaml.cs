@@ -48,9 +48,9 @@ namespace esCharView.Silverlight
 			{
 				playerData.Read(rawCharacterbytes);
 			}
-			catch (Exception ex)
+			catch (KeyNotFoundException ex)
 			{
-				new ErrorWindow(ex.Message, true);
+				new ErrorWindow("Unable to read character, most likely wrong version: " + ex.Message, true);
 				return;
 			}
 
@@ -101,6 +101,11 @@ namespace esCharView.Silverlight
 
 		private void removeSelectedItems()
 		{
+			if (playerData == null)
+			{
+				return;
+			}
+
 			if (tabControlInventory.SelectedItem == tabPageInventoryPlayer)
 			{
 				removeSelectedItems(listBoxInventory, playerData.Inventory.PlayerItems);
@@ -184,6 +189,11 @@ namespace esCharView.Silverlight
 
 		private void AddItemProperty()
 		{
+			if (itemToEdit == null)
+			{
+				return;
+			}
+
 			if (tabControlItemProperties.SelectedItem == tabPageItemProperties)
 			{
 				itemToEdit.Properties.Insert(itemToEdit.Properties.Count - 1, new Item.PropertyInfo());
@@ -200,6 +210,11 @@ namespace esCharView.Silverlight
 
 		private void RemoveItemProperty()
 		{
+			if (itemToEdit == null)
+			{
+				return;
+			}
+
 			if (tabControlItemProperties.SelectedItem == tabPageItemProperties)
 			{
 				foreach (var item in dataGridViewItemProperties.SelectedItems)
@@ -278,11 +293,23 @@ namespace esCharView.Silverlight
 
 		private void buttonSave_Click(object sender, RoutedEventArgs e)
 		{
+			if (playerData == null)
+			{
+				return;
+			}
+
 			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
 			if (saveFileDialog1.ShowDialog() == true)
 			{
-				playerData.Write(saveFileDialog1.OpenFile(), checkBoxSkipFailedData.IsChecked == true);
+				try
+				{
+					playerData.Write(saveFileDialog1.OpenFile(), checkBoxSkipFailedData.IsChecked == true);
+				}
+				catch (Exception ex)
+				{
+					new ErrorWindow("Failed to save character: " + ex.Message, true);
+				}
 			}
 		}
 
@@ -320,7 +347,14 @@ namespace esCharView.Silverlight
 				return;
 			}
 
-			itemToEdit.RemoveSocketedItem(listBoxItemEditorSockets.SelectedIndex);
+			try
+			{
+				itemToEdit.RemoveSocketedItem(listBoxItemEditorSockets.SelectedIndex);
+			}
+			catch (Exception ex)
+			{
+				new ErrorWindow("Failed to remove socket: " + ex.Message, true);
+			}
 			RefreshItemEditor();
 			RefreshInventory();
 		}
@@ -374,12 +408,19 @@ namespace esCharView.Silverlight
 		{
 			ListBox source = GetCurrentItemListbox();
 
-			if (source == null || source.SelectedItems == null)
+			if (source == null || source.SelectedItems == null || playerData == null)
 			{
 				return;
 			}
 
-			ExportSelectedItem(source.SelectedItem as Item);
+			try
+			{
+				ExportSelectedItem(source.SelectedItem as Item);
+			}
+			catch (Exception ex)
+			{
+				new ErrorWindow("Failed to export item: " + ex.Message, true);
+			}
 		}
 
 		private void ExportSelectedItem(Item item)
@@ -399,12 +440,19 @@ namespace esCharView.Silverlight
 		{
 			ListBox source = GetCurrentItemListbox();
 
-			if (source == null || source.SelectedItems == null)
+			if (source == null || source.SelectedItems == null || playerData == null)
 			{
 				return;
 			}
 
-			ImportItem();
+			try
+			{
+				ImportItem();
+			}
+			catch (Exception ex)
+			{
+				new ErrorWindow("Failed to import item: " + ex.Message, true);
+			}
 		}
 
 		private void ImportItem()
@@ -413,12 +461,14 @@ namespace esCharView.Silverlight
 
 			if (ofd.ShowDialog() == true)
 			{
+				byte[] itemData = new byte[ofd.File.Length];
+
 				using (BinaryReader br = new BinaryReader(ofd.File.OpenRead()))
 				{
-					byte[] itemData = new byte[ofd.File.Length];
 					br.Read(itemData, 0, itemData.Length);
-					playerData.Inventory.CorpseItems.Add(new Item(itemData));
 				}
+
+				playerData.Inventory.CorpseItems.Add(new Item(itemData));
 			}
 
 			RefreshInventory();

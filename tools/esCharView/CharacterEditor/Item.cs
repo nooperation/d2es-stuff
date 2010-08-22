@@ -564,6 +564,11 @@ namespace CharacterEditor
 
 		public Item(byte[] itemData)
 		{
+			if (itemData[0] != 'J' || itemData[1] != 'M')
+			{
+				throw new Exception("Item data missing JM header");
+			}
+
 			bs = new BitStream(itemData);
 
 			ReadItemData();

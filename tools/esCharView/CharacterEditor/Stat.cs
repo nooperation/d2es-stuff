@@ -21,21 +21,14 @@ namespace CharacterEditor
 		/// Decoded stat values
 		/// </summary>
 		private Dictionary<int, int> statValues = new Dictionary<int, int>();
-		/// <summary>
-		/// Remaining bits that need to be written (Each a full byte)
-		/// </summary>
-		private byte[] remainingBytes;
-		/// <summary>
-		/// Remaining bits that need to be written after remainingBytes (Not a full byte)
-		/// </summary>
-		private byte remainingBits;
-		/// <summary>
-		/// Total number of bits in remainingBits
-		/// </summary>
-		private int remainingBitsCount;
 
 		public Stat(byte[] statsBytes)
 		{
+			if (statsBytes[0] != 'g' || statsBytes[1] != 'f')
+			{
+				throw new Exception("StatsByte data missing gf header");
+			}
+
 			this.statsBytes = statsBytes;
 			ReadStats();
 		}
