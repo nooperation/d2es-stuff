@@ -237,7 +237,7 @@ namespace CharacterEditor
 			}
 		}
 		/// <summary>
-		/// Number of kills
+		/// Number of kills (Eastern sun only!)
 		/// </summary>
 		public int KillCount
 		{
@@ -259,7 +259,7 @@ namespace CharacterEditor
 			}
 		}
 		/// <summary>
-		/// Times character has died
+		/// Times character has died (Eastern sun only!)
 		/// </summary>
 		public int DeathCount
 		{
@@ -305,12 +305,12 @@ namespace CharacterEditor
 		/// <param name="value">Value to set stat to</param>
 		private void SetStatValue(string name, int value)
 		{
-			int statId = ItemDefs.ItemStatCostsByName[name].ID;
-
-			if (!statValues.ContainsKey(statId))
+			if (!ItemDefs.ItemStatCostsByName.ContainsKey(name))
 			{
-				return;
+				throw new Exception("SetStatValue: Invalid stat name"); 
 			}
+
+			int statId = ItemDefs.ItemStatCostsByName[name].ID;
 
 			statValues[statId] = value;
 		}
@@ -338,22 +338,9 @@ namespace CharacterEditor
 				// Value needs to be shifted by this amount
 				int valShift = 0;
 
+				// Terminating stat index
 				if (statIndex == 0x1ff)
 				{
-					bs.Position -= 9;
-					remainingBytes = new byte[(bs.RemainingBits / 8)];
-
-					for (int i = 0; i < remainingBytes.Length; i++)
-					{
-						remainingBytes[i] = bs.ReadReversedByte();
-					}
-
-					remainingBitsCount = (int)(bs.RemainingBits);
-					if (remainingBitsCount > 0)
-					{
-						remainingBits = (byte)bs.ReadReversed(remainingBitsCount);
-					}
-
 					break;
 				}
 
@@ -384,7 +371,9 @@ namespace CharacterEditor
 			bits.WriteReversed('g', 8);
 			bits.WriteReversed('f', 8);
 
-			foreach (var stat in statValues)
+			var sortedValues = from n in statValues where true orderby n.Key select n;
+
+			foreach (var stat in sortedValues)
 			{
 				bits.WriteReversed(stat.Key, 9);
 
@@ -399,15 +388,14 @@ namespace CharacterEditor
 				bits.WriteReversed((uint)((stat.Value << valShift)), bitCount);
 			}
 
-			// These last 2 bytes seem to be some sort of terminator?
-			if (remainingBytes != null)
-			{
-				bits.WriteReversed(remainingBytes);
-			}
+			// Write termining stat index
+			bits.WriteReversed(0x1ff, 9);
 
-			if (remainingBitsCount > 0)
+			// Add 0 padding to align to byte, if needed
+			int remainingBitsForAlignment = 8 - (int)(bits.Position % 8);
+			if (remainingBitsForAlignment > 0)
 			{
-				bits.WriteReversed(remainingBits, remainingBitsCount);
+				bits.WriteReversed(0, remainingBitsForAlignment);
 			}
 
 			return bits.ToReversedByteArray();
@@ -417,6 +405,11 @@ namespace CharacterEditor
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		/// <summary>
+		/// Used to notify listeners that a property has changed. Mainly for data binding
+		/// on the GUI
+		/// </summary>
+		/// <param name="propertyName">Name of property that was changed</param>
 		private void OnPropertyChange(string propertyName)
 		{
 			if (PropertyChanged != null)
