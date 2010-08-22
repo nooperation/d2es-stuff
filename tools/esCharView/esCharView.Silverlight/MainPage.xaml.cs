@@ -48,7 +48,7 @@ namespace esCharView.Silverlight
 			{
 				playerData.Read(rawCharacterbytes);
 			}
-			catch (KeyNotFoundException ex)
+			catch (Exception ex)
 			{
 				new ErrorWindow("Unable to read character, most likely wrong version: " + ex.Message, true);
 				return;
