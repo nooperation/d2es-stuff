@@ -25,16 +25,11 @@ namespace CharacterEditor
 		{
 			get
 			{
-				return skillBytes[index];
+				return skillBytes[index+2];
 			}
 			set
 			{
-				// "if" skill header should not be set, will remove this when skill editing is 
-				//  updated
-				if (index <= 1)
-					return;
-
-				skillBytes[index] = value;
+				skillBytes[index+2] = value;
 			}
 		}
 
@@ -43,7 +38,7 @@ namespace CharacterEditor
 		/// </summary>
 		public int Length
 		{
-			get { return skillBytes.Length; }
+			get { return skillBytes.Length - 2; }
 		}
 
 		/// <summary>

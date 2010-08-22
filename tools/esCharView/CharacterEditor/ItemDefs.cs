@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace CharacterEditor
 {
-	class ItemDefs
+	public class ItemDefs
 	{
 		private static Dictionary<string, string> itemDescriptions = new Dictionary<string, string>();
 		private static Dictionary<string, string> setDescriptions = new Dictionary<string, string>();
@@ -33,7 +33,7 @@ namespace CharacterEditor
 
 		// TODO: Temp fix! Get rid of static class and move to singleton based on current resource
 		//  set (es300_r6d, rot_1.a3.1, etc)
-		public static void LoadItemDefs()
+		internal static void LoadItemDefs()
 		{
 			// Temp!
 			itemDescriptions = new Dictionary<string, string>();

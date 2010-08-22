@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using CharacterEditor;
+using System.Text.RegularExpressions;
 
 namespace BatchSaveTester
 {
@@ -11,8 +12,72 @@ namespace BatchSaveTester
 	{
 		static void Main(string[] args)
 		{
-			TestAllFiles(@"D:\files\usr\var\charsave");
+			bool detectDuplicateIds = false;
+			bool detectFlaggedItems = false;
+			bool detectFlaggedProperties = false;
+
+			if (args.Length < 2)
+			{
+				PrintUsage();
+				return;
+			}
+
+			string specifiedCharSaveDirectory = args[0];
+			string specifiedMod = args[1].ToLower();
+			List<string> modList = Resources.GetResourceSets();
+
+			if (!Directory.Exists(specifiedCharSaveDirectory))
+			{
+				Console.WriteLine("Invalid charSaveDirectory specified");
+				return;
+			}
+			
+			if (!modList.Any(n => { return n.ToLower() == specifiedMod; }))
+			{
+				Console.WriteLine("Invalid mod specified");
+				return;
+			}
+
+			for (int i = 0; i < args.Length; i++)
+			{
+				if (args[i].ToLower() == "-dupes")
+				{
+					detectDuplicateIds = true;
+				}
+				else if (args[i].ToLower() == "-items")
+				{
+					detectFlaggedItems = true;
+				}
+				else if (args[i].ToLower() == "-properties")
+				{
+					detectFlaggedProperties = true;
+				}
+			}
+
+			TestAllFiles(specifiedCharSaveDirectory, specifiedMod, detectDuplicateIds, detectFlaggedItems, detectFlaggedProperties);
 			//TestAllFiles(@"D:\files\usr\var\charbackup");
+		}
+
+		private static void PrintUsage()
+		{
+			List<string> modList = Resources.GetResourceSets();
+
+			StringBuilder sb = new StringBuilder();
+			foreach (var item in modList)
+			{
+				sb.AppendFormat("\"{0}\" ", item);
+			}
+
+			Console.WriteLine("BatchSaveTester \"charSavePath\" \"mod\" [-dupes] [-items] [-properties]");
+			Console.WriteLine();
+			Console.WriteLine("  charSavePath    Path containing save files");
+			Console.WriteLine("  mod             Name of mod to use from Resources directory");
+			Console.WriteLine("  -dupes          Detect duplicate item IDs");
+			Console.WriteLine("  -items          Detect flagged items");
+			Console.WriteLine("  -properties     Detect flagged item properties");
+			Console.WriteLine();
+			Console.WriteLine("Available mods: " + sb.ToString());
+			Console.WriteLine();
 		}
 
 		struct ItemData
@@ -21,12 +86,18 @@ namespace BatchSaveTester
 			public Item Item;
 		}
 
-		private static void TestAllFiles(string path)
+		private static void TestAllFiles(string path, string resourceSet, bool detectDuplicateIds, bool detectFlaggedItems, bool detectFlaggedProperties)
+		{
+			TestAllFiles(path, resourceSet, detectDuplicateIds, detectFlaggedItems, detectFlaggedProperties, "flaggedItems.txt", "flaggedProperties.txt");
+		}
+
+		private static void TestAllFiles(string path, string resourceSet, bool detectDuplicateIds, bool detectFlaggedItems, bool detectFlaggedProperties, string flaggedItemsPath, string flaggedPropertiesPath)
 		{
 			string invalidSavePath = path + "\\invalid\\";
 			string invalidItemPath = path + "\\baditems\\";
 			string invalidPropsPath = path + "\\badprops\\";
 			string invalidDecodePath = path + "\\undecoded\\";
+			string[] fileNames = Directory.GetFiles(path);
 
 			List<string> invlaidSaves = new List<string>();
 			List<string> invalidItemSaves = new List<string>();
@@ -34,12 +105,40 @@ namespace BatchSaveTester
 			List<string> invalidDecodeSaves = new List<string>();
 
 			Dictionary<uint, List<ItemData>> itemIds = new Dictionary<uint, List<ItemData>>();
+			Dictionary<string, List<ItemData>> detectedFlaggedItems = new Dictionary<string, List<ItemData>>();
+			Dictionary<string, List<ItemData>> detectedFlaggedProps = new Dictionary<string, List<ItemData>>();
 
-			string[] fileNames = Directory.GetFiles(path);
+			HashSet<string> flaggedItems = null;
+			Dictionary<string, ItemPropData> flaggedProperties = null;
+
+			if (detectFlaggedItems)
+			{
+				try
+				{
+					flaggedItems = ReadFlaggedItemList(flaggedItemsPath);
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine("Failed to read " + flaggedItemsPath + ": " + ex.Message);
+					return;
+				}
+			}
+			if (detectFlaggedProperties)
+			{
+				try
+				{
+					flaggedProperties = ReadFlaggedPropertyList(flaggedPropertiesPath);
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine("Failed to read " + flaggedPropertiesPath + ": " + ex.Message);
+					return;
+				}
+			}
 
 			for (int i = 0; i < fileNames.Length; i++)
 			{
-				SaveReader currentSave = new SaveReader("es300_r6d");
+				SaveReader currentSave = new SaveReader(resourceSet);
 
 				try
 				{
@@ -47,12 +146,45 @@ namespace BatchSaveTester
 
 					foreach (var item in currentSave.Inventory.PlayerItems)
 					{
-						if (!itemIds.ContainsKey(item.Id))
+						if (detectDuplicateIds)
 						{
-							itemIds[item.Id] = new List<ItemData>();
-						}
+							if (!itemIds.ContainsKey(item.Id))
+							{
+								itemIds[item.Id] = new List<ItemData>();
+							}
 
-						itemIds[item.Id].Add(new ItemData() { FileName = fileNames[i], Item = item });
+							itemIds[item.Id].Add(new ItemData() { FileName = fileNames[i], Item = item });
+						}
+						if (detectFlaggedItems)
+						{
+							if (flaggedItems.Contains(item.ItemCode))
+							{
+								if (!detectedFlaggedItems.ContainsKey(item.ItemCode))
+								{
+									detectedFlaggedItems[item.ItemCode] = new List<ItemData>();
+								}
+
+								detectedFlaggedItems[item.ItemCode].Add(new ItemData() { FileName = fileNames[i], Item = item });
+							}
+						}
+						if (detectFlaggedProperties)
+						{
+							foreach (var prop in item.Properties)
+							{
+								if (flaggedProperties.ContainsKey(prop.PropertyName))
+								{
+									if (flaggedProperties[prop.PropertyName].TestValue(prop.Value))
+									{
+										if (!detectedFlaggedProps.ContainsKey(prop.PropertyName))
+										{
+											detectedFlaggedProps[prop.PropertyName] = new List<ItemData>();
+										}
+
+										detectedFlaggedProps[prop.PropertyName].Add(new ItemData() { FileName = fileNames[i], Item = item });
+									}
+								}
+							}
+						}
 					}
 				}
 				catch (IndexOutOfRangeException)
@@ -93,18 +225,111 @@ namespace BatchSaveTester
 			MoveInvalidSaves(invalidPropsSaves, invalidPropsPath);
 			MoveInvalidSaves(invalidDecodeSaves, invalidDecodePath);
 
-			Console.WriteLine("Searching for duplicate ids:");
-			var dupes = (from n in itemIds where n.Key > 0 && n.Value.Count > 1 select n).ToList();
-
-			foreach (var item in dupes)
+			if (detectDuplicateIds)
 			{
-				Console.WriteLine("Item {0}:", item.Key);
-				foreach (var dupe in item.Value)
-				{
-					Console.WriteLine("\t{0} -> {1}", dupe.FileName, dupe.Item.ToString());
-				}
 				Console.WriteLine();
+				Console.WriteLine("Searching for duplicate ids:");
+				Console.WriteLine();
+				var dupes = (from n in itemIds where n.Key > 0 && n.Value.Count > 1 select n).ToList();
+
+				foreach (var item in dupes)
+				{
+					Console.WriteLine("Item {0} - {1}:", item.Key, CharacterEditor.ItemDefs.GetItemDescription(item.Value[0].Item.ItemCode));
+					foreach (var dupe in item.Value)
+					{
+						Console.WriteLine("\t{0}", dupe.FileName);
+					}
+					Console.WriteLine();
+				}
 			}
+
+			if (detectFlaggedItems)
+			{
+				Console.WriteLine();
+				Console.WriteLine("Flagged items detected:");
+				Console.WriteLine();
+				foreach (var item in detectedFlaggedItems)
+				{
+					Console.WriteLine("Item {0} - {1}:", item.Key, CharacterEditor.ItemDefs.GetItemDescription(item.Key));
+					foreach (var dupe in item.Value)
+					{
+						Console.WriteLine("\t{0}", dupe.FileName);
+					}
+					Console.WriteLine();
+				}
+			}
+
+			if (detectFlaggedProperties)
+			{
+				Console.WriteLine();
+				Console.WriteLine("Flagged item properties detected:");
+				Console.WriteLine();
+				foreach (var item in detectedFlaggedProps)
+				{
+					Console.WriteLine("Property {0}:", flaggedProperties[item.Key]);
+					foreach (var flagged in item.Value)
+					{
+						Console.Write("\t{0} -> ", flagged.FileName);
+						foreach (var prop in flagged.Item.Properties)
+						{
+							if (prop.PropertyName == item.Key)
+							{
+								Console.WriteLine("[n = {0}] {1}", prop.Value, flagged.Item);
+								break;
+							}
+						}
+					}
+					Console.WriteLine();
+				}
+			}
+		}
+
+		private static Dictionary<string, ItemPropData> ReadFlaggedPropertyList(string path)
+		{
+			Dictionary<string, ItemPropData> flaggedProperties = new Dictionary<string, ItemPropData>();
+
+			using (StreamReader sr = new StreamReader(File.OpenRead(path)))
+			{
+				Regex reg = new Regex(@"(?<propName>\w+)\s+(?<comparer>\W+)\s+(?<value>[-]*\d+)");
+
+				while (!sr.EndOfStream)
+				{
+					string currentLine = sr.ReadLine().Trim();
+
+					Match match = reg.Match(currentLine);
+					if (match.Success)
+					{
+						ItemPropData newPropData = new ItemPropData();
+						newPropData.PropertyName = match.Groups["propName"].Value;
+						newPropData.ComparisonString = match.Groups["comparer"].Value;
+						newPropData.Value = int.Parse(match.Groups["value"].Value);
+						flaggedProperties.Add(newPropData.PropertyName, newPropData);
+					}
+				}
+			}
+
+			return flaggedProperties;
+		}
+
+		private static HashSet<string> ReadFlaggedItemList(string path)
+		{
+			HashSet<string> flaggedItems = new HashSet<string>();
+
+			using (StreamReader sr = new StreamReader(File.OpenRead(path)))
+			{
+				while (!sr.EndOfStream)
+				{
+					string currentLine = sr.ReadLine();
+					if (currentLine.Length < 3)
+					{
+						continue;
+					}
+
+					flaggedItems.Add(currentLine.Trim().Substring(0, 3).ToLower());
+				}
+			}
+
+			return flaggedItems;
 		}
 
 		private static void MoveInvalidSaves(List<string> invalidSaves, string path)

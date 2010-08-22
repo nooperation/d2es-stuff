@@ -152,6 +152,11 @@ namespace CharacterEditor
 		/// </summary>
 		private void ReadHeaders(byte[] rawCharacterData)
 		{
+			if (rawCharacterData[0] != 0x55 || rawCharacterData[1] != 0xAA || rawCharacterData[2] != 0x55 || rawCharacterData[3] != 0xAA)
+			{
+				throw new Exception("Not a Diablo II Save file");
+			}
+
 			OriginalCharacterBytes = null;
 			OriginalSkillBytes = null;
 			OriginalInventoryBytes = null;

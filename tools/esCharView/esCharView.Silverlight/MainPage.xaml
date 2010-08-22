@@ -4,7 +4,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-   d:DesignHeight="333" d:DesignWidth="690" xmlns:controls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls" xmlns:data="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data">
+   d:DesignHeight="333" d:DesignWidth="717" xmlns:controls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls" xmlns:data="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data">
 
     <Grid x:Name="LayoutRoot" Background="White">
         <Grid.RowDefinitions>
@@ -45,8 +45,14 @@
                         <RowDefinition MinHeight="67" />
                         <RowDefinition MinHeight="67" />
                     </Grid.RowDefinitions>
-                    <data:DataGrid AutoGenerateColumns="True" Name="dataGridViewCharacter" Grid.Row="0" />
-                    <data:DataGrid AutoGenerateColumns="True" Name="dataGridViewStats" Grid.Row="1"/>
+                    <StackPanel Grid.Row="0">
+                        <TextBlock>General</TextBlock>
+                        <data:DataGrid AutoGenerateColumns="True" Name="dataGridViewCharacter"  />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1">
+                        <TextBlock>Stats</TextBlock>
+                        <data:DataGrid AutoGenerateColumns="True" Name="dataGridViewStats" />
+                    </StackPanel>
                 </Grid>
             </controls:TabItem>
             <controls:TabItem Header="Inventory" Name="tabPageInventory">

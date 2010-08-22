@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace CharacterEditor
 {
-	class ItemStatCost
+	public class ItemStatCost
 	{
 		public string Stat { get; set; }
 		public int ID { get; set; }
@@ -133,15 +133,18 @@ namespace CharacterEditor
 			List<ItemStatCost> statCosts = new List<ItemStatCost>();
 			PropertyInfo[] properties = typeof(ItemStatCost).GetProperties();
 
-			stream.ReadLine();
-
-			while (!stream.EndOfStream)
+			using (stream)
 			{
-				string currentLine = stream.ReadLine();
-				string[] splitLine = currentLine.Split('\t');
+				stream.ReadLine();
+
+				while (!stream.EndOfStream)
+				{
+					string currentLine = stream.ReadLine();
+					string[] splitLine = currentLine.Split('\t');
 
 
-				statCosts.Add(new ItemStatCost(splitLine));
+					statCosts.Add(new ItemStatCost(splitLine));
+				}
 			}
 
 			return statCosts;
