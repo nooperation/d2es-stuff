@@ -113,9 +113,18 @@ namespace esCharView.Silverlight
 		/// <param name="items"></param>
 		private void RemoveSelectedItems(ListBox listBox, List<Item> items)
 		{
+			List<Item> toRemove = new List<Item>();
+
+			// Listbox data is bound directly to character item list, when removing items the listbox 
+			//  collection gets modified.
 			foreach (var item in listBox.SelectedItems)
 			{
-				items.Remove(item as Item);
+				toRemove.Add(item as Item);
+			}
+
+			foreach (var item in toRemove)
+			{
+				items.Remove(item);
 			}
 
 			RefreshInventory();
@@ -217,26 +226,39 @@ namespace esCharView.Silverlight
 				return;
 			}
 
+			// Item property lists are bound directly to item data, when removing property from item the listbox 
+			//  collection gets modified.
+			List<Item.PropertyInfo> toRemove = new List<Item.PropertyInfo>();
+			List<Item.PropertyInfo> source = null;
+
 			if (tabControlItemProperties.SelectedItem == tabPageItemProperties)
 			{
+				source = itemToEdit.Properties;
 				foreach (var item in dataGridViewItemProperties.SelectedItems)
 				{
-					itemToEdit.Properties.Remove(item as Item.PropertyInfo);
+					toRemove.Add(item as Item.PropertyInfo);
 				}
 			}
 			else if (tabControlItemProperties.SelectedItem == tabPageItemSetProperties)
 			{
+				source = itemToEdit.PropertiesSet;
 				foreach (var item in dataGridViewItemSetProperties.SelectedItems)
 				{
-					itemToEdit.PropertiesSet.Remove(item as Item.PropertyInfo);
+					toRemove.Add(item as Item.PropertyInfo);
 				}
 			}
 			else if (tabControlItemProperties.SelectedItem == tabPageItemRunewordProperties)
 			{
+				source = itemToEdit.PropertiesRuneword;
 				foreach (var item in dataGridViewItemRunewordProperties.SelectedItems)
 				{
-					itemToEdit.PropertiesRuneword.Remove(item as Item.PropertyInfo);
+					toRemove.Add(item as Item.PropertyInfo);
 				}
+			}
+
+			foreach (var item in toRemove)
+			{
+				source.Remove(item);
 			}
 
 			RefreshItemEditor();
@@ -244,7 +266,6 @@ namespace esCharView.Silverlight
 
 		/// <summary>
 		/// Deletes selected socketed item.
-		/// TODO: Move socketed item to corpse instead!
 		/// </summary>
 		private void RemoveSelectedSocket()
 		{
@@ -258,7 +279,9 @@ namespace esCharView.Silverlight
 				return;
 			}
 
-			itemToEdit.RemoveSocketedItem(listBoxItemEditorSockets.SelectedIndex);
+			Item socketedItem = itemToEdit.RemoveSocketedItem(listBoxItemEditorSockets.SelectedIndex);
+			playerData.Inventory.CorpseItems.Add(socketedItem);
+
 			RefreshItemEditor();
 			RefreshInventory();
 		}

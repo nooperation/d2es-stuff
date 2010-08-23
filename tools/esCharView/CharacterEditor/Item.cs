@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Collections;
-using System.Linq;
-using BKSystem.IO;
-using System.IO;
 using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using BKSystem.IO;
 
 namespace CharacterEditor
 {
@@ -290,7 +288,6 @@ namespace CharacterEditor
 
 		#region ExtendedProperties
 
-		// TODO: use SetData ?
 		public string ItemCode
 		{
 			get
@@ -591,7 +588,6 @@ namespace CharacterEditor
 			ReadString("ItemCode", 3, 8, true);
 
 			// Read gold data if it's gold
-			// TODO: Should this come later on? Not sure how to test this...
 			if (ItemCode.ToLower() == "gld")
 			{
 				ReadItemDataGold();
@@ -614,11 +610,8 @@ namespace CharacterEditor
 				ReadData("Unknown9", 32);
 			}
 
-		//	if (Resources.Instance.ResourceSet == "es300_r6d")
-			{
-				// Type specific extended data
-				ReadItemDataExtendedSpecific();
-			}
+			// Type specific extended data
+			ReadItemDataExtendedSpecific();
 		}
 
 		/// <summary>
@@ -803,7 +796,7 @@ namespace CharacterEditor
 		{
 			if (ItemDefs.IsArmor(ItemCode))
 			{
-				ReadData("Defense", ItemDefs.ItemStatCostsByName["armorclass"].SaveBits); // TODO: Changed for ROT
+				ReadData("Defense", ItemDefs.ItemStatCostsByName["armorclass"].SaveBits);
 				Defense -= (uint)ItemDefs.ItemStatCostsByName["armorclass"].SaveAdd;
 			}
 
@@ -926,23 +919,42 @@ namespace CharacterEditor
 		}
 
 		/// <summary>
-		/// Attempts to remove a socketed item, this will fail horribly if used on runewords
+		/// Removes a socketed item from this item and returns it for further processing
 		/// </summary>
-		/// <param name="index">Index of socket to clear</param>
-		public void RemoveSocketedItem(int index)
+		/// <param name="index">Index of socket to remove</param>
+		/// <returns>Socketed item already modified to be stored</returns>
+		public Item RemoveSocketedItem(int index)
 		{
 			if (index < 0 || index > SocketsFilled)
 			{
-				return;
+				throw new Exception("RemoveSocketedItem: Socket index out of bounds");
 			}
 
 			if (IsRuneword)
 			{
-				return;
+				ClearRunewordData();
 			}
+
+			Item socketedItem = Sockets[index];
+			socketedItem.IsNotInSocket = true;
+			socketedItem.IsInSocket = false;
+			socketedItem.Location = Item.ItemLocation.Stored;
 
 			Sockets.RemoveAt(index);
 			SocketsFilled--;
+
+			return socketedItem;
+		}
+
+		public void ClearRunewordData()
+		{
+			IsRuneword = false;
+			propertiesRuneword.Clear();
+
+			if (dataEntries.ContainsKey("RunewordId"))
+			{
+				dataEntries.Remove("RunewordId");
+			}
 		}
 
 		/// <summary>
@@ -1182,7 +1194,7 @@ namespace CharacterEditor
 					{
 						uint value = (uint)item.Value.Value;
 
-						if (item.Key == "Defense" )
+						if (item.Key == "Defense")
 						{
 							value += (uint)ItemDefs.ItemStatCostsByName["armorclass"].SaveAdd;
 						}

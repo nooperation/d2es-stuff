@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CharacterEditor
 {
@@ -163,30 +162,12 @@ namespace CharacterEditor
 
 				if (failedSockets > 0)
 				{
-					if (!item.IsRuneword)
-					{
-						// Items can be removed from non runewords, just decrease socketsfilled
-						item.SocketsFilled -= failedSockets;
-						return item;
-					}
-					else
-					{
-						
-						// There is currently no way to make a runeword a non runeword, we have to
-						//   move all the good socketed items into a corpse and delete the runeword item
-						// TODO: Should move to a new function, called when IsRuneword is set to false
+					item.ClearRunewordData();
 
-						for (int i = 0; i < item.Sockets.Count; i++)
-						{
-							// Move each valid socketed item to the corpse 
-							item.Sockets[i].Location = Item.ItemLocation.Stored;
-							item.Sockets[i].IsNotInSocket = true;
-							item.Sockets[i].IsInSocket = false;
-							CorpseItems.Add(item.Sockets[i]);
-						}
-
-						// Delete the runeword item
-						return null;
+					for (int i = 0; i < item.Sockets.Count; i++)
+					{
+						Item socketedItem = item.Sockets[i].RemoveSocketedItem(i);
+						CorpseItems.Add(socketedItem);
 					}
 				}
 			}
