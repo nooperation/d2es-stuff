@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using CharacterEditor;
-using System.IO;
-using System.Collections.ObjectModel;
 
 namespace esCharView.Silverlight
 {
@@ -28,6 +21,10 @@ namespace esCharView.Silverlight
 			comboBoxResourceSets.SelectedIndex = 0;
 		}
 
+		/// <summary>
+		/// Load and process specified save file
+		/// </summary>
+		/// <param name="saveFile"></param>
 		private void LoadSave(FileInfo saveFile)
 		{
 			byte[] rawCharacterbytes;
@@ -35,13 +32,37 @@ namespace esCharView.Silverlight
 			{
 				rawCharacterbytes = br.ReadBytes((int)br.BaseStream.Length);
 			}
+
 			ProcessCharacter(rawCharacterbytes);
 		}
 
+		/// <summary>
+		/// Save character data to file (specified with dialog)
+		/// </summary>
+		private void SaveCharacter()
+		{
+			if (playerData == null)
+			{
+				return;
+			}
+
+			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+			if (saveFileDialog1.ShowDialog() == true)
+			{
+				playerData.Write(saveFileDialog1.OpenFile(), checkBoxSkipFailedData.IsChecked == true);
+			}
+		}
+
+		/// <summary>
+		/// Process raw character bytes from save file
+		/// </summary>
+		/// <param name="rawCharacterbytes">Raw data from save file</param>
 		private void ProcessCharacter(byte[] rawCharacterbytes)
 		{
-			CharacterEditor.Resources.Instance.ResourceSet = (string)comboBoxResourceSets.SelectedItem;
+			ClearPlayerData();
 
+			CharacterEditor.Resources.Instance.ResourceSet = (string)comboBoxResourceSets.SelectedItem;
 			playerData = new SaveReader(comboBoxResourceSets.SelectedItem.ToString());
 
 			try
@@ -69,7 +90,7 @@ namespace esCharView.Silverlight
 				errorString += "Failed skill decoding";
 			}
 
-			if(errorString.Length > 0)
+			if (errorString.Length > 0)
 			{
 				ErrorWindow errorWindow = new ErrorWindow(errorString, true);
 			}
@@ -79,16 +100,16 @@ namespace esCharView.Silverlight
 				new ErrorWindow(string.Format("Failed to read {0} items. These items will not be included when saving character", playerData.Inventory.FailedItemCount));
 			}
 
-			dataGridViewCharacter.ItemsSource = new List<Character>() { playerData.Character };
-			dataGridViewStats.ItemsSource = new List<Stat>() { playerData.Stat };
-			textBoxPlayerName.DataContext = playerData.Character;
-			textBoxUnknownFlags.DataContext = playerData.Character;
-
-			ClearItemEditor();
+			RefreshCharacter();
 			RefreshInventory();
 		}
 
-		private void removeSelectedItems(ListBox listBox, List<Item> items)
+		/// <summary>
+		/// Deletes selected items
+		/// </summary>
+		/// <param name="listBox"></param>
+		/// <param name="items"></param>
+		private void RemoveSelectedItems(ListBox listBox, List<Item> items)
 		{
 			foreach (var item in listBox.SelectedItems)
 			{
@@ -99,94 +120,68 @@ namespace esCharView.Silverlight
 			ClearItemEditor();
 		}
 
-		private void removeSelectedItems()
+		/// <summary>
+		/// Deletes selected items
+		/// </summary>
+		private void RemoveSelectedItems()
 		{
 			if (playerData == null)
 			{
 				return;
 			}
 
-			if (tabControlInventory.SelectedItem == tabPageInventoryPlayer)
+			if (tabControlInventory.SelectedItem == tabPageItemEditor)
 			{
-				removeSelectedItems(listBoxInventory, playerData.Inventory.PlayerItems);
+				RemoveSelectedSocket();
+			}
+			else if (tabControlInventory.SelectedItem == tabPageInventoryPlayer)
+			{
+				RemoveSelectedItems(listBoxInventory, playerData.Inventory.PlayerItems);
 			}
 			else if (tabControlInventory.SelectedItem == tabPageInventoryCorpse)
 			{
-				removeSelectedItems(listBoxCorpseInventory, playerData.Inventory.CorpseItems);
+				RemoveSelectedItems(listBoxCorpseInventory, playerData.Inventory.CorpseItems);
 			}
 			else if (tabControlInventory.SelectedItem == tabPageInventoryMerc)
 			{
-				removeSelectedItems(listBoxMercInventory, playerData.Inventory.MercItems);
+				RemoveSelectedItems(listBoxMercInventory, playerData.Inventory.MercItems);
 			}
 			else if (tabControlInventory.SelectedItem == tabPageInventoryGolem)
 			{
-				removeSelectedItems(listBoxGolemInventory, playerData.Inventory.GolemItems);
+				RemoveSelectedItems(listBoxGolemInventory, playerData.Inventory.GolemItems);
 			}
 		}
 
+		/// <summary>
+		/// Sets currently selected item as the item being edted and opens the item editor panel
+		/// </summary>
 		private void OpenItemProperties()
 		{
-			if (tabControl1.SelectedItem == tabPageItemEditor)
+			ListBox source = GetCurrentItemListbox();
+			if (source == null)
 			{
-				if (listBoxItemEditorSockets.SelectedIndex == -1)
-				{
-					return;
-				}
-
-				OpenItemProperties(itemToEdit.Sockets[listBoxItemEditorSockets.SelectedIndex]);
+				return;
 			}
-			else
-			{
-				if (tabControlInventory.SelectedItem == tabPageInventoryPlayer)
-				{
-					if (listBoxInventory.SelectedIndex == -1)
-					{
-						return;
-					}
 
-					OpenItemProperties(playerData.Inventory.PlayerItems[listBoxInventory.SelectedIndex]);
-				}
-				else if (tabControlInventory.SelectedItem == tabPageInventoryCorpse)
-				{
-					if (listBoxCorpseInventory.SelectedIndex == -1)
-					{
-						return;
-					}
-
-					OpenItemProperties(playerData.Inventory.CorpseItems[listBoxCorpseInventory.SelectedIndex]);
-				}
-				else if (tabControlInventory.SelectedItem == tabPageInventoryMerc)
-				{
-					if (listBoxMercInventory.SelectedIndex == -1)
-					{
-						return;
-					}
-
-					OpenItemProperties(playerData.Inventory.MercItems[listBoxMercInventory.SelectedIndex]);
-				}
-				else if (tabControlInventory.SelectedItem == tabPageInventoryGolem)
-				{
-					if (listBoxGolemInventory.SelectedIndex == -1)
-					{
-						return;
-					}
-
-					OpenItemProperties(playerData.Inventory.GolemItems[listBoxGolemInventory.SelectedIndex]);
-				}
-			}
+			OpenItemProperties(source.SelectedItem as Item);
 		}
 
+		/// <summary>
+		/// Sets specified item as the item being edted and opens the item editor panel
+		/// </summary>
+		/// <param name="itemToEdit">Item to open in item editor panel</param>
 		private void OpenItemProperties(Item itemToEdit)
 		{
-			ClearItemEditor();
-
 			this.itemToEdit = itemToEdit;
-			
+
 			RefreshItemEditor();
 
 			tabControl1.SelectedItem = tabPageItemEditor;
 		}
 
+		/// <summary>
+		/// Adds a new item property to item being edited
+		/// </summary>
 		private void AddItemProperty()
 		{
 			if (itemToEdit == null)
@@ -206,8 +201,13 @@ namespace esCharView.Silverlight
 			{
 				itemToEdit.PropertiesRuneword.Insert(itemToEdit.PropertiesRuneword.Count - 1, new Item.PropertyInfo());
 			}
+
+			RefreshItemEditor();
 		}
 
+		/// <summary>
+		/// Removes specified item property from item being edited
+		/// </summary>
 		private void RemoveItemProperty()
 		{
 			if (itemToEdit == null)
@@ -236,6 +236,100 @@ namespace esCharView.Silverlight
 					itemToEdit.PropertiesRuneword.Remove(item as Item.PropertyInfo);
 				}
 			}
+
+			RefreshItemEditor();
+		}
+
+		/// <summary>
+		/// Deletes selected socketed item.
+		/// TODO: Move socketed item to corpse instead!
+		/// </summary>
+		private void RemoveSelectedSocket()
+		{
+			if (listBoxItemEditorSockets.SelectedIndex < 0)
+			{
+				return;
+			}
+
+			if (itemToEdit == null)
+			{
+				return;
+			}
+
+			itemToEdit.RemoveSocketedItem(listBoxItemEditorSockets.SelectedIndex);
+			RefreshItemEditor();
+			RefreshInventory();
+		}
+
+		/// <summary>
+		/// Exports currently selected item to an item file
+		/// </summary>
+		private void ExportSelectedItem()
+		{
+			ListBox source = GetCurrentItemListbox();
+
+			if (source == null || source.SelectedItems == null || playerData == null)
+			{
+				return;
+			}
+
+			Item item = source.SelectedItem as Item;
+			SaveFileDialog sfd = new SaveFileDialog();
+
+			if (sfd.ShowDialog() == true)
+			{
+				using (BinaryWriter bw = new BinaryWriter(sfd.OpenFile()))
+				{
+					bw.Write(item.GetItemBytes());
+				}
+			}
+		}
+
+		/// <summary>
+		/// Imports an item file and stores it in the player's corpse
+		/// </summary>
+		private void ImportItem()
+		{
+			if (playerData == null)
+			{
+				return;
+			}
+
+			OpenFileDialog ofd = new OpenFileDialog();
+
+			if (ofd.ShowDialog() == true)
+			{
+				byte[] itemData = new byte[ofd.File.Length];
+
+				using (BinaryReader br = new BinaryReader(ofd.File.OpenRead()))
+				{
+					br.Read(itemData, 0, itemData.Length);
+				}
+
+				playerData.Inventory.CorpseItems.Add(new Item(itemData));
+			}
+
+			RefreshInventory();
+		}
+
+		#region Misc GUI functions
+
+		private void RefreshCharacter()
+		{
+			dataGridViewCharacter.ItemsSource = null;
+			dataGridViewStats.ItemsSource = null;
+			textBoxPlayerName.DataContext = null;
+			textBoxUnknownFlags.DataContext = null;
+
+			if (playerData == null)
+			{
+				return;
+			}
+
+			dataGridViewCharacter.ItemsSource = new List<Character>() { playerData.Character };
+			dataGridViewStats.ItemsSource = new List<Stat>() { playerData.Stat };
+			textBoxPlayerName.DataContext = playerData.Character;
+			textBoxUnknownFlags.DataContext = playerData.Character;
 		}
 
 		private void RefreshInventory()
@@ -245,16 +339,15 @@ namespace esCharView.Silverlight
 			listBoxMercInventory.ItemsSource = null;
 			listBoxGolemInventory.ItemsSource = null;
 
+			if (playerData == null)
+			{
+				return;
+			}
+
 			listBoxInventory.ItemsSource = playerData.Inventory.PlayerItems;
 			listBoxCorpseInventory.ItemsSource = playerData.Inventory.CorpseItems;
 			listBoxMercInventory.ItemsSource = playerData.Inventory.MercItems;
 			listBoxGolemInventory.ItemsSource = playerData.Inventory.GolemItems;
-		}
-
-		private void ClearItemEditor()
-		{
-			itemToEdit = null;
-			RefreshItemEditor();		
 		}
 
 		private void RefreshItemEditor()
@@ -277,40 +370,20 @@ namespace esCharView.Silverlight
 			listBoxItemEditorSockets.ItemsSource = itemToEdit.Sockets;
 		}
 
-		private void buttonLoadCharacter_Click(object sender, RoutedEventArgs e)
+		private void ClearItemEditor()
 		{
-			OpenFileDialog openFileDialog = new OpenFileDialog();
-			if (openFileDialog.ShowDialog() == true)
-			{
-				LoadSave(openFileDialog.File);
-			}
+			itemToEdit = null;
+			RefreshItemEditor();
 		}
 
-		private void buttonRemoveItem_Click(object sender, RoutedEventArgs e)
+		private void ClearPlayerData()
 		{
-			removeSelectedItems();
-		}
+			playerData = null;
+			itemToEdit = null;
 
-		private void buttonSave_Click(object sender, RoutedEventArgs e)
-		{
-			if (playerData == null)
-			{
-				return;
-			}
-
-			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-
-			if (saveFileDialog1.ShowDialog() == true)
-			{
-				try
-				{
-					playerData.Write(saveFileDialog1.OpenFile(), checkBoxSkipFailedData.IsChecked == true);
-				}
-				catch (Exception ex)
-				{
-					new ErrorWindow("Failed to save character: " + ex.Message, true);
-				}
-			}
+			RefreshCharacter();
+			RefreshInventory();
+			RefreshItemEditor();
 		}
 
 		private ListBox GetCurrentItemListbox()
@@ -331,47 +404,63 @@ namespace esCharView.Silverlight
 			{
 				return listBoxGolemInventory;
 			}
+			else if (tabControl1.SelectedItem == tabPageItemEditor)
+			{
+				return listBoxItemEditorSockets;
+			}
 
 			throw new Exception("Invalid state for tabControlInventory");
 		}
 
-		private void buttonRemoveSocket_Click(object sender, RoutedEventArgs e)
+		#endregion
+
+		#region Event Handlers
+
+		private void buttonLoadCharacter_Click(object sender, RoutedEventArgs e)
 		{
-			if (listBoxItemEditorSockets.SelectedIndex < 0)
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			if (openFileDialog.ShowDialog() == true)
 			{
-				return;
+				LoadSave(openFileDialog.File);
 			}
+		}
 
-			if (itemToEdit == null)
-			{
-				return;
-			}
+		private void buttonRemoveItem_Click(object sender, RoutedEventArgs e)
+		{
+			RemoveSelectedItems();
+		}
 
+		private void buttonSave_Click(object sender, RoutedEventArgs e)
+		{
 			try
 			{
-				itemToEdit.RemoveSocketedItem(listBoxItemEditorSockets.SelectedIndex);
+				SaveCharacter();
+			}
+			catch (Exception ex)
+			{
+				new ErrorWindow("Failed to save character: " + ex.Message, true);
+			}
+		}
+
+		private void buttonRemoveSocket_Click(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				RemoveSelectedSocket();
 			}
 			catch (Exception ex)
 			{
 				new ErrorWindow("Failed to remove socket: " + ex.Message, true);
 			}
-			RefreshItemEditor();
-			RefreshInventory();
 		}
 
 		private void buttonItemAddProperty_Click(object sender, RoutedEventArgs e)
 		{
 			AddItemProperty();
-			RefreshItemEditor();
 		}
 
 		private void buttonItemDeleteProperty_Click(object sender, RoutedEventArgs e)
 		{
-			if (itemToEdit == null)
-			{
-				return;
-			}
-
 			RemoveItemProperty();
 		}
 
@@ -384,6 +473,31 @@ namespace esCharView.Silverlight
 		{
 			RefreshItemEditor();
 		}
+
+		private void buttonExportItem_Click(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				ExportSelectedItem();
+			}
+			catch (Exception ex)
+			{
+				new ErrorWindow("Failed to export item: " + ex.Message, true);
+			}
+		}
+
+		private void buttonImportItem_Click(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				ImportItem();
+			}
+			catch (Exception ex)
+			{
+				new ErrorWindow("Failed to import item: " + ex.Message, true);
+			}
+		}
+
 
 		private void onInventoryKeyUp(object sender, KeyEventArgs e)
 		{
@@ -400,78 +514,9 @@ namespace esCharView.Silverlight
 			}
 			else if (e.Key == Key.Delete)
 			{
-				removeSelectedItems();
+				RemoveSelectedItems();
 			}
 		}
-
-		private void buttonExportItem_Click(object sender, RoutedEventArgs e)
-		{
-			ListBox source = GetCurrentItemListbox();
-
-			if (source == null || source.SelectedItems == null || playerData == null)
-			{
-				return;
-			}
-
-			try
-			{
-				ExportSelectedItem(source.SelectedItem as Item);
-			}
-			catch (Exception ex)
-			{
-				new ErrorWindow("Failed to export item: " + ex.Message, true);
-			}
-		}
-
-		private void ExportSelectedItem(Item item)
-		{
-			SaveFileDialog sfd = new SaveFileDialog();
-			
-			if(sfd.ShowDialog() == true)
-			{
-				using (BinaryWriter bw = new BinaryWriter(sfd.OpenFile()))
-				{
-					bw.Write(item.GetItemBytes());
-				}				
-			}
-		}
-
-		private void buttonImportItem_Click(object sender, RoutedEventArgs e)
-		{
-			ListBox source = GetCurrentItemListbox();
-
-			if (source == null || source.SelectedItems == null || playerData == null)
-			{
-				return;
-			}
-
-			try
-			{
-				ImportItem();
-			}
-			catch (Exception ex)
-			{
-				new ErrorWindow("Failed to import item: " + ex.Message, true);
-			}
-		}
-
-		private void ImportItem()
-		{
-			OpenFileDialog ofd = new OpenFileDialog();
-
-			if (ofd.ShowDialog() == true)
-			{
-				byte[] itemData = new byte[ofd.File.Length];
-
-				using (BinaryReader br = new BinaryReader(ofd.File.OpenRead()))
-				{
-					br.Read(itemData, 0, itemData.Length);
-				}
-
-				playerData.Inventory.CorpseItems.Add(new Item(itemData));
-			}
-
-			RefreshInventory();
-		}
+		#endregion
 	}
 }
