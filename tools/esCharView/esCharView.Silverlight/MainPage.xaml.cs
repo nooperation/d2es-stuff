@@ -47,6 +47,8 @@ namespace esCharView.Silverlight
 			}
 
 			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+			saveFileDialog1.DefaultExt = "d2s";
+			saveFileDialog1.Filter = "Diablo II Save Files (*.d2s)|*.d2s|All Files (*.*)|*.*";
 
 			if (saveFileDialog1.ShowDialog() == true)
 			{
@@ -275,6 +277,8 @@ namespace esCharView.Silverlight
 
 			Item item = source.SelectedItem as Item;
 			SaveFileDialog sfd = new SaveFileDialog();
+			sfd.DefaultExt = "d2i";
+			sfd.Filter = "Diablo II Item Files (*.d2i)|*.d2i|All Files (*.*)|*.*";
 
 			if (sfd.ShowDialog() == true)
 			{
@@ -296,6 +300,7 @@ namespace esCharView.Silverlight
 			}
 
 			OpenFileDialog ofd = new OpenFileDialog();
+			ofd.Filter = "Diablo II Item Files (*.d2i)|*.d2i|All Files (*.*)|*.*";
 
 			if (ofd.ShowDialog() == true)
 			{
@@ -419,6 +424,7 @@ namespace esCharView.Silverlight
 		private void buttonLoadCharacter_Click(object sender, RoutedEventArgs e)
 		{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.Filter = "Diablo II Save Files (*.d2s)|*.d2s|All Files (*.*)|*.*";
 			if (openFileDialog.ShowDialog() == true)
 			{
 				LoadSave(openFileDialog.File);
