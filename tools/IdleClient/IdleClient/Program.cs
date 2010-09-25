@@ -22,43 +22,25 @@ namespace IdleClient
 			new Program();
 		}
 
-		Thread chatServerThread = null;
-		Thread realmServerThread = null;
-		Thread gameServerThread = null;
+		public EventHandler OnReadyForNextClient;
 
-		Config settings;
-		ChatServer chatServer;
-		RealmServer realmServer;
-		GameServer gameServer;
+		private Thread chatServerThread = null;
+		private Thread realmServerThread = null;
+		private Thread gameServerThread = null;
 
-		void CurrentDomain_ProcessExit(object sender, EventArgs e)
-		{
-			chatServer.Disconnect();
-			realmServer.Disconnect();
-			gameServer.Disconnect();
-
-			if (chatServerThread != null && chatServerThread.IsAlive)
-			{
-				chatServerThread.Join();
-			}
-			if (realmServerThread != null && realmServerThread.IsAlive)
-			{
-				realmServerThread.Join();
-			}
-			if (gameServerThread != null && gameServerThread.IsAlive)
-			{
-				gameServerThread.Join();
-			}
-		}
+		private Config settings;
+		private ChatServer chatServer;
+		private RealmServer realmServer;
+		private GameServer gameServer;
 
 		public Program()
 		{
-			settings = new Config();
-			chatServer = new ChatServer(settings);
-			realmServer = new RealmServer(settings);
-			gameServer = new GameServer(settings);
+			settings = new Config("IdleClient.ini");
 
-			AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
+			chatServer = new ChatServer(settings, settings.BotNames[0]);
+			realmServer = new RealmServer(settings, settings.BotNames[0]);
+			gameServer = new GameServer(settings, settings.BotNames[0]);
+
 			chatServerThread = new Thread(() =>
 			{
 				chatServer.Run();
@@ -78,9 +60,18 @@ namespace IdleClient
 			realmServer.ReadyToConnectToGameServer += new EventHandler<GameServerArgs>(realmServer_ReadyToConnectToGameServer);
 			realmServer.OnDisconnect += new EventHandler(realmServer_OnDisconnect);
 			gameServer.OnDisconnect += new EventHandler(gameServer_OnDisconnect);
+			gameServer.OnEnterGame += new EventHandler(gameServer_OnEnterGame);
 			chatServerThread.Start();
 		}
 
+		void gameServer_OnEnterGame(object sender, EventArgs e)
+		{
+			EventHandler temp = OnReadyForNextClient;
+			if (temp != null)
+			{
+				OnReadyForNextClient(this, new EventArgs());
+			}
+		}
 
 		void gameServer_OnDisconnect(object sender, EventArgs e)
 		{

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using IdleClient.Game;
 
 namespace IdleClient
 {
@@ -145,34 +146,79 @@ namespace IdleClient
 		};
 
 
-		public static void DetermineGamePacketSize(byte[] data, ref uint headerSize, ref uint packetSize)
+		/// <summary>
+		/// Gets the header size of the compressed data.
+		/// </summary>
+		/// <param name="data">The data containing compressed data.</param>
+		/// <returns>Size of the compressed header</returns>
+		public static int GetCompressedHeaderSize(byte[] data)
 		{
 			if (data[0] < 0xF0)
 			{
-				headerSize = 1;
-				packetSize = (uint)(data[0] - 1);
-				return;
-			}
-
-			headerSize = 2;
-			packetSize = (uint)(((data[0] & 0xF) << 8) + data[1] - 2);
-		}
-
-		public static uint create_game_packet_size_header(uint size, byte[] output)
-		{
-			if (size > 238)
-			{
-				size += 2;
-				size |= 0xF000;
-				output[0] = (byte)(size >> 8);
-				output[1] = (byte)(size & 0xFF);
-				return 2;
-			}
-			else
-			{
-				output[0] = (byte)(size + 1);
 				return 1;
 			}
+
+			return 2;
+		}
+
+		/// <summary>
+		/// Gets the data size of the compressed data.
+		/// </summary>
+		/// <param name="data">The data containing compressed data.</param>
+		/// <returns>Size of the compressed data portion of the input</returns>
+		public static int GetCompressedDataSize(byte[] data)
+		{
+			if (data[0] < 0xF0)
+			{
+				return data[0] - 1;
+			}
+
+			return ((data[0] & 0xF) << 8) + data[1] - 2;
+		}
+
+		/// <summary>
+		/// Decompresses some or all of the buffer and stores decompressed data in
+		/// the output. Consumed portion of the buffer is removed.
+		/// </summary>
+		/// <param name="buffer">[in,out] The compressed packet data buffer.</param>
+		/// <param name="output">[out] The decompressed output.</param>
+		/// <returns>
+		/// true if it succeeds, false if the buffer needs more data
+		/// </returns>
+		public static bool DecompressAndConsumeBuffer(ref byte[] buffer, out byte[] output)
+		{
+			// Compression packet (0xaf 0x01) seems to be an exception among the compressed packets, probably
+			//   more like it to come
+			if (buffer.Length == 2 && buffer[0] == (byte)GameServerInPacketType.RequestLogonInfo)
+			{
+				output = (byte[])buffer.Clone();
+				Array.Resize(ref buffer, 0);
+				return true;
+			}
+
+			// Needs enough data for header portion
+			if (buffer.Length < 2 || buffer[0] >= 0xF0 && buffer.Length < 3)
+			{
+				output = new byte[0];
+				return false;
+			}
+
+			int compressedHeaderSize = GetCompressedHeaderSize(buffer);
+			int compressedDataSize = GetCompressedDataSize(buffer);
+			int compressedPacketSize = compressedDataSize + compressedHeaderSize;
+
+			if (buffer.Length < compressedPacketSize)
+			{
+				output = new byte[0];
+				return false;
+			}
+
+			byte[] compressedData = new byte[compressedDataSize];
+			Array.Copy(buffer, compressedHeaderSize, compressedData, 0, compressedDataSize);
+			Decompress(compressedData, out output);
+
+			Util.RemoveBeginningBytes(ref buffer, compressedPacketSize);
+			return true;
 		}
 
 		//		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "1")]

@@ -9,30 +9,28 @@ namespace IdleClient.Game
 	class GameClient
 	{
 		/// <summary>
-		/// Gets or sets a value indicating whether the game client has a network error.
+		/// Gets the number of players currently in game.
 		/// </summary>
-		public bool HasNetworkError { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether the game client is disconnecting.
-		/// </summary>
-		public bool IsDisconnecting { get; set; }
-
+		public int PlayerCount { get; protected set; }
 
 		private bool waitingForExitMessageResponse;
 		private TcpClient client;
 		private Config settings;
-
+		private string characterName;
+		private GameServer gameServer;
 
 		/// <summary>
 		/// Creates a new game client using a previous game server connection and settings
 		/// </summary>
 		/// <param name="gameServerClient">The game server connection.</param>
 		/// <param name="settings">Options for controlling the operation.</param>
-		public GameClient(TcpClient gameServerClient, Config settings)
+		public GameClient(GameServer gameServer, TcpClient gameServerClient, Config settings, int playerCount, string characterName)
 		{
 			this.settings = settings;
 			client = gameServerClient;
+			this.characterName = characterName;
+			this.PlayerCount = playerCount;
+			this.gameServer = gameServer;
 		}
 
 		/// <summary>
@@ -45,6 +43,36 @@ namespace IdleClient.Game
 			{
 				case GameServerInPacketType.GameMessage:
 					OnGameMessage(packet);
+					break;
+				case GameServerInPacketType.InformationMessage:
+					OnInformationMessage(packet);
+					break;
+				default:
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Handles InformationMessageIn packets. Keeps track of total number of players
+		/// in game.
+		/// </summary>
+		/// <param name="packet">The packet.</param>
+		private void OnInformationMessage(GameServerPacket packet)
+		{
+			InformationMessageIn fromServer = new InformationMessageIn(packet);
+			Console.WriteLine(fromServer);
+
+			switch (fromServer.Event)
+			{
+				case InformationMessageIn.InformationEvents.PlayerTimeout:
+				case InformationMessageIn.InformationEvents.PlayerDropped:
+				case InformationMessageIn.InformationEvents.PlayerQuit:
+					PlayerCount--;
+					Console.WriteLine("{0} players remaining", PlayerCount);
+					break;
+				case InformationMessageIn.InformationEvents.PlayerJoined:
+					PlayerCount++;
+					Console.WriteLine("{0} players total", PlayerCount);
 					break;
 				default:
 					break;
@@ -62,11 +90,12 @@ namespace IdleClient.Game
 
 			if (fromServer.ChatType == GameMessageIn.ChatTypes.ChatMessage)
 			{
-				if (fromServer.CharacterName.ToLower() == settings.CharacterName.ToLower())
+				if (fromServer.CharacterName.ToLower() == characterName.ToLower())
 				{
 					if (waitingForExitMessageResponse)
 					{
-						IsDisconnecting = true;
+						gameServer.Disconnect();
+						return;
 					}
 				}
 				else if (fromServer.CharacterName.ToLower() == settings.MasterName.ToLower())
@@ -76,6 +105,7 @@ namespace IdleClient.Game
 						Say("Bye");
 						SendPacket(new ExitGameOut());
 						waitingForExitMessageResponse = true;
+						return;
 					}
 				}
 			}
@@ -152,10 +182,10 @@ namespace IdleClient.Game
 			}
 			catch (Exception ex)
 			{
-				if (!IsDisconnecting)
+				if (!gameServer.IsDisconnecting)
 				{
 					Console.WriteLine("Failed to send packet to game server: " + ex.Message);
-					IsDisconnecting = true;
+					gameServer.Disconnect();
 				}
 				return;
 			}

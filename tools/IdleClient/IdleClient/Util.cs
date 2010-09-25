@@ -29,6 +29,16 @@ namespace IdleClient
 			return sb.ToString();
 		}
 
+		/// <summary>
+		/// Removes the beginning bytes of a byte array.
+		/// </summary>
+		/// <param name="data">[in,out] The data to modify.</param>
+		/// <param name="count">Number of elements to remove.</param>
+		public static void RemoveBeginningBytes(ref byte[] data, int count)
+		{
+			Array.Copy(data, count, data, 0, data.Length - count);
+			Array.Resize(ref data, data.Length - count);
+		}
 
 		/// <summary>
 		/// Reads a special string from a BinaryReader. These strings are either terminated by a null
@@ -52,6 +62,30 @@ namespace IdleClient
 					sb.Append(ch);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Reads a string padded with null terminator from a stream and resizes it so only
+		/// the string portion remains.
+		/// </summary>
+		/// <param name="br">The BinaryReader to read the string from.</param>
+		/// <param name="byteCount">Total fixed size of string.</param>
+		/// <returns>The unpadded string</returns>
+		public static string ReadAndUnpadString(BinaryReader br, int byteCount)
+		{
+			byte[] temp = br.ReadBytes(byteCount);
+			int paddingStart = temp.Length;
+
+			for (int i = 0; i < temp.Length; i++)
+			{
+				if (temp[i] == 0)
+				{
+					paddingStart = i;
+					break;
+				}
+			}
+
+			return ASCIIEncoding.ASCII.GetString(temp, 0, paddingStart);
 		}
 
 		/// <summary>

@@ -28,6 +28,8 @@ namespace IdleClient.Realm
 
 		/// <summary>Gets or sets the name of the character. Must be padded to 16 bytes.</summary>
 		public byte[] CharacterName { get; set; }
+
+		public int PlayerCount { get; set; }
 	}
 
 	/// <summary>
@@ -47,14 +49,17 @@ namespace IdleClient.Realm
 		private bool isDisconnecting;
 		private TcpClient client = new TcpClient();
 		private Config settings;
+		private string characterName;
+		private int playerCount;
 
 		/// <summary>
 		/// Constructor. 
 		/// </summary>
 		/// <param name="settings">Options for controlling the operation.</param>
-		public RealmServer(Config settings)
+		public RealmServer(Config settings, string characterName)
 		{
 			this.settings = settings;
+			this.characterName = characterName;
 		}
 
 		/// <summary>
@@ -173,9 +178,10 @@ namespace IdleClient.Realm
 			args.GameHash = fromServer.GameHash;
 			args.GameToken = fromServer.GameToken;
 			args.CharacterClass = (byte)CharacterClassType.Barbarian;
+			args.PlayerCount = playerCount;
 
 			// Pad the character name to 16 bytes. This is required by the game server.
-			byte[] charNameBytes = ASCIIEncoding.ASCII.GetBytes(settings.CharacterName);
+			byte[] charNameBytes = ASCIIEncoding.ASCII.GetBytes(characterName);
 			Array.Resize(ref charNameBytes, 16);
 			args.CharacterName = (byte[])charNameBytes.Clone();
 
@@ -190,6 +196,8 @@ namespace IdleClient.Realm
 		{
 			GameInfoIn fromServer = new GameInfoIn(packet);
 			Console.WriteLine(fromServer);
+
+			playerCount = fromServer.PlayerCount;
 
 			JoinGameOut toServer = new JoinGameOut(settings.GameName, settings.GamePass);
 			SendPacket(RealmServerPacketType.JOINGAME, toServer.GetBytes());
@@ -263,14 +271,14 @@ namespace IdleClient.Realm
 			CharList2In fromServer = new CharList2In(packet);
 			Console.WriteLine(fromServer);
 
-			if (!fromServer.CharacterExists(settings.CharacterName))
+			if (!fromServer.CharacterExists(characterName))
 			{
 				Console.WriteLine("Realm server: Character not found");
 				Disconnect();
 				return;
 			}
 
-			CharLogonOut toServer = new CharLogonOut(settings.CharacterName);
+			CharLogonOut toServer = new CharLogonOut(characterName);
 			SendPacket(RealmServerPacketType.CHARLOGON, toServer.GetBytes());
 		}
 

@@ -50,10 +50,12 @@ namespace IdleClient.Chat
 		private Config settings;
 		private uint clientToken = 0;
 		private uint serverToken = 0;
+		private string characterName;
 
-		public ChatServer(Config settings)
+		public ChatServer(Config settings, string characterName)
 		{
 			this.settings = settings;
+			this.characterName = characterName;
 		}
 
 		//C > S [0x50] SID_AUTH_INFO
@@ -213,7 +215,7 @@ namespace IdleClient.Chat
 			AuthCheckIn fromServer = new AuthCheckIn(packet);
 			Console.WriteLine(fromServer.ToString());
 
-			LogonRequest2Out toServer = new LogonRequest2Out(settings.Username, settings.password, clientToken, serverToken);
+			LogonRequest2Out toServer = new LogonRequest2Out(settings.Username, settings.Password, clientToken, serverToken);
 			SendPacket(toServer);
 		}
 

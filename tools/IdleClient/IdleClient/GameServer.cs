@@ -12,13 +12,16 @@ namespace IdleClient.Game
 	{
 		/// <summary> Event queue for all listeners interested in OnDisconnect events. </summary>
 		public event EventHandler OnDisconnect;
+		public event EventHandler OnEnterGame;
+
+		public bool IsDisconnecting { get; protected set; }
 
 		private GameClient gameClient;
-		private bool isDisconnecting;
 		private Config settings;
 		private Thread pingThread;
 		private TcpClient client = new TcpClient();
 		private Realm.GameServerArgs gameServerArgs;
+		private string characterName;
 
 #if OLDVERSION
 		/* D2Net.dll (1.10 ES) StartOffset: 00008148, EndOffset: 000085D7, Length: 00000490 */
@@ -82,9 +85,10 @@ namespace IdleClient.Game
 		/// Creates a new game server client with specified settings
 		/// </summary>
 		/// <param name="settings">Options for controlling the operation.</param>
-		public GameServer(Config settings)
+		public GameServer(Config settings, string characterName)
 		{
 			this.settings = settings;
+			this.characterName = characterName;
 		}
 
 		/// <summary>
@@ -109,19 +113,20 @@ namespace IdleClient.Game
 
 			using (client)
 			{
-				gameClient = new GameClient(client, settings);
+				gameClient = new GameClient(this, client, settings, gameServerArgs.PlayerCount, characterName);
+				byte[] buffer = new byte[0];
 
-				while (client.Connected && !gameClient.IsDisconnecting && !gameClient.HasNetworkError)
+				while (client.Connected)
 				{
 					List<GameServerPacket> packets;
 
 					try
 					{
-						packets = ReceivePackets();
+						packets = ReceivePackets(ref buffer);
 					}
 					catch (Exception ex)
 					{
-						if (!isDisconnecting)
+						if (!IsDisconnecting)
 						{
 							Console.WriteLine("Failed to receive game server packets: " + ex.Message);
 							Disconnect();
@@ -152,6 +157,7 @@ namespace IdleClient.Game
 								OnRequestLogonInfo(packet);
 								break;
 							case GameServerInPacketType.BadSave:
+								Console.WriteLine("Error: The save file for this character is invalid");
 								Disconnect();
 								break;
 							default:
@@ -192,6 +198,12 @@ namespace IdleClient.Game
 			});
 
 			pingThread.Start();
+
+			EventHandler temp = OnEnterGame;
+			if (temp != null)
+			{
+				OnEnterGame(this, new EventArgs());
+			}
 		}
 
 		/// <summary>
@@ -227,43 +239,27 @@ namespace IdleClient.Game
 		/// Receives a list of packets from the game server
 		/// </summary>
 		/// <returns>List of packets read from the game server</returns>
-		private List<GameServerPacket> ReceivePackets()
+		private List<GameServerPacket> ReceivePackets(ref byte[] buffer)
 		{
 			NetworkStream ns = client.GetStream();
 			List<GameServerPacket> packets = new List<GameServerPacket>();
 
-			byte[] buffer = new byte[0];
+			bool needsMoreData = false;
 
 			while (true)
 			{
-				Util.Receive(ns, ref buffer);
-
-				// Compression packet (0xaf 0x01) seems to be an exception among the compressed packets, probably
-				//   more like it to come
-				if (buffer.Length == 2 && buffer[0] == (byte)GameServerInPacketType.RequestLogonInfo)
+				if (buffer.Length == 0 || needsMoreData)
 				{
-					packets.Add(new GameServerPacket() { Id = GameServerInPacketType.RequestLogonInfo, Data = new byte[0] });
-					break;
+					Util.Receive(ns, ref buffer);
+					needsMoreData = false;
 				}
 
-				// Needs enough data for header portion
-				if (buffer.Length < 2 || buffer[0] >= 0xF0 && buffer.Length < 3)
-				{
-					continue;
-				}
-
-				uint headerSize = 0;
-				uint dataSize = 0;
-				Compression.DetermineGamePacketSize(buffer, ref headerSize, ref dataSize);
-				if (buffer.Length < headerSize + dataSize)
-				{
-					continue;
-				}
-
-				byte[] compressedData = new byte[dataSize];
-				Array.Copy(buffer, headerSize, compressedData, 0, dataSize);
 				byte[] decompressedData;
-				Compression.Decompress(compressedData, out decompressedData);
+				if (!Compression.DecompressAndConsumeBuffer(ref buffer, out decompressedData))
+				{
+					needsMoreData = true;
+					continue;
+				}
 
 				while (decompressedData.Length > 0)
 				{
@@ -273,11 +269,12 @@ namespace IdleClient.Game
 					if (decompressedPacketSize == 0xFF)
 					{
 						Console.WriteLine("Ohno, unhandled special packet with no size {0:X2}", decompressedData[0]);
-						break;
+						Disconnect();
+						return packets;
 					}
 
 					packet.Id = (GameServerInPacketType)decompressedData[0];
-					packet.Data = new byte[decompressedPacketSize - 1];
+					packet.Data = new byte[decompressedPacketSize-1];
 
 					if (packet.Data.Length > 0)
 					{
@@ -286,15 +283,11 @@ namespace IdleClient.Game
 
 					packets.Add(packet);
 
-					int newBufferLength = decompressedData.Length - decompressedPacketSize;
-					Array.Copy(decompressedData, decompressedPacketSize, decompressedData, 0, newBufferLength);
-					Array.Resize(ref decompressedData, newBufferLength);
+					Util.RemoveBeginningBytes(ref decompressedData, decompressedPacketSize);
 				}
 
-				break;
+				return packets;
 			}
-
-			return packets;
 		}
 
 		/// <summary>
@@ -364,13 +357,6 @@ namespace IdleClient.Game
 					}
 					break;
 
-				case 0xae:
-					if (data.Length >= 3)
-					{
-						return 3 + BitConverter.ToInt16(data, 1);
-					}
-					break;
-
 				case 0x9c:
 					if (data.Length >= 3)
 					{
@@ -384,6 +370,20 @@ namespace IdleClient.Game
 						return data[2];
 					}
 					break;
+
+#if OLDVERSION
+				case (byte)GameServerInPacketType.RequestLogonInfo:
+					return 2;
+#else
+				case (byte)GameServerInPacketType.WardenCheck:
+					if (data.Length >= 3)
+					{
+						return 3 + BitConverter.ToInt16(data, 1);
+					}
+					break;
+				case (byte)GameServerInPacketType.RequestLogonInfo:
+					return 2;
+#endif
 
 				default:
 					if (packetId < gameServerPacketSizes.Length)
@@ -404,8 +404,7 @@ namespace IdleClient.Game
 			if (client.Connected)
 			{
 				Console.WriteLine("Game server: Disconnect requested");
-				isDisconnecting = true;
-				gameClient.IsDisconnecting = true;
+				IsDisconnecting = true;
 
 				if (pingThread != null && pingThread.IsAlive)
 				{

@@ -313,4 +313,95 @@ namespace IdleClient.Game
 			return ChatType + " " + CharacterName + " " + Message;
 		}
 	}
+
+
+	/// <summary>
+	/// Sent as an update for various events such as players joining/leaving/being killed
+	/// and server events
+	/// </summary>
+	struct InformationMessageIn
+	{
+		public enum InformationEvents
+		{
+			PlayerTimeout = 0x00,
+			PlayerDropped = 0x01,
+			PlayerJoined = 0x02,
+			PlayerQuit = 0x03,
+			PlayerNotInGame = 0x04,
+			PlayerNotLoggedInToGame = 0x05,
+			PlayerDied = 0x06,
+			PlayerRelation = 0x07,
+			PlayerBusy = 0x08,
+			TradeWait = 0x09,
+			ItemsInBox = 0x0A, // ???
+			PlayerIgnoringYou = 0x0D,
+			NotEnoughMana = 0x0E,
+			RealmGoingDown = 0x0F,
+			HostileWait = 0x10,
+			ServerEventCount = 0x11,
+			ServerEvent = 0x12,
+		}
+
+		public InformationEvents Event;
+		public byte Action;
+		public uint EntityID;
+		public byte EntityType;
+		public string First;
+		public string Second;
+
+		public InformationMessageIn(GameServerPacket packet)
+		{
+			BinaryReader br = new BinaryReader(new MemoryStream(packet.Data));
+			Event = (InformationEvents)br.ReadByte();
+			Action = br.ReadByte();
+			EntityID = br.ReadUInt32();
+			EntityType = br.ReadByte();
+
+			First = Util.ReadAndUnpadString(br, 16);
+			Second = Util.ReadAndUnpadString(br, 16);
+		}
+
+		public override string ToString()
+		{
+			switch (Event)
+			{
+				case InformationEvents.PlayerTimeout:
+					return String.Format("{0} ({1}) Dropped Due To Timeout", First, Second);
+				case InformationEvents.PlayerDropped:
+					return String.Format("{0} ({1}) Dropped Due To Errors", First, Second);
+				case InformationEvents.PlayerJoined:
+					return String.Format("{0} ({1}) Joined The Game", First, Second);
+				case InformationEvents.PlayerQuit:
+					return String.Format("{0} ({1}) Quits The Game", First, Second);
+				case InformationEvents.PlayerNotInGame:
+					return String.Format("{0} Is Not In The Game", First);
+				case InformationEvents.PlayerNotLoggedInToGame:
+					return String.Format("{0} Is Not Logged In The Game", First);
+				case InformationEvents.PlayerDied:
+					return String.Format("{0} Was Slain", First);
+				case InformationEvents.PlayerRelation:
+					return String.Format("Player Relation");
+				case InformationEvents.PlayerBusy:
+					return String.Format("{0} Is Busy", First);
+				case InformationEvents.TradeWait:
+					return String.Format("Wait A Short Time Before Going Into Trade");
+				case InformationEvents.ItemsInBox:
+					return String.Format("Item's In Box");
+				case InformationEvents.PlayerIgnoringYou:
+					return String.Format("{0} Is Not Listening To You", First);
+				case InformationEvents.NotEnoughMana:
+					return String.Format("Not Enough Mana");
+				case InformationEvents.RealmGoingDown:
+					return String.Format("Realm Is Going Down In {0} Mins", EntityID);
+				case InformationEvents.HostileWait:
+					return String.Format("You must wait awhile before hostiling {0}", First);
+				case InformationEvents.ServerEventCount:
+					return String.Format("{0} Soj's Have Been Sold", EntityID);
+				case InformationEvents.ServerEvent:
+					return String.Format("Diablo Walks The Earth");
+				default:
+					return String.Format("InformationMessage -> Unkown event {0:X2}", Event);
+			}
+		}
+	}
 }
