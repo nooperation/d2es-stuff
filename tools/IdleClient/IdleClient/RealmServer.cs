@@ -29,6 +29,7 @@ namespace IdleClient.Realm
 		/// <summary>Gets or sets the name of the character. Must be padded to 16 bytes.</summary>
 		public byte[] CharacterName { get; set; }
 
+		/// <summary>Gets or sets the number of players in the game being joining.</summary>
 		public int PlayerCount { get; set; }
 	}
 
@@ -37,13 +38,11 @@ namespace IdleClient.Realm
 	/// </summary>
 	class RealmServer
 	{
-		/// <summary> Event queue for all listeners interested in OnDisconnect events. </summary>
+		/// <summary> Raised when the client disconnects. </summary>
 		public event EventHandler OnDisconnect;
-
-		/// <summary> 
-		/// Event queue for all listeners interested in ReadyToConnectToGameServer events. There
-		/// must exist atleast one listener to this event. 
-		/// </summary>
+		/// <summary> Raised when a failure occurs. This is most likely nonrecoverable. </summary>
+		public event EventHandler<FailureArgs> OnFailure;
+		/// <summary> Rasied when ready to connect to game server. Contains arguments for GameServer connection.</summary>
 		public event EventHandler<GameServerArgs> ReadyToConnectToGameServer;
 
 		private bool isDisconnecting;
@@ -81,6 +80,7 @@ namespace IdleClient.Realm
 			catch (SocketException ex)
 			{
 				Console.WriteLine("Failed to connect to realm server: " + ex.Message);
+				FireOnFailureEvent(FailureArgs.FailureTypes.UnableToConnect, "Failed to connect to realm server: " + ex.Message);
 				FireOnDisconnectEvent();
 				return;
 			}
@@ -109,6 +109,7 @@ namespace IdleClient.Realm
 						if (!isDisconnecting)
 						{
 							Console.WriteLine("Failed to receive realm server packet: " + ex.Message);
+							FireOnFailureEvent(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive realm server packet: " + ex.Message);
 							Disconnect();
 						}
 						break;
@@ -168,6 +169,7 @@ namespace IdleClient.Realm
 
 			if (!fromServer.IsSuccessful())
 			{
+				FireOnFailureEvent(FailureArgs.FailureTypes.FailedToJoinGame, fromServer.ToString());
 				Disconnect();
 				return;
 			}
@@ -215,6 +217,7 @@ namespace IdleClient.Realm
 
 			if (!fromServer.IsSuccessful())
 			{
+				FireOnFailureEvent(FailureArgs.FailureTypes.FailedToCreateGame, fromServer.ToString());
 				Disconnect();
 				return;
 			}
@@ -252,6 +255,7 @@ namespace IdleClient.Realm
 
 			if (!fromServer.IsSuccessful())
 			{
+				FireOnFailureEvent(FailureArgs.FailureTypes.FailedToLoginToChat, fromServer.ToString());
 				Disconnect();
 				return;
 			}
@@ -274,6 +278,7 @@ namespace IdleClient.Realm
 			if (!fromServer.CharacterExists(characterName))
 			{
 				Console.WriteLine("Realm server: Character not found");
+				FireOnFailureEvent(FailureArgs.FailureTypes.CharacterNotFound, "Character not found");
 				Disconnect();
 				return;
 			}
@@ -296,6 +301,7 @@ namespace IdleClient.Realm
 			if (!fromServer.IsSuccessful())
 			{
 				Console.WriteLine("Realm server: server denied our connection request");
+				FireOnFailureEvent(FailureArgs.FailureTypes.ServerDeniedConnection, fromServer.ToString());
 				Disconnect();
 			}
 
@@ -345,6 +351,7 @@ namespace IdleClient.Realm
 				if (!isDisconnecting)
 				{
 					Console.WriteLine("Failed to send packet to realm server: " + ex.Message);
+					FireOnFailureEvent(FailureArgs.FailureTypes.FailedToSend, "Failed to send packet to realm server: " + ex.Message);
 					Disconnect();
 				}
 				return;
@@ -425,6 +432,20 @@ namespace IdleClient.Realm
 			if (tempHandler != null)
 			{
 				tempHandler(this, new EventArgs());
+			}
+		}
+
+		/// <summary>
+		/// Raises the on failure event. 
+		/// </summary>
+		/// <param name="failureTypes">Type of failures.</param>
+		/// <param name="message">The error message.</param>
+		private void FireOnFailureEvent(FailureArgs.FailureTypes failureTypes, string message)
+		{
+			EventHandler<FailureArgs> tempHandler = OnFailure;
+			if (tempHandler != null)
+			{
+				tempHandler(this, new FailureArgs(failureTypes, message));
 			}
 		}
 	}

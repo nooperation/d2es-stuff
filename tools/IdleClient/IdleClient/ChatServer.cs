@@ -36,13 +36,11 @@ namespace IdleClient.Chat
 
 	class ChatServer
 	{
-		/// <summary> Event queue for all listeners interested in OnDisconnect events. </summary>
+		/// <summary> Raised when the client disconnects. </summary>
 		public event EventHandler OnDisconnect;
-
-		/// <summary> 
-		/// Event queue for all listeners interested in ReadyToConnectToGameServer events. There
-		/// must exist atleast one listener to this event. 
-		/// </summary>
+		/// <summary> Raised when a failure occurs. This is most likely nonrecoverable. </summary>
+		public event EventHandler<FailureArgs> OnFailure;
+		/// <summary> Raised when ready to connect to Realm Server. Contains argumentss for RealmServer connection. </summary>
 		public event EventHandler<RealmServerArgs> ReadyToConnectToRealmServer;
 
 		private bool isDisconnecting;
@@ -79,6 +77,7 @@ namespace IdleClient.Chat
 			catch (SocketException ex)
 			{
 				Console.WriteLine("Failed to connect to chat server: " + ex.Message);
+				FireOnFailureEvent(FailureArgs.FailureTypes.UnableToConnect, "Failed to connect to chat server: " + ex.Message);
 				FireOnDisconnectEvent();
 				return;
 			}
@@ -108,6 +107,7 @@ namespace IdleClient.Chat
 						if (!isDisconnecting)
 						{
 							Console.WriteLine("Failed to receive chat packet: " + ex.Message);
+							FireOnFailureEvent(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive chat packet: " + ex.Message);
 							Disconnect();
 						}
 						break;
@@ -163,6 +163,7 @@ namespace IdleClient.Chat
 
 			if (!fromServer.IsSuccessful())
 			{
+				FireOnFailureEvent(FailureArgs.FailureTypes.LoginFailed, fromServer.ToString());
 				Disconnect();
 				return;
 			}
@@ -180,6 +181,7 @@ namespace IdleClient.Chat
 			if (fromServer.Count == 0)
 			{
 				Console.WriteLine("No realms available");
+				FireOnFailureEvent(FailureArgs.FailureTypes.NoRealmsAvailable, "No realms available");
 				Disconnect();
 				return;
 			}
@@ -197,6 +199,7 @@ namespace IdleClient.Chat
 
 			if (!fromServer.IsSuccessful())
 			{
+				FireOnFailureEvent(FailureArgs.FailureTypes.RealmLoginFailed, fromServer.ToString());
 				Disconnect();
 				return;
 			}
@@ -214,6 +217,13 @@ namespace IdleClient.Chat
 		{
 			AuthCheckIn fromServer = new AuthCheckIn(packet);
 			Console.WriteLine(fromServer.ToString());
+
+			if (!fromServer.IsSuccessful())
+			{
+				FireOnFailureEvent(FailureArgs.FailureTypes.FailedAuthCheck, fromServer.ToString());
+				Disconnect();
+				return;
+			}
 
 			LogonRequest2Out toServer = new LogonRequest2Out(settings.Username, settings.Password, clientToken, serverToken);
 			SendPacket(toServer);
@@ -356,10 +366,12 @@ namespace IdleClient.Chat
 		/// </summary>
 		public void Disconnect()
 		{
+			isDisconnecting = true;
+
 			if (client.Connected)
 			{
 				Console.WriteLine("Chat server: Disconnect requested");
-				isDisconnecting = true;
+				FireOnDisconnectEvent();
 				client.Close();
 			}
 		}
@@ -373,6 +385,20 @@ namespace IdleClient.Chat
 			if (tempHandler != null)
 			{
 				tempHandler(this, new EventArgs());
+			}
+		}
+
+		/// <summary>
+		/// Raises the on failure event. 
+		/// </summary>
+		/// <param name="failureTypes">Type of failures.</param>
+		/// <param name="message">The error message.</param>
+		private void FireOnFailureEvent(FailureArgs.FailureTypes failureTypes, string message)
+		{
+			EventHandler<FailureArgs> tempHandler = OnFailure;
+			if (tempHandler != null)
+			{
+				tempHandler(this, new FailureArgs(failureTypes, message));
 			}
 		}
 	}

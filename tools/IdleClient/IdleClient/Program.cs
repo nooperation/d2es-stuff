@@ -22,7 +22,9 @@ namespace IdleClient
 			new Program();
 		}
 
-		public EventHandler OnReadyForNextClient;
+		public event EventHandler<FailureArgs> OnFailure;
+		public event EventHandler<PlayerCountArgs> PlayerCountChanged;
+		public event EventHandler OnClientDisconnect;
 
 		private Thread chatServerThread = null;
 		private Thread realmServerThread = null;
@@ -57,43 +59,85 @@ namespace IdleClient
 			});
 
 			chatServer.ReadyToConnectToRealmServer += new EventHandler<RealmServerArgs>(chatServer_ReadyToConnectToRealmServer);
+			chatServer.OnFailure += new EventHandler<FailureArgs>(chatServer_OnFailure);
+
 			realmServer.ReadyToConnectToGameServer += new EventHandler<GameServerArgs>(realmServer_ReadyToConnectToGameServer);
 			realmServer.OnDisconnect += new EventHandler(realmServer_OnDisconnect);
-			gameServer.OnDisconnect += new EventHandler(gameServer_OnDisconnect);
+			realmServer.OnFailure += new EventHandler<FailureArgs>(realmServer_OnFailure);
+
 			gameServer.OnEnterGame += new EventHandler(gameServer_OnEnterGame);
+			gameServer.OnDisconnect += new EventHandler(gameServer_OnDisconnect);
+			gameServer.OnFailure += new EventHandler<FailureArgs>(gameServer_OnFailure);
+
 			chatServerThread.Start();
+		}
+
+		void chatServer_OnFailure(object sender, FailureArgs e)
+		{
+			Console.WriteLine("Driver: ChatServer failed -> " + e.ToString());
+			FireOnFailureEvent(e.Type, e.Message);
+		}
+
+		void realmServer_OnFailure(object sender, FailureArgs e)
+		{
+			Console.WriteLine("Driver: RealmServer failed -> " + e.ToString());
+			FireOnFailureEvent(e.Type, e.Message);
+		}
+
+		void gameServer_OnFailure(object sender, FailureArgs e)
+		{
+			Console.WriteLine("Driver: GameServer failed -> " + e.ToString());
+			FireOnFailureEvent(e.Type, e.Message);
 		}
 
 		void gameServer_OnEnterGame(object sender, EventArgs e)
 		{
-			EventHandler temp = OnReadyForNextClient;
-			if (temp != null)
-			{
-				OnReadyForNextClient(this, new EventArgs());
-			}
+			Console.WriteLine("Driver: Bot successfully connected to game, ready for more");
 		}
 
 		void gameServer_OnDisconnect(object sender, EventArgs e)
 		{
+			Console.WriteLine("Driver: GameServer disconnected");
 			chatServer.Disconnect();
-			realmServer.Disconnect();
-		}
-
-		void realmServer_ReadyToConnectToGameServer(object sender, GameServerArgs e)
-		{
-			gameServerThread.Start(e);
 			realmServer.Disconnect();
 		}
 
 		void realmServer_OnDisconnect(object sender, EventArgs e)
 		{
+			Console.WriteLine("Driver: RealmServer disconnected");
 			chatServer.Disconnect();
+		}
+
+		void realmServer_ReadyToConnectToGameServer(object sender, GameServerArgs e)
+		{
+			Console.WriteLine("Driver: RealmServer says we're ready to connect to game server");
+			gameServerThread.Start(e);
+			realmServer.Disconnect();
 		}
 
 		void chatServer_ReadyToConnectToRealmServer(object sender, RealmServerArgs e)
 		{
+			Console.WriteLine("Driver: ChatServer says we're ready to connect to realm server");
 			realmServerThread.Start(e);
 		}
 
+		private void FireOnFailureEvent(FailureArgs.FailureTypes failureTypes, string message)
+		{
+			EventHandler<FailureArgs> tempHandler = OnFailure;
+			if (tempHandler != null)
+			{
+				tempHandler(this, new FailureArgs(failureTypes, message));
+			}
+		}
+
+		private void FireOnClientDisconnect()
+		{
+			EventHandler tempHandler = OnClientDisconnect;
+
+			if (tempHandler != null)
+			{
+				tempHandler(this, new EventArgs());
+			}
+		}
 	}
 }

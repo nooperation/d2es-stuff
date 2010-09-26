@@ -73,7 +73,6 @@ namespace IdleClient
 		/// </summary>
 		public bool ShowPacketData { get; set; }
 
-
 		/// <summary>
 		/// Gets or sets a list of the bot names.
 		/// </summary>
