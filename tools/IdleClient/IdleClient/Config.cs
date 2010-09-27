@@ -95,7 +95,7 @@ namespace IdleClient
 #else
 			ClientVersion = 0x0c;
 #endif
-			GameName = "foobarrr";
+			GameName = "test";
 			GamePass = "";
 			GameDifficulty = DifficultyType.Normal;
 			GameDescription = GameDifficulty.ToString();

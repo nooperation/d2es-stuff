@@ -22,122 +22,105 @@ namespace IdleClient
 			new Program();
 		}
 
-		public event EventHandler<FailureArgs> OnFailure;
-		public event EventHandler<PlayerCountArgs> PlayerCountChanged;
-		public event EventHandler OnClientDisconnect;
+		public int MaxPlayerCount { get; set; }
+		List<ClientDriver> clients = new List<ClientDriver>();
+		Config settings;
 
-		private Thread chatServerThread = null;
-		private Thread realmServerThread = null;
-		private Thread gameServerThread = null;
+		// Temp hack to make sure PushBot() isn't called by PlayerChanged event during the inital
+		//  set of bots being pushed.
+		//TODO: Needs a much better way to keep track of the bots
+		private bool initalBotPushing = false;
 
-		private Config settings;
-		private ChatServer chatServer;
-		private RealmServer realmServer;
-		private GameServer gameServer;
 
 		public Program()
 		{
 			settings = new Config("IdleClient.ini");
+			MaxPlayerCount = 8;
 
-			chatServer = new ChatServer(settings, settings.BotNames[0]);
-			realmServer = new RealmServer(settings, settings.BotNames[0]);
-			gameServer = new GameServer(settings, settings.BotNames[0]);
-
-			chatServerThread = new Thread(() =>
+			if (settings.BotNames.Count == 0)
 			{
-				chatServer.Run();
-			});
+				Console.WriteLine("Main: No bots are defined");
+				return;
+			}
 
-			realmServerThread = new Thread((args) =>
+			initalBotPushing = true;
+			PushBot();
+			clients[0].OnPlayerCountChanged += new EventHandler<PlayerCountArgs>(firstClient_OnPlayerCountChanged);
+		}
+
+
+		private void PushBot()
+		{
+			if (clients.Count + 1 >= MaxPlayerCount || clients.Count >= settings.BotNames.Count)
 			{
-				realmServer.Run(args);
-			});
+				initalBotPushing = false;
+				return;
+			}
 
-			gameServerThread = new Thread((args) =>
+			ClientDriver newClient = new ClientDriver(settings, clients.Count);
+			newClient.OnFailure += new EventHandler<FailureArgs>(newClient_OnFailure);
+			newClient.OnEnterGame += new EventHandler(newClient_OnEnterGame);
+			newClient.OnClientDisconnect += new EventHandler(newClient_OnClientDisconnect);
+			newClient.Start();
+
+			clients.Add(newClient);
+		}
+
+		private void Popbot()
+		{
+			Console.WriteLine("Main: PopBot()");
+			if (clients.Count <= 1)
 			{
-				gameServer.Run(args);
-			});
+				return;
+			}
 
-			chatServer.ReadyToConnectToRealmServer += new EventHandler<RealmServerArgs>(chatServer_ReadyToConnectToRealmServer);
-			chatServer.OnFailure += new EventHandler<FailureArgs>(chatServer_OnFailure);
-
-			realmServer.ReadyToConnectToGameServer += new EventHandler<GameServerArgs>(realmServer_ReadyToConnectToGameServer);
-			realmServer.OnDisconnect += new EventHandler(realmServer_OnDisconnect);
-			realmServer.OnFailure += new EventHandler<FailureArgs>(realmServer_OnFailure);
-
-			gameServer.OnEnterGame += new EventHandler(gameServer_OnEnterGame);
-			gameServer.OnDisconnect += new EventHandler(gameServer_OnDisconnect);
-			gameServer.OnFailure += new EventHandler<FailureArgs>(gameServer_OnFailure);
-
-			chatServerThread.Start();
+			clients[clients.Count - 1].Disconnect();
+			Console.WriteLine("Main: ordered client " + (clients.Count - 1) + " to disconnect");
 		}
 
-		void chatServer_OnFailure(object sender, FailureArgs e)
+		void firstClient_OnPlayerCountChanged(object sender, PlayerCountArgs e)
 		{
-			Console.WriteLine("Driver: ChatServer failed -> " + e.ToString());
-			FireOnFailureEvent(e.Type, e.Message);
-		}
+			Console.WriteLine("Main: " + e.PlayerCount + " >=? " + MaxPlayerCount);
 
-		void realmServer_OnFailure(object sender, FailureArgs e)
-		{
-			Console.WriteLine("Driver: RealmServer failed -> " + e.ToString());
-			FireOnFailureEvent(e.Type, e.Message);
-		}
-
-		void gameServer_OnFailure(object sender, FailureArgs e)
-		{
-			Console.WriteLine("Driver: GameServer failed -> " + e.ToString());
-			FireOnFailureEvent(e.Type, e.Message);
-		}
-
-		void gameServer_OnEnterGame(object sender, EventArgs e)
-		{
-			Console.WriteLine("Driver: Bot successfully connected to game, ready for more");
-		}
-
-		void gameServer_OnDisconnect(object sender, EventArgs e)
-		{
-			Console.WriteLine("Driver: GameServer disconnected");
-			chatServer.Disconnect();
-			realmServer.Disconnect();
-		}
-
-		void realmServer_OnDisconnect(object sender, EventArgs e)
-		{
-			Console.WriteLine("Driver: RealmServer disconnected");
-			chatServer.Disconnect();
-		}
-
-		void realmServer_ReadyToConnectToGameServer(object sender, GameServerArgs e)
-		{
-			Console.WriteLine("Driver: RealmServer says we're ready to connect to game server");
-			gameServerThread.Start(e);
-			realmServer.Disconnect();
-		}
-
-		void chatServer_ReadyToConnectToRealmServer(object sender, RealmServerArgs e)
-		{
-			Console.WriteLine("Driver: ChatServer says we're ready to connect to realm server");
-			realmServerThread.Start(e);
-		}
-
-		private void FireOnFailureEvent(FailureArgs.FailureTypes failureTypes, string message)
-		{
-			EventHandler<FailureArgs> tempHandler = OnFailure;
-			if (tempHandler != null)
+			if (!initalBotPushing)
 			{
-				tempHandler(this, new FailureArgs(failureTypes, message));
+				if (e.PlayerCount >= MaxPlayerCount)
+				{
+					Popbot();
+				}
+				else if (e.PlayerCount < MaxPlayerCount - 1)
+				{
+					PushBot();
+				}
 			}
 		}
 
-		private void FireOnClientDisconnect()
+		void newClient_OnClientDisconnect(object sender, EventArgs e)
 		{
-			EventHandler tempHandler = OnClientDisconnect;
-
-			if (tempHandler != null)
+			ClientDriver source = sender as ClientDriver;
+			if (source.ClientIndex == clients.Count - 1)
 			{
-				tempHandler(this, new EventArgs());
+				Console.WriteLine("Main: Removing disconnected client " + (clients.Count - 1));
+				clients.Remove(source);
 			}
 		}
+
+		void newClient_OnEnterGame(object sender, EventArgs e)
+		{
+			ClientDriver source = sender as ClientDriver;
+
+			if (source.ClientIndex == 0)
+			{
+				MaxPlayerCount = source.MaxPlayers;
+			}
+
+			PushBot();
+		}
+
+		void newClient_OnFailure(object sender, FailureArgs e)
+		{
+
+		}
+
 	}
 }

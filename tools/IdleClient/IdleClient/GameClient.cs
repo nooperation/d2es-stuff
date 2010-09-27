@@ -8,6 +8,10 @@ namespace IdleClient.Game
 {
 	class GameClient
 	{
+
+		/// <summary> Player count in the game has changed. </summary>
+		public event EventHandler<PlayerCountArgs> OnPlayerCountChanged;
+
 		/// <summary>
 		/// Gets the number of players currently in game.
 		/// </summary>
@@ -69,10 +73,12 @@ namespace IdleClient.Game
 				case InformationMessageIn.InformationEvents.PlayerQuit:
 					PlayerCount--;
 					Console.WriteLine("{0} players remaining", PlayerCount);
+					FireOnPlayerCountEvent(new PlayerCountArgs(PlayerCount));
 					break;
 				case InformationMessageIn.InformationEvents.PlayerJoined:
 					PlayerCount++;
 					Console.WriteLine("{0} players total", PlayerCount);
+					FireOnPlayerCountEvent(new PlayerCountArgs(PlayerCount));
 					break;
 				default:
 					break;
@@ -188,6 +194,15 @@ namespace IdleClient.Game
 					gameServer.Disconnect();
 				}
 				return;
+			}
+		}
+
+		private void FireOnPlayerCountEvent(PlayerCountArgs args)
+		{
+			EventHandler<PlayerCountArgs> tempHandler = OnPlayerCountChanged;
+			if (tempHandler != null)
+			{
+				tempHandler(this, args);
 			}
 		}
 	}

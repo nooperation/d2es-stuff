@@ -17,11 +17,18 @@ namespace IdleClient.Game
 		/// <summary> Raised when client successfully enters a game. </summary>
 		public event EventHandler OnEnterGame;
 
+		public event EventHandler<PlayerCountArgs> OnPlayerCountChanged;
+
 		/// <summary>
 		/// Gets value indicating whether this object is disconnecting. Used to ignore exceptions
 		/// such as Sending a packet while a planned disconnect is going on.
 		/// </summary>
 		public bool IsDisconnecting { get; protected set; }
+
+		/// <summary>
+		/// Maximum amount of players for this game. Retrieved during connection to game server.
+		/// </summary>
+		public int MaxPlayers { get; protected set; }
 
 		private GameClient gameClient;
 		private Config settings;
@@ -47,6 +54,7 @@ namespace IdleClient.Game
 		public void Run(object args)
 		{
 			gameServerArgs = args as Realm.GameServerArgs;
+			this.MaxPlayers = gameServerArgs.MaxPlayers;
 			Console.WriteLine("Connecting to game server " + gameServerArgs.Address + ":" + gameServerArgs.Port);
 
 			try
@@ -64,6 +72,7 @@ namespace IdleClient.Game
 			using (client)
 			{
 				gameClient = new GameClient(this, client, settings, gameServerArgs.PlayerCount, characterName);
+				gameClient.OnPlayerCountChanged += new EventHandler<PlayerCountArgs>(gameClient_OnPlayerCountChanged);
 				byte[] buffer = new byte[0];
 
 				while (client.Connected)
@@ -224,7 +233,7 @@ namespace IdleClient.Game
 					{
 						return packets;
 					}
-					
+
 					packets.Add(packet);
 				}
 
@@ -286,6 +295,12 @@ namespace IdleClient.Game
 			}
 		}
 
+
+		void gameClient_OnPlayerCountChanged(object sender, PlayerCountArgs e)
+		{
+			FireOnPlayerCountEvent(e);
+		}
+
 		/// <summary>
 		/// Raises the on disconnect event. 
 		/// </summary>
@@ -309,6 +324,15 @@ namespace IdleClient.Game
 			if (tempHandler != null)
 			{
 				tempHandler(this, new FailureArgs(failureTypes, message));
+			}
+		}
+
+		private void FireOnPlayerCountEvent(PlayerCountArgs args)
+		{
+			EventHandler<PlayerCountArgs> tempHandler = OnPlayerCountChanged;
+			if (tempHandler != null)
+			{
+				tempHandler(this, args);
 			}
 		}
 	}

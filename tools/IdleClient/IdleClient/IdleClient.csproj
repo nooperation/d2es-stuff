@@ -79,6 +79,7 @@
   <ItemGroup>
     <Compile Include="ChatServer.cs" />
     <Compile Include="ChatServerDefs.cs" />
+    <Compile Include="ClientDriver.cs" />
     <Compile Include="Compression.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="GameClient.cs" />
