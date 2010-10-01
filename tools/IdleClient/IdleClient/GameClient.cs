@@ -17,7 +17,9 @@ namespace IdleClient.Game
 		/// </summary>
 		public int PlayerCount { get; protected set; }
 
-		private bool waitingForExitMessageResponse;
+		public bool IsExiting { get; set; }
+
+		//private bool waitingForExitMessageResponse;
 		private TcpClient client;
 		private Config settings;
 		private string characterName;
@@ -96,21 +98,21 @@ namespace IdleClient.Game
 
 			if (fromServer.ChatType == GameMessageIn.ChatTypes.ChatMessage)
 			{
-				if (fromServer.CharacterName.ToLower() == characterName.ToLower())
-				{
-					if (waitingForExitMessageResponse)
-					{
-						gameServer.Disconnect();
-						return;
-					}
-				}
-				else if (fromServer.CharacterName.ToLower() == settings.MasterName.ToLower())
+				//if (fromServer.CharacterName.ToLower() == characterName.ToLower())
+				//{
+				//	if (waitingForExitMessageResponse)
+				//	{
+				//		gameServer.Disconnect();
+				//		return;
+				//	}
+				//}
+				if (fromServer.CharacterName.ToLower() == settings.MasterName.ToLower())
 				{
 					if (fromServer.Message == "#exit")
 					{
 						Say("Bye");
+						IsExiting = true;
 						SendPacket(new ExitGameOut());
-						waitingForExitMessageResponse = true;
 						return;
 					}
 				}
@@ -186,12 +188,11 @@ namespace IdleClient.Game
 			{
 				client.GetStream().Write(packetBytes, 0, packetBytes.Length);
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
-				if (!gameServer.IsDisconnecting)
+				if (!gameServer.IsDisconnecting && !IsExiting)
 				{
-					Console.WriteLine("Failed to send packet to game server: " + ex.Message);
-					gameServer.Disconnect();
+					gameServer.Fail(FailureArgs.FailureTypes.FailedToSend, "Failed to send packet to game server");
 				}
 				return;
 			}

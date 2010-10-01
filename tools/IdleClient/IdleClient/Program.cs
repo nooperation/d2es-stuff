@@ -26,12 +26,6 @@ namespace IdleClient
 		List<ClientDriver> clients = new List<ClientDriver>();
 		Config settings;
 
-		// Temp hack to make sure PushBot() isn't called by PlayerChanged event during the inital
-		//  set of bots being pushed.
-		//TODO: Needs a much better way to keep track of the bots
-		private bool initalBotPushing = false;
-
-
 		public Program()
 		{
 			settings = new Config("IdleClient.ini");
@@ -43,17 +37,13 @@ namespace IdleClient
 				return;
 			}
 
-			initalBotPushing = true;
 			PushBot();
-			clients[0].OnPlayerCountChanged += new EventHandler<PlayerCountArgs>(firstClient_OnPlayerCountChanged);
 		}
-
 
 		private void PushBot()
 		{
 			if (clients.Count + 1 >= MaxPlayerCount || clients.Count >= settings.BotNames.Count)
 			{
-				initalBotPushing = false;
 				return;
 			}
 
@@ -61,6 +51,12 @@ namespace IdleClient
 			newClient.OnFailure += new EventHandler<FailureArgs>(newClient_OnFailure);
 			newClient.OnEnterGame += new EventHandler(newClient_OnEnterGame);
 			newClient.OnClientDisconnect += new EventHandler(newClient_OnClientDisconnect);
+
+			if (clients.Count == 0)
+			{
+				newClient.OnPlayerCountChanged += new EventHandler<PlayerCountArgs>(firstClient_OnPlayerCountChanged);
+			}
+
 			newClient.Start();
 
 			clients.Add(newClient);
@@ -82,16 +78,13 @@ namespace IdleClient
 		{
 			Console.WriteLine("Main: " + e.PlayerCount + " >=? " + MaxPlayerCount);
 
-			if (!initalBotPushing)
+			if (e.PlayerCount >= MaxPlayerCount)
 			{
-				if (e.PlayerCount >= MaxPlayerCount)
-				{
-					Popbot();
-				}
-				else if (e.PlayerCount < MaxPlayerCount - 1)
-				{
-					PushBot();
-				}
+				Popbot();
+			}
+			else if (e.PlayerCount < MaxPlayerCount - 1)
+			{
+				PushBot();
 			}
 		}
 
@@ -113,14 +106,11 @@ namespace IdleClient
 			{
 				MaxPlayerCount = source.MaxPlayers;
 			}
-
-			PushBot();
 		}
 
 		void newClient_OnFailure(object sender, FailureArgs e)
 		{
 
 		}
-
 	}
 }

@@ -16,14 +16,23 @@ namespace IdleClient.Game
 		public event EventHandler<FailureArgs> OnFailure;
 		/// <summary> Raised when client successfully enters a game. </summary>
 		public event EventHandler OnEnterGame;
-
+		/// <summary> Raised when a player enters or leaves a game. </summary>
 		public event EventHandler<PlayerCountArgs> OnPlayerCountChanged;
 
 		/// <summary>
-		/// Gets value indicating whether this object is disconnecting. Used to ignore exceptions
-		/// such as Sending a packet while a planned disconnect is going on.
+		/// Client has been marked as disconnecting. Errors from loss of connection should be silenced
+		/// until main loop dies.
 		/// </summary>
 		public bool IsDisconnecting { get; protected set; }
+
+		/// <summary>
+		/// Client has failed and requested to disconnect. Failure event will be rasied after main loop ends
+		/// instead of disconnect event.
+		/// </summary>
+		public bool HasFailed { get; protected set; }
+
+		/// <summary> The failure arguments if a failure has occured</summary>
+		private FailureArgs failureArgs;
 
 		/// <summary>
 		/// Maximum amount of players for this game. Retrieved during connection to game server.
@@ -63,9 +72,8 @@ namespace IdleClient.Game
 			}
 			catch (SocketException ex)
 			{
-				Console.WriteLine("Failed to connect to game server: " + ex.Message);
-				FireOnFailureEvent(FailureArgs.FailureTypes.UnableToConnect, "Failed to connect to game server: " + ex.Message);
-				FireOnDisconnectEvent();
+				Fail(FailureArgs.FailureTypes.UnableToConnect, "Failed to connect to game server: " + ex.Message);
+				FireOnFailureEvent(failureArgs.Type, failureArgs.Message);
 				return;
 			}
 
@@ -85,11 +93,9 @@ namespace IdleClient.Game
 					}
 					catch (Exception ex)
 					{
-						if (!IsDisconnecting)
+						if (!IsDisconnecting && !gameClient.IsExiting)
 						{
-							Console.WriteLine("Failed to receive game server packets: " + ex.Message);
-							FireOnFailureEvent(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive game server packets: " + ex.Message);
-							Disconnect();
+							Fail(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive game server packets: " + ex.Message);
 						}
 						break;
 					}
@@ -117,8 +123,7 @@ namespace IdleClient.Game
 								OnRequestLogonInfo(packet);
 								break;
 							case GameServerInPacketType.BadSave:
-								Console.WriteLine("Error: The save file for this character is invalid");
-								Disconnect();
+								Fail(FailureArgs.FailureTypes.BadCharacterData, "Invalid character data, unable to join game");
 								break;
 							default:
 								break;
@@ -133,7 +138,21 @@ namespace IdleClient.Game
 			}
 
 			Console.WriteLine("Game server: Disconnected");
-			FireOnDisconnectEvent();
+
+			if (pingThread != null && pingThread.IsAlive)
+			{
+				Console.WriteLine("Game server: Terminating ping thread");
+				pingThread.Abort();
+			}
+
+			if (HasFailed)
+			{
+				FireOnFailureEvent(failureArgs.Type, failureArgs.Message);
+			}
+			else
+			{
+				FireOnDisconnectEvent();
+			}
 		}
 
 		/// <summary>
@@ -255,10 +274,7 @@ namespace IdleClient.Game
 
 			if (decompressedPacketSize == 0xFF)
 			{
-				// TODO: All this duplicate message spam seen everywhere will be gone soon
-				Console.WriteLine("Ohno, unhandled special packet with no size {0:X2}", decompressedData[0]);
-				FireOnFailureEvent(FailureArgs.FailureTypes.UnknownPacketSize, String.Format("Unhandled special packet {0:X2}", decompressedData[0]));
-				Disconnect();
+				Fail(FailureArgs.FailureTypes.UnknownPacketSize, String.Format("Unhandled special packet {0:X2}", decompressedData[0]));
 				throw new ApplicationException("Bad packet data encountered (No size)");
 			}
 
@@ -284,21 +300,28 @@ namespace IdleClient.Game
 			{
 				Console.WriteLine("Game server: Disconnect requested");
 				IsDisconnecting = true;
-
-				if (pingThread != null && pingThread.IsAlive)
-				{
-					Console.WriteLine("Game server: Terminating ping thread");
-					pingThread.Abort();
-				}
-
 				client.Close();
 			}
 		}
 
-
-		void gameClient_OnPlayerCountChanged(object sender, PlayerCountArgs e)
+		/// <summary>
+		/// Handles failure and disconnects.
+		/// </summary>
+		/// <param name="failureType">Type of the failure.</param>
+		/// <param name="message">The error message.</param>
+		public void Fail(FailureArgs.FailureTypes failureType, string message)
 		{
-			FireOnPlayerCountEvent(e);
+			if (HasFailed)
+			{
+				failureArgs.Message += ". " + message;
+			}
+			else
+			{
+				failureArgs = new FailureArgs(failureType, message);
+			}
+			HasFailed = true;
+			IsDisconnecting = true;
+			Disconnect();
 		}
 
 		/// <summary>
@@ -327,6 +350,21 @@ namespace IdleClient.Game
 			}
 		}
 
+		/// <summary>
+		/// Handles the player changed event from game client. Just fires it as its own event. 
+		/// </summary>
+		/// <param name="sender">Source of the event.</param>
+		/// <param name="args">The.</param>
+		void gameClient_OnPlayerCountChanged(object sender, PlayerCountArgs args)
+		{
+			FireOnPlayerCountEvent(args);
+		}
+
+
+		/// <summary>
+		/// Raises the player count event.
+		/// </summary>
+		/// <param name="args">Arguments containing current player count.</param>
 		private void FireOnPlayerCountEvent(PlayerCountArgs args)
 		{
 			EventHandler<PlayerCountArgs> tempHandler = OnPlayerCountChanged;

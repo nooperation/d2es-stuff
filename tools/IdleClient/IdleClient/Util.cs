@@ -112,10 +112,6 @@ namespace IdleClient
 
 			int readSize = ns.Read(readBuff, 0, readBuff.Length);
 
-			if (readSize == 0)
-			{
-				int x = 0;
-			}
 			Array.Resize(ref data, data.Length + readSize);
 			Array.Copy(readBuff, 0, data, previousDataLength, readSize);
 		}

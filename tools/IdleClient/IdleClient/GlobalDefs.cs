@@ -65,6 +65,7 @@ namespace IdleClient
 
 			// Game server
 			UnknownPacketSize,
+			BadCharacterData,
 		}
 
 		public FailureTypes Type { get; set; }

@@ -50,7 +50,21 @@ namespace IdleClient.Realm
 		/// <summary> Rasied when ready to connect to game server. Contains arguments for GameServer connection.</summary>
 		public event EventHandler<GameServerArgs> ReadyToConnectToGameServer;
 
-		private bool isDisconnecting;
+		/// <summary>
+		/// Client has been marked as disconnecting. Errors from loss of connection should be silenced
+		/// until main loop dies.
+		/// </summary>
+		public bool IsDisconnecting { get; protected set; }
+
+		/// <summary>
+		/// Client has failed and requested to disconnect. Failure event will be rasied after main loop ends
+		/// instead of disconnect event.
+		/// </summary>
+		public bool HasFailed { get; protected set; }
+
+		/// <summary> The failure arguments if a failure has occured</summary>
+		private FailureArgs failureArgs;
+
 		private TcpClient client = new TcpClient();
 		private Config settings;
 		private string characterName;
@@ -77,7 +91,7 @@ namespace IdleClient.Realm
 			string address = realmServerData.Ip.ToString();
 			int port = realmServerData.Port;
 
-			Console.WriteLine("Connected to realm server " + address + ":" + port);
+			Console.WriteLine("Connecting to realm server " + address + ":" + port);
 
 			try
 			{
@@ -85,9 +99,8 @@ namespace IdleClient.Realm
 			}
 			catch (SocketException ex)
 			{
-				Console.WriteLine("Failed to connect to realm server: " + ex.Message);
-				FireOnFailureEvent(FailureArgs.FailureTypes.UnableToConnect, "Failed to connect to realm server: " + ex.Message);
-				FireOnDisconnectEvent();
+				Fail(FailureArgs.FailureTypes.UnableToConnect, "Failed to connect to realm server: " + ex.Message);
+				FireOnFailureEvent(failureArgs.Type, failureArgs.Message);
 				return;
 			}
 
@@ -112,11 +125,9 @@ namespace IdleClient.Realm
 					}
 					catch (Exception ex)
 					{
-						if (!isDisconnecting)
+						if (!IsDisconnecting)
 						{
-							Console.WriteLine("Failed to receive realm server packet: " + ex.Message);
-							FireOnFailureEvent(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive realm server packet: " + ex.Message);
-							Disconnect();
+							Fail(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive realm server packet: " + ex.Message);
 						}
 						break;
 					}
@@ -160,7 +171,14 @@ namespace IdleClient.Realm
 			}
 
 			Console.WriteLine("Realm server: Disconnected");
-			FireOnDisconnectEvent();
+			if (HasFailed)
+			{
+				FireOnFailureEvent(failureArgs.Type, failureArgs.Message);
+			}
+			else
+			{
+				FireOnDisconnectEvent();
+			}
 		}
 
 		/// <summary>
@@ -175,8 +193,7 @@ namespace IdleClient.Realm
 
 			if (!fromServer.IsSuccessful())
 			{
-				FireOnFailureEvent(FailureArgs.FailureTypes.FailedToJoinGame, fromServer.ToString());
-				Disconnect();
+				Fail(FailureArgs.FailureTypes.FailedToJoinGame, fromServer.ToString());
 				return;
 			}
 
@@ -225,8 +242,7 @@ namespace IdleClient.Realm
 
 			if (!fromServer.IsSuccessful())
 			{
-				FireOnFailureEvent(FailureArgs.FailureTypes.FailedToCreateGame, fromServer.ToString());
-				Disconnect();
+				Fail(FailureArgs.FailureTypes.FailedToCreateGame, fromServer.ToString());
 				return;
 			}
 
@@ -263,8 +279,7 @@ namespace IdleClient.Realm
 
 			if (!fromServer.IsSuccessful())
 			{
-				FireOnFailureEvent(FailureArgs.FailureTypes.FailedToLoginToChat, fromServer.ToString());
-				Disconnect();
+				Fail(FailureArgs.FailureTypes.FailedToLoginToChat, fromServer.ToString());
 				return;
 			}
 
@@ -285,9 +300,7 @@ namespace IdleClient.Realm
 
 			if (!fromServer.CharacterExists(characterName))
 			{
-				Console.WriteLine("Realm server: Character not found");
-				FireOnFailureEvent(FailureArgs.FailureTypes.CharacterNotFound, "Character not found");
-				Disconnect();
+				Fail(FailureArgs.FailureTypes.CharacterNotFound, "Character not found");
 				return;
 			}
 
@@ -308,9 +321,8 @@ namespace IdleClient.Realm
 
 			if (!fromServer.IsSuccessful())
 			{
-				Console.WriteLine("Realm server: server denied our connection request");
-				FireOnFailureEvent(FailureArgs.FailureTypes.ServerDeniedConnection, fromServer.ToString());
-				Disconnect();
+				Fail(FailureArgs.FailureTypes.ServerDeniedConnection, fromServer.ToString());
+				return;
 			}
 
 			CharList2Out toServer = new CharList2Out(8);
@@ -356,11 +368,9 @@ namespace IdleClient.Realm
 			}
 			catch (Exception ex)
 			{
-				if (!isDisconnecting)
+				if (!IsDisconnecting)
 				{
-					Console.WriteLine("Failed to send packet to realm server: " + ex.Message);
-					FireOnFailureEvent(FailureArgs.FailureTypes.FailedToSend, "Failed to send packet to realm server: " + ex.Message);
-					Disconnect();
+					Fail(FailureArgs.FailureTypes.FailedToSend, "Failed to send packet to realm server: " + ex.Message);
 				}
 				return;
 			}
@@ -426,9 +436,29 @@ namespace IdleClient.Realm
 			if (client.Connected)
 			{
 				Console.WriteLine("Realm server: Disconnect requested");
-				isDisconnecting = true;
+				IsDisconnecting = true;
 				client.Close();
 			}
+		}
+
+		/// <summary>
+		/// Handles failure and disconnects.
+		/// </summary>
+		/// <param name="failureType">Type of the failure.</param>
+		/// <param name="message">The error message.</param>
+		public void Fail(FailureArgs.FailureTypes failureType, string message)
+		{
+			if (HasFailed)
+			{
+				failureArgs.Message += ". " + message;
+			}
+			else
+			{
+				failureArgs = new FailureArgs(failureType, message);
+			}
+			HasFailed = true;
+			IsDisconnecting = true;
+			Disconnect();
 		}
 
 		/// <summary>
