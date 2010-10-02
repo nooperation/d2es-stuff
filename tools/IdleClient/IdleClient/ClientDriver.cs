@@ -50,6 +50,14 @@ namespace IdleClient
 			get { return gameServer.MaxPlayers; }
 		}
 
+		/// <summary>
+		/// Name of the character
+		/// </summary>
+		public string CharacterName 
+		{ 
+			get { return settings.BotNames[ClientIndex]; } 
+		}
+
 		private Thread chatServerThread = null;
 		private Thread realmServerThread = null;
 		private Thread gameServerThread = null;
@@ -92,7 +100,7 @@ namespace IdleClient
 
 			chatServerThread = new Thread(() =>
 			{
-				chatServer.Run();
+				chatServer.Run(null);
 			});
 
 			realmServerThread = new Thread((args) =>
@@ -105,6 +113,10 @@ namespace IdleClient
 				gameServer.Run(args);
 			});
 
+			chatServerThread.Name = "CHAT:" + CharacterName;
+			realmServerThread.Name = "REALM:" + CharacterName;
+			gameServerThread.Name = "GAME:" + CharacterName;
+
 			chatServer.ReadyToConnectToRealmServer += new EventHandler<RealmServerArgs>(chatServer_ReadyToConnectToRealmServer);
 			chatServer.OnFailure += new EventHandler<FailureArgs>(chatServer_OnFailure);
 
@@ -115,66 +127,66 @@ namespace IdleClient
 			gameServer.OnEnterGame += new EventHandler(gameServer_OnEnterGame);
 			gameServer.OnDisconnect += new EventHandler(gameServer_OnDisconnect);
 			gameServer.OnFailure += new EventHandler<FailureArgs>(gameServer_OnFailure);
-			gameServer.OnPlayerCountChanged += new EventHandler<PlayerCountArgs>(gameServer_OnPlayerCountChanged);
+			gameServer.OnPlayerCountChanged += new EventHandler<PlayerCountArgs>(gameClient_OnPlayerCountChanged);
 
 			IsRunning = true;
 			chatServerThread.Start();
 		}
 
-		void chatServer_OnFailure(object sender, FailureArgs e)
+		private void chatServer_OnFailure(object sender, FailureArgs e)
 		{
-			Console.WriteLine("Driver: ChatServer failed -> " + e.ToString());
+			Log("ChatServer failed -> " + e.ToString());
 			FireOnFailureEvent(e.Type, e.Message);
 		}
 
-		void realmServer_OnFailure(object sender, FailureArgs e)
+		private void realmServer_OnFailure(object sender, FailureArgs e)
 		{
-			Console.WriteLine("Driver: RealmServer failed -> " + e.ToString());
+			Log("RealmServer failed -> " + e.ToString());
 			FireOnFailureEvent(e.Type, e.Message);
 		}
 
-		void gameServer_OnFailure(object sender, FailureArgs e)
+		private void gameServer_OnFailure(object sender, FailureArgs e)
 		{
-			Console.WriteLine("Driver: GameServer failed -> " + e.ToString());
+			Log("GameServer failed -> " + e.ToString());
 			FireOnFailureEvent(e.Type, e.Message);
 		}
 
-		void gameServer_OnDisconnect(object sender, EventArgs e)
+		private void gameServer_OnDisconnect(object sender, EventArgs e)
 		{
-			Console.WriteLine("Driver: GameServer disconnected");
+			Log("GameServer disconnected");
 			chatServer.Disconnect();
 			realmServer.Disconnect();
 			FireOnClientDisconnectEvent();
 		}
 
-		void realmServer_OnDisconnect(object sender, EventArgs e)
+		private void realmServer_OnDisconnect(object sender, EventArgs e)
 		{
-			Console.WriteLine("Driver: RealmServer disconnected");
+			Log("RealmServer disconnected");
 			chatServer.Disconnect();
 		}
 
-		void realmServer_ReadyToConnectToGameServer(object sender, GameServerArgs e)
+		private void realmServer_ReadyToConnectToGameServer(object sender, GameServerArgs e)
 		{
-			Console.WriteLine("Driver: RealmServer says we're ready to connect to game server");
+			Log("RealmServer says we're ready to connect to game server");
 			gameServerThread.Start(e);
 			realmServer.Disconnect();
 		}
 
-		void chatServer_ReadyToConnectToRealmServer(object sender, RealmServerArgs e)
+		private void chatServer_ReadyToConnectToRealmServer(object sender, RealmServerArgs e)
 		{
-			Console.WriteLine("Driver: ChatServer says we're ready to connect to realm server");
+			Log("ChatServer says we're ready to connect to realm server");
 			realmServerThread.Start(e);
 		}
 
-		void gameServer_OnPlayerCountChanged(object sender, PlayerCountArgs e)
+		private void gameClient_OnPlayerCountChanged(object sender, PlayerCountArgs e)
 		{
-			Console.WriteLine("Driver: Player count changed -> " + e.ToString());
+			//Log("Player count changed -> " + e.ToString());
 			FireOnPlayerCountEvent(e);
 		}
 
-		void gameServer_OnEnterGame(object sender, EventArgs e)
+		private void gameServer_OnEnterGame(object sender, EventArgs e)
 		{
-			Console.WriteLine("Driver: Bot successfully connected to game, ready for more");
+			Log("Bot successfully connected to game, ready for more");
 			FireOnEnterGameEvent();
 		}
 
@@ -232,6 +244,16 @@ namespace IdleClient
 			{
 				gameServer.Disconnect();
 			}
+		}
+
+		public void Log(object message)
+		{
+			Logger.Instance.LogDriver(this, CharacterName + " -> " + message.ToString());
+		}
+
+		public override string ToString()
+		{
+			return "MAIN";
 		}
 	}
 }

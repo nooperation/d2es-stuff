@@ -6,7 +6,6 @@ using System.Net.Sockets;
 using System.IO;
 using System.Collections;
 using System.Threading;
-using MBNCSUtil;
 using System.Reflection;
 
 using IdleClient.Chat;
@@ -30,6 +29,15 @@ namespace IdleClient
 		{
 			settings = new Config("IdleClient.ini");
 			MaxPlayerCount = 8;
+
+			Logger.Instance.OnServerMessage += newClient_OnLog;
+			Logger.Instance.OnDebugMessage += newClient_OnLog;
+			Logger.Instance.OnGameMessage += newClient_OnLog;
+			Logger.Instance.OnErrorMessage += newClient_OnLog;
+			Logger.Instance.OnDriverMessage += newClient_OnLog;
+
+			Logger.Instance.GameMessageFilter.Add(settings.BotNames[0]);
+			Logger.Instance.DriverMessageFilter.Add(settings.BotNames[0]);
 
 			if (settings.BotNames.Count == 0)
 			{
@@ -76,8 +84,6 @@ namespace IdleClient
 
 		void firstClient_OnPlayerCountChanged(object sender, PlayerCountArgs e)
 		{
-			Console.WriteLine("Main: " + e.PlayerCount + " >=? " + MaxPlayerCount);
-
 			if (e.PlayerCount >= MaxPlayerCount)
 			{
 				Popbot();
@@ -111,6 +117,11 @@ namespace IdleClient
 		void newClient_OnFailure(object sender, FailureArgs e)
 		{
 
+		}
+
+		private void newClient_OnLog(object sender, Logger.LoggerArgs args)
+		{
+			Console.WriteLine(args.ToString());
 		}
 	}
 }

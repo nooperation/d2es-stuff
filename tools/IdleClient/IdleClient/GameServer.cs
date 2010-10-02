@@ -8,150 +8,124 @@ using System.Threading;
 
 namespace IdleClient.Game
 {
-	class GameServer
+	partial class GameServer : ClientBase
 	{
-		/// <summary> Raised when the client disconnects. </summary>
-		public event EventHandler OnDisconnect;
-		/// <summary> Raised when a failure occurs. This is most likely nonrecoverable. </summary>
-		public event EventHandler<FailureArgs> OnFailure;
-		/// <summary> Raised when client successfully enters a game. </summary>
-		public event EventHandler OnEnterGame;
-		/// <summary> Raised when a player enters or leaves a game. </summary>
+		/// <summary> 
+		/// Player count in the game has changed. 
+		/// </summary>
 		public event EventHandler<PlayerCountArgs> OnPlayerCountChanged;
 
-		/// <summary>
-		/// Client has been marked as disconnecting. Errors from loss of connection should be silenced
-		/// until main loop dies.
-		/// </summary>
-		public bool IsDisconnecting { get; protected set; }
+		/// <summary> Raised when client successfully enters a game. </summary>
+		public event EventHandler OnEnterGame;
 
 		/// <summary>
-		/// Client has failed and requested to disconnect. Failure event will be rasied after main loop ends
-		/// instead of disconnect event.
+		/// Client is in the game
 		/// </summary>
-		public bool HasFailed { get; protected set; }
-
-		/// <summary> The failure arguments if a failure has occured</summary>
-		private FailureArgs failureArgs;
+		public bool IsInGame { get; protected set; }
 
 		/// <summary>
 		/// Maximum amount of players for this game. Retrieved during connection to game server.
 		/// </summary>
 		public int MaxPlayers { get; protected set; }
 
-		private GameClient gameClient;
-		private Config settings;
-		private Thread pingThread;
-		private TcpClient client = new TcpClient();
-		private Realm.GameServerArgs gameServerArgs;
-		private string characterName;
+		/// <summary>
+		/// Gets the number of players currently in game.
+		/// </summary>
+		public int PlayerCount { get; protected set; }
 
 		/// <summary>
-		/// Creates a new game server client with specified settings
+		/// Client has sent LeaveGame packet to server, expecting connection loss
+		/// </summary>
+		public bool IsExiting { get; set; }
+
+		private Thread pingThread;
+		private Realm.GameServerArgs gameServerArgs;
+
+		/// <summary>
+		/// Creates a new client.
 		/// </summary>
 		/// <param name="settings">Options for controlling the operation.</param>
-		public GameServer(Config settings, string characterName)
+		/// <param name="characterName">Name of the character.</param>
+		public GameServer(Config settings, string characterName) : base(settings, characterName)
 		{
-			this.settings = settings;
-			this.characterName = characterName;
+			ClientName = "GAME";
 		}
 
 		/// <summary>
-		/// Entry point for game server thread. 
+		/// Initialises this object.
 		/// </summary>
-		/// <param name="args">The game server arguments from the realm server.</param>
-		public void Run(object args)
+		/// <param name="args">The arguments to pass to this client.</param>
+		protected override void Init(object args)
 		{
 			gameServerArgs = args as Realm.GameServerArgs;
+
+			this.address = gameServerArgs.Address;
+			this.port = gameServerArgs.Port;
 			this.MaxPlayers = gameServerArgs.MaxPlayers;
-			Console.WriteLine("Connecting to game server " + gameServerArgs.Address + ":" + gameServerArgs.Port);
+			this.PlayerCount = gameServerArgs.PlayerCount;
+		}
 
-			try
-			{
-				client = new TcpClient(gameServerArgs.Address, gameServerArgs.Port);
-			}
-			catch (SocketException ex)
-			{
-				Fail(FailureArgs.FailureTypes.UnableToConnect, "Failed to connect to game server: " + ex.Message);
-				FireOnFailureEvent(failureArgs.Type, failureArgs.Message);
-				return;
-			}
+		/// <summary>
+		/// The main loop for communicating with the server.
+		/// </summary>
+		protected override void MainLoop()
+		{
+			byte[] buffer = new byte[0];
 
-			using (client)
+			while (client.Connected)
 			{
-				gameClient = new GameClient(this, client, settings, gameServerArgs.PlayerCount, characterName);
-				gameClient.OnPlayerCountChanged += new EventHandler<PlayerCountArgs>(gameClient_OnPlayerCountChanged);
-				byte[] buffer = new byte[0];
+				List<GameServerPacket> packets;
 
-				while (client.Connected)
+				try
 				{
-					List<GameServerPacket> packets;
-
-					try
+					packets = ReceivePackets(ref buffer);
+				}
+				catch (Exception ex)
+				{
+					if (!IsDisconnecting && !IsExiting)
 					{
-						packets = ReceivePackets(ref buffer);
+						Fail(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive game server packets: " + ex.Message);
 					}
-					catch (Exception ex)
+					break;
+				}
+
+				foreach (var packet in packets)
+				{
+					if (settings.ShowPackets)
 					{
-						if (!IsDisconnecting && !gameClient.IsExiting)
-						{
-							Fail(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive game server packets: " + ex.Message);
-						}
-						break;
+						LogDebug("S -> C: " + packet);
 					}
-
-					foreach (var packet in packets)
+					if (settings.ShowPacketData)
 					{
-						if (settings.ShowPackets)
-						{
-							Console.WriteLine("S -> C: " + packet);
-						}
-						if (settings.ShowPacketData)
-						{
-							Console.WriteLine("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length));
-						}
-
-						switch (packet.Id)
-						{
-							case GameServerInPacketType.GameLogonReceipt:
-								OnGameLogonReceipt(packet);
-								break;
-							case GameServerInPacketType.GameLogonSuccess:
-								OnGameLogonSuccess(packet);
-								break;
-							case GameServerInPacketType.RequestLogonInfo:
-								OnRequestLogonInfo(packet);
-								break;
-							case GameServerInPacketType.BadSave:
-								Fail(FailureArgs.FailureTypes.BadCharacterData, "Invalid character data, unable to join game");
-								break;
-							default:
-								break;
-						}
-
-						if (gameClient != null)
-						{
-							gameClient.OnPacket(packet);
-						}
+						LogDebug(String.Format("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length)));
 					}
+
+					switch (packet.Id)
+					{
+						case GameServerInPacketType.GameLogonReceipt:
+							OnGameLogonReceipt(packet);
+							break;
+						case GameServerInPacketType.GameLogonSuccess:
+							OnGameLogonSuccess(packet);
+							break;
+						case GameServerInPacketType.RequestLogonInfo:
+							OnRequestLogonInfo(packet);
+							break;
+						case GameServerInPacketType.BadSave:
+							Fail(FailureArgs.FailureTypes.BadCharacterData, "Invalid character data, unable to join game");
+							break;
+						default:
+							break;
+					}
+					
+					OnPacket(packet);
 				}
 			}
 
-			Console.WriteLine("Game server: Disconnected");
-
 			if (pingThread != null && pingThread.IsAlive)
 			{
-				Console.WriteLine("Game server: Terminating ping thread");
+				LogServer("Terminating ping thread");
 				pingThread.Abort();
-			}
-
-			if (HasFailed)
-			{
-				FireOnFailureEvent(failureArgs.Type, failureArgs.Message);
-			}
-			else
-			{
-				FireOnDisconnectEvent();
 			}
 		}
 
@@ -162,27 +136,26 @@ namespace IdleClient.Game
 		/// <param name="packet">The packet.</param>
 		private void OnGameLogonSuccess(GameServerPacket packet)
 		{
-			gameClient.SendPacket(new EnterGameOut());
+			SendPacket(new EnterGameOut());
 
 			// Ping thread used to keep our connection to the server alive
 			pingThread = new Thread(() =>
 			{
-				Console.WriteLine("Ping thread started");
+				LogServer("Ping thread started");
 				while (client.Connected)
 				{
 					Thread.Sleep(7000);
-					gameClient.SendPing();
+					SendPing();
 				}
-				Console.WriteLine("Ping thread ended");
+				LogServer("Ping thread ended");
 			});
 
-			pingThread.Start();
+			pingThread.Name = "PING:" + characterName;
 
-			EventHandler temp = OnEnterGame;
-			if (temp != null)
-			{
-				OnEnterGame(this, new EventArgs());
-			}
+			pingThread.Start();
+			IsInGame = true;
+			FireOnEnterGameEvent();
+
 		}
 
 		/// <summary>
@@ -210,8 +183,8 @@ namespace IdleClient.Game
 				gameServerArgs.CharacterName
 			);
 
-			gameClient.SendPacket(toServer);
-			gameClient.SendPing();
+			SendPacket(toServer);
+			SendPing();
 		}
 
 		/// <summary>
@@ -291,45 +264,57 @@ namespace IdleClient.Game
 			return packet;
 		}
 
+
 		/// <summary>
-		/// Forcefully disconnects from the game server.
+		/// Sends a packet to the game server. 
 		/// </summary>
-		public void Disconnect()
+		/// <param name="packet">The packet.</param>
+		public void SendPacket(IOutPacket packet)
 		{
-			if (client.Connected)
+			SendPacket((GameServerOutPacketType)packet.Id, packet.GetBytes());
+		}
+
+		/// <summary>
+		/// Sends a packet to the game server.
+		/// </summary>
+		/// <param name="type">The type of packet to send.</param>
+		/// <param name="data">The packet data (Not the packet header).</param>
+		public void SendPacket(GameServerOutPacketType type, byte[] data)
+		{
+			GameClientPacket packet = new GameClientPacket();
+			packet.Id = type;
+			packet.Data = data;
+
+			if (settings.ShowPackets)
 			{
-				Console.WriteLine("Game server: Disconnect requested");
-				IsDisconnecting = true;
-				client.Close();
+				LogDebug("C -> S: " + packet);
+			}
+			if (settings.ShowPacketData)
+			{
+				LogDebug(String.Format("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length)));
+			}
+
+			byte[] packetBytes = packet.GetBytes();
+			try
+			{
+				client.GetStream().Write(packetBytes, 0, packetBytes.Length);
+			}
+			catch (Exception)
+			{
+				if (!IsDisconnecting && !IsExiting)
+				{
+					Fail(FailureArgs.FailureTypes.FailedToSend, "Failed to send packet to game server");
+				}
+				return;
 			}
 		}
 
 		/// <summary>
-		/// Handles failure and disconnects.
+		/// Raises the on enter game event. 
 		/// </summary>
-		/// <param name="failureType">Type of the failure.</param>
-		/// <param name="message">The error message.</param>
-		public void Fail(FailureArgs.FailureTypes failureType, string message)
+		private void FireOnEnterGameEvent()
 		{
-			if (HasFailed)
-			{
-				failureArgs.Message += ". " + message;
-			}
-			else
-			{
-				failureArgs = new FailureArgs(failureType, message);
-			}
-			HasFailed = true;
-			IsDisconnecting = true;
-			Disconnect();
-		}
-
-		/// <summary>
-		/// Raises the on disconnect event. 
-		/// </summary>
-		private void FireOnDisconnectEvent()
-		{
-			EventHandler tempHandler = OnDisconnect;
+			EventHandler tempHandler = OnEnterGame;
 			if (tempHandler != null)
 			{
 				tempHandler(this, new EventArgs());
@@ -337,34 +322,9 @@ namespace IdleClient.Game
 		}
 
 		/// <summary>
-		/// Raises the on failure event. 
+		/// Raises the on player count event. 
 		/// </summary>
-		/// <param name="failureTypes">Type of failures.</param>
-		/// <param name="message">The error message.</param>
-		private void FireOnFailureEvent(FailureArgs.FailureTypes failureTypes, string message)
-		{
-			EventHandler<FailureArgs> tempHandler = OnFailure;
-			if (tempHandler != null)
-			{
-				tempHandler(this, new FailureArgs(failureTypes, message));
-			}
-		}
-
-		/// <summary>
-		/// Handles the player changed event from game client. Just fires it as its own event. 
-		/// </summary>
-		/// <param name="sender">Source of the event.</param>
-		/// <param name="args">The.</param>
-		void gameClient_OnPlayerCountChanged(object sender, PlayerCountArgs args)
-		{
-			FireOnPlayerCountEvent(args);
-		}
-
-
-		/// <summary>
-		/// Raises the player count event.
-		/// </summary>
-		/// <param name="args">Arguments containing current player count.</param>
+		/// <param name="args">The arguments.</param>
 		private void FireOnPlayerCountEvent(PlayerCountArgs args)
 		{
 			EventHandler<PlayerCountArgs> tempHandler = OnPlayerCountChanged;

@@ -84,12 +84,6 @@ namespace IdleClient
 		/// </summary>
 		public Config()
 		{
-			Address = "localhost";
-			Port = 6112;
-			Owner = "IdleClient";
-			Username = "brahmin";
-			Password = "asdf123";
-
 #if OLDVERSION
 			ClientVersion = 0x0a;
 #else
@@ -97,10 +91,10 @@ namespace IdleClient
 #endif
 			GameName = "test";
 			GamePass = "";
+
+			Owner = "IdleClient";
 			GameDifficulty = DifficultyType.Normal;
 			GameDescription = GameDifficulty.ToString();
-
-			MasterName = "aaa";
 			ShowPackets = false;
 			ShowPacketData = false;
 		}
@@ -109,26 +103,8 @@ namespace IdleClient
 		/// Creates a new Config and reads settings from specific file
 		/// </summary>
 		/// <param name="configFile">The configuration file.</param>
-		public Config(string configFile)
+		public Config(string configFile) : this()
 		{
-			Address = "localhost";
-			Port = 6112;
-			Owner = "IdleClient";
-
-#if OLDVERSION
-			ClientVersion = 0x0a;
-#else
-			ClientVersion = 0x0c;
-#endif
-			GameName = "foobarrr";
-			GamePass = "";
-			GameDifficulty = DifficultyType.Normal;
-			GameDescription = GameDifficulty.ToString();
-
-			MasterName = "aaa";
-			ShowPackets = false;
-			ShowPacketData = false;
-
 			ReadConfig(configFile);
 		}
 

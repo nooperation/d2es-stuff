@@ -34,141 +34,101 @@ namespace IdleClient.Chat
 		public string UniqueName { get; set; }
 	}
 
-	class ChatServer
+	class ChatServer : ClientBase
 	{
-		/// <summary> Raised when the client disconnects. </summary>
-		public event EventHandler OnDisconnect;
-		/// <summary> Raised when a failure occurs. This is most likely nonrecoverable. </summary>
-		public event EventHandler<FailureArgs> OnFailure;
 		/// <summary> Raised when ready to connect to Realm Server. Contains argumentss for RealmServer connection. </summary>
 		public event EventHandler<RealmServerArgs> ReadyToConnectToRealmServer;
 
-		/// <summary>
-		/// Client has been marked as disconnecting. Errors from loss of connection should be silenced
-		/// until main loop dies.
-		/// </summary>
-		public bool IsDisconnecting { get; protected set; }
-
-		/// <summary>
-		/// Client has failed and requested to disconnect. Failure event will be rasied after main loop ends
-		/// instead of disconnect event.
-		/// </summary>
-		public bool HasFailed { get; protected set; }
-
-		/// <summary> The failure arguments if a failure has occured</summary>
-		private FailureArgs failureArgs;
-
-		private TcpClient client = new TcpClient();
-		private Config settings;
 		private uint clientToken = 0;
 		private uint serverToken = 0;
-		private string characterName;
 
+		/// <summary>
+		/// Creates a new client.
+		/// </summary>
+		/// <param name="settings">Options for controlling the operation.</param>
+		/// <param name="characterName">Name of the character.</param>
 		public ChatServer(Config settings, string characterName)
+			: base(settings, characterName)
 		{
-			this.settings = settings;
-			this.characterName = characterName;
+			ClientName = "CHAT";
 		}
 
-		//C > S [0x50] SID_AUTH_INFO
-		//S > C [0x25] SID_PING
-		//S > C [0x50] SID_AUTH_INFO
-		//C > S [0x51] SID_AUTH_CHECK
-		//S > C [0x51] SID_AUTH_CHECK
-		//C > S [0x3A] SID_LOGONRESPONSE2
-		//S > C [0x3A] SID_LOGONRESPONSE2
-		//C > S [0x0A] SID_ENTERCHAT		<--
-		//S > C [0x0A] SID_ENTERCHAT
-		// http://www.bnetdocs.org/old/content9d2c.html?Section=d&id=6
-		public void Run()
+		/// <summary>
+		/// Initialises this object.
+		/// </summary>
+		/// <param name="args">The arguments to pass to this client.</param>
+		protected override void Init(object args)
 		{
-			Console.WriteLine("Connecting to chat server " + settings.Address + ":" + settings.Port);
+			this.address = settings.Address;
+			this.port = settings.Port;
+		}
 
-			try
+		/// <summary>
+		/// The main loop for communicating with the server.
+		/// </summary>
+		protected override void MainLoop()
+		{
+			// Used to store the unprocessed packet data from ReceivePacket
+			byte[] buffer = new byte[0];
+
+			// When connecting to the server we must specify the protocol to use.
+			NetworkStream ns = client.GetStream();
+			ns.WriteByte(0x01);
+
+			// Must also send auth info to the server after the protocol
+			SendPacket(new AuthInfoOut(settings.ClientVersion));
+
+			while (client.Connected)
 			{
-				client = new TcpClient(settings.Address, settings.Port);
-			}
-			catch (SocketException ex)
-			{
-				Fail(FailureArgs.FailureTypes.UnableToConnect, "Failed to connect to chat server: " + ex.Message);
-				FireOnFailureEvent(failureArgs.Type, failureArgs.Message);
-				return;
-			}
+				ChatServerPacket packet;
 
-			using (client)
-			{
-				// Used to store the unprocessed packet data from ReceivePacket
-				byte[] buffer = new byte[0];
-
-				// When connecting to the server we must specify the protocol to use.
-				NetworkStream ns = client.GetStream();
-				ns.WriteByte(0x01);
-
-				// Must also send auth info to the server after the protocol
-				SendPacket(new AuthInfoOut(settings.ClientVersion));
-
-				while (client.Connected)
+				try
 				{
-					ChatServerPacket packet;
-
-					try
-					{
-						packet = ReceivePacket(ref buffer);
-					}
-					catch (IOException ex)
-					{
-						if (!IsDisconnecting)
-						{
-							Fail(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive chat packet: " + ex.Message);
-						}
-						break;
-					}
-
-					if (settings.ShowPackets)
-					{
-						Console.WriteLine("S -> C: " + packet);
-					}
-					if (settings.ShowPacketData)
-					{
-						Console.WriteLine("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length));
-					}
-
-					switch (packet.Id)
-					{
-						case ChatServerPacketType.PING:
-							OnPing(packet);
-							break;
-						case ChatServerPacketType.AUTH_INFO:
-							OnAuthInfo(packet);
-							break;
-						case ChatServerPacketType.AUTH_CHECK:
-							OnAuthCheck(packet);
-							break;
-						case ChatServerPacketType.LOGONRESPONSE2:
-							OnLogonResponse2(packet);
-							break;
-						case ChatServerPacketType.QUERYREALMS2:
-							OnQueryRealms2(packet);
-							break;
-						case ChatServerPacketType.LOGONREALMEX:
-							OnLogonRealmEx(packet);
-							break;
-						default:
-							Console.WriteLine("Unhandled Chat server packet");
-							Console.WriteLine(packet);
-							break;
-					}
+					packet = ReceivePacket(ref buffer);
 				}
-			}
+				catch (IOException ex)
+				{
+					if (!IsDisconnecting)
+					{
+						Fail(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive chat packet: " + ex.Message);
+					}
+					break;
+				}
 
-			Console.WriteLine("Chat server: Disconnected");
-			if (HasFailed)
-			{
-				FireOnFailureEvent(failureArgs.Type, failureArgs.Message);
-			}
-			else
-			{
-				FireOnDisconnectEvent();
+				if (settings.ShowPackets)
+				{
+					LogDebug("S -> C: " + packet);
+				}
+				if (settings.ShowPacketData)
+				{
+					LogDebug(string.Format("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length)));
+				}
+
+				switch (packet.Id)
+				{
+					case ChatServerPacketType.PING:
+						OnPing(packet);
+						break;
+					case ChatServerPacketType.AUTH_INFO:
+						OnAuthInfo(packet);
+						break;
+					case ChatServerPacketType.AUTH_CHECK:
+						OnAuthCheck(packet);
+						break;
+					case ChatServerPacketType.LOGONRESPONSE2:
+						OnLogonResponse2(packet);
+						break;
+					case ChatServerPacketType.QUERYREALMS2:
+						OnQueryRealms2(packet);
+						break;
+					case ChatServerPacketType.LOGONREALMEX:
+						OnLogonRealmEx(packet);
+						break;
+					default:
+						LogServer("Unhandled Chat server packet");
+						LogServer(packet.ToString());
+						break;
+				}
 			}
 		}
 
@@ -177,7 +137,7 @@ namespace IdleClient.Chat
 		private void OnLogonResponse2(ChatServerPacket packet)
 		{
 			LogonResponse2In fromServer = new LogonResponse2In(packet);
-			Console.WriteLine(fromServer.ToString());
+			LogServer(fromServer.ToString());
 
 			if (!fromServer.IsSuccessful())
 			{
@@ -193,7 +153,7 @@ namespace IdleClient.Chat
 		private void OnQueryRealms2(ChatServerPacket packet)
 		{
 			QueryRealms2In fromServer = new QueryRealms2In(packet);
-			Console.WriteLine(fromServer.ToString());
+			LogServer(fromServer.ToString());
 
 			if (fromServer.Count == 0)
 			{
@@ -210,7 +170,7 @@ namespace IdleClient.Chat
 		private void OnLogonRealmEx(ChatServerPacket packet)
 		{
 			LogonRealmExIn fromServer = new LogonRealmExIn(packet);
-			Console.WriteLine(fromServer.ToString());
+			LogServer(fromServer.ToString());
 
 			if (!fromServer.IsSuccessful())
 			{
@@ -230,7 +190,7 @@ namespace IdleClient.Chat
 		private void OnAuthCheck(ChatServerPacket packet)
 		{
 			AuthCheckIn fromServer = new AuthCheckIn(packet);
-			Console.WriteLine(fromServer.ToString());
+			LogServer(fromServer.ToString());
 
 			if (!fromServer.IsSuccessful())
 			{
@@ -247,7 +207,7 @@ namespace IdleClient.Chat
 		private void OnAuthInfo(ChatServerPacket packet)
 		{
 			AuthInfoIn fromServer = new AuthInfoIn(packet);
-			Console.WriteLine(fromServer.ToString());
+			//LogServer(fromServer.ToString());
 
 			AuthCheckOut toServer = new AuthCheckOut(settings.Owner);
 
@@ -289,11 +249,11 @@ namespace IdleClient.Chat
 
 			if (settings.ShowPackets)
 			{
-				Console.WriteLine("C -> S: " + packet);
+				LogDebug("C -> S: " + packet);
 			}
 			if (settings.ShowPacketData)
 			{
-				Console.WriteLine("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length));
+				LogDebug(String.Format("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length)));
 			}
 
 			byte[] packetBytes = packet.GetBytes();
@@ -372,66 +332,6 @@ namespace IdleClient.Chat
 			Array.Resize(ref buffer, newBufferLength);
 
 			return packet;
-		}
-
-		/// <summary>
-		/// Forcefully disconnects from the realm server.
-		/// </summary>
-		public void Disconnect()
-		{
-			IsDisconnecting = true;
-
-			if (client.Connected)
-			{
-				Console.WriteLine("Chat server: Disconnect requested");
-				client.Close();
-			}
-		}
-
-		/// <summary>
-		/// Handles failure and disconnects.
-		/// </summary>
-		/// <param name="failureType">Type of the failure.</param>
-		/// <param name="message">The error message.</param>
-		public void Fail(FailureArgs.FailureTypes failureType, string message)
-		{
-			if (HasFailed)
-			{
-				failureArgs.Message += ". " + message;
-			}
-			else
-			{
-				failureArgs = new FailureArgs(failureType, message);
-			}
-			HasFailed = true;
-			IsDisconnecting = true;
-			Disconnect();
-		}
-
-		/// <summary>
-		/// Raises the on disconnect event. 
-		/// </summary>
-		private void FireOnDisconnectEvent()
-		{
-			EventHandler tempHandler = OnDisconnect;
-			if (tempHandler != null)
-			{
-				tempHandler(this, new EventArgs());
-			}
-		}
-
-		/// <summary>
-		/// Raises the on failure event. 
-		/// </summary>
-		/// <param name="failureTypes">Type of failures.</param>
-		/// <param name="message">The error message.</param>
-		private void FireOnFailureEvent(FailureArgs.FailureTypes failureTypes, string message)
-		{
-			EventHandler<FailureArgs> tempHandler = OnFailure;
-			if (tempHandler != null)
-			{
-				tempHandler(this, new FailureArgs(failureTypes, message));
-			}
 		}
 	}
 

@@ -333,7 +333,7 @@ namespace IdleClient.Chat
 		{
 			ClientToken = clientToken;
 			ServerToken = serverToken;
-			PasswordHash = MBNCSUtil.OldAuth.DoubleHashPassword(password, clientToken, serverToken);
+			PasswordHash = BNSharp.MBNCSUtil.XSha1.DoubleHashPassword(password, clientToken, serverToken);
 			Username = username;
 		}
 
@@ -441,10 +441,10 @@ namespace IdleClient.Chat
 		{
 			StringBuilder sb = new StringBuilder();
 
-			sb.AppendLine("Total of " + Count + " realms found:");
+			sb.Append("Total of " + Count + " realm(s) found:");
 			foreach (var item in Realms)
 			{
-				sb.AppendLine("  " + item.Title + " - " + item.Description);
+				sb.Append(" \"" + item.Title + " - " + item.Description + "\"");
 			}
 
 			return sb.ToString();
@@ -464,7 +464,7 @@ namespace IdleClient.Chat
 		{
 			this.ClientToken = clientToken;
 			this.RealmTitle = realmTitle;
-			RealmPasswordHash = MBNCSUtil.OldAuth.DoubleHashPassword("password", clientToken, serverToken);
+			RealmPasswordHash = BNSharp.MBNCSUtil.XSha1.DoubleHashPassword("password", clientToken, serverToken);
 		}
 
 		public byte[] GetBytes()

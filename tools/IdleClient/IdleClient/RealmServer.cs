@@ -41,143 +41,104 @@ namespace IdleClient.Realm
 	/// <summary>
 	/// Realm server connection manager.  
 	/// </summary>
-	class RealmServer
+	class RealmServer : ClientBase
 	{
-		/// <summary> Raised when the client disconnects. </summary>
-		public event EventHandler OnDisconnect;
-		/// <summary> Raised when a failure occurs. This is most likely nonrecoverable. </summary>
-		public event EventHandler<FailureArgs> OnFailure;
 		/// <summary> Rasied when ready to connect to game server. Contains arguments for GameServer connection.</summary>
 		public event EventHandler<GameServerArgs> ReadyToConnectToGameServer;
 
-		/// <summary>
-		/// Client has been marked as disconnecting. Errors from loss of connection should be silenced
-		/// until main loop dies.
-		/// </summary>
-		public bool IsDisconnecting { get; protected set; }
-
-		/// <summary>
-		/// Client has failed and requested to disconnect. Failure event will be rasied after main loop ends
-		/// instead of disconnect event.
-		/// </summary>
-		public bool HasFailed { get; protected set; }
-
-		/// <summary> The failure arguments if a failure has occured</summary>
-		private FailureArgs failureArgs;
-
-		private TcpClient client = new TcpClient();
-		private Config settings;
-		private string characterName;
 		private int playerCount;
 		private int maxPlayers;
+		private Chat.RealmServerArgs realmServerArgs;
 
 		/// <summary>
-		/// Constructor. 
+		/// Creates a new client.
 		/// </summary>
 		/// <param name="settings">Options for controlling the operation.</param>
+		/// <param name="characterName">Name of the character.</param>
 		public RealmServer(Config settings, string characterName)
+			: base(settings, characterName)
 		{
-			this.settings = settings;
-			this.characterName = characterName;
+			ClientName = "RELM"; // Realm, it looks better when everything lines up
 		}
 
 		/// <summary>
-		/// Entry point for realm server thread. 
+		/// Initialises this object.
 		/// </summary>
-		/// <param name="args">The realm server arguments from the chat server.</param>
-		public void Run(object args)
+		/// <param name="args">The arguments to pass to this client.</param>
+		protected override void Init(object args)
 		{
-			Chat.RealmServerArgs realmServerData = args as Chat.RealmServerArgs;
-			string address = realmServerData.Ip.ToString();
-			int port = realmServerData.Port;
+			this.realmServerArgs = args as Chat.RealmServerArgs;
 
-			Console.WriteLine("Connecting to realm server " + address + ":" + port);
+			this.address = realmServerArgs.Ip.ToString();
+			this.port = realmServerArgs.Port;
+		}
 
-			try
+		/// <summary>
+		/// The main loop for communicating with the server.
+		/// </summary>
+		protected override void MainLoop()
+		{
+			// Used to store the unprocessed packet data from ReceivePacket
+			byte[] buffer = new byte[0];
+
+			// When connecting to the realm server we must specify the protocol to use.
+			NetworkStream ns = client.GetStream();
+			ns.WriteByte(0x01);
+
+			SendPacket(new StartupOut(realmServerArgs));
+
+			while (client.Connected)
 			{
-				client = new TcpClient(address, port);
-			}
-			catch (SocketException ex)
-			{
-				Fail(FailureArgs.FailureTypes.UnableToConnect, "Failed to connect to realm server: " + ex.Message);
-				FireOnFailureEvent(failureArgs.Type, failureArgs.Message);
-				return;
-			}
+				RealmServerPacket packet;
 
-			using (client)
-			{
-				// Used to store the unprocessed packet data from ReceivePacket
-				byte[] buffer = new byte[0];
-
-				// When connecting to the realm server we must specify the protocol to use.
-				NetworkStream ns = client.GetStream();
-				ns.WriteByte(0x01);
-
-				SendPacket(new StartupOut(realmServerData));
-
-				while (client.Connected)
+				try
 				{
-					RealmServerPacket packet;
-
-					try
-					{
-						packet = ReceivePacket(ref buffer);
-					}
-					catch (Exception ex)
-					{
-						if (!IsDisconnecting)
-						{
-							Fail(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive realm server packet: " + ex.Message);
-						}
-						break;
-					}
-
-					if (settings.ShowPackets)
-					{
-						Console.WriteLine("S -> C: " + packet);
-					}
-					if (settings.ShowPacketData)
-					{
-						Console.WriteLine("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length));
-					}
-
-					switch (packet.Id)
-					{
-						case RealmServerPacketType.STARTUP:
-							OnStartup(packet);
-							break;
-						case RealmServerPacketType.CREATEGAME:
-							OnCreateGame(packet);
-							break;
-						case RealmServerPacketType.JOINGAME:
-							OnJoinGame(packet);
-							break;
-						case RealmServerPacketType.GAMEINFO:
-							OnGameInfo(packet);
-							break;
-						case RealmServerPacketType.CHARLOGON:
-							OnCharLogon(packet);
-							break;
-						case RealmServerPacketType.CREATEQUEUE:
-							OnCreateQueue(packet);
-							break;
-						case RealmServerPacketType.CHARLIST2:
-							OnCharList2(packet);
-							break;
-						default:
-							break;
-					}
+					packet = ReceivePacket(ref buffer);
 				}
-			}
+				catch (Exception ex)
+				{
+					if (!IsDisconnecting)
+					{
+						Fail(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive realm server packet: " + ex.Message);
+					}
+					break;
+				}
 
-			Console.WriteLine("Realm server: Disconnected");
-			if (HasFailed)
-			{
-				FireOnFailureEvent(failureArgs.Type, failureArgs.Message);
-			}
-			else
-			{
-				FireOnDisconnectEvent();
+				if (settings.ShowPackets)
+				{
+					LogDebug("S -> C: " + packet);
+				}
+				if (settings.ShowPacketData)
+				{
+					LogDebug(String.Format("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length)));
+				}
+
+				switch (packet.Id)
+				{
+					case RealmServerPacketType.STARTUP:
+						OnStartup(packet);
+						break;
+					case RealmServerPacketType.CREATEGAME:
+						OnCreateGame(packet);
+						break;
+					case RealmServerPacketType.JOINGAME:
+						OnJoinGame(packet);
+						break;
+					case RealmServerPacketType.GAMEINFO:
+						OnGameInfo(packet);
+						break;
+					case RealmServerPacketType.CHARLOGON:
+						OnCharLogon(packet);
+						break;
+					case RealmServerPacketType.CREATEQUEUE:
+						OnCreateQueue(packet);
+						break;
+					case RealmServerPacketType.CHARLIST2:
+						OnCharList2(packet);
+						break;
+					default:
+						break;
+				}
 			}
 		}
 
@@ -189,7 +150,7 @@ namespace IdleClient.Realm
 		private void OnJoinGame(RealmServerPacket packet)
 		{
 			JoinGameIn fromServer = new JoinGameIn(packet);
-			Console.WriteLine(fromServer);
+			LogServer(fromServer);
 
 			if (!fromServer.IsSuccessful())
 			{
@@ -221,7 +182,7 @@ namespace IdleClient.Realm
 		private void OnGameInfo(RealmServerPacket packet)
 		{
 			GameInfoIn fromServer = new GameInfoIn(packet);
-			Console.WriteLine(fromServer);
+			LogServer(fromServer);
 
 			playerCount = fromServer.PlayerCount;
 			maxPlayers = fromServer.MaximumPlayers;
@@ -238,7 +199,7 @@ namespace IdleClient.Realm
 		private void OnCreateGame(RealmServerPacket packet)
 		{
 			CreateGameIn fromServer = new CreateGameIn(packet);
-			Console.WriteLine(fromServer);
+			LogServer(fromServer);
 
 			if (!fromServer.IsSuccessful())
 			{
@@ -259,7 +220,7 @@ namespace IdleClient.Realm
 		private void OnCreateQueue(RealmServerPacket packet)
 		{
 			CreateQueueIn fromServer = new CreateQueueIn(packet);
-			Console.WriteLine(fromServer);
+			LogServer(fromServer);
 		}
 
 		/// <summary>
@@ -275,7 +236,7 @@ namespace IdleClient.Realm
 		private void OnCharLogon(RealmServerPacket packet)
 		{
 			CharLogonIn fromServer = new CharLogonIn(packet);
-			Console.WriteLine(fromServer);
+			LogServer(fromServer);
 
 			if (!fromServer.IsSuccessful())
 			{
@@ -296,7 +257,7 @@ namespace IdleClient.Realm
 		private void OnCharList2(RealmServerPacket packet)
 		{
 			CharList2In fromServer = new CharList2In(packet);
-			Console.WriteLine(fromServer);
+			LogServer(fromServer);
 
 			if (!fromServer.CharacterExists(characterName))
 			{
@@ -317,7 +278,7 @@ namespace IdleClient.Realm
 		private void OnStartup(RealmServerPacket packet)
 		{
 			StartupIn fromServer = new StartupIn(packet);
-			Console.WriteLine(fromServer);
+			LogServer(fromServer);
 
 			if (!fromServer.IsSuccessful())
 			{
@@ -354,11 +315,11 @@ namespace IdleClient.Realm
 
 			if (settings.ShowPackets)
 			{
-				Console.WriteLine("C -> S: " + packet);
+				LogDebug("C -> S: " + packet);
 			}
 			if (settings.ShowPacketData)
 			{
-				Console.WriteLine("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length));
+				LogDebug(String.Format("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length)));
 			}
 
 			byte[] packetBytes = packet.GetBytes();
@@ -426,65 +387,6 @@ namespace IdleClient.Realm
 			Array.Resize(ref buffer, newBufferLength);
 
 			return packet;
-		}
-
-		/// <summary>
-		/// Forcefully disconnects from the realm server.
-		/// </summary>
-		public void Disconnect()
-		{
-			if (client.Connected)
-			{
-				Console.WriteLine("Realm server: Disconnect requested");
-				IsDisconnecting = true;
-				client.Close();
-			}
-		}
-
-		/// <summary>
-		/// Handles failure and disconnects.
-		/// </summary>
-		/// <param name="failureType">Type of the failure.</param>
-		/// <param name="message">The error message.</param>
-		public void Fail(FailureArgs.FailureTypes failureType, string message)
-		{
-			if (HasFailed)
-			{
-				failureArgs.Message += ". " + message;
-			}
-			else
-			{
-				failureArgs = new FailureArgs(failureType, message);
-			}
-			HasFailed = true;
-			IsDisconnecting = true;
-			Disconnect();
-		}
-
-		/// <summary>
-		/// Raises the on disconnect event.
-		/// </summary>
-		private void FireOnDisconnectEvent()
-		{
-			EventHandler tempHandler = OnDisconnect;
-			if (tempHandler != null)
-			{
-				tempHandler(this, new EventArgs());
-			}
-		}
-
-		/// <summary>
-		/// Raises the on failure event. 
-		/// </summary>
-		/// <param name="failureTypes">Type of failures.</param>
-		/// <param name="message">The error message.</param>
-		private void FireOnFailureEvent(FailureArgs.FailureTypes failureTypes, string message)
-		{
-			EventHandler<FailureArgs> tempHandler = OnFailure;
-			if (tempHandler != null)
-			{
-				tempHandler(this, new FailureArgs(failureTypes, message));
-			}
 		}
 	}
 }

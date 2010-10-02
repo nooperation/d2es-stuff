@@ -6,39 +6,8 @@ using System.Net.Sockets;
 
 namespace IdleClient.Game
 {
-	class GameClient
+	partial class GameServer : ClientBase
 	{
-
-		/// <summary> Player count in the game has changed. </summary>
-		public event EventHandler<PlayerCountArgs> OnPlayerCountChanged;
-
-		/// <summary>
-		/// Gets the number of players currently in game.
-		/// </summary>
-		public int PlayerCount { get; protected set; }
-
-		public bool IsExiting { get; set; }
-
-		//private bool waitingForExitMessageResponse;
-		private TcpClient client;
-		private Config settings;
-		private string characterName;
-		private GameServer gameServer;
-
-		/// <summary>
-		/// Creates a new game client using a previous game server connection and settings
-		/// </summary>
-		/// <param name="gameServerClient">The game server connection.</param>
-		/// <param name="settings">Options for controlling the operation.</param>
-		public GameClient(GameServer gameServer, TcpClient gameServerClient, Config settings, int playerCount, string characterName)
-		{
-			this.settings = settings;
-			client = gameServerClient;
-			this.characterName = characterName;
-			this.PlayerCount = playerCount;
-			this.gameServer = gameServer;
-		}
-
 		/// <summary>
 		/// Handles packets sent from the game server
 		/// </summary>
@@ -66,7 +35,7 @@ namespace IdleClient.Game
 		private void OnInformationMessage(GameServerPacket packet)
 		{
 			InformationMessageIn fromServer = new InformationMessageIn(packet);
-			Console.WriteLine(fromServer);
+			Log(fromServer);
 
 			switch (fromServer.Event)
 			{
@@ -74,12 +43,12 @@ namespace IdleClient.Game
 				case InformationMessageIn.InformationEvents.PlayerDropped:
 				case InformationMessageIn.InformationEvents.PlayerQuit:
 					PlayerCount--;
-					Console.WriteLine("{0} players remaining", PlayerCount);
+					Log(String.Format("{0} players remaining", PlayerCount));
 					FireOnPlayerCountEvent(new PlayerCountArgs(PlayerCount));
 					break;
 				case InformationMessageIn.InformationEvents.PlayerJoined:
 					PlayerCount++;
-					Console.WriteLine("{0} players total", PlayerCount);
+					Log(String.Format("{0} players total", PlayerCount));
 					FireOnPlayerCountEvent(new PlayerCountArgs(PlayerCount));
 					break;
 				default:
@@ -94,18 +63,10 @@ namespace IdleClient.Game
 		private void OnGameMessage(GameServerPacket packet)
 		{
 			GameMessageIn fromServer = new GameMessageIn(packet);
-			Console.WriteLine(fromServer);
+			Log(fromServer);
 
 			if (fromServer.ChatType == GameMessageIn.ChatTypes.ChatMessage)
 			{
-				//if (fromServer.CharacterName.ToLower() == characterName.ToLower())
-				//{
-				//	if (waitingForExitMessageResponse)
-				//	{
-				//		gameServer.Disconnect();
-				//		return;
-				//	}
-				//}
 				if (fromServer.CharacterName.ToLower() == settings.MasterName.ToLower())
 				{
 					if (fromServer.Message == "#exit")
@@ -154,57 +115,5 @@ namespace IdleClient.Game
 			SendPacket(toServer);
 		}
 
-		/// <summary>
-		/// Sends a packet to the game server. 
-		/// </summary>
-		/// <param name="packet">The packet.</param>
-		public void SendPacket(IOutPacket packet)
-		{
-			SendPacket((GameServerOutPacketType)packet.Id, packet.GetBytes());
-		}
-
-		/// <summary>
-		/// Sends a packet to the game server.
-		/// </summary>
-		/// <param name="type">The type of packet to send.</param>
-		/// <param name="data">The packet data (Not the packet header).</param>
-		public void SendPacket(GameServerOutPacketType type, byte[] data)
-		{
-			GameClientPacket packet = new GameClientPacket();
-			packet.Id = type;
-			packet.Data = data;
-
-			if (settings.ShowPackets)
-			{
-				Console.WriteLine("C -> S: " + packet);
-			}
-			if (settings.ShowPacketData)
-			{
-				Console.WriteLine("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length));
-			}
-
-			byte[] packetBytes = packet.GetBytes();
-			try
-			{
-				client.GetStream().Write(packetBytes, 0, packetBytes.Length);
-			}
-			catch (Exception)
-			{
-				if (!gameServer.IsDisconnecting && !IsExiting)
-				{
-					gameServer.Fail(FailureArgs.FailureTypes.FailedToSend, "Failed to send packet to game server");
-				}
-				return;
-			}
-		}
-
-		private void FireOnPlayerCountEvent(PlayerCountArgs args)
-		{
-			EventHandler<PlayerCountArgs> tempHandler = OnPlayerCountChanged;
-			if (tempHandler != null)
-			{
-				tempHandler(this, args);
-			}
-		}
 	}
 }
