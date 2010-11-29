@@ -347,5 +347,39 @@ namespace CharacterEditor
 
 			throw new Exception("End of stat list not found!");
 		}
+
+		/// <summary>
+		/// Move all allocated skill and stat points to pool of unspent points. Fails if golem exists
+		/// </summary>
+		/// TODO: Untested!
+		public void Respec()
+		{
+			if (Inventory.GolemItems.Count > 0)
+			{
+				throw new Exception("Respec: Cannot respec with an active golem");
+			}
+
+			int totalSkillPoints = Stat.SkillPoints;
+			int totalStatPoints = stat.StatPoints;
+
+			for (int i = 0; i < Skill.Length; i++)
+			{
+				totalSkillPoints += Skill[i];
+				Skill[i] = 0;
+			}
+
+			totalStatPoints += Stat.Strength;
+			totalStatPoints += Stat.Dexterity;
+			totalStatPoints += Stat.Vitality;
+			totalStatPoints += Stat.Energy;
+
+			Stat.Strength = 0;
+			Stat.Dexterity = 0;
+			Stat.Vitality = 0;
+			Stat.Energy = 0;
+
+			Stat.SkillPoints = totalSkillPoints;
+			Stat.StatPoints = totalStatPoints;
+		}
 	}
 }

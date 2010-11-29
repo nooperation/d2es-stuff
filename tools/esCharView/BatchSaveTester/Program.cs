@@ -5,11 +5,14 @@ using System.Text;
 using System.IO;
 using CharacterEditor;
 using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace BatchSaveTester
 {
 	class Program
 	{
+		private static StreamWriter sw; // TEMP!
+
 		static void Main(string[] args)
 		{
 			bool detectDuplicateIds = false;
@@ -31,7 +34,7 @@ namespace BatchSaveTester
 				Console.WriteLine("Invalid charSaveDirectory specified");
 				return;
 			}
-			
+
 			if (!modList.Any(n => { return n.ToLower() == specifiedMod; }))
 			{
 				Console.WriteLine("Invalid mod specified");
@@ -54,8 +57,53 @@ namespace BatchSaveTester
 				}
 			}
 
-			TestAllFiles(specifiedCharSaveDirectory, specifiedMod, detectDuplicateIds, detectFlaggedItems, detectFlaggedProperties);
+			//// TEMP!
+			//using(sw = new StreamWriter(File.OpenWrite(@"d:\\goontopiaStats.txt")))
+			//{
+			//	DumpCharacterData(null);
+			//	TestAllFiles(specifiedCharSaveDirectory, specifiedMod, detectDuplicateIds, detectFlaggedItems, detectFlaggedProperties);
+			//}
 			//TestAllFiles(@"D:\files\usr\var\charbackup");
+			// 
+			BatchConvertToD2s(@"D:\charsaves", "es300_R6D");
+			Console.WriteLine("Complete");
+		}
+
+		private static void BatchConvertToD2s(string path, string resourceSet)
+		{
+			string convertedSavePath = path + "\\d2s\\";
+			string[] fileNames = Directory.GetFiles(path);
+
+			if (!Directory.Exists(convertedSavePath))
+			{
+				Directory.CreateDirectory(convertedSavePath);
+			}
+			for (int i = 0; i < fileNames.Length; i++)
+			{
+				SaveReader currentSave = new SaveReader(resourceSet);
+
+				try
+				{
+					currentSave.Read(File.ReadAllBytes(fileNames[i]));
+					if (currentSave.Character.UnknownFlags != 64)
+					{
+						Console.WriteLine("Flags = {0}", currentSave.Character.UnknownFlags);
+					}
+					currentSave.Character.UnknownFlags = 0;
+
+					string savePath = convertedSavePath + Path.GetFileNameWithoutExtension(fileNames[i]) + ".d2s";
+
+					using (FileStream saveStream = File.OpenWrite(savePath))
+					{
+						currentSave.Write(saveStream, false);
+					}
+					
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine("Failed to convert {0}: {1}", fileNames[i], ex.Message);
+				}
+			}
 		}
 
 		private static void PrintUsage()
@@ -120,6 +168,7 @@ namespace BatchSaveTester
 				catch (Exception ex)
 				{
 					Console.WriteLine("Failed to read " + flaggedItemsPath + ": " + ex.Message);
+					sw.Close();
 					return;
 				}
 			}
@@ -197,9 +246,15 @@ namespace BatchSaveTester
 					invalidPropsSaves.Add(fileNames[i]);
 					continue;
 				}
+				catch (Exception)
+				{
+					invlaidSaves.Add(fileNames[i]);
+					continue;
+				}
 
 				if (currentSave != null)
 				{
+					DumpCharacterData(currentSave);
 					if (currentSave.Inventory.FailedItemCount > 0)
 					{
 						invalidItemSaves.Add(fileNames[i]);
@@ -349,6 +404,56 @@ namespace BatchSaveTester
 				Console.WriteLine(item);
 				//	File.Move(item, path + Path.GetFileName(item));
 			}
+		}
+
+		private static object outputLock = new object();
+
+		private static void DumpCharacterData(SaveReader saveData)
+		{
+			lock (outputLock)
+			{
+				sw.WriteLine(GetCharacterCSVData(saveData));
+			}
+		}
+
+		private static string GetCharacterCSVData(SaveReader saveData)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			PropertyInfo[] characterProperties = typeof(Character).GetProperties();
+			PropertyInfo[] statProperties = typeof(Stat).GetProperties();
+
+			foreach (var item in characterProperties)
+			{
+				if (item.PropertyType.IsPrimitive || item.PropertyType.IsEnum || item.PropertyType == typeof(string))
+				{
+					if (saveData != null)
+					{
+						sb.Append(item.GetValue(saveData.Character, null) + ",");
+					}
+					else
+					{
+						sb.Append(item.Name + ",");
+					}
+				}
+			}
+			foreach (var item in statProperties)
+			{
+				if (item.PropertyType.IsPrimitive || item.PropertyType.IsEnum || item.PropertyType == typeof(string))
+				{
+					if (saveData != null)
+					{
+						sb.Append(item.GetValue(saveData.Stat, null) + ",");
+					}
+					else
+					{
+						sb.Append(item.Name + ",");
+					}
+				}
+			}
+
+			sb.Remove(sb.Length - 1, 1);
+			return sb.ToString();
 		}
 	}
 }

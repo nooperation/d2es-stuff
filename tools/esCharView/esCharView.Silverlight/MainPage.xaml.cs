@@ -18,7 +18,7 @@ namespace esCharView.Silverlight
 			InitializeComponent();
 
 			comboBoxResourceSets.ItemsSource = CharacterEditor.Resources.GetResourceSets();
-			comboBoxResourceSets.SelectedIndex = 0;
+			comboBoxResourceSets.SelectedIndex = 1;
 		}
 
 		/// <summary>

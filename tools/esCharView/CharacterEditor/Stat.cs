@@ -305,7 +305,16 @@ namespace CharacterEditor
 
 			int statId = ItemDefs.ItemStatCostsByName[name].ID;
 
-			statValues[statId] = value;
+			// If value is 0, we assume user wants to delete the entry for that stat. 0 should 
+			// be default if no record exists when diablo loads the save so it should work out?
+			if (value == 0)
+			{
+				statValues.Remove(statId);
+			}
+			else
+			{
+				statValues[statId] = value;
+			}
 		}
 
 		/// <summary>
