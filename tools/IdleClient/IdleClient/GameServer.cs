@@ -38,6 +38,8 @@ namespace IdleClient.Game
 		/// </summary>
 		public bool IsExiting { get; set; }
 
+		public List<string> PlayerNames { get; set; }
+
 		private Thread pingThread;
 		private Realm.GameServerArgs gameServerArgs;
 
@@ -63,6 +65,7 @@ namespace IdleClient.Game
 			this.port = gameServerArgs.Port;
 			this.MaxPlayers = gameServerArgs.MaxPlayers;
 			this.PlayerCount = gameServerArgs.PlayerCount;
+			this.PlayerNames = gameServerArgs.PlayerNames;
 		}
 
 		/// <summary>

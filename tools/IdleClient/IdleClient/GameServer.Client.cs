@@ -42,11 +42,13 @@ namespace IdleClient.Game
 				case InformationMessageIn.InformationEvents.PlayerTimeout:
 				case InformationMessageIn.InformationEvents.PlayerDropped:
 				case InformationMessageIn.InformationEvents.PlayerQuit:
+					PlayerNames.Remove(fromServer.First);
 					PlayerCount--;
 					Log(String.Format("{0} players remaining", PlayerCount));
 					FireOnPlayerCountEvent(new PlayerCountArgs(PlayerCount));
 					break;
 				case InformationMessageIn.InformationEvents.PlayerJoined:
+					PlayerNames.Add(fromServer.First);
 					PlayerCount++;
 					Log(String.Format("{0} players total", PlayerCount));
 					FireOnPlayerCountEvent(new PlayerCountArgs(PlayerCount));
@@ -54,6 +56,12 @@ namespace IdleClient.Game
 				default:
 					break;
 			}
+		}
+
+		public void LeaveGame()
+		{
+			IsExiting = true;
+			SendPacket(new ExitGameOut());
 		}
 
 		/// <summary>
@@ -72,8 +80,7 @@ namespace IdleClient.Game
 					if (fromServer.Message == "#exit")
 					{
 						Say("Bye");
-						IsExiting = true;
-						SendPacket(new ExitGameOut());
+						LeaveGame();
 						return;
 					}
 				}

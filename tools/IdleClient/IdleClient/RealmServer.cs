@@ -36,6 +36,11 @@ namespace IdleClient.Realm
 		/// Gets or sets the maximum players for the game being joined.
 		/// </summary>
 		public int MaxPlayers { get; set; }
+
+		/// <summary>
+		/// List of all the character names in game before joining
+		/// </summary>
+		public List<string> PlayerNames { get; set; }
 	}
 
 	/// <summary>
@@ -48,6 +53,7 @@ namespace IdleClient.Realm
 
 		private int playerCount;
 		private int maxPlayers;
+		private List<string> playerNames;
 		private Chat.RealmServerArgs realmServerArgs;
 
 		/// <summary>
@@ -166,6 +172,7 @@ namespace IdleClient.Realm
 			args.CharacterClass = (byte)CharacterClassType.Barbarian;
 			args.PlayerCount = playerCount;
 			args.MaxPlayers = maxPlayers;
+			args.PlayerNames = playerNames;
 
 			// Pad the character name to 16 bytes. This is required by the game server.
 			byte[] charNameBytes = ASCIIEncoding.ASCII.GetBytes(characterName);
@@ -186,6 +193,7 @@ namespace IdleClient.Realm
 
 			playerCount = fromServer.PlayerCount;
 			maxPlayers = fromServer.MaximumPlayers;
+			playerNames = new List<string>(fromServer.CharacterNames);
 
 			JoinGameOut toServer = new JoinGameOut(settings.GameName, settings.GamePass);
 			SendPacket(RealmServerPacketType.JOINGAME, toServer.GetBytes());

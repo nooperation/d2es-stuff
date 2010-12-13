@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IdleClient
 {
-	class Logger
+	public class Logger
 	{
 
 		/// <summary>

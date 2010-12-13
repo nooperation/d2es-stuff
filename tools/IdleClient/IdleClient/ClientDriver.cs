@@ -9,9 +9,8 @@ using System.Threading;
 
 namespace IdleClient
 {
-	class ClientDriver
+	public class ClientDriver
 	{
-
 		/// <summary> Client had a nonrecoverable error. </summary>
 		public event EventHandler<FailureArgs> OnFailure;
 
@@ -23,6 +22,19 @@ namespace IdleClient
 
 		/// <summary> Client successfully entered the game. </summary>
 		public event EventHandler OnEnterGame;
+
+		public List<string> PlayerNames 
+		{
+			get
+			{
+				if (gameServer.IsInGame)
+				{
+					return gameServer.PlayerNames;
+				}
+
+				return new List<string>();
+			}
+		}
 
 		/// <summary>
 		/// Index of this client, assigned and used by ClientDriver manager
@@ -86,6 +98,33 @@ namespace IdleClient
 			if (gameServer != null)
 			{
 				gameServer.Disconnect();
+			}
+		}
+
+		public void Say(string message)
+		{
+			if (gameServer != null && gameServer.IsInGame)
+			{
+				gameServer.Say(message);
+			}
+		}
+
+		public void Terminate()
+		{
+			if (gameServerThread.IsAlive)
+			{
+				gameServer.LeaveGame();
+				gameServerThread.Join();
+			}
+			if (chatServerThread.IsAlive)
+			{
+				chatServer.Disconnect();
+				chatServerThread.Join();
+			}
+			if (realmServerThread.IsAlive)
+			{
+				realmServer.Disconnect();
+				realmServerThread.Join();
 			}
 		}
 
