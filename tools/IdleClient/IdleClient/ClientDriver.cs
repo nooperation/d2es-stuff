@@ -23,22 +23,7 @@ namespace IdleClient
 		/// <summary> Client successfully entered the game. </summary>
 		public event EventHandler OnEnterGame;
 
-		public List<string> PlayerNames 
-		{
-			get
-			{
-				if (gameServer.IsInGame)
-				{
-					return gameServer.PlayerNames;
-				}
-
-				return new List<string>();
-			}
-		}
-
-		/// <summary>
-		/// Index of this client, assigned and used by ClientDriver manager
-		/// </summary>
+		/// <summary> Index of this client, assigned and used by ClientDriver manager </summary>
 		public int ClientIndex { get; protected set; }
 
 		/// <summary>
@@ -62,9 +47,21 @@ namespace IdleClient
 			get { return gameServer.MaxPlayers; }
 		}
 
-		/// <summary>
-		/// Name of the character
-		/// </summary>
+		/// <summary> List of player names currently in the game </summary>
+		public List<string> PlayerNames
+		{
+			get
+			{
+				if (gameServer.IsInGame)
+				{
+					return gameServer.PlayerNames;
+				}
+
+				return new List<string>();
+			}
+		}
+
+		/// <summary> Name of the character </summary>
 		public string CharacterName 
 		{ 
 			get { return settings.BotNames[ClientIndex]; } 
@@ -79,28 +76,31 @@ namespace IdleClient
 		private RealmServer realmServer;
 		private GameServer gameServer;
 
+		/// <summary>
+		/// Creates a new client based on specified settings. Bot name determined by clientIndex
+		/// using list of names found in settings.
+		/// </summary>
+		/// <param name="settings">Idleclient settings</param>
+		/// <param name="clientIndex">Index of bot name from settings.BotNames</param>
 		public ClientDriver(Config settings, int clientIndex)
 		{
 			this.settings = settings;
 			this.ClientIndex = clientIndex;
 		}
 
+		/// <summary>
+		/// Terminates all connections.
+		/// TODO: Call terminate from destructor or just forcefully disconnect everything here?
+		/// </summary>
 		~ClientDriver()
 		{
-			if (chatServer != null)
-			{
-				chatServer.Disconnect();
-			}
-			if (realmServer != null)
-			{
-				realmServer.Disconnect();
-			}
-			if (gameServer != null)
-			{
-				gameServer.Disconnect();
-			}
+			Terminate();
 		}
 
+		/// <summary>
+		/// Causes the client to send a chat message to the game
+		/// </summary>
+		/// <param name="message">Message to say to player in the game</param>
 		public void Say(string message)
 		{
 			if (gameServer != null && gameServer.IsInGame)
@@ -109,27 +109,50 @@ namespace IdleClient
 			}
 		}
 
+		/// <summary>
+		/// Terminates all connetions made by this client
+		/// </summary>
 		public void Terminate()
 		{
-			if (gameServerThread.IsAlive)
+			IsDisconnecting = true;
+
+			// If we're connected to a game then we will want to let the server know we're disconnecting
+			// so our character is disconnected from the server itself. Otherwise we will just 'drop due to timeout'
+			// and probably fill the server's error logs up with garbage.
+			if (gameServerThread.IsAlive && gameServer != null)
 			{
-				gameServer.LeaveGame();
-				gameServerThread.Join();
+				if (gameServer.IsInGame)
+				{
+					gameServer.LeaveGame();
+
+					// Give the client some time to send the leave game packet to the server before
+					// disconnecting. After server get the message it should close our connection so
+					// it shouldn't take a full 1000ms
+					gameServerThread.Join(1000);
+				}
+
+				gameServer.Disconnect();
+
+				if (!gameServerThread.Join(1000))
+				{
+					// TODO: Check to see if this actually does what i want it to do
+					gameServerThread.Abort();
+				}
 			}
-			if (chatServerThread.IsAlive)
+			if (chatServerThread.IsAlive && chatServer != null)
 			{
 				chatServer.Disconnect();
-				chatServerThread.Join();
+				chatServerThread.Join(1000);
 			}
-			if (realmServerThread.IsAlive)
+			if (realmServerThread.IsAlive && realmServer != null)
 			{
 				realmServer.Disconnect();
-				realmServerThread.Join();
+				realmServerThread.Join(1000);
 			}
 		}
 
 		/// <summary>
-		/// Asynchronously creates a new client and starts its connection to the game
+		/// Asynchronously creates a new client and starts its connection to the game servers
 		/// </summary>
 		public void Start()
 		{
@@ -152,6 +175,7 @@ namespace IdleClient
 				gameServer.Run(args);
 			});
 
+			// Named threads for debugging purposes only
 			chatServerThread.Name = "CHAT:" + CharacterName;
 			realmServerThread.Name = "REALM:" + CharacterName;
 			gameServerThread.Name = "GAME:" + CharacterName;
@@ -172,24 +196,44 @@ namespace IdleClient
 			chatServerThread.Start();
 		}
 
+		/// <summary>
+		/// Fired when client fails when communicating with the chat server
+		/// </summary>
+		/// <param name="sender">Object causing this event</param>
+		/// <param name="e">Details of the failure</param>
 		private void chatServer_OnFailure(object sender, FailureArgs e)
 		{
 			Log("ChatServer failed -> " + e.ToString());
 			FireOnFailureEvent(e.Type, e.Message);
 		}
 
+		/// <summary>
+		/// Fired when client fails when communicating with the realm server
+		/// </summary>
+		/// <param name="sender">Object causing this event</param>
+		/// <param name="e">Details of the failure</param>
 		private void realmServer_OnFailure(object sender, FailureArgs e)
 		{
 			Log("RealmServer failed -> " + e.ToString());
 			FireOnFailureEvent(e.Type, e.Message);
 		}
 
+		/// <summary>
+		/// Fired when client fails when communicating with the game server
+		/// </summary>
+		/// <param name="sender">Object causing this event</param>
+		/// <param name="e">Details of the failure</param>
 		private void gameServer_OnFailure(object sender, FailureArgs e)
 		{
 			Log("GameServer failed -> " + e.ToString());
 			FireOnFailureEvent(e.Type, e.Message);
 		}
 
+		/// <summary>
+		/// Raised when client is disconnected from the game server
+		/// </summary>
+		/// <param name="sender">Object causing this event</param>
+		/// <param name="e">Unused</param>
 		private void gameServer_OnDisconnect(object sender, EventArgs e)
 		{
 			Log("GameServer disconnected");
@@ -198,12 +242,22 @@ namespace IdleClient
 			FireOnClientDisconnectEvent();
 		}
 
+		/// <summary>
+		/// Raised when client is disconnected from the realm server
+		/// </summary>
+		/// <param name="sender">Object causing this event</param>
+		/// <param name="e">Unused</param>
 		private void realmServer_OnDisconnect(object sender, EventArgs e)
 		{
 			Log("RealmServer disconnected");
 			chatServer.Disconnect();
 		}
 
+		/// <summary>
+		/// raised when client is ready to connect to the game server
+		/// </summary>
+		/// <param name="sender">Object causing this event</param>
+		/// <param name="e">Arguments needed to connect to the game server</param>
 		private void realmServer_ReadyToConnectToGameServer(object sender, GameServerArgs e)
 		{
 			Log("RealmServer says we're ready to connect to game server");
@@ -211,24 +265,44 @@ namespace IdleClient
 			realmServer.Disconnect();
 		}
 
+		/// <summary>
+		/// raised when client is ready to connect to the realm server
+		/// </summary>
+		/// <param name="sender">Object causing this event</param>
+		/// <param name="e">Arguments needed to connect to the realm server</param>
 		private void chatServer_ReadyToConnectToRealmServer(object sender, RealmServerArgs e)
 		{
 			Log("ChatServer says we're ready to connect to realm server");
 			realmServerThread.Start(e);
 		}
 
+		/// <summary>
+		/// Raised when player count changes within the game.
+		/// </summary>
+		/// <param name="sender">Object causing this event</param>
+		/// <param name="e">Args containing new player count</param>
 		private void gameClient_OnPlayerCountChanged(object sender, PlayerCountArgs e)
 		{
 			//Log("Player count changed -> " + e.ToString());
 			FireOnPlayerCountEvent(e);
 		}
 
+		/// <summary>
+		/// Raised when the client enters the game
+		/// </summary>
+		/// <param name="sender">Object causing this event</param>
+		/// <param name="e">Unused</param>
 		private void gameServer_OnEnterGame(object sender, EventArgs e)
 		{
 			Log("Bot successfully connected to game, ready for more");
 			FireOnEnterGameEvent();
 		}
 
+		/// <summary>
+		/// Raises a Failure event
+		/// </summary>
+		/// <param name="failureTypes">Type of failure</param>
+		/// <param name="message">Failure message</param>
 		private void FireOnFailureEvent(FailureArgs.FailureTypes failureTypes, string message)
 		{
 			EventHandler<FailureArgs> tempHandler = OnFailure;
@@ -238,6 +312,9 @@ namespace IdleClient
 			}
 		}
 
+		/// <summary>
+		/// Raises a Disconnect event
+		/// </summary>
 		private void FireOnClientDisconnectEvent()
 		{
 			EventHandler tempHandler = OnClientDisconnect;
@@ -248,6 +325,9 @@ namespace IdleClient
 			}
 		}
 
+		/// <summary>
+		/// Raises an EnterGame event
+		/// </summary>
 		private void FireOnEnterGameEvent()
 		{
 			EventHandler tempHandler = OnEnterGame;
@@ -258,6 +338,10 @@ namespace IdleClient
 			}
 		}
 
+		/// <summary>
+		/// Raises a PlayerCount event
+		/// </summary>
+		/// <param name="args"></param>
 		private void FireOnPlayerCountEvent(PlayerCountArgs args)
 		{
 			EventHandler<PlayerCountArgs> tempHandler = OnPlayerCountChanged;
@@ -267,29 +351,20 @@ namespace IdleClient
 			}
 		}
 
-		public void Disconnect()
-		{
-			IsDisconnecting = true;
-
-			if (chatServer != null)
-			{
-				chatServer.Disconnect();
-			}
-			if (realmServer != null)
-			{
-				realmServer.Disconnect();
-			}
-			if (gameServer != null)
-			{
-				gameServer.Disconnect();
-			}
-		}
-
+		/// <summary>
+		/// Logs a message
+		/// </summary>
+		/// <param name="message">Message to log</param>
 		public void Log(object message)
 		{
 			Logger.Instance.LogDriver(this, CharacterName + " -> " + message.ToString());
 		}
 
+		/// <summary>
+		/// The string representation of this client. Currently used for determining where log
+		/// messages originate from (eg. GAME, RELM, CHAT)
+		/// </summary>
+		/// <returns>String representation of this object</returns>
 		public override string ToString()
 		{
 			return "MAIN";

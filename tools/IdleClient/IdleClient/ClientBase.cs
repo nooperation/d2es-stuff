@@ -16,38 +16,37 @@ namespace IdleClient
 		public bool IsDisconnecting { get; protected set; }
 
 		/// <summary>
-		/// Client has failed and requested to disconnect. Failure event will be rasied after main loop ends
-		/// instead of disconnect event.
+		/// Client has failed and requested to disconnect. Failure event will be rasied after main loop
+		/// ends instead of disconnect event.
 		/// </summary>
 		public bool HasFailed { get; protected set; }
 
-		/// <summary> 
-		/// Raised when the client disconnects. 
-		/// </summary>
+		/// <summary>  Raised when the client disconnects.  </summary>
 		public event EventHandler OnDisconnect;
 
-		/// <summary> 
-		/// Raised when a failure occurs. This is most likely nonrecoverable. 
-		/// </summary>
+		/// <summary>  Raised when a failure occurs. This is most likely nonrecoverable.  </summary>
 		public event EventHandler<FailureArgs> OnFailure;
 
-		/// <summary>
-		/// Name of the character we want to log in as
-		/// </summary>
+		/// <summary> Name of the character we want to log in as </summary>
 		public string characterName { get; protected set; }
 
-		/// <summary>
-		/// Name of the client.
-		/// </summary>
+		/// <summary> Name of the client. </summary>		
 		public string ClientName { get; protected set; }
 
 		/// <summary> The failure arguments if a failure has occured</summary>
 		protected FailureArgs failureArgs;
-		protected TcpClient client = new TcpClient();
-		protected Config settings;
-		protected string address;
-		protected int port;
 
+		/// <summary> The TCP client </summary>
+		protected TcpClient client = new TcpClient();
+
+		/// <summary> Settings used for this client </summary>
+		protected Config settings;
+
+		/// <summary> The server address </summary>
+		protected string address;
+
+		/// <summary> The server port </summary>
+		protected int port;
 
 		/// <summary>
 		/// Creates a new client.
@@ -218,6 +217,11 @@ namespace IdleClient
 			Logger.Instance.LogError(this, characterName + " -> " + message);
 		}
 
+		/// <summary>
+		/// The string representation of this client. Currently used for determining where log
+		/// messages originate from (eg. GAME, RELM, CHAT)
+		/// </summary>
+		/// <returns>String representation of this object</returns>
 		public override string ToString()
 		{
 			return ClientName;

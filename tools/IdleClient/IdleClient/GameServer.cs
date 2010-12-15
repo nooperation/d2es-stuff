@@ -73,6 +73,12 @@ namespace IdleClient.Game
 		/// </summary>
 		protected override void MainLoop()
 		{
+#if OLDVERSION
+			LogServer("Game client started for 1.10 servers.");
+#else
+			LogServer("Game client started for 1.11+ servers.");
+#endif
+
 			byte[] buffer = new byte[0];
 
 			while (client.Connected)
@@ -205,7 +211,10 @@ namespace IdleClient.Game
 			{
 				if (buffer.Length == 0 || needsMoreData)
 				{
-					Util.Receive(ns, ref buffer);
+					while (buffer.Length == 0)
+					{
+						Util.Receive(ns, ref buffer);
+					}
 					needsMoreData = false;
 				}
 

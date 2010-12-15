@@ -60,8 +60,11 @@ namespace IdleClient.Game
 
 		public void LeaveGame()
 		{
-			IsExiting = true;
-			SendPacket(new ExitGameOut());
+			if (IsInGame)
+			{
+				IsExiting = true;
+				SendPacket(new ExitGameOut());
+			}
 		}
 
 		/// <summary>

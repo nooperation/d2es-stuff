@@ -291,7 +291,10 @@ namespace IdleClient.Chat
 			{
 				if (buffer.Length == 0 || needsMoreData)
 				{
-					Util.Receive(ns, ref buffer);
+					while (buffer.Length == 0)
+					{
+						Util.Receive(ns, ref buffer);
+					}
 					needsMoreData = false;
 				}
 
