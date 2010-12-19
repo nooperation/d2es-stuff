@@ -86,7 +86,7 @@ namespace IdleClient.Chat
 				{
 					packet = ReceivePacket(ref buffer);
 				}
-				catch (IOException ex)
+				catch (Exception ex)
 				{
 					if (!IsDisconnecting)
 					{

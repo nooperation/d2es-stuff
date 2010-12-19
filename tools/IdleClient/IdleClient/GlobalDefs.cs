@@ -90,15 +90,23 @@ namespace IdleClient
 	public class PlayerCountArgs : EventArgs
 	{
 		public int PlayerCount { get; set; }
+		public int MaxPlayers { get; set; }
+		public string PlayerName { get; set; }
+		public bool IsNewPlayer { get; set; }
+		public bool IsBot { get; set; }
 
-		public PlayerCountArgs(int count)
+		public PlayerCountArgs(int count, int maxPlayers, string name, bool isNewPlayer, bool isBot)
 		{
 			PlayerCount = count;
+			MaxPlayers = maxPlayers;
+			PlayerName = name;
+			IsNewPlayer = isNewPlayer;
+			IsBot = isBot;
 		}
 
 		public override string ToString()
 		{
-			return PlayerCount.ToString();
+			return PlayerCount.ToString() + " / " + MaxPlayers.ToString();
 		}
 	}
 }

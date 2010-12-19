@@ -194,6 +194,7 @@ namespace IdleClient.Realm
 			playerCount = fromServer.PlayerCount;
 			maxPlayers = fromServer.MaximumPlayers;
 			playerNames = new List<string>(fromServer.CharacterNames);
+			playerNames.RemoveAll(n => String.IsNullOrEmpty(n));
 
 			JoinGameOut toServer = new JoinGameOut(settings.GameName, settings.GamePass);
 			SendPacket(RealmServerPacketType.JOINGAME, toServer.GetBytes());

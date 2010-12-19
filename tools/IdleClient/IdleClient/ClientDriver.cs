@@ -119,7 +119,7 @@ namespace IdleClient
 			// If we're connected to a game then we will want to let the server know we're disconnecting
 			// so our character is disconnected from the server itself. Otherwise we will just 'drop due to timeout'
 			// and probably fill the server's error logs up with garbage.
-			if (gameServerThread.IsAlive && gameServer != null)
+			if (gameServerThread != null && gameServerThread.IsAlive && gameServer != null)
 			{
 				if (gameServer.IsInGame)
 				{
@@ -139,12 +139,12 @@ namespace IdleClient
 					gameServerThread.Abort();
 				}
 			}
-			if (chatServerThread.IsAlive && chatServer != null)
+			if (chatServerThread != null && chatServerThread.IsAlive && chatServer != null)
 			{
 				chatServer.Disconnect();
 				chatServerThread.Join(1000);
 			}
-			if (realmServerThread.IsAlive && realmServer != null)
+			if (realmServerThread != null && realmServerThread.IsAlive && realmServer != null)
 			{
 				realmServer.Disconnect();
 				realmServerThread.Join(1000);

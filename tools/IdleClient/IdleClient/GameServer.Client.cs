@@ -44,14 +44,14 @@ namespace IdleClient.Game
 				case InformationMessageIn.InformationEvents.PlayerQuit:
 					PlayerNames.Remove(fromServer.First);
 					PlayerCount--;
-					Log(String.Format("{0} players remaining", PlayerCount));
-					FireOnPlayerCountEvent(new PlayerCountArgs(PlayerCount));
+					Log(String.Format("{0}/{1} players remaining", PlayerCount, MaxPlayers));
+					FireOnPlayerCountEvent(new PlayerCountArgs(PlayerCount, MaxPlayers, fromServer.First, false, PlayerNames.Contains(fromServer.First.ToLower())));
 					break;
 				case InformationMessageIn.InformationEvents.PlayerJoined:
 					PlayerNames.Add(fromServer.First);
 					PlayerCount++;
-					Log(String.Format("{0} players total", PlayerCount));
-					FireOnPlayerCountEvent(new PlayerCountArgs(PlayerCount));
+					Log(String.Format("{0}/{1} players total", PlayerCount, MaxPlayers));
+					FireOnPlayerCountEvent(new PlayerCountArgs(PlayerCount, MaxPlayers, fromServer.First, true, PlayerNames.Contains(fromServer.First.ToLower())));
 					break;
 				default:
 					break;
