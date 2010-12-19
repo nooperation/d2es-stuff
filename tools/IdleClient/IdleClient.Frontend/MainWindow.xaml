@@ -14,7 +14,7 @@
             <RowDefinition Height="24" />
         </Grid.RowDefinitions>
 
-        <TabControl Background="White" Grid.Row="0" Grid.Column="0">
+        <TabControl Background="White" Grid.Row="0" Grid.Column="0" Name="tabControlMain">
             <TabItem Header="Server">
                 <TabItem.Background>
                 	<LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
@@ -22,7 +22,7 @@
                 		<GradientStop Color="{DynamicResource {x:Static SystemColors.GradientActiveCaptionColorKey}}" Offset="1"/>
                 	</LinearGradientBrush>
                 </TabItem.Background>
-                <TextBox IsReadOnly="True" Name="textServerOutput" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto"/>
+                <TextBox IsReadOnly="True" Name="textServerOutput" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" FontFamily="Lucida Console" FontSize="12" Background="White" Foreground="Black" FontWeight="Normal" FontStretch="Normal" Opacity="1" Text=""></TextBox>
             </TabItem>
             <TabItem Header="Chat">
             	<TabItem.Background>
@@ -33,40 +33,113 @@
             	</TabItem.Background>
                 <TextBox IsReadOnly="True" Name="textChatOutput" VerticalScrollBarVisibility="Visible"/>
             </TabItem>
+            <TabItem Header="Misc">
+                <TabItem.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="{DynamicResource {x:Static SystemColors.GradientActiveCaptionColorKey}}" Offset="1"/>
+                        <GradientStop Color="White"/>
+                    </LinearGradientBrush>
+                </TabItem.Background>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="0" Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0">Server</Label>
+                        <TextBox Grid.Row="0" Grid.Column="1" Name="textBoxServer" />
+                        <Label Grid.Row="1" Grid.Column="0">Port</Label>
+                        <TextBox Grid.Row="1" Grid.Column="1" Name="textBoxPort" />
+                        <Label Grid.Row="2" Grid.Column="0">Account</Label>
+                        <TextBox Grid.Row="2" Grid.Column="1" Name="textBoxAccountName" />
+                        <Label Grid.Row="3" Grid.Column="0">Password</Label>
+                        <PasswordBox Grid.Row="3" Grid.Column="1" Name="textBoxAccountPassword" />
+                        <Label Grid.Row="4" Grid.Column="0">Master</Label>
+                        <TextBox Grid.Row="4" Grid.Column="1" Name="textBoxMaster" />
+                        <Label Grid.Row="5" Grid.Column="0">Owner</Label>
+                        <TextBox Grid.Row="5" Grid.Column="1" Name="textBoxOwner" />
+                        <Label Grid.Row="6" Grid.Column="0">Delay</Label>
+                        <TextBox Grid.Row="6" Grid.Column="1" Name="textBoxJoinDelay" />
+                        <Separator Grid.Row="7" Grid.ColumnSpan="2" />
+                        <CheckBox Grid.Row="8" Grid.ColumnSpan="2" Name="checkBoxShowPackets">Show packets</CheckBox>
+                        <CheckBox Grid.Row="9" Grid.ColumnSpan="2" Name="checkBoxShowPacketData">Show packet data</CheckBox>
+                    </Grid>
+                    <Grid Grid.Row="0" Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Center">Bots</Label>
+                        <ListBox Name="listBoxBots" Grid.Row="1" Grid.ColumnSpan="3" SelectionMode="Extended"/>
+                        <TextBox Name="textBoxAddBot" Grid.Row="2" Grid.Column="0" KeyUp="textBoxAddBot_KeyUp" />
+                        <Button Name="buttonAddBot" Grid.Row="2" Grid.Column="1" Click="buttonAddBot_Click">Add</Button>
+                        <Button Name="buttonRemoveBot" Grid.Row="2" Grid.Column="2" Click="buttonRemoveBot_Click">Del</Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
         </TabControl>
 
         <GridSplitter  Grid.Row="0" Grid.Column="1" Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-        <StackPanel Grid.Column="2">
-            <Grid Name="gridConnect">                
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Name="gridConnect">                
                 <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Row="0" Grid.ColumnSpan="2" Name="buttonConnect">Connect</Button>
+                <Button Grid.Row="0" Grid.ColumnSpan="2" Name="buttonConnect" Click="buttonConnect_Click">Connect</Button>
                 
                 <Label Grid.Row="1" Grid.Column="0" Width="auto">Game</Label>
-                <TextBox Grid.Row="1" Grid.Column="1" Name="gameName"></TextBox>
+                <TextBox Grid.Row="1" Grid.Column="1" Name="textBoxGameName"></TextBox>
 
                 <Label Grid.Row="2" Grid.Column="0" Width="auto">Pass</Label>
-                <TextBox Grid.Row="2" Grid.Column="1" Name="gamePass"></TextBox>
+                <TextBox Grid.Row="2" Grid.Column="1" Name="textBoxGamePass"></TextBox>
 
                 <Label Grid.Row="3" Grid.Column="0" Width="auto">Diff</Label>
-                <ComboBox Grid.Row="3" Grid.Column="1"  SelectedIndex="0">
-                    <ComboBoxItem>Normal</ComboBoxItem>
-                    <ComboBoxItem>Nightmare</ComboBoxItem>
-                    <ComboBoxItem>Hell</ComboBoxItem>
-                </ComboBox>
+                <ComboBox Grid.Row="3" Grid.Column="1"  SelectedIndex="0" Name="comboBoxDifficulty" />            
             </Grid>
-            <TextBox IsReadOnly="True" Name="textBotCount">0 Bot(s) online</TextBox>
-            <ListBox Name="listBoxNames"></ListBox>
-        </StackPanel>
+            <TextBox Grid.Row="1" IsReadOnly="True" Name="textBotCount">0 Bot(s) online</TextBox>
+            <ListBox Grid.Row="2" Name="listBoxNames" />
+        </Grid>
         <GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="2" Grid.ColumnSpan="3" />
         <TextBox Name="textInput" Grid.Row="2" Grid.ColumnSpan="3" KeyUp="textInput_KeyUp" />
     </Grid>

@@ -8,7 +8,9 @@ namespace IdleClient.ConsoleFrontend
 {
 	class Program
 	{
+		private readonly string settingsPath = "IdleClient.xml";
 		Driver driver = new Driver();
+		Config settings = new Config();
 
 		static void Main(string[] args)
 		{
@@ -17,8 +19,21 @@ namespace IdleClient.ConsoleFrontend
 
 		public Program()
 		{
-			driver.Initalize();
-			driver.Start();
+			try
+			{
+				settings = Config.ReadConfig(settingsPath);
+			}
+			catch (Exception ex)
+			{
+				Output("Initalization failed: " + ex.Message);
+				throw;
+			}
+
+			driver.Initalize(settings);
+			driver.OnOutput = Output;
+			driver.OnPlayerCountChange = null;
+
+			driver.Start();			
 
 			while (driver.IsRunning)
 			{

@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace IdleClient
 {
 	class Driver
 	{
-		/// <summary> Number of milliseconds to wait before attempting to connect </summary>
-		public int JoinDelay { get; set; }
-
 		/// <summary> Determins if IdleClient is running. If not running then it's complete. </summary>
 		public bool IsRunning
 		{
@@ -23,7 +21,7 @@ namespace IdleClient
 		public Queue<ClientDriver> availableClients = new Queue<ClientDriver>();
 
 		/// <summary> IdleClient settings </summary>
-		private Config settings;
+		public Config settings;
 
 		/// <summary> IdleClient is shutting down, no more bots should join </summary>
 		private bool isShuttindDown = false;
@@ -34,22 +32,25 @@ namespace IdleClient
 		/// <summary> Captures output from IdleClient </summary>
 		public Action<string> OnOutput;
 
-		public Driver()
+		/// <summary> Captures OnPlayerCountChange events </summary>
+		public Action<List<string>> OnPlayerCountChange;
+
+		/// <summary> Determins if driver has been initalized </summary>
+		public bool IsInitalized { get; protected set; }
+
+		/// <summary>
+		/// Initalize driver.
+		/// </summary>
+		/// <param name="settings">Settings to use</param>
+		public void Initalize(Config settings)
 		{
-
-		}
-
-		public void Initalize()
-		{
-			settings = new Config("IdleClient.ini");
-
+			this.settings = settings;
+			
 			if (settings.BotNames.Count == 0)
 			{
 				Output("no bots defined");
 				return;
 			}
-
-			JoinDelay = 3000;
 
 			// Initalize all bots
 			for (int i = 0; i < settings.BotNames.Count; i++)
@@ -62,6 +63,8 @@ namespace IdleClient
 			Logger.Instance.OnErrorMessage += new EventHandler<Logger.LoggerArgs>(OnLoggerMessage);
 			Logger.Instance.OnGameMessage += new EventHandler<Logger.LoggerArgs>(OnLoggerMessage);
 			Logger.Instance.OnServerMessage += new EventHandler<Logger.LoggerArgs>(OnLoggerMessage);
+
+			IsInitalized = true;
 		}
 
 		/// <summary>
@@ -69,6 +72,32 @@ namespace IdleClient
 		/// </summary>
 		public void Start()
 		{
+			if (!IsInitalized)
+			{
+				throw new Exception("Driver not initalized!");
+			}
+
+			PushBot();
+		}
+
+		/// <summary>
+		/// Starts driver
+		/// </summary>
+		/// <param name="game">Game name to join/create</param>
+		/// <param name="pass">Game pass to join/create</param>
+		/// <param name="difficulty">Game difficulty</param>
+		public void Start(string game, string pass, DifficultyType difficulty)
+		{
+			if (!IsInitalized)
+			{
+				throw new Exception("Driver not initalized!");
+			}
+
+			settings.GameName = game;
+			settings.GamePass = pass;
+			settings.GameDifficulty = difficulty;
+			settings.GameDescription = difficulty.ToString();
+
 			PushBot();
 		}
 
@@ -77,6 +106,11 @@ namespace IdleClient
 		/// </summary>
 		public void Terminate()
 		{
+			if (!IsInitalized)
+			{
+				return;
+			}
+
 			isShuttindDown = true;
 
 			while (clients.Count > 0)
@@ -105,8 +139,8 @@ namespace IdleClient
 
 			lock (clients)
 			{
-				Output("Waiting...");
-				for (int i = 0; i < JoinDelay / 100; i++)
+				Output("Waiting " + settings.JoinDelay + "ms...");
+				for (int i = 0; i < settings.JoinDelay / 100; i++)
 				{
 					System.Threading.Thread.Sleep(100);
 
@@ -214,6 +248,13 @@ namespace IdleClient
 		/// <param name="e">New player count and information about player who joined/left game</param>
 		void newClient_OnPlayerCountChanged(object sender, PlayerCountArgs e)
 		{
+			// Let our listeners know the player count has changed
+			var tempHandler = OnPlayerCountChange;
+			if (OnPlayerCountChange != null)
+			{
+				tempHandler.BeginInvoke(clients[0].PlayerNames, null, null);
+			}
+
 			if (isShuttindDown)
 			{
 				return;
