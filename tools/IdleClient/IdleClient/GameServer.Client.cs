@@ -94,6 +94,7 @@ namespace IdleClient.Game
 					if (fromServer.Message == "#exit")
 					{
 						Say("Bye");
+						FireOnShutdownEvent();
 						LeaveGame();
 						return;
 					}

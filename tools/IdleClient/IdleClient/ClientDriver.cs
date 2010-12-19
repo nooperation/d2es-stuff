@@ -23,6 +23,9 @@ namespace IdleClient
 		/// <summary> Client successfully entered the game. </summary>
 		public event EventHandler OnEnterGame;
 
+		/// <summary> Raised when client is shut down, such as from the #exit of from a player </summary>
+		public event EventHandler OnShutdown;
+
 		/// <summary> Index of this client, assigned and used by ClientDriver manager </summary>
 		public int ClientIndex { get; protected set; }
 
@@ -200,9 +203,20 @@ namespace IdleClient
 			gameServer.OnDisconnect += new EventHandler(gameServer_OnDisconnect);
 			gameServer.OnFailure += new EventHandler<FailureArgs>(gameServer_OnFailure);
 			gameServer.OnPlayerCountChanged += new EventHandler<PlayerCountArgs>(gameClient_OnPlayerCountChanged);
+			gameServer.OnShutdown += new EventHandler(gameServer_OnShutdown);
 
 			IsRunning = true;
 			chatServerThread.Start();
+		}
+
+		/// <summary>
+		/// Fired when client(s) have been ordered to shutdown
+		/// </summary>
+		/// <param name="sender">Object causing this event</param>
+		/// <param name="e">Unused</param>
+		void gameServer_OnShutdown(object sender, EventArgs e)
+		{
+			FireOnShutdownEvent();
 		}
 
 		/// <summary>
@@ -358,6 +372,19 @@ namespace IdleClient
 			if (tempHandler != null)
 			{
 				tempHandler.BeginInvoke(this, args, null, null);
+			}
+		}
+
+		/// <summary>
+		/// Asynchronously raises the on player count event. 
+		/// </summary>
+		/// <param name="args">The arguments.</param>
+		private void FireOnShutdownEvent()
+		{
+			EventHandler tempHandler = OnShutdown;
+			if (tempHandler != null)
+			{
+				tempHandler.BeginInvoke(this, new EventArgs(), null, null);
 			}
 		}
 

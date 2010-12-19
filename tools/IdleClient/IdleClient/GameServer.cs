@@ -10,32 +10,31 @@ namespace IdleClient.Game
 {
 	partial class GameServer : ClientBase
 	{
-		/// <summary> 
-		/// Player count in the game has changed. 
-		/// </summary>
+		/// <summary>  Player count in the game has changed.  </summary>
 		public event EventHandler<PlayerCountArgs> OnPlayerCountChanged;
 
 		/// <summary> Raised when client successfully enters a game. </summary>
 		public event EventHandler OnEnterGame;
 
-		/// <summary>
-		/// Client is in the game
-		/// </summary>
+		/// <summary> Raised when client is shut down, such as from the #exit of from a player </summary>
+		public event EventHandler OnShutdown;
+
+		/// <summary> Client is in the game </summary>
 		public bool IsInGame { get; protected set; }
 
-		/// <summary>
-		/// Maximum amount of players for this game. Retrieved during connection to game server.
-		/// </summary>
+		/// <summary> Maximum amount of players for this game. Retrieved during connection to game server. </summary>
 		public int MaxPlayers { get; protected set; }
 
-		/// <summary>
-		/// Client has sent LeaveGame packet to server, expecting connection loss
-		/// </summary>
-		public bool IsExiting { get; set; }
+		/// <summary> Client has sent LeaveGame packet to server, expecting connection loss </summary>
+		public bool IsExiting { get; protected set; }
 
-		public List<string> PlayerNames { get; set; }
+		/// <summary> List of players in current game </summary>
+		public List<string> PlayerNames { get; protected set; }
 
+		/// <summary> Thread to continously send ping to server so server doesn't drop us </summary>
 		private Thread pingThread;
+
+		/// <summary> Arguments needed to connect to the game server </summary>
 		private Realm.GameServerArgs gameServerArgs;
 
 		/// <summary>
@@ -126,6 +125,8 @@ namespace IdleClient.Game
 				}
 			}
 
+			// PingThread will spend the majority of it's time sleeping, we will most likely always need to 
+			//   kill it
 			if (pingThread != null && pingThread.IsAlive)
 			{
 				LogServer("Terminating ping thread");
@@ -339,6 +340,19 @@ namespace IdleClient.Game
 			if (tempHandler != null)
 			{
 				tempHandler.BeginInvoke(this, args, null, null);
+			}
+		}
+
+		/// <summary>
+		/// Asynchronously raises the on player count event. 
+		/// </summary>
+		/// <param name="args">The arguments.</param>
+		private void FireOnShutdownEvent()
+		{
+			EventHandler tempHandler = OnShutdown;
+			if (tempHandler != null)
+			{
+				tempHandler.BeginInvoke(this, new EventArgs(), null, null);
 			}
 		}
 	}
