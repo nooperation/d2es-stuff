@@ -17,12 +17,18 @@ namespace IdleClient.ConsoleFrontend
 
 		public Program()
 		{
+			driver.Initalize();
 			driver.Start();
 
 			while (driver.IsRunning)
 			{
 				Thread.Sleep(10);
 			}
+		}
+
+		private void Output(string message)
+		{
+			Console.WriteLine(message);
 		}
 	}
 }

@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace IdleClient.ConsoleFrontend
+namespace IdleClient
 {
-	class Driver 
+	class Driver
 	{
+		/// <summary> Number of milliseconds to wait before attempting to connect </summary>
+		public int JoinDelay { get; set; }
+
 		/// <summary> Determins if IdleClient is running. If not running then it's complete. </summary>
-		public bool IsRunning 
+		public bool IsRunning
 		{
 			get { return clients.Count != 0; }
 		}
 
 		/// <summary> List of currently running clients </summary>
-		private List<ClientDriver> clients = new List<ClientDriver>();
+		public List<ClientDriver> clients = new List<ClientDriver>();
 
 		/// <summary> List of clients available to join the game </summary>
-		private Queue<ClientDriver> availableClients = new Queue<ClientDriver>();
+		public Queue<ClientDriver> availableClients = new Queue<ClientDriver>();
 
 		/// <summary> IdleClient settings </summary>
 		private Config settings;
@@ -25,15 +28,28 @@ namespace IdleClient.ConsoleFrontend
 		/// <summary> IdleClient is shutting down, no more bots should join </summary>
 		private bool isShuttindDown = false;
 
+		/// <summary> Lock for output, haven't tested it yet. </summary>
+		private object outputLock = new object();
+
+		/// <summary> Captures output from IdleClient </summary>
+		public Action<string> OnOutput;
+
 		public Driver()
+		{
+
+		}
+
+		public void Initalize()
 		{
 			settings = new Config("IdleClient.ini");
 
 			if (settings.BotNames.Count == 0)
 			{
-				Console.WriteLine("no bots defined");
+				Output("no bots defined");
 				return;
 			}
+
+			JoinDelay = 3000;
 
 			// Initalize all bots
 			for (int i = 0; i < settings.BotNames.Count; i++)
@@ -56,7 +72,18 @@ namespace IdleClient.ConsoleFrontend
 			PushBot();
 		}
 
-		private int delay = 3000;
+		/// <summary>
+		/// Terminate all bots
+		/// </summary>
+		public void Terminate()
+		{
+			isShuttindDown = true;
+
+			while (clients.Count > 0)
+			{
+				PopBot();
+			}
+		}
 
 		/// <summary>
 		/// Starts and new bot
@@ -69,7 +96,7 @@ namespace IdleClient.ConsoleFrontend
 			{
 				if (availableClients.Count == 0)
 				{
-					Console.WriteLine("PushBot(): No bots available!");
+					Output("PushBot(): No bots available!");
 					return;
 				}
 
@@ -78,23 +105,23 @@ namespace IdleClient.ConsoleFrontend
 
 			lock (clients)
 			{
-				Console.WriteLine("Waiting...");
-				for (int i = 0; i < delay / 100; i++)
+				Output("Waiting...");
+				for (int i = 0; i < JoinDelay / 100; i++)
 				{
 					System.Threading.Thread.Sleep(100);
 
 					if (isShuttindDown)
 					{
-						Console.WriteLine("Canceling PushBot()");
+						Output("Canceling PushBot()");
 						return;
 					}
-				}				
+				}
 
 				newClient.OnClientDisconnect += new EventHandler(newClient_OnClientDisconnect);
 				newClient.OnEnterGame += new EventHandler(newClient_OnEnterGame);
 				newClient.OnFailure += new EventHandler<FailureArgs>(newClient_OnFailure);
 				newClient.OnShutdown += new EventHandler(newClient_OnShutdown);
-			
+
 				if (clients.Count == 0)
 				{
 					// Only one client should handle player count change events since this is where we handle adding/removing bots
@@ -118,7 +145,7 @@ namespace IdleClient.ConsoleFrontend
 		private void PopBot()
 		{
 			lock (clients)
-			{		
+			{
 				// This is checked again after removing client
 				if (clients.Count == 0)
 				{
@@ -130,6 +157,18 @@ namespace IdleClient.ConsoleFrontend
 				clients.Remove(clientToRemove);
 
 				AddBotAsAvailable(clientToRemove);
+			}
+		}
+
+		/// <summary>
+		/// Make the first client say a message in game
+		/// </summary>
+		/// <param name="message">Chat message</param>
+		public void Say(string message)
+		{
+			if (clients.Count > 0 && clients[0] != null)
+			{
+				clients[0].Say(message);
 			}
 		}
 
@@ -165,7 +204,7 @@ namespace IdleClient.ConsoleFrontend
 		/// <param name="e">Logger args</param>
 		void OnLoggerMessage(object sender, Logger.LoggerArgs e)
 		{
-			System.Console.WriteLine("[" + e.Source + "] " +  e.Message);
+			Output("[" + e.Source + "] " + e.Message);
 		}
 
 		/// <summary>
@@ -180,17 +219,17 @@ namespace IdleClient.ConsoleFrontend
 				return;
 			}
 
-			System.Console.WriteLine("Player count changed: {0} / {1}", e.PlayerCount, e.MaxPlayers);
+			Output(String.Format("Player count changed: {0} / {1}", e.PlayerCount, e.MaxPlayers));
 
 			if (e.IsBot)
 			{
-				Console.WriteLine("It's a bot, ignoring");
+				Output("It's a bot, ignoring");
 				return;
 			}
 
 			if (clients.Count == 0)
 			{
-				Console.WriteLine("!!! PlayerCountChanged event raised without any clients");
+				Output("!!! PlayerCountChanged event raised without any clients");
 				return;
 			}
 
@@ -219,28 +258,19 @@ namespace IdleClient.ConsoleFrontend
 
 			ClientDriver source = sender as ClientDriver;
 
-			System.Console.WriteLine("Client entered game");
+			Output("Client entered game");
 
 			// PlayerNames doesn't include our bot's name yet
-			if (source.PlayerNames.Count+1 < source.MaxPlayers - 1)
+			if (source.PlayerNames.Count + 1 < source.MaxPlayers - 1)
 			{
-				Console.WriteLine("Room for another bot, adding...");
+				Output("Room for another bot, adding...");
 				PushBot();
 			}
-			else if (source.PlayerNames.Count+1 == source.MaxPlayers && clients.Count > 0)
+			else if (source.PlayerNames.Count + 1 == source.MaxPlayers && clients.Count > 0)
 			{
-				Console.WriteLine("oops, this bot wasn't needed, removing...");
+				Output("oops, this bot wasn't needed, removing...");
 				PopBot();
 			}
-			//else
-			//{
-			//	// Temporary stress test sort of thing
-			//	while (clients.Count > 1)
-			//	{
-			//		PopBot();
-			//	}
-			//	PushBot();
-			//}
 		}
 
 		/// <summary>
@@ -252,7 +282,7 @@ namespace IdleClient.ConsoleFrontend
 		{
 			ClientDriver source = sender as ClientDriver;
 
-			System.Console.WriteLine("Client failed");
+			Output("Client failed");
 
 			lock (clients)
 			{
@@ -271,7 +301,7 @@ namespace IdleClient.ConsoleFrontend
 		{
 			ClientDriver source = sender as ClientDriver;
 
-			System.Console.WriteLine("Client disconnected");
+			Output("Client disconnected");
 
 			lock (clients)
 			{
@@ -289,6 +319,26 @@ namespace IdleClient.ConsoleFrontend
 		void newClient_OnShutdown(object sender, EventArgs e)
 		{
 			isShuttindDown = true;
+		}
+
+		/// <summary>
+		/// Output message to interface
+		/// </summary>
+		/// <param name="message">Output message</param>
+		void Output(string message)
+		{
+			// TODO: Test
+			lock (outputLock)
+			{
+				if (OnOutput != null)
+				{
+					OnOutput.BeginInvoke(message, null, null);
+				}
+				else
+				{
+					Console.WriteLine(message);
+				}
+			}
 		}
 	}
 }
