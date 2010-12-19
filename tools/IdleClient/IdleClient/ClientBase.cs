@@ -156,19 +156,19 @@ namespace IdleClient
 		}
 
 		/// <summary>
-		/// Raises the on disconnect event. 
+		/// Asynchronously raises the on disconnect event. 
 		/// </summary>
 		private void FireOnDisconnectEvent()
 		{
 			EventHandler tempHandler = OnDisconnect;
 			if (tempHandler != null)
 			{
-				tempHandler(this, new EventArgs());
+				tempHandler.BeginInvoke(this, new EventArgs(), null, null);
 			}
 		}
 
 		/// <summary>
-		/// Raises the on failure event. 
+		/// Asynchronously raises the on failure event. 
 		/// </summary>
 		/// <param name="failureTypes">Type of failures.</param>
 		/// <param name="message">The error message.</param>
@@ -177,7 +177,7 @@ namespace IdleClient
 			EventHandler<FailureArgs> tempHandler = OnFailure;
 			if (tempHandler != null)
 			{
-				tempHandler(this, new FailureArgs(failureTypes, message));
+				tempHandler.BeginInvoke(this, new FailureArgs(failureTypes, message), null, null);
 			}
 		}
 

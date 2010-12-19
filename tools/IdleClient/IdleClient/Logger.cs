@@ -216,7 +216,7 @@ namespace IdleClient
 
 			if (tempHandler != null)
 			{
-				tempHandler(source, new LoggerArgs(source.ToString(), message.ToString()));
+				tempHandler.BeginInvoke(source, new LoggerArgs(source.ToString(), message.ToString()), null, null);
 			}
 		}
 

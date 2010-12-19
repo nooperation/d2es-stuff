@@ -29,11 +29,6 @@ namespace IdleClient.Game
 		public int MaxPlayers { get; protected set; }
 
 		/// <summary>
-		/// Gets the number of players currently in game.
-		/// </summary>
-		public int PlayerCount { get; protected set; }
-
-		/// <summary>
 		/// Client has sent LeaveGame packet to server, expecting connection loss
 		/// </summary>
 		public bool IsExiting { get; set; }
@@ -64,7 +59,6 @@ namespace IdleClient.Game
 			this.address = gameServerArgs.Address;
 			this.port = gameServerArgs.Port;
 			this.MaxPlayers = gameServerArgs.MaxPlayers;
-			this.PlayerCount = gameServerArgs.PlayerCount;
 			this.PlayerNames = gameServerArgs.PlayerNames;
 		}
 
@@ -95,6 +89,7 @@ namespace IdleClient.Game
 					{
 						Fail(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive game server packets: " + ex.Message);
 					}
+					
 					break;
 				}
 
@@ -160,6 +155,7 @@ namespace IdleClient.Game
 			});
 
 			pingThread.Name = "PING:" + characterName;
+			pingThread.IsBackground = true;
 
 			pingThread.Start();
 			IsInGame = true;
@@ -322,19 +318,19 @@ namespace IdleClient.Game
 		}
 
 		/// <summary>
-		/// Raises the on enter game event. 
+		/// Asynchronously raises the on enter game event. 
 		/// </summary>
 		private void FireOnEnterGameEvent()
 		{
 			EventHandler tempHandler = OnEnterGame;
 			if (tempHandler != null)
 			{
-				tempHandler(this, new EventArgs());
+				tempHandler.BeginInvoke(this, new EventArgs(), null, null);
 			}
 		}
 
 		/// <summary>
-		/// Raises the on player count event. 
+		/// Asynchronously raises the on player count event. 
 		/// </summary>
 		/// <param name="args">The arguments.</param>
 		private void FireOnPlayerCountEvent(PlayerCountArgs args)
@@ -342,7 +338,7 @@ namespace IdleClient.Game
 			EventHandler<PlayerCountArgs> tempHandler = OnPlayerCountChanged;
 			if (tempHandler != null)
 			{
-				tempHandler(this, args);
+				tempHandler.BeginInvoke(this, args, null, null);
 			}
 		}
 	}

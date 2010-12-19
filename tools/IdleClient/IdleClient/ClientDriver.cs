@@ -135,19 +135,24 @@ namespace IdleClient
 
 				if (!gameServerThread.Join(1000))
 				{
-					// TODO: Check to see if this actually does what i want it to do
 					gameServerThread.Abort();
 				}
 			}
 			if (chatServerThread != null && chatServerThread.IsAlive && chatServer != null)
 			{
 				chatServer.Disconnect();
-				chatServerThread.Join(1000);
+				if (!chatServerThread.Join(1000))
+				{
+					chatServerThread.Abort();
+				}
 			}
 			if (realmServerThread != null && realmServerThread.IsAlive && realmServer != null)
 			{
 				realmServer.Disconnect();
-				realmServerThread.Join(1000);
+				if (!realmServerThread.Join(1000))
+				{
+					realmServerThread.Abort();
+				}
 			}
 		}
 
@@ -179,6 +184,10 @@ namespace IdleClient
 			chatServerThread.Name = "CHAT:" + CharacterName;
 			realmServerThread.Name = "REALM:" + CharacterName;
 			gameServerThread.Name = "GAME:" + CharacterName;
+
+			chatServerThread.IsBackground = true;
+			realmServerThread.IsBackground = true;
+			gameServerThread.IsBackground = true;
 
 			chatServer.ReadyToConnectToRealmServer += new EventHandler<RealmServerArgs>(chatServer_ReadyToConnectToRealmServer);
 			chatServer.OnFailure += new EventHandler<FailureArgs>(chatServer_OnFailure);
@@ -306,9 +315,10 @@ namespace IdleClient
 		private void FireOnFailureEvent(FailureArgs.FailureTypes failureTypes, string message)
 		{
 			EventHandler<FailureArgs> tempHandler = OnFailure;
+
 			if (tempHandler != null)
 			{
-				tempHandler(this, new FailureArgs(failureTypes, message));
+				tempHandler.BeginInvoke(this, new FailureArgs(failureTypes, message), null, null);
 			}
 		}
 
@@ -321,7 +331,7 @@ namespace IdleClient
 
 			if (tempHandler != null)
 			{
-				tempHandler(this, new EventArgs());
+				tempHandler.BeginInvoke(this, new EventArgs(), null, null);
 			}
 		}
 
@@ -334,7 +344,7 @@ namespace IdleClient
 
 			if (tempHandler != null)
 			{
-				tempHandler(this, new EventArgs());
+				tempHandler.BeginInvoke(this, new EventArgs(), null, null);
 			}
 		}
 
@@ -347,7 +357,7 @@ namespace IdleClient
 			EventHandler<PlayerCountArgs> tempHandler = OnPlayerCountChanged;
 			if (tempHandler != null)
 			{
-				tempHandler(this, args);
+				tempHandler.BeginInvoke(this, args, null, null);
 			}
 		}
 

@@ -178,11 +178,7 @@ namespace IdleClient.Chat
 				return;
 			}
 
-			EventHandler<RealmServerArgs> tempHandler = ReadyToConnectToRealmServer;
-			if (tempHandler != null)
-			{
-				tempHandler(this, new RealmServerArgs(fromServer));
-			}
+			FireReadyToConnectToRealmServerEvent(new RealmServerArgs(fromServer));
 		}
 
 		/// <summary>Handles the AuthCheck packet. Responds with LogonRequest2 packet</summary>
@@ -335,6 +331,19 @@ namespace IdleClient.Chat
 			Array.Resize(ref buffer, newBufferLength);
 
 			return packet;
+		}
+
+		/// <summary>
+		/// Asynchronously raises the ReadyToConnectToRealmServer event
+		/// </summary>
+		/// <param name="args"></param>
+		private void FireReadyToConnectToRealmServerEvent(RealmServerArgs args)
+		{
+			EventHandler<RealmServerArgs> tempHandler = ReadyToConnectToRealmServer;
+			if (tempHandler != null)
+			{
+				tempHandler.BeginInvoke(this, args, null, null);
+			}
 		}
 	}
 

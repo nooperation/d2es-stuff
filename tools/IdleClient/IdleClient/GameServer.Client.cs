@@ -37,21 +37,32 @@ namespace IdleClient.Game
 			InformationMessageIn fromServer = new InformationMessageIn(packet);
 			Log(fromServer);
 
+			
+
 			switch (fromServer.Event)
 			{
 				case InformationMessageIn.InformationEvents.PlayerTimeout:
 				case InformationMessageIn.InformationEvents.PlayerDropped:
 				case InformationMessageIn.InformationEvents.PlayerQuit:
-					PlayerNames.Remove(fromServer.First);
-					PlayerCount--;
-					Log(String.Format("{0}/{1} players remaining", PlayerCount, MaxPlayers));
-					FireOnPlayerCountEvent(new PlayerCountArgs(PlayerCount, MaxPlayers, fromServer.First, false, PlayerNames.Contains(fromServer.First.ToLower())));
-					break;
+					{
+						bool isBot = settings.BotNames.Contains(fromServer.First.ToLower());
+						
+						PlayerNames.Remove(fromServer.First);
+						Log(String.Format("{0}/{1} players remaining", PlayerNames.Count, MaxPlayers));
+
+						FireOnPlayerCountEvent(new PlayerCountArgs(PlayerNames.Count, MaxPlayers, fromServer.First, false, isBot));
+						
+						break;
+					}
 				case InformationMessageIn.InformationEvents.PlayerJoined:
-					PlayerNames.Add(fromServer.First);
-					PlayerCount++;
-					Log(String.Format("{0}/{1} players total", PlayerCount, MaxPlayers));
-					FireOnPlayerCountEvent(new PlayerCountArgs(PlayerCount, MaxPlayers, fromServer.First, true, PlayerNames.Contains(fromServer.First.ToLower())));
+					{
+						bool isBot = settings.BotNames.Contains(fromServer.First.ToLower());
+						
+						PlayerNames.Add(fromServer.First);
+						Log(String.Format("{0}/{1} players total", PlayerNames.Count, MaxPlayers));
+
+						FireOnPlayerCountEvent(new PlayerCountArgs(PlayerNames.Count, MaxPlayers, fromServer.First, true, isBot));
+					}
 					break;
 				default:
 					break;
