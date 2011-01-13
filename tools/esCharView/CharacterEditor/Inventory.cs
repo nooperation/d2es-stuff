@@ -207,9 +207,9 @@ namespace CharacterEditor
 
 			//TODO: Trust item count header and use it to detect player/corpse/merc/golem sections
 
-			// Player inventory data ends with "JM\x00\x00" or "JM\x01\x00"
+			// Player inventory data ends with "JM\x00\x00" or "JM\x01\x00". Using +4 because we want to skip the initial JM## bytes.
 			playerInventoryStart = 0;
-			for (int i = playerInventoryStart + 5; i < inventoryBytes.Length; i++)
+			for (int i = playerInventoryStart + 4; i < inventoryBytes.Length; i++)
 			{
 				// End of player inventory list
 				if (inventoryBytes[i] == 'J' && inventoryBytes[i + 1] == 'M' && inventoryBytes[i + 3] == 0x00)
