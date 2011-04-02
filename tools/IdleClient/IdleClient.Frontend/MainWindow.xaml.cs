@@ -107,6 +107,11 @@ namespace IdleClient.Frontend
 			driver = new Driver();
 
 			driver.Initalize(settings);
+			if (!driver.IsInitalized)
+			{
+				return;
+			}
+
 			driver.OnOutput = Output;
 			driver.OnPlayerCountChange = PlayerCountChanged;
 			driver.OnCompletion = DriverCompleted;

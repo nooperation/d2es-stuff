@@ -33,6 +33,11 @@ namespace IdleClient.ConsoleFrontend
 
 			
 			driver.Initalize(settings);
+			if (!driver.IsInitalized)
+			{
+				return;
+			}
+
 			driver.OnOutput = Output;
 			driver.OnPlayerCountChange = null;
 			driver.OnCompletion = null;

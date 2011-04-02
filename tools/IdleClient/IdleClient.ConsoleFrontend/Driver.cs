@@ -385,7 +385,9 @@ namespace IdleClient
 		}
 
 		/// <summary>
-		/// Moves specified client from pool of running clients to pool of available clients
+		/// Moves specified client from pool of running clients to pool of available clients. Client itself
+		/// isn't moved, but it's recreated using the same clientIndex so any values from deadClient will be
+		/// lost.
 		/// </summary>
 		/// <param name="deadClient"></param>
 		void RecycleClient(ClientDriver deadClient)
