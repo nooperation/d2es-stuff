@@ -109,8 +109,12 @@ namespace IdleClient
 			byte[] readBuff = new byte[4096];
 			int previousDataLength = data.Length;
 
-
 			int readSize = ns.Read(readBuff, 0, readBuff.Length);
+
+			if (readSize == 0)
+			{
+				throw new Exception("Server killed our connection?");
+			}
 
 			Array.Resize(ref data, data.Length + readSize);
 			Array.Copy(readBuff, 0, data, previousDataLength, readSize);

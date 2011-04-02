@@ -35,8 +35,20 @@ namespace IdleClient
 		/// <summary> Captures OnPlayerCountChange events </summary>
 		public Action<List<string>> OnPlayerCountChange;
 
+		/// <summary> Driver has completed all operations, no clients are running </summary>
+		public Action OnCompletion;
+
 		/// <summary> Determins if driver has been initalized </summary>
 		public bool IsInitalized { get; protected set; }
+
+		/// <summary> Map of each client and number of times it's failed </summary>
+		private Dictionary<int, int> FailedClientCounts = new Dictionary<int, int>();
+
+		/// <summary>
+		/// Additional time to delay before starting next client. Mainly used when server
+		/// kills our connection because we connected too fast
+		/// </summary>
+		private int TemporaryJoinDelay = 0;
 
 		/// <summary>
 		/// Initalize driver.
@@ -44,8 +56,9 @@ namespace IdleClient
 		/// <param name="settings">Settings to use</param>
 		public void Initalize(Config settings)
 		{
+			FailedClientCounts.Clear();
 			this.settings = settings;
-			
+
 			if (settings.BotNames.Count == 0)
 			{
 				Output("no bots defined");
@@ -56,13 +69,14 @@ namespace IdleClient
 			for (int i = 0; i < settings.BotNames.Count; i++)
 			{
 				availableClients.Enqueue(new ClientDriver(settings, i));
+				FailedClientCounts.Add(i, 0);
 			}
 
-			Logger.Instance.OnDebugMessage += new EventHandler<Logger.LoggerArgs>(OnLoggerMessage);
-			Logger.Instance.OnDriverMessage += new EventHandler<Logger.LoggerArgs>(OnLoggerMessage);
-			Logger.Instance.OnErrorMessage += new EventHandler<Logger.LoggerArgs>(OnLoggerMessage);
-			Logger.Instance.OnGameMessage += new EventHandler<Logger.LoggerArgs>(OnLoggerMessage);
-			Logger.Instance.OnServerMessage += new EventHandler<Logger.LoggerArgs>(OnLoggerMessage);
+			Logger.Instance.OnDebugMessage = OnLoggerMessage;
+			Logger.Instance.OnDriverMessage = OnLoggerMessage;
+			Logger.Instance.OnErrorMessage = OnLoggerMessage;
+			Logger.Instance.OnGameMessage = OnLoggerMessage;
+			Logger.Instance.OnServerMessage = OnLoggerMessage;
 
 			IsInitalized = true;
 		}
@@ -110,6 +124,7 @@ namespace IdleClient
 			{
 				return;
 			}
+			Output("Terminating");
 
 			isShuttindDown = true;
 
@@ -117,6 +132,8 @@ namespace IdleClient
 			{
 				PopBot();
 			}
+
+			IsInitalized = false;
 		}
 
 		/// <summary>
@@ -124,7 +141,7 @@ namespace IdleClient
 		/// </summary>
 		private void PushBot()
 		{
-			ClientDriver newClient;
+			ClientDriver newClient = null;
 
 			lock (availableClients)
 			{
@@ -139,17 +156,20 @@ namespace IdleClient
 
 			lock (clients)
 			{
-				Output("Waiting " + settings.JoinDelay + "ms...");
-				for (int i = 0; i < settings.JoinDelay / 100; i++)
+				Output("Waiting " + (settings.JoinDelay + TemporaryJoinDelay) + "ms...");
+				for (int i = 0; i < (settings.JoinDelay + TemporaryJoinDelay) / 100; i++)
 				{
 					System.Threading.Thread.Sleep(100);
 
 					if (isShuttindDown)
 					{
 						Output("Canceling PushBot()");
+						OnCompletion();
 						return;
 					}
 				}
+
+				TemporaryJoinDelay = 0;
 
 				newClient.OnClientDisconnect += new EventHandler(newClient_OnClientDisconnect);
 				newClient.OnEnterGame += new EventHandler(newClient_OnEnterGame);
@@ -236,9 +256,13 @@ namespace IdleClient
 		/// </summary>
 		/// <param name="sender">Object causing this event</param>
 		/// <param name="e">Logger args</param>
-		void OnLoggerMessage(object sender, Logger.LoggerArgs e)
+		//void OnLoggerMessage(object sender, Logger.LoggerArgs e)
+		//{
+		//    Output("[" + e.Source + "] " + e.Message);
+		//}
+		void OnLoggerMessage(string source, string message)
 		{
-			Output("[" + e.Source + "] " + e.Message);
+			Output("[" + source + "] " + message);
 		}
 
 		/// <summary>
@@ -323,14 +347,27 @@ namespace IdleClient
 		{
 			ClientDriver source = sender as ClientDriver;
 
-			Output("Client failed");
+			FailedClientCounts[source.ClientIndex]++;
+			Output("Client failure #" + FailedClientCounts[source.ClientIndex]);
 
-			lock (clients)
+			if (FailedClientCounts[source.ClientIndex] <= 3)
 			{
-				clients.Remove(source);
+				RecycleClient(source);
+			}
+			else
+			{
+				Output("Client failed too many times, ignoring it from now on");
 			}
 
-			AddBotAsAvailable(source);
+			if (e.Type == FailureArgs.FailureTypes.GameserverDeniedConnection)
+			{
+				settings.JoinDelay += 500;
+				TemporaryJoinDelay = 10000;
+				Output("Increasing JoinDelay by 500ms and adding a 10second temporary join delay");
+			}
+
+			Output("Attempting next client");
+			PushBot();
 		}
 
 		/// <summary>
@@ -344,12 +381,26 @@ namespace IdleClient
 
 			Output("Client disconnected");
 
+			RecycleClient(source);
+		}
+
+		/// <summary>
+		/// Moves specified client from pool of running clients to pool of available clients
+		/// </summary>
+		/// <param name="deadClient"></param>
+		void RecycleClient(ClientDriver deadClient)
+		{
 			lock (clients)
 			{
-				clients.Remove(source);
+				clients.Remove(deadClient);
+				if (clients.Count == 0)
+				{
+					// If the last client failed or disconnected then we can no longer operate
+					OnCompletion();
+				}
 			}
 
-			AddBotAsAvailable(source);
+			AddBotAsAvailable(deadClient);
 		}
 
 		/// <summary>

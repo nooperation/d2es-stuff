@@ -19,6 +19,8 @@ namespace IdleClient.ConsoleFrontend
 
 		public Program()
 		{
+			driver = new Driver();
+
 			try
 			{
 				settings = Config.ReadConfig(settingsPath);
@@ -29,10 +31,11 @@ namespace IdleClient.ConsoleFrontend
 				throw;
 			}
 
+			
 			driver.Initalize(settings);
 			driver.OnOutput = Output;
 			driver.OnPlayerCountChange = null;
-
+			driver.OnCompletion = null;
 			driver.Start();			
 
 			while (driver.IsRunning)

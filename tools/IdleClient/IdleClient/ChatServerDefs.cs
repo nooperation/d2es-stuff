@@ -333,7 +333,7 @@ namespace IdleClient.Chat
 		{
 			ClientToken = clientToken;
 			ServerToken = serverToken;
-			PasswordHash = BNSharp.MBNCSUtil.XSha1.DoubleHashPassword(password, clientToken, serverToken);
+			PasswordHash = BNSharp.MBNCSUtil.XSha1.DoubleHashPassword(password.ToLower(), clientToken, serverToken);
 			Username = username;
 		}
 

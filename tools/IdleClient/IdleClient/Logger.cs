@@ -21,35 +21,15 @@ namespace IdleClient
 		}
 
 		/// <summary>
-		/// Arguments for a logged message.
-		/// </summary>
-		public class LoggerArgs : EventArgs
-		{
-			public readonly string Source;
-			public readonly string Message;
-
-			public LoggerArgs(string source, string message)
-			{
-				this.Source = source;
-				this.Message = message;
-			}
-
-			public override string ToString()
-			{
-				return "[" + Source + "] " + Message;
-			}
-		}
-		
-		/// <summary>
 		/// Gets the logger instance.
 		/// </summary>
 		public static Logger Instance { get; protected set; }
 
-		public event EventHandler<LoggerArgs> OnServerMessage;
-		public event EventHandler<LoggerArgs> OnDebugMessage;
-		public event EventHandler<LoggerArgs> OnGameMessage;
-		public event EventHandler<LoggerArgs> OnErrorMessage;
-		public event EventHandler<LoggerArgs> OnDriverMessage;
+		public Action<string, string> OnServerMessage;
+		public Action<string, string> OnDebugMessage;
+		public Action<string, string> OnGameMessage;
+		public Action<string, string> OnErrorMessage;
+		public Action<string, string> OnDriverMessage;
 
 		List<string> serverMessageFilter = new List<string>();
 		List<string> debugMessageFilter = new List<string>();
@@ -151,8 +131,6 @@ namespace IdleClient
 		/// <param name="message">The message.</param>
 		private void Log(MessageType type, object source, object message)
 		{
-			EventHandler<LoggerArgs> tempHandler;
-
 			// Filter out messages that need to be filtered
 			if (source is ClientBase)
 			{
@@ -193,6 +171,8 @@ namespace IdleClient
 				}
 			}
 
+			Action<string, string> tempHandler;
+
 			switch (type)
 			{
 				case MessageType.Server:
@@ -216,7 +196,7 @@ namespace IdleClient
 
 			if (tempHandler != null)
 			{
-				tempHandler.BeginInvoke(source, new LoggerArgs(source.ToString(), message.ToString()), null, null);
+				tempHandler.BeginInvoke(source.ToString(), message.ToString(), null, null);
 			}
 		}
 

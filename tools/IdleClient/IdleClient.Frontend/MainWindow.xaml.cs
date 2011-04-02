@@ -92,6 +92,14 @@ namespace IdleClient.Frontend
 		/// </summary>
 		private void StartIdleClient()
 		{
+			if (driver.IsInitalized)
+			{
+				driver.Terminate();
+			}
+
+			gridConnect.Visibility = System.Windows.Visibility.Collapsed;
+			gridDisconnect.Visibility = System.Windows.Visibility.Visible;
+
 			ReaderUserSettingsFromGUI();
 
 			tabControlMain.SelectedIndex = 0;
@@ -101,6 +109,7 @@ namespace IdleClient.Frontend
 			driver.Initalize(settings);
 			driver.OnOutput = Output;
 			driver.OnPlayerCountChange = PlayerCountChanged;
+			driver.OnCompletion = DriverCompleted;
 
 			DifficultyType difficulty = (DifficultyType)comboBoxDifficulty.SelectedItem;
 			string gameName = textBoxGameName.Text.Trim();
@@ -164,6 +173,24 @@ namespace IdleClient.Frontend
 			{
 				listBoxBots.Items.Add(item);
 			}
+		}
+
+		private void DriverCompleted()
+		{
+			this.Dispatcher.BeginInvoke(
+				new Action(() =>
+				{
+					gridConnect.Visibility = System.Windows.Visibility.Visible;
+					gridDisconnect.Visibility = System.Windows.Visibility.Collapsed;
+					listBoxNames.Items.Clear();
+
+					// Settings might of been changed by the driver
+					ReloadGUIUserSettings();
+				}),
+				System.Windows.Threading.DispatcherPriority.Normal
+			);
+
+			Output("Driver completed");
 		}
 
 		/// <summary>
@@ -260,6 +287,11 @@ namespace IdleClient.Frontend
 				AddBot(textBoxAddBot.Text);
 				textBoxAddBot.Text = "";
 			}
+		}
+
+		private void buttonDisconnect_Click(object sender, RoutedEventArgs e)
+		{
+			driver.Terminate();
 		}
 	}
 }

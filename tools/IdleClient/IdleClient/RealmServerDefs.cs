@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Net;
+using System.Globalization;
 
 namespace IdleClient.Realm
 {
@@ -624,9 +625,11 @@ namespace IdleClient.Realm
 
 		public JoinGameOut(string name, string pass)
 		{
+			TextInfo myTI = new CultureInfo("en-US",false).TextInfo;
+
 			RequestID = (ushort)new Random().Next(0, short.MaxValue);
 			GameName = name;
-			GamePassword = pass;
+			GamePassword = myTI.ToTitleCase(pass);
 		}
 
 		public byte[] GetBytes()

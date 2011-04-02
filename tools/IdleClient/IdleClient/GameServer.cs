@@ -71,7 +71,7 @@ namespace IdleClient.Game
 #else
 			LogServer("Game client started for 1.11+ servers.");
 #endif
-
+			bool firstPacketReceieved = false;
 			byte[] buffer = new byte[0];
 
 			while (client.Connected)
@@ -86,12 +86,20 @@ namespace IdleClient.Game
 				{
 					if (!IsDisconnecting && !IsExiting)
 					{
-						Fail(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive game server packets: " + ex.Message);
+						if (!firstPacketReceieved)
+						{
+							Fail(FailureArgs.FailureTypes.GameserverDeniedConnection, "Failed to receive initiaal game server packet, connecting too fast?: " + ex.Message);
+						}
+						else
+						{
+							Fail(FailureArgs.FailureTypes.FailedToReceive, "Failed to receive game server packets: " + ex.Message);
+						}
 					}
 					
 					break;
 				}
 
+				firstPacketReceieved = true;
 				foreach (var packet in packets)
 				{
 					if (settings.ShowPackets)

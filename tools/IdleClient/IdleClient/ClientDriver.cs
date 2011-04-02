@@ -118,6 +118,8 @@ namespace IdleClient
 		public void Terminate()
 		{
 			IsDisconnecting = true;
+			bool wasConnectedToGameServer = false;
+			bool wasConnectedToAnyServer = false;
 
 			// If we're connected to a game then we will want to let the server know we're disconnecting
 			// so our character is disconnected from the server itself. Otherwise we will just 'drop due to timeout'
@@ -140,14 +142,9 @@ namespace IdleClient
 				{
 					gameServerThread.Abort();
 				}
-			}
-			if (chatServerThread != null && chatServerThread.IsAlive && chatServer != null)
-			{
-				chatServer.Disconnect();
-				if (!chatServerThread.Join(1000))
-				{
-					chatServerThread.Abort();
-				}
+
+				wasConnectedToGameServer = true;
+				wasConnectedToAnyServer = true;
 			}
 			if (realmServerThread != null && realmServerThread.IsAlive && realmServer != null)
 			{
@@ -156,6 +153,23 @@ namespace IdleClient
 				{
 					realmServerThread.Abort();
 				}
+
+				wasConnectedToAnyServer = true;
+			}
+			if (chatServerThread != null && chatServerThread.IsAlive && chatServer != null)
+			{
+				chatServer.Disconnect();
+				if (!chatServerThread.Join(1000))
+				{
+					chatServerThread.Abort();
+				}
+
+				wasConnectedToAnyServer = true;
+			}
+
+			if (wasConnectedToAnyServer && !wasConnectedToGameServer)
+			{
+				FireOnClientDisconnectEvent();
 			}
 		}
 

@@ -112,7 +112,7 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Name="gridConnect">                
+            <Grid Grid.Row="0" Name="gridConnect" Visibility="Visible">                
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
@@ -137,7 +137,32 @@
                 <Label Grid.Row="3" Grid.Column="0" Width="auto">Diff</Label>
                 <ComboBox Grid.Row="3" Grid.Column="1"  SelectedIndex="0" Name="comboBoxDifficulty" />            
             </Grid>
-            <TextBox Grid.Row="1" IsReadOnly="True" Name="textBotCount">0 Bot(s) online</TextBox>
+			<Grid Grid.Row="0" Name="gridDisconnect" Visibility="Collapsed">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto" />
+					<RowDefinition Height="auto" />
+					<RowDefinition Height="auto" />
+					<RowDefinition Height="auto" />
+					<RowDefinition Height="auto" />
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+
+				<Button Grid.Row="0" Grid.ColumnSpan="2" Name="buttonDisconnect" Click="buttonDisconnect_Click">Disconnect</Button>
+
+				<Label Grid.Row="1" Grid.Column="0" Width="auto">Game</Label>
+				<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ElementName=textBoxGameName, Path=Text}" IsReadOnly="True" />
+
+				<Label Grid.Row="2" Grid.Column="0" Width="auto">Pass</Label>
+				<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ElementName=textBoxGamePass, Path=Text}" IsReadOnly="True" />
+
+				<Label Grid.Row="3" Grid.Column="0" Width="auto">Diff</Label>
+				<ComboBox Grid.Row="3" Grid.Column="1"  SelectedIndex="{Binding ElementName=comboBoxDifficulty, Path=SelectedIndex}" IsReadOnly="True" ItemsSource="{Binding ElementName=comboBoxDifficulty, Path=Items}" />
+			</Grid>
+			<TextBox Grid.Row="1" IsReadOnly="True" Name="textBotCount">0 Bot(s) online</TextBox>
             <ListBox Grid.Row="2" Name="listBoxNames" />
         </Grid>
         <GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="2" Grid.ColumnSpan="3" />
