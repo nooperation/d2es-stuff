@@ -365,6 +365,11 @@ namespace IdleClient
 				TemporaryJoinDelay = 10000;
 				Output("Increasing JoinDelay by 500ms and adding a 10second temporary join delay");
 			}
+			else if (e.Type == FailureArgs.FailureTypes.FailedToJoinGame)
+			{
+				Output("Failed to join game, giving up");
+				return;
+			}
 
 			Output("Attempting next client");
 			PushBot();
