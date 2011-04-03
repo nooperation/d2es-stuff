@@ -62,6 +62,7 @@ namespace IdleClient
 			if (settings.BotNames.Count == 0)
 			{
 				Output("no bots defined");
+				OnCompletion();
 				return;
 			}
 
