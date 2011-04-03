@@ -106,15 +106,15 @@ namespace IdleClient.Frontend
 
 			driver = new Driver();
 
+			driver.OnOutput = Output;
+			driver.OnPlayerCountChange = PlayerCountChanged;
+			driver.OnCompletion = DriverCompleted;
+
 			driver.Initalize(settings);
 			if (!driver.IsInitalized)
 			{
 				return;
 			}
-
-			driver.OnOutput = Output;
-			driver.OnPlayerCountChange = PlayerCountChanged;
-			driver.OnCompletion = DriverCompleted;
 
 			DifficultyType difficulty = (DifficultyType)comboBoxDifficulty.SelectedItem;
 			string gameName = textBoxGameName.Text.Trim();
