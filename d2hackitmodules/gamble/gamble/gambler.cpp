@@ -138,7 +138,7 @@ void Gambler::OnNpcGambleItemList(ITEM &gambleItem)
 	if(itemsToGamble.count(gambleItem.szItemCode) > 0)
 	{
 		gambleQueue.push(gambleItem.dwItemID);
-		ticksTillGambleItemTimeout = 50; // 5 second timeout
+		ticksTillGambleItemTimeout = 5 * (1000 / server->GetTickRate()); // 5 second timeout
 	}
 }
 
