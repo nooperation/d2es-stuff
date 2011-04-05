@@ -122,8 +122,9 @@ bool AutoStocker::BeginAutostocking()
 	if(!IsCubeEmpty())
 	{
 		if(useChat)
+		{
 			me->Say("ÿc:Autostockerÿc0: Please empty your cube");
-
+		}
 		server->GameStringf("ÿc:Autostockerÿc0: Please empty your cube");
 
 		Abort();
@@ -160,7 +161,9 @@ void AutoStocker::OnTick()
 			currentState = STATE_UNINITIALIZED;
 
 			if(useChat)
+			{
 				me->Say("ÿc:Autostockerÿc0: Autostocker Ended");
+			}
 
 			server->GameStringf("ÿc:Autostockerÿc0: Autostocker Ended");
 
@@ -230,14 +233,15 @@ void AutoStocker::OnItemFromCube(DWORD itemID)
 	{
 		currentState = STATE_STOCKERTOINVENTORY;
 
-		if(!me->DropCursorItemToStorageEx(STORAGE_INVENTORY, restockerPositions[currentStocker]))
+		if(!me->DropItemToStorageEx(STORAGE_INVENTORY, restockerPositions[currentStocker], itemID))
 		{
 			if(useChat)
+			{
 				me->Say("ÿc:Autostockerÿc0: Failed drop stocker back to inventory");
-			
+			}
 			server->GameStringf("ÿc:Autostockerÿc0: Failed drop stocker back to inventory");
 
-			currentState = STATE_COMPLETE;
+			Abort();
 		}
 	}
 	else
@@ -311,9 +315,8 @@ void AutoStocker::OnItemToCube(DWORD itemId)
 		// Only the stocker should be returned from the transmute process
 		if(!GetStockerType(itemId, NULL))
 		{
-			server->GameStringf("ÿc:Autostockerÿc0: Tried to assign non stocker to stocker");
-			Abort();
-			return;
+			// Plugin and game are not always in sync, game might not know this item exists yet
+			server->GameStringf("ÿc:Autostockerÿc0: Warning! Tried to assign non stocker to stocker");
 		}
 
 		// Every time a stocker is transmuted it gets a new itemId, updated our collection of stockers
@@ -323,7 +326,6 @@ void AutoStocker::OnItemToCube(DWORD itemId)
 		// Process the next item for this stocker
 		ProcessNextItem();
 	}
-
 }
 
 /// <summary>
@@ -350,7 +352,7 @@ void AutoStocker::ProcessNextStocker()
 	// All stockers have been processed, autostocker complete
 	if(currentStocker >= restockers.size())
 	{
-		currentState = STATE_COMPLETE;
+		Abort();
 		return;
 	}
 
@@ -368,7 +370,9 @@ void AutoStocker::ProcessNextStocker()
 	if(!me->PickStorageItemToCursor(restockers[currentStocker]))
 	{
 		if(useChat)
+		{
 			me->Say("ÿc:Autostockerÿc0: Failed to pick up new stocker");
+		}
 
 		server->GameStringf("ÿc:Autostockerÿc0: Failed to pick up new stocker");
 
@@ -432,10 +436,13 @@ bool AutoStocker::OpenCube()
 	if(!me->OpenCube())
 	{
 		if(useChat)
+		{
 			me->Say("ÿc:Autostockerÿc0: You must open your cube before using");
+		}
 
 		server->GameStringf("ÿc:Autostockerÿc0: You must open your cube before using");
 
+		Abort();
 		return false;
 	}
 
@@ -463,7 +470,9 @@ bool AutoStocker::CheckCubeUI()
 void AutoStocker::Abort()
 {
 	if(currentState != STATE_COMPLETE && currentState != STATE_UNINITIALIZED)
+	{
 		currentState = STATE_COMPLETE;
+	}
 }
 
 /// <summary>
@@ -877,23 +886,6 @@ bool AutoStocker::IsRerollItem(const ITEM &item)
 		(item.iQuality == ITEM_LEVEL_RARE && transmuteRare) ||
 		(item.iQuality == ITEM_LEVEL_UNIQUE && transmuteUnique))
 	{
-		
-		if(_stricmp(item.szItemCode, "jew") == 0)
-		{
-			bool isIdentified = false;
-
-			for(int i = 0; i < 3; i++)
-			{
-				if(item.wPrefix[i] != 0 || item.wSuffix[i] != 0)
-				{
-					isIdentified = true;
-				}
-			}
-			if(!isIdentified)
-			{
-				return false;
-			}
-		}
 		if(!CheckItemAffix(item))
 		{
 			return stockerItems[TRANSMUTE_REROLL].count(item.szItemCode) > 0;
