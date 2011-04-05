@@ -41,6 +41,9 @@ extern	char g_szDebug[512];
 #define D2_VERSION 110
 #include "CommonStructs.h"
 
+
+#define TICK_RATE 10
+
 //////////////////////////////////////////////////////////////////////
 // Version history.
 // -------------------------------------------------------------------
@@ -121,6 +124,7 @@ BOOL	EXPORT D2FindFile(LPSTR szDest, LPCSTR szFileName, int nDestSize = _MAX_PAT
 // GameCommandLine.cpp
 BOOL	EXPORT GameCommandLine(char* buf);
 CHAR	EXPORT GetCommandCharacter();
+int		EXPORT GetTickRate();
 
 void EXPORT DebugTest(); // For debug only
 

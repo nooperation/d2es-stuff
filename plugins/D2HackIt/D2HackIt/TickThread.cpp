@@ -37,7 +37,7 @@ DWORD WINAPI TickThread(LPVOID lpParameter)
 			}
 		}
 
-		Sleep(100);
+		Sleep(psi->TickRate);
 	}
 
 	psi->TickShutDown = -1;

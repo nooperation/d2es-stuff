@@ -248,6 +248,7 @@ BOOL PRIVATE SetupClient(HMODULE hModule, LPCSTR szModule)
 	BIND_AND_CHECK(LeftClickHere);
 	BIND_AND_CHECK(RightClickHere);	
 	BIND_AND_CHECK(GetCommandCharacter);
+	BIND_AND_CHECK(GetTickRate);
 
 	BIND_AND_CHECK(IsStackable);
 	BIND_AND_CHECK(IsWeapon);

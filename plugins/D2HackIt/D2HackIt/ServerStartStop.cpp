@@ -163,6 +163,10 @@ BOOL PRIVATE ServerStart(HANDLE hModule)
 		psi->CommandCharacter = tbf[0];
 	else
 		psi->CommandCharacter = '.';
+
+	char iniFileName[MAX_PATH];
+	GetIniFileName( "D2HackIt", iniFileName, sizeof(iniFileName) );
+	psi->TickRate = GetPrivateProfileInt("Misc", "TickRate", 100, iniFileName);
 	// -- B
 
 	//////////////////////////////////////////////////////////////////
@@ -522,7 +526,7 @@ BOOL PRIVATE ServerStop(void)
 		psi->TickShutDown = 25;
 		psi->TickThreadActive = FALSE;
 		// Give TickThread 2.5 seconds max to clean up before killing it
-		while(--psi->TickShutDown > 0) Sleep(100);
+		while(--psi->TickShutDown > 0) Sleep(psi->TickRate);
 
 		if(psi->TickShutDown == 0)
 		{

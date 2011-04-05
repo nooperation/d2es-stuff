@@ -183,10 +183,10 @@ DWORD Player_OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 
 DWORD Player_TimerTick()
 {
-	g_npcState.TickIt(100);
-	g_townState.TickIt(100);
-	g_wpState.TickIt(100);
-	g_jobState.TickIt(100);
+	g_npcState.TickIt(psi->TickRate);
+	g_townState.TickIt(psi->TickRate);
+	g_wpState.TickIt(psi->TickRate);
+	g_jobState.TickIt(psi->TickRate);
 	
 	////////////////////////////////////////////////////////////////
 	// Steps below here are checked as soon as joining game
@@ -202,7 +202,7 @@ DWORD Player_TimerTick()
 	}	
 	else if (g_bClosingUI)
 	{
-		// try to close UI every 100 ms
+		// try to close UI every psi->TickRate ms
 		if (GetOpenedUI()) // any UI opened?
 		{
 			// simply send "esc" key until no more UI's appear!

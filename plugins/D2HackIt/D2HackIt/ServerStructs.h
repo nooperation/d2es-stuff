@@ -48,6 +48,7 @@ typedef struct privateserverinfo_t
 
 	// ++ B
 	char			CommandCharacter;
+	int				TickRate;
 	// -- B
 
 	// Tick thread

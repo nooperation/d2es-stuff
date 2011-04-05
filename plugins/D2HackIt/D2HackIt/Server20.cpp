@@ -69,7 +69,7 @@ VOID Proc_OnGameLeave()
 
 DWORD Proc_OnGameTimerTick()
 {
-	g_dwInGameTime += 100; // update in-game time
+	g_dwInGameTime += psi->TickRate; // update in-game time
 	g_scroll.OnTimerTick();
 
 	Player_TimerTick();
@@ -803,6 +803,11 @@ BYTE EXPORT GetActFromMap(BYTE iMapID)
 CHAR EXPORT GetCommandCharacter()
 {
 	return psi->CommandCharacter;
+}
+
+int EXPORT GetTickRate()
+{
+	return psi->TickRate;
 }
 
 // item related

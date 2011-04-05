@@ -392,6 +392,7 @@ typedef BYTE (__cdecl *fnGetTownMap)(BYTE iAct);
 typedef BYTE (__cdecl *fnGetActFromMap)(BYTE iMapID);
 
 typedef CHAR (__cdecl *fnGetCommandCharacter)();
+typedef int (__cdecl *fnGetTickRate)();
 
 typedef BOOL (__cdecl *fnParseItem)(const BYTE* aPacket, DWORD aLen, ITEM& item); // Parses item info from a packet
 typedef SIZE (__cdecl *fnGetItemSize)(LPCSTR lpszItemCode);
@@ -506,6 +507,7 @@ typedef struct functionentrypoints_t
 	fnGetItemQuality				GetItemQuality;
 	fnGetItemBeltRows				GetItemBeltRows;
 	fnGetCommandCharacter			GetCommandCharacter;
+	fnGetTickRate					GetTickRate;
 
 	fnSendKey						SendKey;				// 2.00 (Abin)
 	fnGetSpellName					GetSpellName;			// 2.00 (Abin)
