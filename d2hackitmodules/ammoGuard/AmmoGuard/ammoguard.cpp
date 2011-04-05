@@ -124,7 +124,7 @@ void AmmoGuard::OnComplete()
 
 void AmmoGuard::Tick()
 {
-	if(!me->IsInTown() && ++ticksUntilNextCheck >= 20)
+	if(!me->IsInTown() && ++ticksUntilNextCheck >= 2 * (1000 / server->GetTickRate()))
 	{
 		if(me->GetStat(STAT_AMMOQUANTITY) < 80 && me->GetStat(STAT_AMMOQUANTITY) > 0)
 		{
