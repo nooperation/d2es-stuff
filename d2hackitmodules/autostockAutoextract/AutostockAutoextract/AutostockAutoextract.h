@@ -55,7 +55,7 @@ class AutostockAutoextract
 		bool OnEmptyCubeEnded();
 		void OnItemFromInventory(ITEM &item);
 		void OnItemToCube(ITEM &item);
-		void OnItemToInventory(ITEM &item);
+		void OnItemFromCube(ITEM &item);
 
 		void OnTick();
 		void Abort();		
@@ -75,7 +75,8 @@ class AutostockAutoextract
 		States currentState;
 };
 
-bool GetStockerType(DWORD itemId, int *stockerType);
+bool GetStockerTypeByID(DWORD itemId, int *stockerType);
+bool GetStockerTypeByCode(const char *itemCode, int *stockerType);
 BOOL CALLBACK enumFindCubeItems(LPCITEM item, LPARAM lParam);
 
 #endif

@@ -147,7 +147,7 @@ VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPAR
 		}
 		else if(wParam == 0x05 && item.iStorageID == 0x04)
 		{
-			autostockAutoextract.OnItemToInventory(item);
+			autostockAutoextract.OnItemFromCube(item);
 		}
 	}
 }

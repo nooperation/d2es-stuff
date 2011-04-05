@@ -260,7 +260,7 @@ void AutostockAutoextract::OnItemFromInventory(ITEM &item)
 /// Called whenever an item is moved to the player's inventory
 /// </summary>
 /// <param name="item">The item moved to the player's inventory.</param>
-void AutostockAutoextract::OnItemToInventory(ITEM &item)
+void AutostockAutoextract::OnItemFromCube(ITEM &item)
 {
 	// We only care about items going to the inventory when autostocker is
 	//  moving the extractor back to the inventory
@@ -273,7 +273,8 @@ void AutostockAutoextract::OnItemToInventory(ITEM &item)
 	//   to double check that the item placed in our inventory by autostocker
 	//   was indeed a restocker and store the new item ID of that stocker for
 	//   future use
-	if(GetStockerType(item.dwItemID, NULL))
+	server->GameStringf("OnItemFromCube");
+	if(GetStockerTypeByCode(item.szItemCode, NULL))
 	{
 		extractorStuff.restockerID = item.dwItemID;
 	}
@@ -308,7 +309,7 @@ BOOL CALLBACK enumFindCubeItems(LPCITEM item, LPARAM lParam)
 {
 	ExtractorStuff *extractorStuff = (ExtractorStuff *)lParam;
 
-	if(GetStockerType(item->dwItemID, NULL))
+	if(GetStockerTypeByCode(item->szItemCode, NULL))
 	{
 		strcpy_s(extractorStuff->restockerCode, 4, item->szItemCode);
 		extractorStuff->restockerID = item->dwItemID;
@@ -324,23 +325,35 @@ BOOL CALLBACK enumFindCubeItems(LPCITEM item, LPARAM lParam)
 
 /// <summary>
 /// Determines the type of stocker the item with specified ID is
-/// TODO: this is horrible -> Store all stockers in a nice, easy to access list
-/// TODO: This is duplicate code from autostocker!
 /// </summary>
 /// <param name="itemId">ItemID of item being checked.</param>
 /// <param name="stockerType">[out] Type of stocker this item is.</param>
 /// <returns>true if item is a stocker, false if not a stocker.</returns>
-bool GetStockerType(DWORD itemId, int *stockerType)
+bool GetStockerTypeByID(DWORD itemId, int *stockerType)
 {
 	char itemCode[4];
-	int itemCodeNum = 0;
 
 	if(!server->GetItemCodeEx(itemId, itemCode, sizeof(itemCode)/sizeof(itemCode[0]), 10, 50))
 	{
 		server->GameStringf("ÿc5AutostockAutoextractÿc0: Failed to get item code");
 		return false;
 	}
-	
+
+	return GetStockerTypeByCode(itemCode, stockerType);
+}
+
+/// <summary>
+/// Determines the type of stocker the item with specified item code
+/// TODO: this is horrible -> Store all stockers in a nice, easy to access list
+/// TODO: This is duplicate code from autostocker!
+/// </summary>
+/// <param name="itemCode">Itemcode with 4 elements.</param>
+/// <param name="stockerType">[out] Type of stocker this item is.</param>
+/// <returns>true if item is a stocker, false if not a stocker.</returns>
+bool GetStockerTypeByCode(const char *itemCode, int *stockerType)
+{
+	int itemCodeNum = 0;
+
 	if(itemCode[0] == 'k' && itemCode[2] == '0')
 	{
 		if(itemCode[1] == 'v' || itemCode[1] == 'y' ||
