@@ -36,7 +36,7 @@ void AmmoGuard::ReloadAmmo()
 		return;
 	}
 
-	inventoryOpenAtStart = me->IsUIOpened(UI_INVENTORY);
+	inventoryOpenAtStart = me->IsUIOpened(UI_INVENTORY) == TRUE;
 
 	ammoId = leftHandItem->dwItemID;
 	currentState = STATE_AMMO_FROM_EQUIP;
@@ -54,7 +54,7 @@ void AmmoGuard::OnItemToCursor(DWORD itemId)
 	if(currentState == STATE_AMMO_FROM_EQUIP)
 	{
 		currentState = STATE_AMMO_TO_CUBE;
-		me->DropCursorItemToStorage(STORAGE_CUBE);
+		me->DropItemToStorage(STORAGE_CUBE, itemId);
 	}
 	else if(currentState == STATE_AMMO_FROM_CUBE)
 	{

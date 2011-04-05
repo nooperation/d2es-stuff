@@ -14,10 +14,10 @@ void WriteConfig();
 
 CLIENTINFO
 (
-	0,1,
+	2,2,
+	"Ammo Guard v2.2",
 	"",
-	"",
-	"Ammo Guard",
+	"Ammo Guard v2.2",
 	""
 )
 
