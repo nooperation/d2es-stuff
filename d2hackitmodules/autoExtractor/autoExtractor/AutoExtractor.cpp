@@ -260,11 +260,12 @@ void AutoExtractor::OnItemFromCube(DWORD itemID)
 	if(itemID != extractedItemID)
 	{
 		char itemCode[4];
-		server->GetItemCode(itemID, itemCode, sizeof(itemCode)/sizeof(itemCode[0]));
+		server->GetItemCodeEx(itemID, itemCode, sizeof(itemCode)/sizeof(itemCode[0]), 10, 50);
 
 		if(useChat)
+		{
 			me->Say("ÿc:AutoExtractorÿc0: Unknown item picked up");
-
+		}
 		server->GameStringf("ÿc:AutoExtractorÿc0: Unknown item picked up: [%X] %s", itemID, itemCode);
 
 		Abort();
