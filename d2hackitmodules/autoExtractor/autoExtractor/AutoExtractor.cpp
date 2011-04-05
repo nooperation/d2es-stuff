@@ -246,7 +246,7 @@ void AutoExtractor::OnTick()
 /// <summary>
 /// Called whenever an item is moved from the cube to the cursor
 /// </summary>
-/// <param name="item">The ID of the item item that moved to the player's cursor.</param>
+/// <param name="item">The item that moved to the player's cursor.</param>
 void AutoExtractor::OnItemFromCube(const ITEM &item)
 {
 	// Only interested in this event when we're picking up the extracted item from the cube
