@@ -22,6 +22,10 @@ AutoStocker::AutoStocker()
 	currentState = STATE_UNINITIALIZED;
 }
 
+/// <summary>
+/// Initalizes autostocker
+/// </summary>
+/// <param name="useChat">Determines if output messages should be sent as chat messages.</param>
 bool AutoStocker::Init(bool useChat)
 {
 	this->useChat = useChat;
@@ -44,6 +48,14 @@ bool AutoStocker::Init(bool useChat)
 	return true;
 }
 
+/// <summary>
+/// Starts the autostocker with custom settings
+/// </summary>
+/// <param name="transmuteSet">Determines if set items should be cubed.</param>
+/// <param name="transmuteRare">Determines if rare items should be cubed.</param>
+/// <param name="transmuteUnique">Determines if unique items should be cubed.</param>
+/// <param name="useChat">Determines if output messages should be sent as chat messages.</param>
+/// <returns>true if successful, false if failed.</returns>
 bool AutoStocker::StartRares(bool transmuteSet, bool transmuteRare, bool transmuteUnique, bool useChat)
 {
 	if(!Init(useChat))
@@ -55,9 +67,14 @@ bool AutoStocker::StartRares(bool transmuteSet, bool transmuteRare, bool transmu
 	this->transmuteRare = transmuteRare;
 	this->transmuteUnique = transmuteUnique;
 
-	return Foo();
+	return BeginAutostocking();
 }
 
+/// <summary>
+/// Starts the autostocker with default settings (only normal/magic items)
+/// </summary>
+/// <param name="useChat">Determines if output messages should be sent as chat messages.</param>
+/// <returns>true if successful, false if failed.</returns>
 bool AutoStocker::Start(bool useChat)
 {
 	if(!Init(useChat))
@@ -69,38 +86,39 @@ bool AutoStocker::Start(bool useChat)
 	this->transmuteRare = false;
 	this->transmuteUnique = false;
 
-	return Foo();
+	return BeginAutostocking();
 }
 
-bool AutoStocker::Foo()
+/// <summary>
+/// Begins the autostocker process
+/// </summary>
+/// <returns>true if successful, false if failed.</returns>
+bool AutoStocker::BeginAutostocking()
 {
 	std::vector<ITEM> itemsInInventory;
 
-	server->GameStringf("ÿc:Autostockerÿc0: Transmuting: ÿc3Magic%s%s%s", transmuteSet?" ÿc2Sets":"", transmuteRare?" ÿc9Rares":"", transmuteUnique?" ÿc4Uniques":"");
-
-	if(!OpenCube())
-	{
-		currentState = STATE_COMPLETE;
-		return false;
-	}
-
+	// Clear previous settings
 	itemsInInventory.clear();
-	me->EnumStorageItems(STORAGE_INVENTORY, enumItemProc, (LPARAM)&itemsInInventory);
-
 	itemsToTransmute.clear();
 	itemsToTransmute.resize(TRANSMUTE_END);
-
 	restockers.clear();
 	restockers.resize(TRANSMUTE_END, 0);
-
 	restockerPositions.clear();
 	restockerPositions.resize(TRANSMUTE_END);
+	currentItem = -1;
+	currentStocker = -1;
 
-	if(!FindStockers(itemsInInventory))
+	// Notify the user about the current settings
+	server->GameStringf("ÿc:Autostockerÿc0: Transmuting: ÿc3Magic%s%s%s", transmuteSet?" ÿc2Sets":"", transmuteRare?" ÿc9Rares":"", transmuteUnique?" ÿc4Uniques":"");
+
+	// Open the player's cube
+	if(!OpenCube())
 	{
+		Abort();
 		return false;
 	}
 
+	// Make sure the cube is empty
 	if(!IsCubeEmpty())
 	{
 		if(useChat)
@@ -108,36 +126,35 @@ bool AutoStocker::Foo()
 
 		server->GameStringf("ÿc:Autostockerÿc0: Please empty your cube");
 
-		currentState = STATE_COMPLETE;
+		Abort();
 		return false;
 	}
 
+	// Read all items from the player's inventory
+	me->EnumStorageItems(STORAGE_INVENTORY, enumItemProc, (LPARAM)&itemsInInventory);
+
+	// Find the stockers that we will be using, if no stockers exist then we quit
+	if(!FindStockers(itemsInInventory))
+	{
+		return false;
+	}
+
+	// Find the items in the player's inventory that need to be cubed
 	FindItemsToTransmute(itemsInInventory);
 
-
-	currentItem = -1;
-	currentStocker = -1;
-	currentState = STATE_NEXTSTOCKER;
+	// Begin processing the stockers and their items
+	ProcessNextStocker();
 
 	return true;
 }
 
+/// <summary>
+/// Called at a constant rate by d2hackit's timer
+/// </summary>
 void AutoStocker::OnTick()
 {
 	switch(currentState)
 	{
-		case STATE_NEXTSTOCKER:
-		{
-			currentState = STATE_WAITINGFORNEXTSTATE;
-			OnStateNextStocker();
-			break;
-		}
-		case STATE_NEXTITEM:
-		{
-			currentState = STATE_WAITINGFORNEXTSTATE;
-			OnStateNextItem();
-			break;
-		}
 		case STATE_COMPLETE:
 		{
 			currentState = STATE_UNINITIALIZED;
@@ -152,43 +169,64 @@ void AutoStocker::OnTick()
 	}
 }
 
-void AutoStocker::OnItemFromStorage(DWORD itemID)
+/// <summary>
+/// Called whenever an item is picked up to the cursor from the player's inventory
+/// </summary>
+/// <param name="item">Item ID of the item that was picked up.</param>
+void AutoStocker::OnItemFromInventory(DWORD itemID)
 {
-	if(currentState == STATE_PICKUPSTOCKER || currentState == STATE_PICKUPITEM)
+	// Only care about this event when we're picking up the stocker or item to be cubed
+	if(currentState != STATE_PICKUPSTOCKER && currentState != STATE_PICKUPITEM)
 	{
-		if(me->GetCursorItem() == itemWaitingOn)
-		{
-			if(currentState == STATE_PICKUPSTOCKER)
-			{
-				server->GameStringf("Stocker picked up, dropping...");
-				currentState = STATE_STOCKERTOCUBE;
-			}
-			else if(currentState == STATE_PICKUPITEM)
-			{
-				currentState = STATE_ITEMTOCUBE;
-			}
-			
-			if(!CheckCubeUI())
-				return;
+		return;
+	}
 
-			if(!me->DropCursorItemToStorage(STORAGE_CUBE))
-			{
-				server->GameStringf("DropCursorItemToStorage failed");
-			}
-		}
-		else
-		{
-			server->GameStringf("I'm not waiting on this item!");
-		}
+	// User might of picked up an item while autostocker was running, abort before we attempt
+	// to pickup another item and have the server kick us
+	if(itemID != itemWaitingOn)
+	{
+		server->GameStringf("I'm not waiting on this item!");
+		Abort();
+		return;
+	}
+
+	// Make sure cube UI is still open
+	if(!CheckCubeUI())
+	{
+		return;
+	}
+
+	if(currentState == STATE_PICKUPSTOCKER)
+	{
+		// We're going to move the stocker item from cursor to cube
+		currentState = STATE_STOCKERTOCUBE;
+	}
+	else if(currentState == STATE_PICKUPITEM)
+	{
+		// We're going to move the non-stocker item to the cube
+		currentState = STATE_ITEMTOCUBE;
+	}
+
+	if(!me->DropItemToStorage(STORAGE_CUBE, itemID))
+	{
+		server->GameStringf("DropItemToStorage failed");
 	}
 }
 
+/// <summary>
+/// Called whenever an item is pickedup to the cursor from the cube
+/// </summary>
+/// <param name="item">Item ID of the item picked up from the cube.</param>
 void AutoStocker::OnItemFromCube(DWORD itemID)
 {
+	// We only care about this event when we're picking up the stocker from the cube
 	if(currentState != STATE_STOCKERFROMCUBE)
+	{
 		return;
+	}
 
-	if(me->GetCursorItem() == restockers[currentStocker])
+	// Make sure the item picked up from the cube is the stocker, otherwise there's a problem
+	if(itemID == restockers[currentStocker])
 	{
 		currentState = STATE_STOCKERTOINVENTORY;
 
@@ -204,79 +242,102 @@ void AutoStocker::OnItemFromCube(DWORD itemID)
 	}
 	else
 	{
+		// User might of picked up item from the cube while process was running, if so we need to abort
+		//  to avoid being kicked by the server
 		char itemCode[4];
 		server->GetItemCode(itemID, itemCode, sizeof(itemCode)/sizeof(itemCode[0]));
 
 		if(useChat)
+		{
 			me->Say("ÿc:Autostockerÿc0: Unknown item picked up");
-
+		}
 		server->GameStringf("ÿc:Autostockerÿc0: Unknown item picked up: [%X] %s", itemID, itemCode);
 
-		currentState = STATE_COMPLETE;
-		if(!me->DropCursorItemToStorage(STORAGE_INVENTORY))
-		{
-			if(useChat)
-				me->Say("ÿc:Autostockerÿc0: Failed drop unknown back to inventory");
-
-			server->GameStringf("ÿc:Autostockerÿc0: Failed drop unknown back to inventory");
-		}
+		Abort();
+		return;
 	}
 }
 
+/// <summary>
+/// Called whenever an item is moved to the player's inventory
+/// </summary>
+/// <param name="item">The item moved to the player's inventory.</param>
 void AutoStocker::OnItemToInventory(DWORD itemID)
 {
+	// We only care about this event when we're moving our stocker back to the player's inventory
 	if(currentState != STATE_STOCKERTOINVENTORY)
+	{
 		return;
+	}
 
+	// Make sure the item that was moved was the stocker, otherwise ignore it
 	if(itemID != restockers[currentStocker])
 	{
 		server->GameStringf("ÿc:Autostockerÿc0: Item to inventory not stocker");
 		return;
 	}
 
-	currentState = STATE_NEXTSTOCKER;
+	// Process the next stocker now that the cube is empty
+	ProcessNextStocker();
 }
 
+/// <summary>
+/// Called whenever an item is moved to the cube
+/// </summary>
+/// <param name="item">The item moved to the cube.</param>
 void AutoStocker::OnItemToCube(DWORD itemId)
 {
 	if(currentState == STATE_STOCKERTOCUBE)
 	{
-		currentState = STATE_NEXTITEM;
+		// Stocker was added to the cube, start processing items belonging to this stocker
+		ProcessNextItem();
 	}
 	else if(currentState == STATE_ITEMTOCUBE)
 	{
 		currentState = STATE_TRANSMUTE;
 
+		// Make sure user still has the cube UI open
 		if(!CheckCubeUI())
+		{
 			return;
+		}
 
+		// Stocker and item to be stocked are in cube, transmute them and wait for next
+		//  OnItemToCube event (see below)
 		me->Transmute();
 	}
 	else if(currentState == STATE_TRANSMUTE)
 	{
-		// Restocker assigned a new ID after each transmute
+		// Only the stocker should be returned from the transmute process
 		if(!GetStockerType(itemId, NULL))
 		{
 			server->GameStringf("ÿc:Autostockerÿc0: Tried to assign non stocker to stocker");
+			Abort();
 			return;
 		}
 
+		// Every time a stocker is transmuted it gets a new itemId, updated our collection of stockers
+		//  with the new id
 		restockers[currentStocker] = itemId;
 
-		currentState = STATE_NEXTITEM;
+		// Process the next item for this stocker
+		ProcessNextItem();
 	}
 
 }
 
-void AutoStocker::OnStateNextStocker()
+/// <summary>
+/// Starts proecessing the next stocker that have items needing to be cubed
+/// </summary>
+void AutoStocker::ProcessNextStocker()
 {
 	POINT location = {0, 0};
 	currentStocker++;
 
-	// TODO: Open cube
+	// Open the player's cube
 	if(!OpenCube())
 	{
-		currentState = STATE_COMPLETE;
+		Abort();
 		return;
 	}
 
@@ -311,29 +372,34 @@ void AutoStocker::OnStateNextStocker()
 
 		server->GameStringf("ÿc:Autostockerÿc0: Failed to pick up new stocker");
 
-		currentState = STATE_COMPLETE;
+		Abort();
 		return;
 	}
 }
 
-void AutoStocker::OnStateNextItem()
+/// <summary>
+/// Processes the next item to be cubed
+/// </summary>
+void AutoStocker::ProcessNextItem()
 {
-	currentItem++;
-
 	if(!CheckCubeUI())
+	{
 		return;
+	}
+
+	// CurrentItem starts at -1 so the first time this is called 'currentITem' will be incremented to the first element
+	currentItem++;
 
 	if(currentItem < itemsToTransmute[currentStocker].size())
 	{
+		// Remember the item we're picking up for curecking during the OnItemFromInventory event
 		itemWaitingOn = itemsToTransmute[currentStocker][currentItem];
 		currentState = STATE_PICKUPITEM;
 
-		// NOTE: Bug in d2hackit item management - it will see items that no longer exist
 		if(!me->PickStorageItemToCursor(itemsToTransmute[currentStocker][currentItem]))
 		{
 			server->GameStringf("ÿc:Autostockerÿc0: Failed to pickup item %d/%d", currentItem+1, itemsToTransmute[currentStocker].size());
-
-			currentState = STATE_NEXTITEM;
+			ProcessNextItem();
 			return;
 		}
 	}
@@ -345,11 +411,13 @@ void AutoStocker::OnStateNextItem()
 		if(!me->PickStorageItemToCursor(restockers[currentStocker]))
 		{
 			if(useChat)
+			{
 				me->Say("ÿc:Autostockerÿc0: Failed to pickup stocker item");
+			}
 
 			server->GameStringf("ÿc:Autostockerÿc0: Failed to pickup stocker item %d", currentStocker);
 
-			currentState = STATE_COMPLETE;
+			Abort();
 			return;
 		}		
 	}

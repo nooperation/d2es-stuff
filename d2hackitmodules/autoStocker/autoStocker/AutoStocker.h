@@ -26,8 +26,6 @@ enum States
 	STATE_PICKUPSTOCKER,
 	STATE_PICKUPITEM,
 	STATE_TRANSMUTE,
-	STATE_NEXTITEM,
-	STATE_NEXTSTOCKER,
 	STATE_STOCKERTOCUBE,
 	STATE_ITEMTOCUBE,
 	STATE_STOCKERFROMCUBE,
@@ -40,10 +38,10 @@ class AutoStocker
 	public:
 		AutoStocker();
 		bool Start(bool useChat);
-		bool Foo();
+		bool BeginAutostocking();
 		bool Init(bool useChat);
 		bool StartRares(bool transmuteSet, bool transmuteRare, bool transmuteUnique, bool useChat);
-		void OnItemFromStorage(DWORD itemID);
+		void OnItemFromInventory(DWORD itemID);
 		void OnItemToCube(DWORD itemID);
 		void OnItemToInventory(DWORD itemID);
 		void OnItemFromCube(DWORD itemID);
@@ -59,8 +57,8 @@ class AutoStocker
 		void FindItemsToTransmute(const std::vector<ITEM> &itemsInInventory);
 		bool FindStockers(const std::vector<ITEM> &itemsInInventory);
 		bool IsCubeEmpty();
-		void OnStateNextItem();
-		void OnStateNextStocker();
+		void ProcessNextItem();
+		void ProcessNextStocker();
 		bool OpenCube();
 		bool GetStockerType(DWORD itemId, int *stockerType);
 		bool CheckCubeUI();

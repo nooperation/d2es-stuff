@@ -8,17 +8,15 @@ void ReadConfig();
 
 AutoStocker autoStocker;
 
-int ticksSkipped = 0;
-int speed = 0;
 bool settingHotkey = false;
 int hotkey = 0;
 
 CLIENTINFO
 (
-	0,1,
+	1,6,
+	"Auto Stocker v1.6",
 	"",
-	"",
-	"Auto Stocker",
+	"Auto Stocker v1.6",
 	""
 )
 
@@ -76,22 +74,6 @@ BOOL PRIVATE StartRares(char** argv, int argc)
 	return TRUE;
 }
 
-BOOL PRIVATE Speed(char** argv, int argc)
-{
-	if(argc == 3)
-	{
-		speed = atoi(argv[2]);
-
-		if(speed < 0)
-			speed = 0;
-
-		server->GameStringf("ÿc:Autostockerÿc0: Setting speed to %d", speed);
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 //DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 //{
 //	if(aPacket[0] == 0x2c)
@@ -112,11 +94,7 @@ VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
 
 DWORD EXPORT OnGameTimerTick()
 {
-	if(ticksSkipped++ < speed)
-		return 0;
-
 	autoStocker.OnTick();
-	ticksSkipped = 0;
 
 	return 0;
 }
@@ -145,7 +123,7 @@ VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPAR
 		}
 		else if(wParam == 0x05 && item->iStorageID == 0x01)
 		{
-			autoStocker.OnItemFromStorage(item->dwItemID);
+			autoStocker.OnItemFromInventory(item->dwItemID);
 		}
 		else if(wParam == 0x05 && item->iStorageID == 0x04)
 		{
@@ -231,11 +209,6 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"Start_rares",
 		StartRares,
 		"Usage: Start_rares [sets] [rares] [uniques] [chat]"
-	},
-	{
-		"Speed",
-		Speed,
-		"Speed # where # is the number of ticks to wait per command. Each tick is 100ms"
 	},
 	{
 		"Hotkey",
