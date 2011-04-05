@@ -25,7 +25,7 @@ class AutoExtractor
 
 		void OnItemToCube(const ITEM &itemID);
 		void OnItemToInventory(const ITEM &item);
-		void OnItemFromCube(DWORD itemID);
+		void OnItemFromCube(const ITEM &item);
 		void OnTick();
 		void Abort();		
 

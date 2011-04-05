@@ -247,7 +247,7 @@ void AutoExtractor::OnTick()
 /// Called whenever an item is moved from the cube to the cursor
 /// </summary>
 /// <param name="item">The ID of the item item that moved to the player's cursor.</param>
-void AutoExtractor::OnItemFromCube(DWORD itemID)
+void AutoExtractor::OnItemFromCube(const ITEM &item)
 {
 	// Only interested in this event when we're picking up the extracted item from the cube
 	if(currentState != STATE_PICKUPEXTRACTEDITEM)
@@ -257,16 +257,13 @@ void AutoExtractor::OnItemFromCube(DWORD itemID)
 	//  process (e.g: rare ring). If it's not, then we need to abort because there's going to be
 	//  a request to pickup the extracted item from the cube while we have this item in our hand,
 	//  the server will kick us.
-	if(itemID != extractedItemID)
+	if(item.dwItemID != extractedItemID)
 	{
-		char itemCode[4];
-		server->GetItemCodeEx(itemID, itemCode, sizeof(itemCode)/sizeof(itemCode[0]), 10, 50);
-
 		if(useChat)
 		{
 			me->Say("ÿc:AutoExtractorÿc0: Unknown item picked up");
 		}
-		server->GameStringf("ÿc:AutoExtractorÿc0: Unknown item picked up: [%X] %s", itemID, itemCode);
+		server->GameStringf("ÿc:AutoExtractorÿc0: Unknown item picked up: [%X] %s", item.dwItemID, item.szItemCode);
 
 		Abort();
 		return;
@@ -274,11 +271,12 @@ void AutoExtractor::OnItemFromCube(DWORD itemID)
 
 	// Drop the extracted item to our inventory
 	currentState = STATE_EXTRACTEDTOINVENTORY;
-	if(!me->DropItemToStorage(STORAGE_INVENTORY, itemID))
+	if(!me->DropItemToStorage(STORAGE_INVENTORY, item.dwItemID))
 	{
 		if(useChat)
+		{
 			me->Say("ÿc:AutoExtractorÿc0: Failed drop extracted item back to inventory");
-
+		}
 		server->GameStringf("ÿc:AutoExtractorÿc0: Failed drop extracted item back to inventory");
 
 		Abort();
@@ -300,7 +298,9 @@ void AutoExtractor::OnItemToInventory(const ITEM &item)
 	if(item.dwItemID != extractedItemID)
 	{
 		if(useChat)
+		{
 			me->Say("ÿc:AutoExtractorÿc0: Item to inventory not extracted item");
+		}
 
 		server->GameStringf("ÿc:AutoExtractorÿc0: Item to inventory not extracted item, ignoring");
 		return;
@@ -350,7 +350,9 @@ void AutoExtractor::OnItemToCube(const ITEM &item)
 {
 	// We only care about items to the cube if we just completed the transmute step
 	if(currentState != STATE_TRANSMUTE)
+	{
 		return;
+	}
 
 	bool itemIsNotExtractor = true;
 	itemsExpectedToCube--;
@@ -371,7 +373,9 @@ void AutoExtractor::OnItemToCube(const ITEM &item)
 		itemsExpectedToCube = extractors.size()+1;
 		
 		if(!CheckCubeUI())
+		{
 			return;
+		}
 
 		currentState = STATE_PICKUPEXTRACTEDITEM;
 		if(!me->PickStorageItemToCursor(extractedItemID))
