@@ -333,6 +333,8 @@ BOOL PRIVATE SetupClient(HMODULE hModule, LPCSTR szModule)
 	BIND_TO_PLAYER(FindFirstStorageSpaceEx);
 	BIND_TO_PLAYER(DropCursorItemToStorage);	// 2.00 (Abin)
 	BIND_TO_PLAYER(DropCursorItemToStorageEx);	
+	BIND_TO_PLAYER(DropItemToStorage);
+	BIND_TO_PLAYER(DropItemToStorageEx);
 	BIND_TO_PLAYER(CloseAllUIs);				// 2.00 (Abin)
 	BIND_TO_PLAYER(GetOpenedUI);				// 2.00 (Abin)
 	BIND_TO_PLAYER(BuyHealingPotion);			// 2.00 (Abin)

@@ -2254,29 +2254,41 @@ BOOL EXPORT DropCursorItemToStorageEx(int nStorageType, POINT preferedPosition)
 {
 	DWORD dwItemID = GetCursorItem();
 
+	return DropItemToStorageEx(nStorageType, preferedPosition, dwItemID);
+}
+
+BOOL EXPORT DropItemToStorage(int nStorageType, DWORD dwItemID)
+{
+	POINT startAt = {0, 0};
+
+	return DropItemToStorageEx(nStorageType, startAt, dwItemID);
+}
+
+BOOL EXPORT DropItemToStorageEx(int nStorageType, POINT preferedPosition, DWORD dwItemID)
+{
 	if (dwItemID == 0)
 	{
-		GameErrorf("DropCursorItemToStorage: dwItemID == 0");
+		GameErrorf("DropItemToStorage: dwItemID == 0");
 		return FALSE;
 	}
 
 	if( preferedPosition.x < 0 || preferedPosition.y < 0)
 	{
-		GameErrorf("DropCursorItemToStorage: preferedPosition.x < 0 || preferedPosition.y < 0");
+		GameErrorf("DropItemToStorage: preferedPosition.x < 0 || preferedPosition.y < 0");
 		return FALSE;
 	}
 
 	char szCode[4] = "";
 	if (!GetItemCode(dwItemID, szCode, 3))
 	{
-		GameErrorf("DropCursorItemToStorage: Failed to get item code");
+		GameErrorf("DropItemToStorage: Failed to get item code");
 		return FALSE;
 	}
 
 	SIZE cs = GetItemSize(szCode);
 	if (cs.cx == 0 || cs.cy == 0)
 	{
-		GameErrorf("DropCursorItemToStorage: %s has a dimension is 0", szCode);
+		GameErrorf("DropItemToStorage: %s has a dimension is 0", szCode);
 		return FALSE;
 	}
 
@@ -2288,13 +2300,13 @@ BOOL EXPORT DropCursorItemToStorageEx(int nStorageType, POINT preferedPosition)
 		{
 			if(!FindFirstStorageSpace(nStorageType, cs, &pt))
 			{
-				GameErrorf("DropCursorItemToStorage: No space");
+				GameErrorf("DropItemToStorage: No space");
 				return FALSE;
 			}
 		}
 		else
 		{
-			GameErrorf("DropCursorItemToStorage: No space (preferedPosition = 0,0)");
+			GameErrorf("DropItemToStorage: No space (preferedPosition = 0,0)");
 			return FALSE;
 		}
 	}
@@ -2304,7 +2316,7 @@ BOOL EXPORT DropCursorItemToStorageEx(int nStorageType, POINT preferedPosition)
 	{
 		if (dwCubeID == 0)
 		{
-			GameErrorf("DropCursorItemToStorage: No cube");
+			GameErrorf("DropItemToStorage: No cube");
 			return FALSE;
 		}
 
@@ -2326,8 +2338,8 @@ BOOL EXPORT DropCursorItemToStorageEx(int nStorageType, POINT preferedPosition)
 		return GameSendPacketToServer(aPacket, 17);
 	}
 
-	GameErrorf("DropCursorItemToStorageEx: Invalid storage %d", nStorageType);
-	return FALSE;	
+	GameErrorf("DropItemToStorage: Invalid storage %d", nStorageType);
+	return FALSE;
 }
 
 BOOL EXPORT RemoveFromStorage(int storageType, DWORD dwItemID)

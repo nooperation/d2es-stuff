@@ -290,6 +290,8 @@ BOOL EXPORT RightClickHere();
 BOOL EXPORT RemoveFromStorage(int storageType, DWORD dwItemID);
 BOOL EXPORT DumpStorage(LPCSTR path);
 BOOL EXPORT DropCursorItemToStorageEx(int nStorageType, POINT preferedPosition);
+BOOL EXPORT DropItemToStorageEx(int nStorageType, POINT preferedPosition, DWORD dwItemID);
+BOOL EXPORT DropItemToStorage(int nStorageType, DWORD dwItemID);
 BOOL EXPORT FindFirstStorageSpaceEx(int nStorageType, SIZE minSize, LPPOINT lpBuffer, POINT preferedPosition);
 BOOL EXPORT FindItemPosition(int nStorageType, DWORD dwItemID, LPPOINT position);
 BOOL EXPORT OpenCube();

@@ -634,6 +634,8 @@ typedef BOOL (__cdecl *fnRemoveFromStorage)(int storageType, DWORD dwItemID);
 typedef BOOL (__cdecl *fnDumpStorage)(LPCSTR path);
 typedef BOOL (__cdecl *fnFindFirstStorageSpaceEx)(int nStorageType, SIZE minSize, LPPOINT lpBuffer, POINT preferedPosition);
 typedef BOOL (__cdecl *fnDropCursorItemToStorageEx)(int nStorageType, POINT preferedPosition);
+typedef BOOL (__cdecl *fnDropItemToStorage)(int nStorageType, DWORD dwItemID);
+typedef BOOL (__cdecl *fnDropItemToStorageEx)(int nStorageType, POINT preferedPosition, DWORD dwItemID);
 // B--
 
 typedef struct tagPlayerEntryPoints
@@ -729,6 +731,8 @@ typedef struct tagPlayerEntryPoints
 	fnFindItemPosition				FindItemPosition;
 	fnFindFirstStorageSpaceEx		FindFirstStorageSpaceEx;
 	fnDropCursorItemToStorageEx		DropCursorItemToStorageEx;
+	fnDropItemToStorageEx			DropItemToStorageEx;
+	fnDropItemToStorage				DropItemToStorage;
 	fnRemoveFromStorage				RemoveFromStorage;
 	fnDumpStorage					DumpStorage;
 	// -- B
