@@ -237,7 +237,7 @@ void AutostockAutoextract::OnTick()
 /// Called whenever an item is picked up from the inventory
 /// </summary>
 /// <param name="item">The item picked up from player's inventory.</param>
-void AutostockAutoextract::OnItemFromInventory(ITEM &item)
+void AutostockAutoextract::OnItemFromInventory(const ITEM &item)
 {
 	// We only care about items picked up from the player's inventory when we're moving
 	//   the extractor and stocker to the cube
@@ -260,7 +260,7 @@ void AutostockAutoextract::OnItemFromInventory(ITEM &item)
 /// Called whenever an item is moved to the player's inventory
 /// </summary>
 /// <param name="item">The item moved to the player's inventory.</param>
-void AutostockAutoextract::OnItemFromCube(ITEM &item)
+void AutostockAutoextract::OnItemFromCube(const ITEM &item)
 {
 	// We only care about items going to the inventory when autostocker is
 	//  moving the extractor back to the inventory
@@ -284,7 +284,7 @@ void AutostockAutoextract::OnItemFromCube(ITEM &item)
 /// Called whenever an item is moved to the cube
 /// </summary>
 /// <param name="item">The item moved to the cube.</param>
-void AutostockAutoextract::OnItemToCube(ITEM &item)
+void AutostockAutoextract::OnItemToCube(const ITEM &item)
 {
 	// We only care about items going to the cube when we're moving the extractor 
 	//   or stocker to the cube

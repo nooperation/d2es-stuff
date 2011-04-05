@@ -53,9 +53,9 @@ class AutostockAutoextract
 		bool OnAutostockerEnded();
 		bool OnAutoExtractorEnded();
 		bool OnEmptyCubeEnded();
-		void OnItemFromInventory(ITEM &item);
-		void OnItemToCube(ITEM &item);
-		void OnItemFromCube(ITEM &item);
+		void OnItemFromInventory(const ITEM &item);
+		void OnItemToCube(const ITEM &item);
+		void OnItemFromCube(const ITEM &item);
 
 		void OnTick();
 		void Abort();		
