@@ -55,11 +55,12 @@ bool AutostockAutoextract::StartAsAe()
 	if(!me->OpenCube())
 	{
 		if(useChat)
+		{
 			me->Say("ÿc5AutostockAutoextractÿc0: Cube not opened");
-
+		}
 		server->GameStringf("ÿc5EmptyCubeÿc0: Cube not opened");
-		currentState = STATE_COMPLETE;
 
+		Abort();
 		return false;
 	}
 
@@ -70,7 +71,7 @@ bool AutostockAutoextract::StartAsAe()
 	if(strlen(extractorStuff.extractorCode) == 0 || strlen(extractorStuff.restockerCode) == 0)
 	{
 		server->GameStringf("ÿc5AutostockAutoextractÿc0: Place extractors in cube before starting");
-		currentState = STATE_COMPLETE;
+		Abort();
 		return false;
 	}
 
@@ -190,7 +191,7 @@ void AutostockAutoextract::MoveExtractorAndStockerToCube()
 	currentState = STATE_PICKUPEXTRACTORSTUFF;
 	if(!me->PickStorageItemToCursor(itemToPickup))
 	{
-		server->GameStringf("Failed to pickup extractor stuff");
+		server->GameStringf("Failed to pickup extractor (e.g: key) or restocker (e.g: rerolling orb)");
 		Abort();
 		return;
 	}
@@ -199,7 +200,6 @@ void AutostockAutoextract::MoveExtractorAndStockerToCube()
 /// <summary>
 /// Aborts the ASAE process if it's currently running
 /// </summary>
-/// <returns>true if this event was handled, false if ignored.</returns>
 void AutostockAutoextract::Abort()
 {
 	if(currentState != STATE_COMPLETE && currentState != STATE_UNINITIALIZED)
@@ -236,7 +236,7 @@ void AutostockAutoextract::OnTick()
 /// <summary>
 /// Called whenever an item is picked up from the inventory
 /// </summary>
-/// <param name="item">The item moved to the cube.</param>
+/// <param name="item">The item picked up from player's inventory.</param>
 void AutostockAutoextract::OnItemFromInventory(ITEM &item)
 {
 	// We only care about items picked up from the player's inventory when we're moving
@@ -250,7 +250,7 @@ void AutostockAutoextract::OnItemFromInventory(ITEM &item)
 	currentState = STATE_EXTRACTORSTUFFTOCUBE;
 	if(!me->DropItemToStorage(STORAGE_CUBE, item.dwItemID))
 	{
-		server->GameStringf("Failed to drop extractorstuff to cube");
+		server->GameStringf("ÿc5AutostockAutoextractÿc0: Failed to drop extractorstuff to cube");
 		Abort();
 		return;
 	}
@@ -259,7 +259,7 @@ void AutostockAutoextract::OnItemFromInventory(ITEM &item)
 /// <summary>
 /// Called whenever an item is moved to the player's inventory
 /// </summary>
-/// <param name="item">The item moved to the cube.</param>
+/// <param name="item">The item moved to the player's inventory.</param>
 void AutostockAutoextract::OnItemToInventory(ITEM &item)
 {
 	// We only care about items going to the inventory when autostocker is
@@ -335,7 +335,11 @@ bool GetStockerType(DWORD itemId, int *stockerType)
 	char itemCode[4];
 	int itemCodeNum = 0;
 
-	server->GetItemCode(itemId, itemCode, sizeof(itemCode)/sizeof(itemCode[0]));
+	if(!server->GetItemCodeEx(itemId, itemCode, sizeof(itemCode)/sizeof(itemCode[0]), 10, 50))
+	{
+		server->GameStringf("ÿc5AutostockAutoextractÿc0: Failed to get item code");
+		return false;
+	}
 	
 	if(itemCode[0] == 'k' && itemCode[2] == '0')
 	{
