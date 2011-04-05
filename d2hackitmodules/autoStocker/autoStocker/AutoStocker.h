@@ -41,10 +41,10 @@ class AutoStocker
 		bool BeginAutostocking();
 		bool Init(bool useChat);
 		bool StartRares(bool transmuteSet, bool transmuteRare, bool transmuteUnique, bool useChat);
-		void OnItemFromInventory(DWORD itemID);
-		void OnItemToCube(DWORD itemID);
-		void OnItemToInventory(DWORD itemID);
-		void OnItemFromCube(DWORD itemID);
+		void OnItemFromInventory(const ITEM &item);
+		void OnItemToCube(const ITEM &item);
+		void OnItemToInventory(const ITEM &item);
+		void OnItemFromCube(const ITEM &item);
 		void OnTick();
 		void Abort();
 		
@@ -60,7 +60,8 @@ class AutoStocker
 		void ProcessNextItem();
 		void ProcessNextStocker();
 		bool OpenCube();
-		bool GetStockerType(DWORD itemId, int *stockerType);
+		bool GetStockerTypeByID(DWORD itemId, int *stockerType);
+		bool GetStockerTypeByCode(const char *itemCode, int *stockerType);
 		bool CheckCubeUI();
 		bool CheckItemAffix(const ITEM &item);
 

@@ -175,8 +175,8 @@ void AutoStocker::OnTick()
 /// <summary>
 /// Called whenever an item is picked up to the cursor from the player's inventory
 /// </summary>
-/// <param name="item">Item ID of the item that was picked up.</param>
-void AutoStocker::OnItemFromInventory(DWORD itemID)
+/// <param name="item">Item that was picked up.</param>
+void AutoStocker::OnItemFromInventory(const ITEM &item)
 {
 	// Only care about this event when we're picking up the stocker or item to be cubed
 	if(currentState != STATE_PICKUPSTOCKER && currentState != STATE_PICKUPITEM)
@@ -186,7 +186,7 @@ void AutoStocker::OnItemFromInventory(DWORD itemID)
 
 	// User might of picked up an item while autostocker was running, abort before we attempt
 	// to pickup another item and have the server kick us
-	if(itemID != itemWaitingOn)
+	if(item.dwItemID != itemWaitingOn)
 	{
 		server->GameStringf("I'm not waiting on this item!");
 		Abort();
@@ -210,7 +210,7 @@ void AutoStocker::OnItemFromInventory(DWORD itemID)
 		currentState = STATE_ITEMTOCUBE;
 	}
 
-	if(!me->DropItemToStorage(STORAGE_CUBE, itemID))
+	if(!me->DropItemToStorage(STORAGE_CUBE, item.dwItemID))
 	{
 		server->GameStringf("DropItemToStorage failed");
 	}
@@ -219,8 +219,8 @@ void AutoStocker::OnItemFromInventory(DWORD itemID)
 /// <summary>
 /// Called whenever an item is pickedup to the cursor from the cube
 /// </summary>
-/// <param name="item">Item ID of the item picked up from the cube.</param>
-void AutoStocker::OnItemFromCube(DWORD itemID)
+/// <param name="item">Item picked up from the cube.</param>
+void AutoStocker::OnItemFromCube(const ITEM &item)
 {
 	// We only care about this event when we're picking up the stocker from the cube
 	if(currentState != STATE_STOCKERFROMCUBE)
@@ -229,11 +229,11 @@ void AutoStocker::OnItemFromCube(DWORD itemID)
 	}
 
 	// Make sure the item picked up from the cube is the stocker, otherwise there's a problem
-	if(itemID == restockers[currentStocker])
+	if(item.dwItemID == restockers[currentStocker])
 	{
 		currentState = STATE_STOCKERTOINVENTORY;
 
-		if(!me->DropItemToStorageEx(STORAGE_INVENTORY, restockerPositions[currentStocker], itemID))
+		if(!me->DropItemToStorageEx(STORAGE_INVENTORY, restockerPositions[currentStocker], item.dwItemID))
 		{
 			if(useChat)
 			{
@@ -248,14 +248,11 @@ void AutoStocker::OnItemFromCube(DWORD itemID)
 	{
 		// User might of picked up item from the cube while process was running, if so we need to abort
 		//  to avoid being kicked by the server
-		char itemCode[4];
-		server->GetItemCodeEx(itemID, itemCode, sizeof(itemCode)/sizeof(itemCode[0]), 10, 50);
-
 		if(useChat)
 		{
 			me->Say("ÿc:Autostockerÿc0: Unknown item picked up");
 		}
-		server->GameStringf("ÿc:Autostockerÿc0: Unknown item picked up: [%X] %s", itemID, itemCode);
+		server->GameStringf("ÿc:Autostockerÿc0: Unknown item picked up: [%X] %s", item.dwItemID, item.szItemCode);
 
 		Abort();
 		return;
@@ -265,8 +262,8 @@ void AutoStocker::OnItemFromCube(DWORD itemID)
 /// <summary>
 /// Called whenever an item is moved to the player's inventory
 /// </summary>
-/// <param name="item">The item moved to the player's inventory.</param>
-void AutoStocker::OnItemToInventory(DWORD itemID)
+/// <param name="item">The item that was moved to the player's inventory.</param>
+void AutoStocker::OnItemToInventory(const ITEM &item)
 {
 	// We only care about this event when we're moving our stocker back to the player's inventory
 	if(currentState != STATE_STOCKERTOINVENTORY)
@@ -275,7 +272,7 @@ void AutoStocker::OnItemToInventory(DWORD itemID)
 	}
 
 	// Make sure the item that was moved was the stocker, otherwise ignore it
-	if(itemID != restockers[currentStocker])
+	if(item.dwItemID != restockers[currentStocker])
 	{
 		server->GameStringf("ÿc:Autostockerÿc0: Item to inventory not stocker");
 		return;
@@ -288,8 +285,8 @@ void AutoStocker::OnItemToInventory(DWORD itemID)
 /// <summary>
 /// Called whenever an item is moved to the cube
 /// </summary>
-/// <param name="item">The item moved to the cube.</param>
-void AutoStocker::OnItemToCube(DWORD itemId)
+/// <param name="item">The item that was moved to the cube.</param>
+void AutoStocker::OnItemToCube(const ITEM &item)
 {
 	if(currentState == STATE_STOCKERTOCUBE)
 	{
@@ -313,7 +310,7 @@ void AutoStocker::OnItemToCube(DWORD itemId)
 	else if(currentState == STATE_TRANSMUTE)
 	{
 		// Only the stocker should be returned from the transmute process
-		if(!GetStockerType(itemId, NULL))
+		if(!GetStockerTypeByCode(item.szItemCode, NULL))
 		{
 			// Plugin and game are not always in sync, game might not know this item exists yet
 			server->GameStringf("ÿc:Autostockerÿc0: Warning! Tried to assign non stocker to stocker");
@@ -321,7 +318,7 @@ void AutoStocker::OnItemToCube(DWORD itemId)
 
 		// Every time a stocker is transmuted it gets a new itemId, updated our collection of stockers
 		//  with the new id
-		restockers[currentStocker] = itemId;
+		restockers[currentStocker] = item.dwItemID;
 
 		// Process the next item for this stocker
 		ProcessNextItem();
@@ -542,24 +539,35 @@ void AutoStocker::FindItemsToTransmute(const std::vector<ITEM> &itemsInInventory
 
 /// <summary>
 /// Determines the type of stocker the item with specified ID is
-/// TODO: this is horrible -> Store all stockers in a nice, easy to access list
 /// </summary>
 /// <param name="itemId">ItemID of item being checked.</param>
 /// <param name="stockerType">[out] Type of stocker this item is.</param>
 /// <returns>true if item is a stocker, false if not a stocker.</returns>
-bool AutoStocker::GetStockerType(DWORD itemId, int *stockerType)
+bool AutoStocker::GetStockerTypeByID(DWORD itemId, int *stockerType)
 {
 	char itemCode[4];
-	int itemCodeNum = 0;
-
-	int attempts = 0;
 
 	if(!server->GetItemCodeEx(itemId, itemCode, sizeof(itemCode)/sizeof(itemCode[0]), 10, 50))
 	{
-		server->GameStringf("ÿc:Autostockerÿc0: Failed to get item code");
+		server->GameStringf("ÿc5AutostockAutoextractÿc0: Failed to get item code");
 		return false;
 	}
-	
+
+	return GetStockerTypeByCode(itemCode, stockerType);
+}
+
+/// <summary>
+/// Determines the type of stocker the item with specified item code
+/// TODO: this is horrible -> Store all stockers in a nice, easy to access list
+/// TODO: This is duplicate code from autostocker!
+/// </summary>
+/// <param name="itemCode">Itemcode with 4 elements.</param>
+/// <param name="stockerType">[out] Type of stocker this item is.</param>
+/// <returns>true if item is a stocker, false if not a stocker.</returns>
+bool AutoStocker::GetStockerTypeByCode(const char *itemCode, int *stockerType)
+{
+	int itemCodeNum = 0;
+
 	if(itemCode[0] == 'k' && itemCode[2] == '0')
 	{
 		if(itemCode[1] == 'v' || itemCode[1] == 'y' ||
@@ -621,7 +629,7 @@ bool AutoStocker::GetStockerType(DWORD itemId, int *stockerType)
 	else if(itemCode[0] == 'w' && isdigit(itemCode[1]) && isdigit(itemCode[2]))
 	{
 		itemCodeNum = atoi(itemCode + 1);
-		
+
 		if(itemCodeNum >= 31 && itemCodeNum <= 55)
 		{
 			//w31 Tome a
@@ -650,6 +658,7 @@ bool AutoStocker::GetStockerType(DWORD itemId, int *stockerType)
 	return false;
 }
 
+
 /// <summary>
 /// Obtains a list of stockers found in the player's inventory
 /// </summary>
@@ -661,7 +670,7 @@ bool AutoStocker::FindStockers(const std::vector<ITEM> &itemsInInventory)
 
 	for(unsigned int i = 0; i < itemsInInventory.size(); ++i)
 	{
-		if(GetStockerType(itemsInInventory[i].dwItemID, &stockerType))
+		if(GetStockerTypeByCode(itemsInInventory[i].szItemCode, &stockerType))
 		{
 			restockers[stockerType] = itemsInInventory[i].dwItemID;
 		}

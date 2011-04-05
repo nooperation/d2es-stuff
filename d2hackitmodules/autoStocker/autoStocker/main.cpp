@@ -111,23 +111,23 @@ VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPAR
 {
 	if(nMessage == UM_ITEMEVENT)
 	{
-		ITEM *item = (ITEM *)lParam;
+		ITEM item = *(ITEM *)lParam;
 
-		if(wParam == 0x04 && item->iStorageID == 0x04)
+		if(wParam == 0x04 && item.iStorageID == 0x04)
 		{
-			autoStocker.OnItemToCube(item->dwItemID);
+			autoStocker.OnItemToCube(item);
 		}
-		else if(wParam == 0x04 && item->iStorageID == 0x01)
+		else if(wParam == 0x04 && item.iStorageID == 0x01)
 		{
-			autoStocker.OnItemToInventory(item->dwItemID);
+			autoStocker.OnItemToInventory(item);
 		}
-		else if(wParam == 0x05 && item->iStorageID == 0x01)
+		else if(wParam == 0x05 && item.iStorageID == 0x01)
 		{
-			autoStocker.OnItemFromInventory(item->dwItemID);
+			autoStocker.OnItemFromInventory(item);
 		}
-		else if(wParam == 0x05 && item->iStorageID == 0x04)
+		else if(wParam == 0x05 && item.iStorageID == 0x04)
 		{
-			autoStocker.OnItemFromCube(item->dwItemID);
+			autoStocker.OnItemFromCube(item);
 		}
 	}
 }
