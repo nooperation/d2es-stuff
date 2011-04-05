@@ -249,7 +249,7 @@ void AutoStocker::OnItemFromCube(DWORD itemID)
 		// User might of picked up item from the cube while process was running, if so we need to abort
 		//  to avoid being kicked by the server
 		char itemCode[4];
-		server->GetItemCode(itemID, itemCode, sizeof(itemCode)/sizeof(itemCode[0]));
+		server->GetItemCodeEx(itemID, itemCode, sizeof(itemCode)/sizeof(itemCode[0]), 10, 50);
 
 		if(useChat)
 		{
@@ -552,7 +552,13 @@ bool AutoStocker::GetStockerType(DWORD itemId, int *stockerType)
 	char itemCode[4];
 	int itemCodeNum = 0;
 
-	server->GetItemCode(itemId, itemCode, sizeof(itemCode)/sizeof(itemCode[0]));
+	int attempts = 0;
+
+	if(!server->GetItemCodeEx(itemId, itemCode, sizeof(itemCode)/sizeof(itemCode[0]), 10, 50))
+	{
+		server->GameStringf("ÿc:Autostockerÿc0: Failed to get item code");
+		return false;
+	}
 	
 	if(itemCode[0] == 'k' && itemCode[2] == '0')
 	{
