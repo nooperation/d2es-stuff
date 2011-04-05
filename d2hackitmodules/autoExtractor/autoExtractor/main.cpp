@@ -3,15 +3,12 @@
 
 AutoExtractor autoExtractor;
 
-int ticksSkipped = 0;
-int speed = 0;
-
 CLIENTINFO
 (
-	0,1,
+	1,4,
 	"",
-	"",
-	"Auto Extractor",
+	"http://madbrahmin.googlepages.com/d2es/",
+	"Auto Extractor v1.4",
 	""
 )
 
@@ -33,30 +30,9 @@ BOOL PRIVATE Start(char** argv, int argc)
 	return TRUE;
 }
 
-
-BOOL PRIVATE Speed(char** argv, int argc)
-{
-	if(argc == 3)
-	{
-		speed = atoi(argv[2]);
-
-		if(speed < 0)
-			speed = 0;
-
-		server->GameStringf("Setting speed to %d", speed);
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 DWORD EXPORT OnGameTimerTick()
 {
-	if(ticksSkipped++ < speed)
-		return 0;
-
 	autoExtractor.OnTick();
-	ticksSkipped = 0;
 
 	return 0;
 }
@@ -114,11 +90,6 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"Start",
 		Start,
 		"Usage: Start [chat]",
-	},
-	{
-		"Speed",
-		Speed,
-		"Speed # where # is the number of ticks to wait per command. Each tick is 100ms"
 	},
 	{NULL}
 };

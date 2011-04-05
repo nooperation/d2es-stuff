@@ -10,13 +10,9 @@ enum States
 {
 	STATE_UNINITIALIZED = 0,
 	STATE_COMPLETE,
-	STATE_STARTEXTRACTION,
 	STATE_TRANSMUTE,
-	STATE_TRANSMUTE_COMPLETE,
 	STATE_PICKUPEXTRACTEDITEM,
 	STATE_EXTRACTEDTOINVENTORY,
-	STATE_EXTRACTIONCOMPLETE,
-	STATE_WAITINGFORNEXTSTATE,
 };
 
 class AutoExtractor
@@ -39,13 +35,12 @@ class AutoExtractor
 		bool CheckExtractedItem(const ITEM &item);
 		bool IsGoodPrefix(int prefixId);
 		bool IsGoodSuffix(int suffixId);
-
-		bool ReadConfig(std::string configPath, stdext::hash_set<int> &readTo);
+		bool IsItemAnExtractor(const ITEM &item);
+		bool ReadAffixFile(std::string configPath, stdext::hash_set<int> &readTo);
 
 		bool useChat;
 		DWORD extractedItemID;
 		int itemsExpectedToCube;
-		int ticksTillTransmuteTimeout;
 		std::vector<std::string> extractors;
 		stdext::hash_set<int> goodPrefix;
 		stdext::hash_set<int> goodSuffix;
