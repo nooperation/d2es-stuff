@@ -1100,6 +1100,24 @@ BYTE EXPORT CalculatePath(WORD x, WORD y, LPPATH lpBuffer, int nAdjust)
 	return pf.CalculatePathTo(x, y, lpBuffer, nAdjust);
 }
 
+BOOL EXPORT GetItemCodeEx(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars, int maxRetryCount, int delayBeteenRetries)
+{
+	int retryCount = 0;
+
+	while(!GetItemCode(dwItemID, lpszBuffer, dwMaxChars))
+	{
+		if(retryCount > maxRetryCount)
+		{
+			return FALSE;
+		}
+
+		Sleep(delayBeteenRetries);
+		retryCount++;
+	}
+
+	return TRUE;
+}
+
 BOOL EXPORT GetItemCode(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars)
 {
 	if (lpszBuffer == NULL ||dwMaxChars == 0)

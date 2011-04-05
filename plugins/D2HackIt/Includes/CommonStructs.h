@@ -415,6 +415,7 @@ typedef LPCSTR (__cdecl *fnGetGameIP)();
 typedef BOOL (__cdecl *fnEnumPresetUnits)(fnEnumPresetUnitProc lpfnEnumPresetUnitProc, LPARAM lParam); //lparam = 0
 typedef BYTE (__cdecl *fnCalculatePath)(WORD x, WORD y, LPPATH lpBuffer, int nAdjust); // nAdjust = 5
 typedef BOOL (__cdecl *fnGetItemCode)(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars);
+typedef BOOL (__cdecl *fnGetItemCodeEx)(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars, int maxRetryCount, int delayBeteenRetries);
 typedef BOOL (__cdecl *fnLeftClick)(long x, long y);
 typedef BOOL (__cdecl *fnRightClick)(long x, long y);
 typedef DWORD (__cdecl *fnQueryModuleData)(LPCSTR lpszModuleName, DWORD dwDataID, LPVOID lpBuffer, DWORD dwMaxLength, LPARAM lParam); // lparam = 0
@@ -521,6 +522,7 @@ typedef struct functionentrypoints_t
 	fnEnumPresetUnits				EnumPresetUnits;		// 2.00 (Abin)
 	fnCalculatePath					CalculatePath;			// 2.00 (Abin)
 	fnGetItemCode					GetItemCode;			// 2.00 (Abin)
+	fnGetItemCodeEx					GetItemCodeEx;			// 2.00 (Abin)
 	fnLeftClick						LeftClick;				// 2.00 (Abin)
 	fnRightClick					RightClick;				// 2.00 (Abin)
 	fnQueryModuleData				QueryModuleData;		// 2.00 (Abin)

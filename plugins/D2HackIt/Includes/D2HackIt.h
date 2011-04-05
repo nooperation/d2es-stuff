@@ -282,6 +282,7 @@ BOOL EXPORT PickStorageItemToCursor(DWORD dwItemID);
 BOOL EXPORT FindFirstStorageSpace(int nStorageType, SIZE minSize, LPPOINT lpBuffer);
 BOOL EXPORT DropCursorItemToStorage(int nStorageType);
 BOOL EXPORT GetItemCode(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars);
+BOOL EXPORT GetItemCodeEx(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars, int maxRetryCount, int delayBeteenRetries);
 
 // ++ B
 int EXPORT GetItemQuality(DWORD dwItemID);
