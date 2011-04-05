@@ -126,7 +126,7 @@ void AutoExtractor::OnTick()
 		case STATE_STARTEXTRACTION:
 		{
 			currentState = STATE_TRANSMUTE;
-			ticksTillTransmuteTimeout = 30;
+			ticksTillTransmuteTimeout = 3 * (1000 / server->GetTickRate());
 
 			if(!CheckCubeUI())
 				return;
