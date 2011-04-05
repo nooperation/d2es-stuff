@@ -273,7 +273,6 @@ void AutostockAutoextract::OnItemFromCube(const ITEM &item)
 	//   to double check that the item placed in our inventory by autostocker
 	//   was indeed a restocker and store the new item ID of that stocker for
 	//   future use
-	server->GameStringf("OnItemFromCube");
 	if(GetStockerTypeByCode(item.szItemCode, NULL))
 	{
 		extractorStuff.restockerID = item.dwItemID;
