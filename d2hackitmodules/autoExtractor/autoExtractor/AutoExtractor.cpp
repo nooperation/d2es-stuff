@@ -9,6 +9,7 @@
 AutoExtractor::AutoExtractor()
 {
 	currentState = STATE_UNINITIALIZED;
+	ticksTillTransmuteTimeout = 0;
 }
 
 /// <summary>
@@ -18,6 +19,7 @@ AutoExtractor::AutoExtractor()
 /// <returns>true if successful, false if failed.</returns>
 bool AutoExtractor::Init(bool useChat)
 {
+	ticksTillTransmuteTimeout = 0;
 	this->useChat = useChat;
 
 	if(!ReadAffixFile(".\\plugin\\goodPrefix_ae.txt", goodPrefix))
@@ -110,6 +112,8 @@ bool AutoExtractor::StartExtraction()
 	if(!CheckCubeUI())
 		return false;
 
+	// 3000ms timeout
+	ticksTillTransmuteTimeout = 3 * (1000 / server->GetTickRate());
 	currentState = STATE_TRANSMUTE;
 	me->Transmute();
 
@@ -190,7 +194,9 @@ bool AutoExtractor::IsItemAnExtractor(const ITEM &item)
 void AutoExtractor::Abort()
 {
 	if(currentState != STATE_COMPLETE && currentState != STATE_UNINITIALIZED)
+	{
 		currentState = STATE_COMPLETE;
+	}
 }
 
 /// <summary>
@@ -205,10 +211,33 @@ void AutoExtractor::OnTick()
 			currentState = STATE_UNINITIALIZED;
 
 			if(useChat)
+			{
 				me->Say("ÿc:AutoExtractorÿc0: AutoExtractor Ended");
+			}
 			else
+			{
 				server->GameStringf("ÿc:AutoExtractorÿc0: AutoExtractor Ended");
+			}
 
+			break;
+		}
+		case STATE_TRANSMUTE:
+		{
+			if(!CheckCubeUI())
+			{
+				return;
+			}
+		
+			if(ticksTillTransmuteTimeout-- <= 0)
+			{
+				if(useChat)
+					me->Say("ÿc:AutoExtractorÿc0: Timed out waiting for transmute results");
+		
+				server->GameStringf("ÿc:AutoExtractorÿc0: Timed out waiting for transmute results");
+				Abort();
+				return;
+			}
+		
 			break;
 		}
 	}
@@ -244,7 +273,7 @@ void AutoExtractor::OnItemFromCube(DWORD itemID)
 
 	// Drop the extracted item to our inventory
 	currentState = STATE_EXTRACTEDTOINVENTORY;
-	if(!me->DropCursorItemToStorage(STORAGE_INVENTORY))
+	if(!me->DropItemToStorage(STORAGE_INVENTORY, itemID))
 	{
 		if(useChat)
 			me->Say("ÿc:AutoExtractorÿc0: Failed drop extracted item back to inventory");

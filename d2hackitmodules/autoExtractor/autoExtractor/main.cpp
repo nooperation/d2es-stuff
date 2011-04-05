@@ -6,7 +6,7 @@ AutoExtractor autoExtractor;
 CLIENTINFO
 (
 	1,4,
-	"",
+	"Auto Extractor v1.4",
 	"http://madbrahmin.googlepages.com/d2es/",
 	"Auto Extractor v1.4",
 	""

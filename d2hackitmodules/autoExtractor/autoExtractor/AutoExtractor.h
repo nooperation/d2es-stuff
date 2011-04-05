@@ -41,6 +41,7 @@ class AutoExtractor
 		bool useChat;
 		DWORD extractedItemID;
 		int itemsExpectedToCube;
+		int ticksTillTransmuteTimeout;
 		std::vector<std::string> extractors;
 		stdext::hash_set<int> goodPrefix;
 		stdext::hash_set<int> goodSuffix;
