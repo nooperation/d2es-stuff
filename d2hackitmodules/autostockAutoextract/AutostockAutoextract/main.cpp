@@ -3,15 +3,12 @@
 
 AutostockAutoextract autostockAutoextract;
 
-int ticksSkipped = 0;
-int speed = 0;
-
 CLIENTINFO
 (
-	0,1,
+	1,2,
+	"Autostock Autoextract v1.2",
 	"",
-	"",
-	"Autostock Autoextract",
+	"Autostock Autoextract v1.2",
 	""
 )
 
@@ -23,7 +20,9 @@ BOOL PRIVATE Start(char** argv, int argc)
 	bool sets = false;
 
 	if(argc < 2)
+	{
 		return FALSE;
+	}
 
 	for(int i = 2; i < argc; i++)
 	{
@@ -51,29 +50,10 @@ BOOL PRIVATE Start(char** argv, int argc)
 }
 
 
-BOOL PRIVATE Speed(char** argv, int argc)
-{
-	if(argc == 3)
-	{
-		speed = atoi(argv[2]);
-
-		if(speed < 0)
-			speed = 0;
-
-		server->GameStringf("Setting speed to %d", speed);
-		return TRUE;
-	}
-
-	return FALSE;
-}
 
 DWORD EXPORT OnGameTimerTick()
 {
-	if(ticksSkipped++ < speed)
-		return 0;
-
 	autostockAutoextract.OnTick();
-	ticksSkipped = 0;
 
 	return 0;
 }
@@ -196,11 +176,6 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"Start",
 		Start,
 		"Usage: Start [sets] [rares] [uniques]",
-	},
-	{
-		"Speed",
-		Speed,
-		"Speed # where # is the number of ticks to wait per command. Each tick is 100ms"
 	},
 	{NULL}
 };

@@ -13,7 +13,6 @@ enum States
 	STATE_FINISHAUTOSTOCKER,
 	STATE_FINISHAUTOEXTRACTOR,
 	STATE_FINISHEMPTYCUBE,
-	STATE_NEXTEXTRACTORSTUFF,
 	STATE_PICKUPEXTRACTORSTUFF,
 	STATE_EXTRACTORSTUFFTOCUBE,
 	STATE_WAITINGFORNEXTSTATE,
@@ -62,6 +61,7 @@ class AutostockAutoextract
 		void Abort();		
 
 	private:
+		void MoveExtractorAndStockerToCube();
 		void StartStocking();
 		bool useChat;
 		bool transmuteRare;
