@@ -18,24 +18,15 @@ enum States
 {
 	STATE_UNINITIALIZED = 0,
 	STATE_COMPLETE,
-	STATE_STARTEXTRACTION,
 	STATE_TRANSMUTE,
-	STATE_TRANSMUTE_COMPLETE,
-	STATE_NEXTEXTRACTOR,
-	STATE_PICKUPEXTRACTEDITEM,
-	STATE_PICKUPEXTRACTOR,
+	STATE_PICKUPITEMTOREROLLED,
+	STATE_PICKUPGEM,
 	STATE_PICKUPGEMCANSTUFF,
-	STATE_NEXTGEMCANSTUFF,
 	STATE_GEMCANSTUFFTOCUBE,
-	STATE_EXTRACTORTOCUBE,
-	STATE_EXTRACTEDTOINVENTORY,
-	STATE_EXTRACTEDTOCUBE,
-	STATE_EXTRACTIONCOMPLETE,
+	STATE_GEMTOCUBE,
+	STATE_ITEMTOREROLLTOCUBE,
 	STATE_RUNNINGEMPTYCUBE,
 	STATE_RUNNINGAUTOEXTRACTOR,
-	STATE_FINISHEDEMPTYCUBE,
-	STATE_FINISHEDAUTOEXTRACTOR,
-	STATE_WAITINGFORNEXTSTATE,
 };
 
 #define CONFIG_PATH ".\\plugin\\autoreroll.ini"
@@ -44,7 +35,7 @@ class AutoReroll
 	public:
 		AutoReroll();
 		bool Start(int numGems, bool useChat);
-		bool StartExtraction();
+		bool StartRerollingItemInCube();
 		bool Init(bool useChat);
 
 		void OnItemToCube(const ITEM &item);
@@ -57,20 +48,24 @@ class AutoReroll
 
 	private:
 		void StartStocking();
-		bool CheckExtractedItem(const ITEM &item);
+		bool CheckRerolledItem(const ITEM &item);
 
-		bool ReadConfig(std::string configPath, stdext::hash_set<int> &readTo);
+		void ExtractMoreGems();
+		void MoveGemCanAndOpenerToCube();
+		void MoveNextGemToCube();
+		void FinishedEmptyCube();
+
+		bool ReadAffixConfig(std::string configPath, stdext::hash_set<int> &readTo);
 
 		bool loadedEmptyCube;
-		bool justRanAutoExtractor;
+		bool rerollItemNeedsToGoBackToCube;
 		bool useChat;
-		bool isExtractedItemGood;
 		int minPrefix;
 		int minSuffix;
 		int numGemsToUse;
-		DWORD extractedItemID;
-		int currentExtractor;
-		std::vector<DWORD> extractors;
+		DWORD itemToRerollID;
+		int currentGemIndex;
+		std::vector<DWORD> gemsInInventory;
 		stdext::hash_set<int> goodPrefix;
 		stdext::hash_set<int> goodSuffix;
 

@@ -3,16 +3,14 @@
 
 AutoReroll autoReroll;
 
-int ticksSkipped = 0;
-int speed = 0;
 bool autoRerollStarted;
 
 CLIENTINFO
 (
-	0,1,
+	1,2,
+	"Auto Reroll v1.2",
 	"",
-	"",
-	"Auto Reroll",
+	"Auto Reroll v1.2",
 	""
 )
 
@@ -45,30 +43,9 @@ BOOL PRIVATE Start(char** argv, int argc)
 	return TRUE;
 }
 
-
-BOOL PRIVATE Speed(char** argv, int argc)
-{
-	if(argc == 3)
-	{
-		speed = atoi(argv[2]);
-
-		if(speed < 0)
-			speed = 0;
-
-		server->GameStringf("Setting speed to %d", speed);
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 DWORD EXPORT OnGameTimerTick()
 {
-	if(ticksSkipped++ < speed)
-		return 0;
-
 	autoReroll.OnTick();
-	ticksSkipped = 0;
 
 	return 0;
 }
@@ -138,18 +115,10 @@ VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPAR
 		{
 			autoReroll.OnItemToCube(item);
 		}
-		//else if(wParam == 0x04 && item.iStorageID == 0x01)
-		//{
-		//	autoReroll.OnItemToInventory(item);
-		//}
 		else if(wParam == 0x05 && item.iStorageID == 0x01)
 		{
 			autoReroll.OnItemFromInventory(item.dwItemID);
 		}
-		//else if(wParam == 0x05 && item.iStorageID == 0x04)
-		//{
-		//	autoReroll.OnItemFromCube(item.dwItemID);
-		//}
 	}
 }
 
@@ -177,11 +146,6 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"Start",
 		Start,
 		"Usage: Start [chat]",
-	},
-	{
-		"Speed",
-		Speed,
-		"Speed # where # is the number of ticks to wait per command. Each tick is 100ms"
 	},
 	{NULL}
 };

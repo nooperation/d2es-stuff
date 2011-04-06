@@ -7,6 +7,8 @@
 #include "../../d2hackit/includes/itemSuffix.h"
 
 stdext::hash_set<std::string> gemItemCodes;
+stdext::hash_set<std::string> gemCanItemCodes;
+stdext::hash_set<std::string> canOpenerItemCodes;
 
 AutoReroll::AutoReroll()
 {
@@ -61,17 +63,44 @@ AutoReroll::AutoReroll()
 	gemItemCodes.insert("gzk"); // ÿc5Flawless Obsidian
 	gemItemCodes.insert("gpk"); // ÿc5Blemished Obsidian
 	gemItemCodes.insert("gbk"); // ÿc5Perfect Obsidian
+
+	gemCanItemCodes.clear();
+	gemCanItemCodes.insert("kv0"); // Gem Can
+	gemCanItemCodes.insert("ky0"); // Gem Can
+	gemCanItemCodes.insert("kb0"); // Gem Can
+	gemCanItemCodes.insert("kg0"); // Gem Can
+	gemCanItemCodes.insert("kr0"); // Gem Can
+	gemCanItemCodes.insert("kw0"); // Gem Can
+	gemCanItemCodes.insert("ks0"); // Gem Can
+	gemCanItemCodes.insert("kk0"); // Gem Can
+
+	canOpenerItemCodes.clear();
+	canOpenerItemCodes.insert("ko0"); // Opener
+	canOpenerItemCodes.insert("ko1"); // Opener
+	canOpenerItemCodes.insert("ko2"); // Opener
+	canOpenerItemCodes.insert("ko3"); // Opener
+	canOpenerItemCodes.insert("ko4"); // Opener
+	canOpenerItemCodes.insert("ko5"); // Opener
 }
 
+/// <summary>
+/// Initalizes AutoReroll
+/// </summary>
+/// <param name="useChat">Determines if output messages should be sent as chat messages.</param>
+/// <returns>true if successful, false if failed.</returns>
 bool AutoReroll::Init(bool useChat)
 {
 	this->useChat = useChat;
 
-	if(!ReadConfig(".\\plugin\\goodPrefix_ar.txt", goodPrefix))
+	if(!ReadAffixConfig(".\\plugin\\goodPrefix_ar.txt", goodPrefix))
+	{
 		return false;
+	}
 
-	if(!ReadConfig(".\\plugin\\goodSuffix_ar.txt", goodSuffix))
+	if(!ReadAffixConfig(".\\plugin\\goodSuffix_ar.txt", goodSuffix))
+	{
 		return false;
+	}
 
 	minPrefix = GetPrivateProfileInt("AutoReroll", "PrefixCount", 2, CONFIG_PATH);
 	minSuffix = GetPrivateProfileInt("AutoReroll", "SuffixCount", 0, CONFIG_PATH);
@@ -79,15 +108,20 @@ bool AutoReroll::Init(bool useChat)
 
 	server->GameStringf("Min prefix: %d Min suffix: %d", minPrefix, minSuffix);
 
-	extractedItemID = 0;
-	justRanAutoExtractor = false;
-	isExtractedItemGood = false;
+	itemToRerollID = 0;
+	rerollItemNeedsToGoBackToCube = false;
 	loadedEmptyCube = false;
 
 	return true;
 }
 
-bool AutoReroll::ReadConfig(std::string configPath, stdext::hash_set<int> &readTo)
+/// <summary>
+/// Reads list of affix ids from file into specified map
+/// </summary>
+/// <param name="configPath">Path of config file.</param>
+/// <param name="readTo">Map to read good affix values into.</param>
+/// <returns>true if successful, false if failed.</returns>
+bool AutoReroll::ReadAffixConfig(std::string configPath, stdext::hash_set<int> &readTo)
 {
 	std::string readLineBuff;
 	int readNum = 0;
@@ -117,6 +151,12 @@ bool AutoReroll::ReadConfig(std::string configPath, stdext::hash_set<int> &readT
 	return true;
 }
 
+/// <summary>
+/// Starts AutoReroll
+/// </summary>
+/// <param name="numGems">Number of gems to cube item with.</param>
+/// <param name="useChat">Determines if output messages should be sent as chat messages.</param>
+/// <returns>true if successful, false if failed.</returns>
 bool AutoReroll::Start(int numGems, bool useChat)
 {
 	if(!Init(useChat))
@@ -130,10 +170,162 @@ bool AutoReroll::Start(int numGems, bool useChat)
 		numGemsToUse = numGems;
 	}
 
-	return StartExtraction();
+	server->GameCommandLine("load ae");
+	server->GameCommandLine("load emptycube");
+
+	return StartRerollingItemInCube();
 }
 
-bool AutoReroll::CheckExtractedItem(const ITEM &item)
+/// <summary>
+/// Starts the rerolling process. The cube must only contain the item to be rerolled.
+/// </summary>
+/// <returns>True on success, false on failure</returns>
+bool AutoReroll::StartRerollingItemInCube()
+{
+	// Make sure the user has the cube UI open
+	if(!me->OpenCube())
+	{
+		if(useChat)
+		{
+			me->Say("ÿc:AutoRerollÿc0: Cube not opened");
+		}
+		server->GamePrintString("ÿc:AutoRerollÿc0: Cube not opened");
+		
+		Abort();
+		return false;
+	}
+
+	// Make sure that there's only one item in the cube
+	int itemCount = 0;
+	me->EnumStorageItems(STORAGE_CUBE, enumItemCountProc, (LPARAM)&itemCount);
+	if(itemCount != 1)
+	{
+		if(useChat)
+		{
+			me->Say("ÿc:AutoRerollÿc0: Place only one rare weapon/armor to reroll in cube before starting");
+		}
+		
+		server->GamePrintString("ÿc:AutoRerollÿc0: Place only one rare weapon/armor to reroll in cube before starting");
+		
+		Abort();
+		return false;
+	}
+
+	// Get the item ID of the only item in the player's cube, this is the item we will reroll
+	me->EnumStorageItems(STORAGE_CUBE, enumFindItemToReroll, (LPARAM)&itemToRerollID);
+
+	// Get a list of item IDs for the gems in the player's inventory
+	currentGemIndex = 0;
+	gemsInInventory.clear();
+	me->EnumStorageItems(STORAGE_INVENTORY, enumFindGems, (LPARAM)&gemsInInventory);
+
+	// We don't have enough gems to use, need to get more from the gemcan
+	if((int)gemsInInventory.size() < numGemsToUse)
+	{
+		ExtractMoreGems();
+		return true;
+	}
+
+	MoveNextGemToCube();
+
+	return true;
+}
+
+// Empty cube -> 
+void AutoReroll::ExtractMoreGems()
+{
+	// We're out of gems so we need to move the item to be rerolled to the player's inventory
+	//   then start extracting more gems
+	currentState = STATE_RUNNINGEMPTYCUBE;
+	server->GameCommandLine("emptycube start chat");
+	loadedEmptyCube = true;
+	return;
+}
+
+/// <summary>
+/// Picks up the next extractor (e.g: gem) and moves it to the cube
+/// </summary>
+void AutoReroll::MoveNextGemToCube()
+{
+	// I've never had the currentGemIndex index go out of bounds, but just checking just
+	//   to make sure it doesn't
+	if(currentGemIndex >= (int)gemsInInventory.size())
+	{
+		if(useChat)
+		{
+			me->Say("ÿc:AutoRerollÿc0: currentGemIndex > gemsInInventory.size()");
+		}
+		server->GamePrintString("ÿc:AutoRerollÿc0: currentGemIndex > gemsInInventory.size()");
+
+		Abort();
+		return;
+	}
+
+	// Pickup the current extractor (e.g: gem) and begin moving it to the cube
+	currentState = STATE_PICKUPGEM;
+	if(!me->PickStorageItemToCursor(gemsInInventory[currentGemIndex]))
+	{
+		if(useChat)
+		{
+			me->Say("ÿc:AutoRerollÿc0: Failed to pickup gem");
+		}
+
+		server->GamePrintString("ÿc:AutoRerollÿc0: Failed to pickup gem");
+		
+		Abort();
+		return;
+	}
+}
+
+/// <summary>
+/// Starts moving the gemcan and can opener to the cube
+/// </summary>
+void AutoReroll::MoveGemCanAndOpenerToCube()
+{
+	DWORD itemToPickup = 0;
+
+	if(!gemCanAndOpener.GemCanMoved)
+	{
+		// Gem can hasn't been moved yet, we will move it now
+		gemCanAndOpener.GemCanMoved = true;
+		itemToPickup = gemCanAndOpener.GemCanID;
+	}
+	else if(!gemCanAndOpener.CanOpenerMoved)
+	{
+		// Gem can is already in cube, but we haven't moved the can opener, we will move it now
+		gemCanAndOpener.CanOpenerMoved = true;
+		itemToPickup = gemCanAndOpener.CanOpenerID;
+	}
+
+	// We already moved both the gemcan and canopener, this shouldn't happen
+	// TODO: Check if this actually happens
+	if(itemToPickup == 0)
+	{
+		return;
+	}
+
+	// Pickup the gemcan or canopenr so it can be moved to the cube
+	currentState = STATE_PICKUPGEMCANSTUFF;
+	if(!me->PickStorageItemToCursor(itemToPickup))
+	{
+		if(useChat)
+		{
+			me->Say("ÿc:AutoRerollÿc0: Failed drop pickup can opener");
+		}
+		server->GamePrintString("ÿc:AutoRerollÿc0: Failed drop pickup  can opener");
+
+		Abort();
+		return;
+	}
+}
+
+/// <summary>
+/// Checks specified item to see if it can be considered good based on its affixes. If the item
+///   is good, then the AutoReroll process must stop.
+/// </summary>
+/// <param name="item">Item to check.</param>
+/// <returns>true if item is good and process needs to stop, false if it's junk.</returns>
+bool AutoReroll::CheckRerolledItem(const ITEM &item)
 {
 	int goodPrefixCount = 0;
 	int goodSuffixCount = 0;
@@ -158,415 +350,320 @@ bool AutoReroll::CheckExtractedItem(const ITEM &item)
 	return goodPrefixCount >= minPrefix && goodSuffixCount >= minSuffix;
 }
 
-bool AutoReroll::StartExtraction()
+/// <summary>
+/// Aborts the AutoReroll process if it's currently running
+/// </summary>
+void AutoReroll::Abort()
 {
-	int itemCount = 0;
-
-	if(!me->OpenCube())
+	if(currentState != STATE_COMPLETE && currentState != STATE_UNINITIALIZED)
 	{
-		if(useChat)
-			me->Say("ÿc:AutoRerollÿc0: Cube not opened");
-
-		server->GamePrintString("ÿc:AutoRerollÿc0: Cube not opened");
 		currentState = STATE_COMPLETE;
-		return false;
 	}
-
-	me->EnumStorageItems(STORAGE_CUBE, enumItemCountProc, (LPARAM)&itemCount);
-	if(itemCount != 1 && extractedItemID == 0)
-	{
-		if(useChat)
-			me->Say("ÿc:AutoRerollÿc0: Place only one rare weapon/armor to reroll in cube before starting");
-		
-		server->GamePrintString("ÿc:AutoRerollÿc0: Place only one rare weapon/armor to reroll in cube before starting");
-		currentState = STATE_COMPLETE;
-		return false;
-	}
-	else if(itemCount == 1 && extractedItemID == 0)
-	{
-		me->EnumStorageItems(STORAGE_CUBE, enumFindItemToReroll, (LPARAM)&extractedItemID);
-	}
-
-	currentExtractor = 0;
-	extractors.clear();
-	me->EnumStorageItems(STORAGE_INVENTORY, enumFindGems, (LPARAM)&extractors);
-
-	if(extractors.size() <= 1)
-	{
-		if(justRanAutoExtractor)
-		{
-			if(useChat)
-				me->Say("ÿc:AutoRerollÿc0: No more gems");
-			else
-				server->GamePrintString("ÿc:AutoRerollÿc0: No more gems");
-
-			currentState = STATE_COMPLETE;
-			return true;
-		}
-		else
-		{
-			currentState = STATE_RUNNINGEMPTYCUBE;
-			server->GameCommandLine("load emptycube");
-			server->GameCommandLine("emptycube start chat");
-			loadedEmptyCube = true;
-			return true;
-		}
-	}
-
-	if(justRanAutoExtractor)
-	{
-		justRanAutoExtractor = false;
-		if(extractedItemID != 0)
-		{
-			currentState = STATE_PICKUPEXTRACTEDITEM;
-			if(!me->PickStorageItemToCursor(extractedItemID))
-			{
-				if(useChat)
-					me->Say("ÿc:AutoRerollÿc0: Unable to pickup previously extracted item from inventory");
-
-				server->GamePrintString("ÿc:AutoRerollÿc0: Unable to pickup previously extracted item from inventory");
-				currentState = STATE_COMPLETE;
-				return false;
-			}
-		}
-	}
-	else
-	{
-		justRanAutoExtractor = false;
-		currentState = STATE_NEXTEXTRACTOR;
-	}
-	return true;
 }
 
+/// <summary>
+/// Called at a constant rate by d2hackit's timer
+/// </summary>
 void AutoReroll::OnTick()
 {
 	switch(currentState)
 	{
-		case STATE_NEXTGEMCANSTUFF:
-		{
-			currentState = STATE_PICKUPGEMCANSTUFF;
-			DWORD itemToPickup = 0;
-
-			if(!gemCanAndOpener.GemCanMoved)
-			{
-				gemCanAndOpener.GemCanMoved = true;
-				itemToPickup = gemCanAndOpener.GemCanID;
-			}
-			else if(!gemCanAndOpener.CanOpenerMoved)
-			{
-				gemCanAndOpener.CanOpenerMoved = true;
-				itemToPickup = gemCanAndOpener.CanOpenerID;
-			}
-
-			if(itemToPickup != 0)
-			{
-				if(!me->PickStorageItemToCursor(itemToPickup))
-				{
-					if(useChat)
-						me->Say("ÿc:AutoRerollÿc0: Failed drop pickup can opener");
-						
-					server->GamePrintString("ÿc:AutoRerollÿc0: Failed drop pickup  can opener");
-
-					currentState = STATE_COMPLETE;
-					return;
-				}
-			}
-			break;
-		}
-		case STATE_NEXTEXTRACTOR:
-		{
-			currentState = STATE_WAITINGFORNEXTSTATE;
-
-			if(currentExtractor >= (int)extractors.size())
-			{
-				if(useChat)
-					me->Say("ÿc:AutoRerollÿc0: currentExtractor > extractors.size()");
-
-				server->GamePrintString("ÿc:AutoRerollÿc0: currentExtractor > extractors.size()");
-				currentState = STATE_COMPLETE;
-				return;
-			}
-
-			currentState = STATE_PICKUPEXTRACTOR;
-			if(!me->PickStorageItemToCursor(extractors[currentExtractor]))
-			{
-				if(useChat)
-					me->Say("ÿc:AutoRerollÿc0: Failed to pickup extractor");
-
-				server->GamePrintString("ÿc:AutoRerollÿc0: Failed to pickup extractor");
-				currentState = STATE_COMPLETE;
-				return;
-			}
-
-			break;
-		}
-		case STATE_STARTEXTRACTION:
-		{
-			currentState = STATE_TRANSMUTE;
-			me->Transmute();
-			break;
-		}
-		case STATE_EXTRACTIONCOMPLETE:
-		{
-			currentState = STATE_COMPLETE;
-			break;
-		}
-		case STATE_TRANSMUTE_COMPLETE:
-		{
-			currentState = STATE_WAITINGFORNEXTSTATE;
-
-			if(!isExtractedItemGood)
-			{
-				//server->GameStringf("Junk, trying next");
-				StartExtraction();
-				return;
-			}
-			else
-			{
-				if(useChat)
-					me->Say("ÿc:AutoRerollÿc0: Rolled good item");
-				else
-					server->GamePrintString("ÿc:AutoRerollÿc0: Rolled good item");
-
-				currentState = STATE_COMPLETE;
-				return;
-			}
-
-			break;
-		}
 		case STATE_COMPLETE:
 		{
 			currentState = STATE_UNINITIALIZED;
 
-			if(loadedEmptyCube)
-				server->GameCommandLine("unload emptycube");
-
 			if(useChat)
+			{
 				me->Say("ÿc:AutoRerollÿc0: AutoReroll Ended");
-			else
-				server->GamePrintString("ÿc:AutoRerollÿc0: AutoReroll Ended");
+			}
+			server->GamePrintString("ÿc:AutoRerollÿc0: AutoReroll Ended");
 
 			break;
-		}
-		case STATE_FINISHEDEMPTYCUBE:
-		{
-			currentState = STATE_WAITINGFORNEXTSTATE;
-
-			// 1 - Finished AutoExtractor, ran EmptyCube - we have gems and are ready to restart
-			if(justRanAutoExtractor)
-			{
-				StartExtraction();
-				return;
-			}
-			else
-			{
-				// 2 - Ready to move GemCan + CanOpener to cube and run AutoExtractor
-				me->EnumStorageItems(STORAGE_INVENTORY, enumFindGemCanStuff, (LPARAM)&gemCanAndOpener);
-				if(gemCanAndOpener.CanOpenerID == 0 || gemCanAndOpener.GemCanID == 0)
-				{
-					if(useChat)
-						me->Say("ÿc:AutoRerollÿc0: Unable to find gem can or gem can opener");
-
-					server->GameStringf("ÿc:AutoRerollÿc0: Unable to find %s%s", (gemCanAndOpener.CanOpenerID==0)?" Can Opener":"", (gemCanAndOpener.GemCanID==0)?" Gem Gan":"");
-
-					currentState = STATE_COMPLETE;
-					return;
-				}
-
-				currentState = STATE_NEXTGEMCANSTUFF;
-			}
 		}
 	}
 }
 
+/// <summary>
+/// Called whenever an item is picked up to the cursor from the player's inventory
+/// </summary>
+/// <param name="item">Item that was picked up.</param>
 void AutoReroll::OnItemFromInventory(DWORD itemID)
 {
 	switch(currentState)
 	{
 		case STATE_PICKUPGEMCANSTUFF:
 		{
+			// We picked up the gem can or can opener
 			currentState = STATE_GEMCANSTUFFTOCUBE;
 			break;
 		}
-		case STATE_PICKUPEXTRACTOR:
+		case STATE_PICKUPGEM:
 		{
-			currentState = STATE_EXTRACTORTOCUBE;
+			// We picked up a gem
+			currentState = STATE_GEMTOCUBE;
 			break;
 		}
-		case STATE_PICKUPEXTRACTEDITEM:
+		case STATE_PICKUPITEMTOREROLLED:
 		{
-			currentState = STATE_EXTRACTEDTOCUBE;
+			// We picked up the item to be rerolled
+			currentState = STATE_ITEMTOREROLLTOCUBE;
 			break;
 		}
 		default:
 		{
+			// Don't care about any other items being picked up from the inventory in our current
+			//  state
 			return;
 		}
 	}
 
-	if(!me->DropCursorItemToStorage(STORAGE_CUBE))
+	// Drop the item we picked up to the cube
+	if(!me->DropItemToStorage(STORAGE_CUBE, itemID))
 	{
 		if(useChat)
+		{
 			me->Say("ÿc:AutoRerollÿc0: Failed drop inventory item to cube");
-			
+		}
 		server->GameStringf("ÿc:AutoRerollÿc0: Failed drop inventory item to cube");
 
-		currentState = STATE_COMPLETE;
+		Abort();
 		return;
 	}
 }
 
+/// <summary>
+/// Called whenever an item is placed in the cube
+/// </summary>
+/// <param name="item">Item placed in the cube.</param>
 void AutoReroll::OnItemToCube(const ITEM &item)
 {
 	switch(currentState)
 	{
 		case STATE_TRANSMUTE:
 		{
-			// Only thing to cube will be extracted item
-			extractedItemID = item.dwItemID;
-			isExtractedItemGood = CheckExtractedItem(item);
+			// Only the item to be rerolled will be sent to the cube after being cubed with the gems
+			//  we need to remember the ID of this item for future use
+			itemToRerollID = item.dwItemID;
 
-			currentState = STATE_TRANSMUTE_COMPLETE;
-			break;
-		}
-		case STATE_EXTRACTORTOCUBE: // The flawless gem
-		{
-			currentExtractor++;
-			if(currentExtractor >= numGemsToUse)
+			// Check to see if this is a good item. If it's not, then just restart the rerolling process again
+			if(!CheckRerolledItem(item))
 			{
-				currentState = STATE_STARTEXTRACTION;
+				StartRerollingItemInCube();
+				return;
+			}
+
+			if(useChat)
+			{
+				me->Say("ÿc:AutoRerollÿc0: Rolled good item");
+			}
+			server->GamePrintString("ÿc:AutoRerollÿc0: Rolled good item");
+
+			Abort();
+			return;
+		}
+		case STATE_GEMTOCUBE:
+		{
+			// Item moved to the cube was a gem, If we have enough gems to reroll the item
+			//   then it's time to transmute. Otherwise we need to add the next extractor (e.g: next gem)
+			currentGemIndex++;
+			if(currentGemIndex >= numGemsToUse)
+			{
+				currentState = STATE_TRANSMUTE;
+				me->Transmute();
 			}
 			else
 			{
-				currentState = STATE_NEXTEXTRACTOR;
+				MoveNextGemToCube();
 			}
 			break;
 		}
-		case STATE_EXTRACTEDTOCUBE: // The item we're rerolling
+		case STATE_ITEMTOREROLLTOCUBE: // The item we're rerolling
 		{
-			currentState = STATE_NEXTEXTRACTOR;
+			// We just moved the item we're rerolling to the cube. Start adding the required gems
+			//MoveNextGemToCube();
+			StartRerollingItemInCube();
 			break;
 		}
 		case STATE_GEMCANSTUFFTOCUBE: // Gem can and can opener
 		{
+			// Item placed in the cube was the gem can or can opener. If both of them have been
+			//   moved to the cube then we can start the autoextractor process to get the gems.
+			//   Otherwise we need to move the other gemcan or can opener
 			if(gemCanAndOpener.CanOpenerMoved && gemCanAndOpener.GemCanMoved)
 			{
 				currentState = STATE_RUNNINGAUTOEXTRACTOR;
-				server->GameCommandLine("load ae");
 				server->GameCommandLine("ae start chat");
 			}
 			else
 			{
-				currentState = STATE_NEXTGEMCANSTUFF;
+				MoveGemCanAndOpenerToCube();
 			}
 			break;
 		}
 	}
 }
+
+/// <summary>
+/// Called whenever AutoExtractor has finished
+/// </summary>
+/// <returns>true if we processed this event, false if we ignored it.</returns>
 bool AutoReroll::OnAutoExtractorEnded()
 {
+	// Make sure we actually started the AutoExtractor
 	if(currentState != STATE_RUNNINGAUTOEXTRACTOR)
+	{
 		return false;
+	}
 
-	// Clean cube again!
-	justRanAutoExtractor = true;
+	// Our inventory should be full of gems now or our gem can is empty and a few gems are in
+	//  our inventory. Get Get a list of item IDs for the gems in the player's inventory just
+	//  to make sure we haven't run out of gems
+	std::vector<DWORD> tempGemsInInventory;
+	me->EnumStorageItems(STORAGE_INVENTORY, enumFindGems, (LPARAM)&tempGemsInInventory);
+	if((int)tempGemsInInventory.size() < numGemsToUse)
+	{
+		if(useChat)
+		{
+			me->Say("ÿc:AutoRerollÿc0: No more gems");
+		}
+		server->GamePrintString("ÿc:AutoRerollÿc0: No more gems");
+
+		Abort();
+		return true;
+	}
+
+	// Gem can and can opener are still in the cube, we need to empty the cube now
+	rerollItemNeedsToGoBackToCube = true;
 	currentState = STATE_RUNNINGEMPTYCUBE;
 	server->GameCommandLine("emptycube start chat");
 
 	return true;
 }
 
+/// <summary>
+/// Called whenever EmptyCube has finished
+/// </summary>
+/// <returns>true if we processed this event, false if we ignored it.</returns>
 bool AutoReroll::OnEmptyCubeEnded()
 {
+	// Make sure we actually started the EmptyCube process
 	if(currentState != STATE_RUNNINGEMPTYCUBE)
+	{
 		return false;
+	}
 
+	// Make sure the cube is actually empty
 	int itemCount = 0;
-	memset(&gemCanAndOpener, 0, sizeof(GemCanStuff));
-
 	me->EnumStorageItems(STORAGE_CUBE, enumItemCountProc, (LPARAM)&itemCount);
 	if(itemCount != 0)
 	{
 		server->GameStringf("ÿc:AutoRerollÿc0: Unable to clean cube");
-		currentState = STATE_COMPLETE;
+		Abort();
+		return true;
 	}
-	else
+
+	// We just finished running autoextractor, cube is empty and gems are in our inventory.
+	//  Now we need to move the item to be rerolled back into the cube so the whole rerolling
+	//  process can restart
+	if(rerollItemNeedsToGoBackToCube)
 	{
-		currentState = STATE_FINISHEDEMPTYCUBE;
+		rerollItemNeedsToGoBackToCube = false;
+		currentState = STATE_PICKUPITEMTOREROLLED;
+		if(!me->PickStorageItemToCursor(itemToRerollID))
+		{
+			if(useChat)
+			{
+				me->Say("ÿc:AutoRerollÿc0: Unable to pickup previously extracted item from inventory");
+			}
+			server->GamePrintString("ÿc:AutoRerollÿc0: Unable to pickup previously extracted item from inventory");
+
+			Abort();
+			return false;
+		}
+
+		return true;
 	}
+
+	// We just ran out of gems and moved the item to be rerolled back into our inventory. Now
+	//   we need to put the gemcan and can opener into the cube so we can extract more gems.
+	//   Find the IDs of the can opener and gem can (they change every time it's transmuted)
+	memset(&gemCanAndOpener, 0, sizeof(GemCanStuff));
+	me->EnumStorageItems(STORAGE_INVENTORY, enumFindGemCanStuff, (LPARAM)&gemCanAndOpener);
+	if(gemCanAndOpener.CanOpenerID == 0 || gemCanAndOpener.GemCanID == 0)
+	{
+		if(useChat)
+		{
+			me->Say("ÿc:AutoRerollÿc0: Unable to find gem can or gem can opener");
+		}
+		server->GameStringf("ÿc:AutoRerollÿc0: Unable to find %s%s", (gemCanAndOpener.CanOpenerID==0)?" Can Opener":"", (gemCanAndOpener.GemCanID==0)?" Gem Gan":"");
+
+		Abort();
+		return true;
+	}
+
+	// Move the gem can or can opener to cube. Both gem can and can opener will be moved to the
+	//  cube during MoveGemCanAndOpenerToCube. After they're both in there autoextractor will begin
+	MoveGemCanAndOpenerToCube();
 
 	return true;
 }
 
-void AutoReroll::Abort()
-{
-	if(currentState != STATE_COMPLETE && currentState != STATE_UNINITIALIZED)
-		currentState = STATE_COMPLETE;
-}
-
-bool IsGem(const char *itemCode)
-{
-	if(itemCode[0] == 'g')
-	{
-		if(itemCode[1] == 'l')
-		{
-			return (itemCode[2] == 'y' ||itemCode[2] == 'b' ||itemCode[2] == 'g' ||itemCode[2] == 'r' ||itemCode[2] == 'w');
-		}
-		else if(itemCode[1] == 'z')
-		{
-			return (itemCode[2] == 'k' || itemCode[2] == 'v');
-		}
-	}
-
-	return (_stricmp(itemCode, "skl") == 0);
-}
-
+/// <summary>
+/// Counts the number of items in the cube.
+/// </summary>
+/// <param name="item">Item found in the cube.</param>
+/// <param name="lParam">Pointer to item count.</param>
+/// <returns>true.</returns>
 BOOL CALLBACK enumItemCountProc(LPCITEM item, LPARAM lParam)
 {
 	(*(int *)lParam)++;
 	return TRUE;
 }
 
+/// <summary>
+/// Looks in the cube for the item that will be rerolled. Cube should only contain that one item.
+/// </summary>
+/// <param name="item">Item found in the cube.</param>
+/// <param name="lParam">Pointer to item id.</param>
+/// <returns>true.</returns>
 BOOL CALLBACK enumFindItemToReroll(LPCITEM item, LPARAM lParam)
 {
 	(*(DWORD *)lParam) = item->dwItemID;
 	return TRUE;
 }
 
+/// <summary>
+/// Finds our gem can and can opener, stores the IDs of these items in the GemCanStuff structure (lParam)
+/// </summary>
+/// <param name="item">Item found in the cube.</param>
+/// <param name="lParam">Pointer to GemCanStuff structure to store item IDs.</param>
+/// <returns>true.</returns>
 BOOL CALLBACK enumFindGemCanStuff(LPCITEM item, LPARAM lParam)
 {
 	GemCanStuff *canStuff = (GemCanStuff *)lParam;
 
-	if(item->szItemCode[0] == 'k' && isdigit(item->szItemCode[2]))
+	// Store ID of this item as our can opener if it's a can opener
+	if(canOpenerItemCodes.count(item->szItemCode) > 0)
 	{
-		// k[^o]0 is gem can
-		if(item->szItemCode[1] != 'o' && item->szItemCode[2] == '0')
-		{
-			if(item->szItemCode[1] == 'v' || item->szItemCode[1] == 'y' ||
-				item->szItemCode[1] == 'b' || item->szItemCode[1] == 'g' ||
-				item->szItemCode[1] == 'r' || item->szItemCode[1] == 'w' ||
-				item->szItemCode[1] == 's' || item->szItemCode[1] == 'k')
-			{
-				canStuff->GemCanID = item->dwItemID;
-
-				return canStuff->CanOpenerID == 0;
-			}
-		}
-		else // ko[0-5] is can opener
-		{
-			int itemCodeNum = atoi(item->szItemCode+2);
-			if(itemCodeNum >= 0 && itemCodeNum <= 5)
-			{
-				canStuff->CanOpenerID = item->dwItemID;
-
-				return canStuff->GemCanID == 0;
-			}
-		}
+		canStuff->GemCanID = item->dwItemID;
+		return canStuff->CanOpenerID == 0;
 	}
 
+	// Store ID of this item as our gem can if it's a gem can
+	if(gemCanItemCodes.count(item->szItemCode) > 0)
+	{
+		canStuff->CanOpenerID = item->dwItemID;
+		return canStuff->GemCanID == 0;
+	}
 	return TRUE;
 }
 
+/// <summary>
+/// Searches the player's inventory for gems and stores their ID's in a list (lParam)
+/// </summary>
+/// <param name="item">Item found in the cube.</param>
+/// <param name="lParam">Pointer to list of item IDs.</param>
+/// <returns>true.</returns>
 BOOL CALLBACK enumFindGems(LPCITEM item, LPARAM lParam)
 {
 	if(gemItemCodes.count(item->szItemCode) > 0)
