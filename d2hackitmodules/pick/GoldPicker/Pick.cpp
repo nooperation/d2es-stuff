@@ -1,5 +1,7 @@
 #include <iostream>
 #include "../../d2hackit/includes/ClientCore.cpp"
+#include "../../d2hackit/includes/itemPrefix.h"
+#include "../../d2hackit/includes/itemSuffix.h"
 #include "ItemWatcher.h"
 
 BOOL PRIVATE ToggleTownPickup(char **argv, int argc);
@@ -42,7 +44,7 @@ BOOL PRIVATE SetTownPickup(char **argv, int argc)
 {
 	if(argc == 3)
 	{
-		itemWatcher.SetTownPickup(atoi(argv[2]));
+		itemWatcher.SetTownPickup(atoi(argv[2]) == 1);
 		return TRUE;
 	}
 
@@ -54,7 +56,7 @@ BOOL PRIVATE ShowEthSoc(char **argv, int argc)
 {
 	if(argc == 3)
 	{
-		itemWatcher.ShowEthSoc(atoi(argv[2]));
+		itemWatcher.ShowEthSoc(atoi(argv[2]) == 1);
 		return TRUE;
 	}
 
@@ -66,7 +68,7 @@ BOOL PRIVATE ShowEthereal(char **argv, int argc)
 {
 	if(argc == 3)
 	{
-		itemWatcher.ShowEthereal(atoi(argv[2]));
+		itemWatcher.ShowEthereal(atoi(argv[2]) == 1);
 		return TRUE;
 	}
 
@@ -277,6 +279,60 @@ VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPAR
 	}
 }
 
+void DumpItemInfo(const ITEM& item)
+{
+	char chatBuff[128];
+	char itemColor[4];
+
+	switch(item.iQuality)
+	{
+		case ITEM_QUALITY_MAGIC:
+			strcpy_s(itemColor, 4, "ÿc3");
+			break;
+		case ITEM_QUALITY_RARE:
+			strcpy_s(itemColor, 4, "ÿc9");
+			break;
+		case ITEM_QUALITY_CRAFT:
+			strcpy_s(itemColor, 4, "ÿc8");
+			break;
+		default:
+			return;
+	}
+
+	server->GameStringf("%s%sÿc0 affixes:", itemColor, server->GetItemName(item.szItemCode));
+
+	for(int i = 0; i < 3; i++)
+	{
+		if(item.wPrefix[i] != 0)
+		{
+			if(item.wPrefix[i] > ITEM_PREFIX_COUNT)
+			{
+				server->GameStringf("Prefix too large: %d", item.wPrefix[i]);
+			}
+			else
+			{
+				sprintf(chatBuff, "  ÿc;Prefixÿc0 %d: %s - %s",item.wPrefix[i], Prefix[item.wPrefix[i]], PrefixDetails[item.wPrefix[i]]);
+				server->GamePrintString(chatBuff);
+			}
+		}
+	}
+	for(int i = 0; i < 3; i++)
+	{
+		if(item.wSuffix[i] != 0)
+		{
+			if(item.wSuffix[i] > ITEM_SUFFIX_COUNT)
+			{
+				server->GameStringf("Suffix too large: %d", item.wSuffix[i]);
+			}
+			else
+			{
+				sprintf(chatBuff, "  ÿc:Suffixÿc0 %d: %s - %s", item.wSuffix[i], Suffix[item.wSuffix[i]], SuffixDetails[item.wSuffix[i]]);
+				server->GamePrintString(chatBuff);
+			}
+		}
+	}
+}
+
 DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 {   
 
@@ -292,6 +348,7 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 			if(waitingForItemPickup)
 			{
 				server->GameStringf("%s: Level %d", item.szItemCode, item.iLevel);
+				DumpItemInfo(item);
 			}
 		}
 		else
