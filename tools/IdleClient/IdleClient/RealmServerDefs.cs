@@ -625,11 +625,9 @@ namespace IdleClient.Realm
 
 		public JoinGameOut(string name, string pass)
 		{
-			TextInfo myTI = new CultureInfo("en-US",false).TextInfo;
-
 			RequestID = (ushort)new Random().Next(0, short.MaxValue);
 			GameName = name;
-			GamePassword = myTI.ToTitleCase(pass);
+			GamePassword = pass;
 		}
 
 		public byte[] GetBytes()

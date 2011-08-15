@@ -65,6 +65,8 @@ namespace IdleClient.Frontend
 			textBoxJoinDelay.Text = settings.JoinDelay.ToString();
 			checkBoxShowPackets.IsChecked = settings.ShowPackets;
 			checkBoxShowPacketData.IsChecked = settings.ShowPacketData;
+			checkBoxSinglePlayerMode.IsChecked = settings.IsSinglePlayerMode;
+			sliderMaxBots.Value = settings.MaxBots;
 		}
 
 		/// <summary>
@@ -85,6 +87,8 @@ namespace IdleClient.Frontend
 			settings.JoinDelay = int.Parse(textBoxJoinDelay.Text);
 			settings.ShowPackets = checkBoxShowPackets.IsChecked == true;
 			settings.ShowPacketData = checkBoxShowPacketData.IsChecked == true;
+			settings.IsSinglePlayerMode = checkBoxSinglePlayerMode.IsChecked == true;
+			settings.MaxBots = (int)sliderMaxBots.Value;
 		}
 
 		/// <summary>

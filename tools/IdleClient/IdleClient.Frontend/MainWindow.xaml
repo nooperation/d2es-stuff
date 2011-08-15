@@ -60,6 +60,8 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
+							<RowDefinition Height="auto"/>
+							<RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
@@ -83,7 +85,13 @@
                         <Separator Grid.Row="7" Grid.ColumnSpan="2" />
                         <CheckBox Grid.Row="8" Grid.ColumnSpan="2" Name="checkBoxShowPackets">Show packets</CheckBox>
                         <CheckBox Grid.Row="9" Grid.ColumnSpan="2" Name="checkBoxShowPacketData">Show packet data</CheckBox>
-                    </Grid>
+						<CheckBox Grid.Row="10" Grid.ColumnSpan="2" Name="checkBoxSinglePlayerMode">Single player mode</CheckBox>
+						<Slider Name="sliderMaxBots" Grid.Row="11" Grid.ColumnSpan="1" Maximum="7" Minimum="1" Value="1" SmallChange="1" IsSnapToTickEnabled="True"></Slider>
+						<StackPanel Grid.Row="11" Grid.Column="1" Orientation="Horizontal">
+							<Label Content="Max bots:"></Label>
+							<Label Content="{Binding Path=Value, ElementName=sliderMaxBots}"></Label>
+						</StackPanel>
+					</Grid>
                     <Grid Grid.Row="0" Grid.Column="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto" />

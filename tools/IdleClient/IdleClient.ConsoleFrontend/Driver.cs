@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Globalization;
 
 namespace IdleClient
 {
@@ -50,6 +51,8 @@ namespace IdleClient
 		/// </summary>
 		private int TemporaryJoinDelay = 0;
 
+		private bool isDriverComplete;
+
 		/// <summary>
 		/// Initalize driver.
 		/// </summary>
@@ -62,12 +65,12 @@ namespace IdleClient
 			if (settings.BotNames.Count == 0)
 			{
 				Output("no bots defined");
-				OnCompletion();
+				FireOnCompletion();
 				return;
 			}
 
 			// Initalize all bots
-			for (int i = 0; i < settings.BotNames.Count; i++)
+			for (int i = 0; i < settings.BotNames.Count && i < settings.MaxBots; i++)
 			{
 				availableClients.Enqueue(new ClientDriver(settings, i));
 				FailedClientCounts.Add(i, 0);
@@ -108,8 +111,11 @@ namespace IdleClient
 				throw new Exception("Driver not initalized!");
 			}
 
+			// convert game password to Titlecase
+			TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
+
 			settings.GameName = game;
-			settings.GamePass = pass;
+			settings.GamePass = myTI.ToTitleCase(pass);
 			settings.GameDifficulty = difficulty;
 			settings.GameDescription = difficulty.ToString();
 
@@ -165,7 +171,7 @@ namespace IdleClient
 					if (isShuttindDown)
 					{
 						Output("Canceling PushBot()");
-						OnCompletion();
+						FireOnCompletion();
 						return;
 					}
 				}
@@ -257,13 +263,22 @@ namespace IdleClient
 		/// </summary>
 		/// <param name="sender">Object causing this event</param>
 		/// <param name="e">Logger args</param>
-		//void OnLoggerMessage(object sender, Logger.LoggerArgs e)
-		//{
-		//    Output("[" + e.Source + "] " + e.Message);
-		//}
 		void OnLoggerMessage(string source, string message)
 		{
 			Output("[" + source + "] " + message);
+		}
+
+		void FireOnCompletion()
+		{
+			if (isDriverComplete)
+			{
+				return;
+			}
+
+			isDriverComplete = true;
+
+			Terminate();
+			OnCompletion();
 		}
 
 		/// <summary>
@@ -298,14 +313,23 @@ namespace IdleClient
 				Output("!!! PlayerCountChanged event raised without any clients");
 				return;
 			}
-
-			if (e.PlayerCount < e.MaxPlayers - 1)
+			if (settings.IsSinglePlayerMode)
 			{
-				PushBot();
+				if (e.PlayerCount < e.MaxPlayers-1)
+				{
+					PushBot();
+				}
 			}
-			else if (e.PlayerCount == e.MaxPlayers && clients.Count > 0)
+			else
 			{
-				PopBot();
+				if (e.PlayerCount < e.MaxPlayers - 1)
+				{
+					PushBot();
+				}
+				else if (e.PlayerCount == e.MaxPlayers && clients.Count > 0)
+				{
+					PopBot();
+				}
 			}
 		}
 
@@ -326,16 +350,27 @@ namespace IdleClient
 
 			Output("Client entered game");
 
-			// PlayerNames doesn't include our bot's name yet
-			if (source.PlayerNames.Count + 1 < source.MaxPlayers - 1)
+			if (settings.IsSinglePlayerMode)
 			{
-				Output("Room for another bot, adding...");
-				PushBot();
+				if (source.PlayerNames.Count + 1 < source.MaxPlayers)
+				{
+					Output("Room for another bot, adding...");
+					PushBot();
+				}
 			}
-			else if (source.PlayerNames.Count + 1 == source.MaxPlayers && clients.Count > 0)
+			else
 			{
-				Output("oops, this bot wasn't needed, removing...");
-				PopBot();
+				// PlayerNames doesn't include our bot's name yet
+				if (source.PlayerNames.Count + 1 < source.MaxPlayers - 1)
+				{
+					Output("Room for another bot, adding...");
+					PushBot();
+				}
+				else if (source.PlayerNames.Count + 1 == source.MaxPlayers && clients.Count > 0)
+				{
+					Output("oops, this bot wasn't needed, removing...");
+					PopBot();
+				}
 			}
 		}
 
@@ -347,13 +382,16 @@ namespace IdleClient
 		void newClient_OnFailure(object sender, FailureArgs e)
 		{
 			ClientDriver source = sender as ClientDriver;
-
 			FailedClientCounts[source.ClientIndex]++;
-			Output("Client failure #" + FailedClientCounts[source.ClientIndex]);
 
 			if (FailedClientCounts[source.ClientIndex] <= 3)
 			{
-				RecycleClient(source);
+				if (!RecycleClient(source))
+				{
+					return;
+				}
+
+				Output("Client failure #" + FailedClientCounts[source.ClientIndex]);
 			}
 			else
 			{
@@ -396,7 +434,11 @@ namespace IdleClient
 		/// lost.
 		/// </summary>
 		/// <param name="deadClient"></param>
-		void RecycleClient(ClientDriver deadClient)
+		/// <returns>
+		/// True if client was successfully recycled, false if this is the only active client and the
+		/// driver needs to shut down. OnCompletion has been fired
+		/// </returns>
+		bool RecycleClient(ClientDriver deadClient)
 		{
 			lock (clients)
 			{
@@ -404,11 +446,13 @@ namespace IdleClient
 				if (clients.Count == 0)
 				{
 					// If the last client failed or disconnected then we can no longer operate
-					OnCompletion();
+					FireOnCompletion();
+					return false;
 				}
 			}
 
 			AddBotAsAvailable(deadClient);
+			return true;
 		}
 
 		/// <summary>

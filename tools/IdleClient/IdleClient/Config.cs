@@ -86,6 +86,16 @@ namespace IdleClient
 		/// </summary>
 		public List<string> BotNames { get; set; }
 
+		/// <summary>
+		/// Determines if the game should be filled with bots
+		/// </summary>
+		public bool IsSinglePlayerMode { get; set; }
+
+		/// <summary>
+		/// Specifies the maximum amount of bots to join a game [1..7]
+		/// </summary>
+		public int MaxBots { get; set; }
+
 		// TODO: Temporary
 		private object configLock = new object();
 
@@ -114,6 +124,8 @@ namespace IdleClient
 			GameDescription = GameDifficulty.ToString();
 			ShowPackets = false;
 			ShowPacketData = false;
+
+			MaxBots = 7;
 
 			BotNames = new List<string>();
 		}
