@@ -61,7 +61,6 @@ BOOL PRIVATE StartAmulets(char **argv, int argc)
 	{
 		return TRUE;
 	}
-
 	gambler.StartGambling();
 
 	return TRUE;
@@ -72,7 +71,7 @@ BOOL PRIVATE StartJewellery(char** argv, int argc)
 	std::vector<std::string> jewellery;
 
 	jewellery.push_back("rin"); //Ring");
-	//jewellery.push_back("amu"); //Amulet");
+	jewellery.push_back("amu"); //Amulet");
 	jewellery.push_back("zrn"); //Amazonian"); //Loop");
 	jewellery.push_back("srn"); //Sorcerer's"); //Band");
 	jewellery.push_back("nrn"); //Necromancer's"); //Stone");
@@ -92,7 +91,6 @@ BOOL PRIVATE StartJewellery(char** argv, int argc)
 	{
 		return TRUE;
 	}
-
 	gambler.StartGambling();
 
 	return TRUE;
@@ -123,7 +121,6 @@ BOOL PRIVATE StartRings(char** argv, int argc)
 	{
 		return TRUE;
 	}
-
 	gambler.StartGambling();
 
 	return TRUE;
@@ -183,7 +180,11 @@ BOOL PRIVATE SetMaster(char **argv, int argc)
 	}
 
 	strcpy_s(masterPlayer, argv[2]);
+
+	goldDrop = true;
 	server->GameStringf("Setting master to %s", masterPlayer);
+	server->GameStringf("Gold dropping ÿc2enabledÿc0 for \"%s\"", masterPlayer);
+	server->GameCommandLine("pick townpick 0");
 
 	return TRUE;
 }
@@ -224,7 +225,27 @@ BOOL PRIVATE ToggleGoldDrop(char **argv, int argc)
 
 BOOL PRIVATE ToggleGambleSell(char **argv, int argc)
 {
-	gambler.ToggleGambleSell();
+	bool uniques = false;
+	bool rares = false;
+	bool sets = false;
+
+	for(int i = 2; i < argc; i++)
+	{
+		if(_stricmp(argv[i], "sets") == 0 || _stricmp(argv[i], "set") == 0)
+		{
+			sets = true;
+		}
+		else if(_stricmp(argv[i], "rares") == 0 || _stricmp(argv[i], "rare") == 0)
+		{
+			rares = true;
+		}
+		else if(_stricmp(argv[i], "uniques") == 0 || _stricmp(argv[i], "unique") == 0)
+		{
+			uniques = true;
+		}
+	}
+
+	gambler.ToggleGambleSell(sets, rares, uniques);
 
 	return TRUE;
 }
@@ -276,21 +297,6 @@ BOOL PRIVATE ToggleIDBlock(char **argv, int argc)
 	return TRUE;
 }
 
-BOOL PRIVATE AutostockDelay(char **argv, int argc)
-{
-	int delay = 0;
-
-	if(argc != 3)
-		return FALSE;
-
-	delay = atoi(argv[2]);
-	if(delay < 0)
-		delay = 0;
-
-	gambler.SetAutostockStartDelay(delay);
-
-	return TRUE;
-}
 ////////////////////////////////////////////
 //
 //               EXPORTS
@@ -326,13 +332,23 @@ BOOL EXPORT OnClientStart()
 
 DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 {
-	if(blockId && aPacket[0] == 0x37)
+
+	if(aPacket[0] == 0x37)
 	{
-		return 0;
+		//DWORD itemID = *((DWORD*)(aPacket+1));
+
+		//gambler.OnItemIdentified(itemID);
+
+		if(blockId)
+		{
+			return 0;
+		}
 	}
 	else if(autostock && aPacket[0] == 0x15 && aPacket[1] == 0x01)
 	{
 		char *chatMessage = (char *)(aPacket+3);
+
+		//server->GameStringf("Msg: %s", chatMessage);
 
 		// Sneaky message passing, doesn't send autostocker chat messages out
 		if(strncmp(chatMessage, "ÿc:Autostockerÿc0:", 18) == 0)
@@ -358,9 +374,49 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 	return aLen;
 }
 
+/// <summary>
+/// Process game packets that have already been processed by d2hackit and the game. Internal inventory structure
+///   for d2hackit is up to date at this time.
+/// </summary>
+VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
+{
+	if(aPacket[0] == 0x2a) // npc transation
+	{
+		if(aPacket[2] == 0x01)
+		{
+			gambler.OnItemSold();
+		}
+	}
+}
+
 DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 {
-	if(aPacket[0] == 0x9c)
+
+	// 0x27 D2GS_NPCINTERACT
+
+	//if((aPacket[0] < 0x67 || aPacket[0] > 0x6D) && aPacket[0] != 0x0A && aPacket[0] != 0x8f) 
+	//{
+	//	char buff[1024];
+	//	memset(buff, 0, sizeof(buff));
+	//	for(int i = 0; i < aLen; ++i)
+	//	{
+	//		sprintf(buff, "%s %02X", buff, aPacket[i]);
+	//	}
+	//	server->GameStringf("IN: %s", buff);
+	//}
+	if(aPacket[0] == 0x2c)
+	{
+		BYTE entityType = *((BYTE *)(aPacket+1));
+		DWORD entityID = *((DWORD *)(aPacket+2));
+		WORD speechID = *((WORD *)(aPacket+6));
+
+		// Identify sound
+		if(speechID == 6)
+		{
+			gambler.OnItemIdentifiedSounded();
+		}
+	}
+	else if(aPacket[0] == 0x9c)
 	{
 		ITEM currentItem;
 
@@ -383,10 +439,6 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 		if(aPacket[2] == 0x0C) // 0x0C = Not enough money, 0x00 = bought, 0x01 = sold
 		{
 			gambler.OnNotEnoughMoney();
-		}
-		else if(aPacket[2] == 0x01)
-		{
-			gambler.OnItemSold();
 		}
 	}
 	else if(goldDrop && aPacket[0] == 0x26 && aPacket[1] == 0x01)
@@ -417,15 +469,15 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 		}
 	}
 
-	/*else if((aPacket[0] < 0x67 || aPacket[0] > 0x6D) && aPacket[0] != 0x0A && aPacket[0] != 0x8f) 
-	{
-		server->GameStringf("%02X", aPacket[0]);
-	}*/
 	return aLen;
 }
 
 VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
 {
+	if(nMessage == PM_UICLOSED)
+	{
+		gambler.OnUIClosed();
+	}
 	if(nMessage == PM_NPCSESSION)
 	{
 		gambler.OnNpcSession(wParam);
@@ -470,7 +522,12 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 	{
 		"StartRings",
 		StartRings,
-		"Starts gambling for rings and amulets"
+		"Starts gambling for rings"
+	},
+	{
+		"StartAmulets",
+		StartAmulets,
+		"Starts gambling for amulets"
 	},
 	{
 		"Rings",
@@ -518,14 +575,9 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"Usage: autostock [sets] [rares] [uniques]"
 	},
 	{
-		"AutostockDelay",
-		AutostockDelay,
-		"Sets a delay of N ticks before starting autostock. Each tick is 100ms, default 10"
-	},
-	{
 		"Jewellery",
 		StartJewellery,
-		"Start gambling for Jewellery except for generic amulet",
+		"Start gambling for rings and amulets",
 	},
 	{NULL}
 };

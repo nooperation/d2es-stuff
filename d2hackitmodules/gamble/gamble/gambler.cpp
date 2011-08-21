@@ -1,6 +1,12 @@
 #include "gambler.h"
 #include <fstream>
 
+#if 1
+	#define DEBUG_TRACE() {server->GameStringf("%s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);}
+#else
+	#define DEBUG_TRACE() {}
+#endif
+
 Gambler::Gambler()
 {
 	requestedGoldSplitBy = 1;
@@ -10,14 +16,17 @@ Gambler::Gambler()
 	transmuteRare = false;
 	transmuteUnique = false;
 	transmuteEnabled = false;
-	autostockStartDelay = 10; // ~1s autostock delay before start
-	ticksTillAutostock = autostockStartDelay;
+
+	sellRare = false;
+	sellSet = false;
+	sellUnique = false;
 
 	currentState = STATE_UNINITIALIZED;
 }
 
 bool Gambler::Init(std::vector<std::string> itemCodes)
 {
+	DEBUG_TRACE();
 	itemsToGamble.clear();
 
 	for(int i = 0; i < (int)itemCodes.size(); i++)
@@ -34,61 +43,70 @@ bool Gambler::Init(std::vector<std::string> itemCodes)
 		return false;
 	}
 
-	Reset(false);
+	while(!gambleQueue.empty())
+	{
+		gambleQueue.pop();
+	}
+	while(!itemsToSell.empty())
+	{
+		itemsToSell.pop();
+	}
+
 	return true;
 }
 
 void Gambler::StopGambling()
 {
+	if(currentState == STATE_UNINITIALIZED)
+		return;
+
+	DEBUG_TRACE();
 	Reset(true);
 }
 
 void Gambler::Reset(bool haltGambling)
 {
+	DEBUG_TRACE();
+
+	while(!gambleQueue.empty())
+	{
+		gambleQueue.pop();
+	}
+
 	if(haltGambling)
 	{
-		if(currentState != STATE_READYTORUN && currentState != STATE_HALTED && currentState != STATE_UNINITIALIZED)
+		int totalGambled = stats.magic + stats.rares + stats.sets + stats.uniques;
+
+		if(totalGambled > 0)
 		{
-			int totalGambled = stats.magic + stats.rares + stats.sets + stats.uniques;
-
-			if(totalGambled > 0)
-			{
-				server->GameStringf("ÿc3Gambleÿc0: ÿc3Magic: %d (%d%%)  ÿc9Rare: %d (%d%%)  ÿc2Set: %d (%d%%)  ÿc4Unique: %d (%d%%)ÿc0",
-					stats.magic, (int)(100 * (stats.magic / (float)totalGambled)),
-					stats.rares, (int)(100 * (stats.rares / (float)totalGambled)),
-					stats.sets, (int)(100 * (stats.sets / (float)totalGambled)),
-					stats.uniques, (int)(100 * (stats.uniques / (float)totalGambled)));
-			}
-
-			memset(&stats, 0, sizeof(GambleStats));
-
-			server->GamePrintInfo("ÿc3Gambleÿc0: Gamble ended");
+			server->GameStringf("ÿc3Gambleÿc0: ÿc3Magic: %d (%d%%)  ÿc9Rare: %d (%d%%)  ÿc2Set: %d (%d%%)  ÿc4Unique: %d (%d%%)ÿc0",
+				stats.magic, (int)(100 * (stats.magic / (float)totalGambled)),
+				stats.rares, (int)(100 * (stats.rares / (float)totalGambled)),
+				stats.sets, (int)(100 * (stats.sets / (float)totalGambled)),
+				stats.uniques, (int)(100 * (stats.uniques / (float)totalGambled)));
 		}
 
-		currentState = STATE_HALTED;
-
+		server->GamePrintInfo("ÿc3Gambleÿc0: Gamble ended");
 		me->CleanJobs();
 		me->EndNpcSession();
 		
 		while(!itemsToSell.empty())
+		{
 			itemsToSell.pop();
+		}
+
+		memset(&stats, 0, sizeof(GambleStats));
+		currentState = STATE_UNINITIALIZED;
 	}
 	else
 	{
-		currentState = STATE_READYTORUN;
+		StartGambling();
 	}
-
-	ticksTillAutostock = autostockStartDelay;
-	ticksTillNextPurchase = 0;
-
-	while(!gambleQueue.empty())
-		gambleQueue.pop();
 }
 
 bool Gambler::StartGambling()
 {
-	if(currentState != STATE_READYTORUN && currentState != STATE_AUTOSTOCK_ENDED)
-		return false;
+	DEBUG_TRACE();
 
 	for(stdext::hash_set<std::string>::iterator i = itemsToGamble.begin(); i != itemsToGamble.end(); ++i)
 	{
@@ -99,8 +117,17 @@ bool Gambler::StartGambling()
 				server->GameStringf("ÿc3Gambleÿc0: Not enough room");
 				if(transmuteEnabled && currentState != STATE_AUTOSTOCK_ENDED)
 				{
-					me->EndNpcSession();
-					currentState = STATE_AUTOSTOCK_START;
+					if(me->GetOpenedUI())
+					{
+						me->EndNpcSession();
+						currentState = STATE_UI_CLOSING_FOR_AUTOSTOCKER;
+					}
+					else
+					{
+						StartAutostocker();
+					}
+					//me->EndNpcSession();
+					//StartAutostocker();
 				}
 				else
 				{
@@ -111,7 +138,7 @@ bool Gambler::StartGambling()
 			else
 			{
 				//server->GameStringf("Try to sell again...");
-				currentState = STATE_GAMBLE_SELLITEM;
+				SellQueuedItems();
 				return false;
 			}
 		}
@@ -129,177 +156,65 @@ bool Gambler::StartGambling()
 	return true;
 }
 
-// Called when NPC is listing items up for gamble, before NPC_SESSION message
-void Gambler::OnNpcGambleItemList(ITEM &gambleItem)
+void Gambler::RequestMoreGold()
 {
-	if(currentState != STATE_NPC_LISTINGITEMS)
-		return;
-
-	if(itemsToGamble.count(gambleItem.szItemCode) > 0)
+	DEBUG_TRACE();
+	if(isRequestingGold)
 	{
-		gambleQueue.push(gambleItem.dwItemID);
-		ticksTillGambleItemTimeout = 5 * (1000 / server->GetTickRate()); // 5 second timeout
+		me->CleanJobs();
+		me->EndNpcSession();
+		currentState = STATE_GOLD_WAIT;
+
+		char goldRequest[32];
+
+		sprintf_s(goldRequest, sizeof(goldRequest)/sizeof(goldRequest[0]), "%d", (me->GetInventoryGoldLimit() - me->GetStat(STAT_GOLD))/requestedGoldSplitBy);
+
+		server->GameStringf("Looking for gold...");
+		me->Say(goldRequest);				
+	}
+	else
+	{
+		if(isSellingGambledItems && !itemsToSell.empty())
+		{
+			SellQueuedItems();
+		}
+		else
+		{
+			StopGambling();
+		}
 	}
 }
 
-void Gambler::OnNotEnoughMoney()
+void Gambler::StartAutostocker()
 {
-	if(currentState != STATE_GAMBLE_WAITFORITEM)
-		return;
+	DEBUG_TRACE();
+	currentState = STATE_AUTOSTOCK_RUNNING;
 
-	server->GameStringf("ÿc3Gambleÿc0: Not enough money");
+	std::string asCommand;
 
-	currentState = STATE_GOLD_NEEDMORE;
-}
+	while(!gambleQueue.empty())
+		gambleQueue.pop();
 
-void Gambler::OnItemSold()
-{
-	if(currentState != STATE_GAMBLE_SOLDITEM)
-		return;
+	asCommand = server->GetCommandCharacter();
+	asCommand += "as start_rares chat";
 
-	currentState = STATE_GAMBLE_SELLITEM;
-}
+	if(transmuteSet)
+		asCommand += " sets";
+	if(transmuteRare)
+		asCommand += " rares";
+	if(transmuteUnique)
+		asCommand += " uniques";
 
-void Gambler::OnTick()
-{
-	switch(currentState)
-	{
-		case STATE_GAMBLE_NEXTITEM:
-		{
-			if(--ticksTillNextPurchase <= 0)
-			{
-				GambleQueuedItems();
-				ticksTillNextPurchase = 2;
-			}
-			break;
-		}
-		case STATE_GAMBLE_WAITFORITEM:
-		{
-			if(ticksTillGambleItemTimeout-- == 0)
-			{
-				server->GamePrintInfo("ÿc3Gambleÿc0: Timed out buying items");
-				Reset(false);
-			}
-			break;
-		}
-		case STATE_NPC_DONELISTINGITEMS:
-		{
-			currentState = STATE_GAMBLE_NEXTITEM;
-			break;
-		}
-		case STATE_READYTORUN:
-		{
-			StartGambling();
-			break;
-		}
-		case STATE_GAMBLE_SELLITEM:
-		{
-			if(itemsToSell.empty())
-			{
-				//server->GameStringf("ÿc3Gambleÿc0: Inventory full, nothing to sell");
-				Reset(false);
-			}
-			else
-			{
-				SellQueuedItems();
-			}
-
-			break;
-		}
-		case STATE_GAMBLE_SOLDITEM:
-		{
-			currentState = STATE_GAMBLE_SELLITEM;
-			break;
-		}
-		case STATE_GAMBLE_DONESELLING:
-		{
-			Reset(false);
-			break;
-		}
-		case STATE_GOLD_NEEDMORE:
-		{
-			if(isRequestingGold)
-			{
-				me->CleanJobs();
-				me->EndNpcSession();
-				currentState = STATE_GOLD_WAIT;
-
-				char goldRequest[32];
-
-				sprintf_s(goldRequest, sizeof(goldRequest)/sizeof(goldRequest[0]), "%d", (me->GetInventoryGoldLimit() - me->GetStat(STAT_GOLD))/requestedGoldSplitBy);
-
-				server->GameStringf("Looking for gold...");
-				me->Say(goldRequest);				
-			}
-			else
-			{
-				if(isSellingGambledItems && !itemsToSell.empty())
-				{
-					currentState = STATE_GAMBLE_SELLITEM;
-				}
-				else
-				{
-					StopGambling();
-				}
-			}
-
-			break;
-		}
-		case STATE_GOLD_REFILLED:
-		{
-			Reset(false);
-			break;
-		}
-		case STATE_GAMBLE_DONE:
-		{
-			Reset(false);
-			break;
-		}
-		case STATE_AUTOSTOCK_START:
-		{
-			if(ticksTillAutostock-- > 0)
-				break;
-
-			std::string asCommand;
-			
-			ticksTillNextPurchase = 0;
-
-			while(!gambleQueue.empty())
-				gambleQueue.pop();
-
-			asCommand = server->GetCommandCharacter();
-			asCommand += "as start_rares chat";
-
-			if(transmuteSet)
-				asCommand += " sets";
-			if(transmuteRare)
-				asCommand += " rares";
-			if(transmuteUnique)
-				asCommand += " uniques";
-			
-			me->Say(asCommand.c_str());
-
-			currentState = STATE_AUTOSTOCK_RUNNING;
-			ticksTillAutostock = autostockStartDelay;
-
-			break;
-		}
-		case STATE_AUTOSTOCK_ENDED:
-		{
-			StartGambling();
-			break;
-		}
-	}
+	me->Say(asCommand.c_str());
 }
 
 void Gambler::SellQueuedItems()
 {
-	if(currentState != STATE_GAMBLE_SELLITEM)
-		return;
-
+	DEBUG_TRACE();
 	if(itemsToSell.empty())
 	{
-		currentState = STATE_GAMBLE_DONESELLING;
+		StartGambling();
+		//Reset(false);
 		return;
 	}
 	
@@ -313,17 +228,99 @@ void Gambler::SellQueuedItems()
 		return;
 	}
 
+	currentState = STATE_GAMBLE_SOLDITEM;
 	if(!me->SellItem(currentItemId))
 	{
 		server->GameStringf("ÿc3Gambleÿc0: Unable to sell item");
 		return;
-	}	
+	}
+}
 
-	currentState = STATE_GAMBLE_SELLITEM;
+DWORD Gambler::FindGamblingNpc()
+{
+	DEBUG_TRACE();
+	GAMEUNIT gameUnit;
+	const char *gamblingNpcNames[] = 
+	{
+		"Gheed",
+		"Elzix",
+		"Alkor",
+		"Jamella",
+		"Nihlathak",
+		"Anya"
+	};
+
+	for(int i = 0; i < sizeof(gamblingNpcNames)/sizeof(gamblingNpcNames[0]); i++)
+	{
+		if(server->FindUnitByName(gamblingNpcNames[i], UNIT_TYPE_MONSTER, &gameUnit))
+		{
+			return gameUnit.dwUnitID;
+		}
+	}
+
+	return 0;
+}
+
+void Gambler::ToggleRequestGold(int splitBy)
+{
+	DEBUG_TRACE();
+	isRequestingGold = !isRequestingGold;
+	requestedGoldSplitBy = splitBy;
+
+	if(isRequestingGold)
+		server->GameStringf("ÿc3Gambleÿc0: Gold requesting ÿc2enabledÿc0, split by %d", splitBy);
+	else
+		server->GamePrintInfo("ÿc3Gambleÿc0: Gold requesting ÿc1disabledÿc0");
+}
+
+void Gambler::ToggleGambleSell(bool sellSet, bool sellRare, bool sellUnique)
+{
+	DEBUG_TRACE();
+	isSellingGambledItems = !isSellingGambledItems;
+
+	this->sellRare = sellRare;
+	this->sellSet = sellSet;
+	this->sellUnique = sellUnique;
+
+	if(isSellingGambledItems)
+	{
+		server->GameStringf("ÿc3Gambleÿc0: Selling ÿc3Magic%s%s%s", sellSet?" ÿc2Sets":"", sellRare?" ÿc9Rares":"", sellUnique?" ÿc4Uniques":"");
+	}
+	else
+	{
+		while(!itemsToSell.empty())
+		{
+			itemsToSell.pop();
+		}
+
+		server->GamePrintInfo("ÿc3Gambleÿc0: Selling gambled items ÿc1disabledÿc0");
+	}
+}
+
+void Gambler::ToggleAutostock(bool transmuteSet, bool transmuteRare, bool transmuteUnique)
+{
+	DEBUG_TRACE();
+	transmuteEnabled = !transmuteEnabled;
+
+	if(transmuteEnabled)
+	{
+		this->transmuteSet = transmuteSet;
+		this->transmuteRare = transmuteRare;
+		this->transmuteUnique = transmuteUnique;
+		server->GameStringf("ÿc3Gambleÿc0: Autostocking ÿc3Magic%s%s%s", transmuteSet?" ÿc2Sets":"", transmuteRare?" ÿc9Rares":"", transmuteUnique?" ÿc4Uniques":"");
+	}
+	else
+	{
+		this->transmuteSet = false;
+		this->transmuteRare = false;
+		this->transmuteUnique = false;
+		server->GamePrintInfo("ÿc3Gambleÿc0: Autostock ÿc1disabledÿc0");
+	}
 }
 
 bool Gambler::WillItemFit(DWORD dwItemId)
 {
+	DEBUG_TRACE();
 	char itemCode[4];
 
 	if(!server->GetItemCode(dwItemId, itemCode, 4))
@@ -332,7 +329,7 @@ bool Gambler::WillItemFit(DWORD dwItemId)
 	}
 	else
 	{
-		return me->FindFirstStorageSpace(STORAGE_INVENTORY, server->GetItemSize(itemCode), NULL);
+		return me->FindFirstStorageSpace(STORAGE_INVENTORY, server->GetItemSize(itemCode), NULL) == TRUE;
 	}
 
 	return false;
@@ -340,18 +337,17 @@ bool Gambler::WillItemFit(DWORD dwItemId)
 
 bool Gambler::WillItemFit(const char *itemCode)
 {
-	return me->FindFirstStorageSpace(STORAGE_INVENTORY, server->GetItemSize(itemCode), NULL);
+	DEBUG_TRACE();
+	return me->FindFirstStorageSpace(STORAGE_INVENTORY, server->GetItemSize(itemCode), NULL) == TRUE;
 }
 
 // only when [next item to gamble]
 void Gambler::GambleQueuedItems()
 {
-	if(currentState != STATE_GAMBLE_NEXTITEM)
-		return;
-
+	DEBUG_TRACE();
 	if(gambleQueue.empty())
 	{
-		currentState = STATE_GAMBLE_DONE;
+		Reset(false);
 		return;
 	}
 	
@@ -381,22 +377,93 @@ void Gambler::GambleQueuedItems()
 }
 
 
-// [Wait for item to inventory]
-// Called when a gambled item is placed in our inventory
+// Called when NPC is listing items up for gamble, before NPC_SESSION message
+void Gambler::OnNpcGambleItemList(ITEM &gambleItem)
+{
+	if(currentState != STATE_NPC_LISTINGITEMS)
+		return;
+
+	//DEBUG_TRACE();
+	if(itemsToGamble.count(gambleItem.szItemCode) > 0)
+	{
+		gambleQueue.push(gambleItem.dwItemID);
+		ticksTillGambleItemTimeout = 30 * (1000 / server->GetTickRate()); // 30 second timeout
+	}
+}
+
+void Gambler::OnNotEnoughMoney()
+{
+	if(currentState != STATE_GAMBLE_WAITFORITEM)
+		return;
+
+	DEBUG_TRACE();
+	server->GameStringf("ÿc3Gambleÿc0: Not enough money");
+	RequestMoreGold();
+}
+
+/// <summary>
+/// Item was sold to the vendor
+/// </summary>
+/// <param name="">.</param>
+void Gambler::OnItemSold()
+{
+	if(currentState != STATE_GAMBLE_SOLDITEM)
+		return;
+
+	DEBUG_TRACE();
+	server->GameStringf("Sold item, %d left in gamble queue", gambleQueue.size());
+	GambleQueuedItems();
+}
+
+/// <summary>
+/// Process a single tick. Handles timeouts/etc
+/// </summary>
+void Gambler::OnTick()
+{
+	switch(currentState)
+	{
+		case STATE_GAMBLE_WAITFORITEM:
+		{
+			if(ticksTillGambleItemTimeout-- == 0)
+			{
+				server->GamePrintInfo("ÿc3Gambleÿc0: Timed out buying items");
+				Reset(false);
+			}
+			break;
+		}
+	}
+}
+
+/// <summary>
+/// An item was placed in the player's inventory. If we're currently gambling then the item
+///   is processed, otherwise it's ignored.
+/// </summary>
+/// <param name="gambleItem">Item that was placed in our inventory.</param>
 void Gambler::OnItemToStorage(ITEM &gambleItem)
 {
 	if(currentState != STATE_GAMBLE_WAITFORITEM)
 		return;
 
+	DEBUG_TRACE();
 	std::string itemName = server->GetItemName(gambleItem.szItemCode);
 
 	if(gambleItem.iQuality == ITEM_LEVEL_UNIQUE)
 	{
+		if(isSellingGambledItems && sellUnique)
+		{
+			itemsToSell.push(gambleItem.dwItemID);
+		}
+
 		server->GameStringf("Gamble: ÿc4Unique %s", itemName.c_str());
 		stats.uniques++;
 	}
 	else if(gambleItem.iQuality == ITEM_LEVEL_SET)
 	{
+		if(isSellingGambledItems && sellSet)
+		{
+			itemsToSell.push(gambleItem.dwItemID);
+		}
+
 		server->GameStringf("Gamble: ÿc2Set %s", itemName.c_str());
 		stats.sets++;
 	}
@@ -405,7 +472,7 @@ void Gambler::OnItemToStorage(ITEM &gambleItem)
 		server->GameStringf("Gamble: ÿc9Rare %s", itemName.c_str());
 		stats.rares++;
 
-		if(isSellingGambledItems)
+		if(isSellingGambledItems && sellRare)
 		{
 			itemsToSell.push(gambleItem.dwItemID);
 		}
@@ -424,16 +491,20 @@ void Gambler::OnItemToStorage(ITEM &gambleItem)
 	{
 		server->GameStringf("Gamble: ÿc2Unknown[%02X] %s", gambleItem.iQuality, itemName.c_str());
 	}
-
-	currentState = STATE_GAMBLE_NEXTITEM;
 }
 
-// Called when NPC is done giving us the list of items to gamble
+/// <summary>
+/// *Should* be called whenever the npc has completed listing all of their items. Possible to miss
+///   some since d2hackit waits 1000ms after every item from the merchant (resetting to 1000ms every
+///   time a new item packet comes in) before this message is sent
+/// </summary>
+/// <param name="success">True if session was successfully established with NPC.</param>
 void Gambler::OnNpcSession(int success)
 {
 	if(currentState != STATE_NPC_LISTINGITEMS)
 		return;
 
+	DEBUG_TRACE();
 	if(!success)
 	{
 		me->RedrawClient(FALSE);
@@ -443,105 +514,59 @@ void Gambler::OnNpcSession(int success)
 		return;
 	}
 
-	currentState = STATE_NPC_DONELISTINGITEMS;
+	GambleQueuedItems();
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="">.</param>
 void Gambler::OnGoldPickup()
 {
 	if(currentState != STATE_GOLD_WAIT)
 		return;
 
-	currentState = STATE_GOLD_REFILLED;
+	DEBUG_TRACE();
+	Reset(false);
 }
 
+/// <summary>
+/// Autostocker has completed, we will continue gambling if we requested autostocker to run
+///   previously
+/// </summary>
+/// <param name="">.</param>
 bool Gambler::OnAutostockerEnded()
 {
 	if(currentState != STATE_AUTOSTOCK_RUNNING)
 		return false;
 
-	currentState = STATE_AUTOSTOCK_ENDED;
-
+	DEBUG_TRACE();
+	StartGambling();
 	return true;
 }
 
-void Gambler::ToggleRequestGold(int splitBy)
+/// <summary>
+/// The 'item identified' swish sound has been scheduled to play, this is the last identifiable packet that is 
+///   sent done before we can continue gambling the rest of our items. If we gamble again before this packet then
+///   we might get kicked
+/// </summary>
+void Gambler::OnItemIdentifiedSounded()
 {
-	isRequestingGold = !isRequestingGold;
-	requestedGoldSplitBy = splitBy;
+	if(currentState != STATE_GAMBLE_WAITFORITEM)
+		return;
 
-	if(isRequestingGold)
-		server->GameStringf("ÿc3Gambleÿc0: Gold requesting ÿc2enabledÿc0, split by %d", splitBy);
-	else
-		server->GamePrintInfo("ÿc3Gambleÿc0: Gold requesting ÿc1disabledÿc0");
+	DEBUG_TRACE();
+	GambleQueuedItems();
 }
 
-void Gambler::ToggleGambleSell()
+/// <summary>
+/// All UIs have been closed and we're able to start the autostocker now if we're waiting on it
+/// </summary>
+void Gambler::OnUIClosed()
 {
-	isSellingGambledItems = !isSellingGambledItems;
+	if(currentState != STATE_UI_CLOSING_FOR_AUTOSTOCKER)
+		return;
 
-	if(isSellingGambledItems)
-	{
-		server->GamePrintInfo("ÿc3Gambleÿc0: Selling gambled magic items ÿc2enabledÿc0");
-	}
-	else
-	{
-		while(!itemsToSell.empty())
-		{
-			itemsToSell.pop();
-		}
-
-		server->GamePrintInfo("ÿc3Gambleÿc0: Selling gambled magic items ÿc1disabledÿc0");
-	}
-}
-
-void Gambler::ToggleAutostock(bool transmuteSet, bool transmuteRare, bool transmuteUnique)
-{
-	transmuteEnabled = !transmuteEnabled;
-
-	if(transmuteEnabled)
-	{
-		this->transmuteSet = transmuteSet;
-		this->transmuteRare = transmuteRare;
-		this->transmuteUnique = transmuteUnique;
-		server->GameStringf("ÿc3Gambleÿc0: Autostocking ÿc3Magic%s%s%s", transmuteSet?" ÿc2Sets":"", transmuteRare?" ÿc9Rares":"", transmuteUnique?" ÿc4Uniques":"");
-	}
-	else
-	{
-		this->transmuteSet = false;
-		this->transmuteRare = false;
-		this->transmuteUnique = false;
-		server->GamePrintInfo("ÿc3Gambleÿc0: Autostock ÿc1disabledÿc0");
-	}
-}
-
-void Gambler::SetAutostockStartDelay(int ticks)
-{
-	server->GameStringf("ÿc3Gambleÿc0: Delay before starting autostocker is now %dms", ticks*100);
-
-	autostockStartDelay = ticks;
-	ticksTillAutostock = ticks;
-}
-
-DWORD Gambler::FindGamblingNpc()
-{
-	GAMEUNIT gameUnit;
-	const char *gamblingNpcNames[] = 
-	{
-		"Gheed",
-		"Elzix",
-		"Alkor",
-		"Jamella",
-		"Nihlathak",
-		"Anya"
-	};
-
-	for(int i = 0; i < sizeof(gamblingNpcNames)/sizeof(gamblingNpcNames[0]); i++)
-	{
-		if(server->FindUnitByName(gamblingNpcNames[i], UNIT_TYPE_MONSTER, &gameUnit))
-		{
-			return gameUnit.dwUnitID;
-		}
-	}
-
-	return 0;
+	DEBUG_TRACE();
+	StartAutostocker();
 }

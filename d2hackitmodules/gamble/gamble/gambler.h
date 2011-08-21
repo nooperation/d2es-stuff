@@ -9,22 +9,13 @@
 enum States
 {
 	STATE_UNINITIALIZED = 0,
-	STATE_HALTED,
-	STATE_READYTORUN,
 	STATE_NPC_LISTINGITEMS,
-	STATE_NPC_DONELISTINGITEMS,
-	STATE_GAMBLE_NEXTITEM,
 	STATE_GAMBLE_WAITFORITEM,
-	STATE_GAMBLE_DONE,
-	STATE_GAMBLE_SELLITEM,
 	STATE_GAMBLE_SOLDITEM,
-	STATE_GAMBLE_DONESELLING,
-	STATE_GOLD_NEEDMORE,
 	STATE_GOLD_WAIT,
-	STATE_GOLD_REFILLED,
-	STATE_AUTOSTOCK_START,
 	STATE_AUTOSTOCK_RUNNING,
 	STATE_AUTOSTOCK_ENDED,
+	STATE_UI_CLOSING_FOR_AUTOSTOCKER,
 };
 
 struct GambleStats
@@ -51,7 +42,7 @@ class Gambler
 		void StopGambling();
 		bool StartGambling();
 		void SetAutostockStartDelay(int ticks);
-		void ToggleGambleSell();
+		void ToggleGambleSell(bool sellSet, bool sellRare, bool sellUnique);
 		void ToggleRequestGold(int splitBy);
 		void ToggleAutostock(bool transmuteSet, bool transmuteRare, bool transmuteUnique);
 		
@@ -63,6 +54,8 @@ class Gambler
 		void OnItemSold();
 		void OnGoldPickup();
 		bool OnAutostockerEnded();
+		void OnItemIdentifiedSounded();
+		void OnUIClosed();
 		
 	private:
 		void GambleQueuedItems();
@@ -72,10 +65,10 @@ class Gambler
 		bool WillItemFit(const char *itemCode);
 		DWORD FindGamblingNpc();
 
+		void StartAutostocker();
+		void RequestMoreGold();
+
 		int ticksTillGambleItemTimeout;
-		int ticksTillNextPurchase;
-		int ticksTillAutostock;
-		int autostockStartDelay;
 
 		int requestedGoldSplitBy;
 
@@ -86,6 +79,10 @@ class Gambler
 		bool transmuteSet;
 		bool transmuteRare;
 		bool transmuteUnique;
+
+		bool sellRare;
+		bool sellSet;
+		bool sellUnique;
 
 		GambleStats stats;
 		States currentState;
