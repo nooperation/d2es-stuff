@@ -34,6 +34,7 @@ DWORD EXPORT OnRealmPacketBeforeSent(BYTE* aPacket, DWORD aLen);
 DWORD EXPORT OnRealmPacketBeforeReceived(BYTE* aPacket, DWORD aLen);
 DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen);
 DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen);
+VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen);
 LPCSTR EXPORT GetModuleAuthor();
 LPCSTR EXPORT GetModuleWebsite();
 LPCSTR EXPORT GetModuleEmail();

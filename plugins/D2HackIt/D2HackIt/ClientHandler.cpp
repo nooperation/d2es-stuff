@@ -312,6 +312,7 @@ LinkedItem* PRIVATE LoadClientModule(LPCSTR szName)
 
 	BIND(OnGamePacketBeforeSent);
 	BIND(OnGamePacketBeforeReceived);
+	BIND(OnGamePacketAfterReceived);
 	BIND(OnGameCommandLine);
 	BIND(OnGameJoin);
 	BIND(OnGameLeave);

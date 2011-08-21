@@ -97,6 +97,19 @@ DWORD Proc_OnGameTimerTick()
 		//
 		const PKT& pkt = g_aPackets.GetNext(pos);
 		OnGamePacketAfterReceived(pkt.aPacket, pkt.aLen);
+
+		// Pass packet to all clients who wants to snoop
+		LinkedItem *li = ClientModules.GetFirstItem();
+		while(li)
+		{	
+			PCIS pCIS = ClientModules.GetCIS(li);
+			if(pCIS && pCIS->OnGamePacketAfterReceived)
+			{
+				pCIS->OnGamePacketAfterReceived(pkt.aPacket, pkt.aLen);
+			}
+			li = ClientModules.GetNextItem(li);
+		}
+
 		g_aPackets.RemoveFront();
 	}
 

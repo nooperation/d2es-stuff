@@ -146,6 +146,7 @@ typedef DWORD	(__cdecl *fnOnRealmPacketBeforeSent)(BYTE* aPacket, DWORD aLen);
 typedef DWORD	(__cdecl *fnOnRealmPacketBeforeReceived)(BYTE* aPacket, DWORD aLen);
 typedef DWORD	(__cdecl *fnOnGamePacketBeforeSent)(BYTE* aPacket, DWORD aLen);
 typedef DWORD	(__cdecl *fnOnGamePacketBeforeReceived)(BYTE* aPacket, DWORD aLen);
+typedef VOID	(__cdecl *fnOnGamePacketAfterReceived)(BYTE* aPacket, DWORD aLen);
 typedef	BOOL	(__cdecl *fnOnGameCommandLine)(char** argv, int argc);
 typedef	VOID	(__cdecl *fnOnGameJoin)(THISGAMESTRUCT* thisgame);
 typedef	VOID	(__cdecl *fnOnGameLeave)(THISGAMESTRUCT* thisgame);
@@ -171,6 +172,7 @@ typedef struct clientinfostruct_t
 	// Event handlers
 	fnOnGamePacketBeforeSent		OnGamePacketBeforeSent;
 	fnOnGamePacketBeforeReceived	OnGamePacketBeforeReceived;
+	fnOnGamePacketAfterReceived		OnGamePacketAfterReceived;
 	fnOnGameCommandLine				OnGameCommandLine;
 	fnOnGameLeave					OnGameLeave;
 	fnOnGameJoin					OnGameJoin;

@@ -228,12 +228,23 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 // of the new packet!
 //
 // NOTE: This event also works in single player games.
+// NOTE: D2Hackit inventory structure will NOT be updated at this time.
 //////////////////////////////////////////////////////////////////////
 DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 {
 	return aLen;
 }
 
+//////////////////////////////////////////////////////////////////////
+// OnGamePacketAfterReceived
+// -------------------------------------------------------------------
+// Executes after packets are received to the game from the server.
+// D2Hackit inventory structure will be updated at this time.
+//////////////////////////////////////////////////////////////////////
+VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
+{
+	return;
+}
 
 //////////////////////////////////////////////////////////////////////
 // OnGameTimerTick
