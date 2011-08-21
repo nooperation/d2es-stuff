@@ -60,7 +60,7 @@ class Gambler
 	private:
 		void GambleQueuedItems();
 		void SellQueuedItems();
-		void Reset(bool haltGambling);
+		void ResetQueues();
 		bool WillItemFit(DWORD dwItemId);
 		bool WillItemFit(const char *itemCode);
 		DWORD FindGamblingNpc();

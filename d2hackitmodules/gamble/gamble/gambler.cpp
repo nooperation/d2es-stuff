@@ -1,7 +1,7 @@
 #include "gambler.h"
 #include <fstream>
 
-#if 1
+#if 0
 	#define DEBUG_TRACE() {server->GameStringf("%s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);}
 #else
 	#define DEBUG_TRACE() {}
@@ -61,10 +61,33 @@ void Gambler::StopGambling()
 		return;
 
 	DEBUG_TRACE();
-	Reset(true);
+
+	int totalGambled = stats.magic + stats.rares + stats.sets + stats.uniques;
+
+	if(totalGambled > 0)
+	{
+		server->GameStringf("ÿc3Gambleÿc0: ÿc3Magic: %d (%d%%)  ÿc9Rare: %d (%d%%)  ÿc2Set: %d (%d%%)  ÿc4Unique: %d (%d%%)ÿc0",
+			stats.magic, (int)(100 * (stats.magic / (float)totalGambled)),
+			stats.rares, (int)(100 * (stats.rares / (float)totalGambled)),
+			stats.sets, (int)(100 * (stats.sets / (float)totalGambled)),
+			stats.uniques, (int)(100 * (stats.uniques / (float)totalGambled)));
+	}
+
+	server->GamePrintInfo("ÿc3Gambleÿc0: Gamble ended");
+	me->CleanJobs();
+	me->EndNpcSession();
+		
+	while(!itemsToSell.empty())
+	{
+		itemsToSell.pop();
+	}
+
+	memset(&stats, 0, sizeof(GambleStats));
+	currentState = STATE_UNINITIALIZED;
 }
 
-void Gambler::Reset(bool haltGambling)
+
+void Gambler::ResetQueues()
 {
 	DEBUG_TRACE();
 
@@ -72,35 +95,9 @@ void Gambler::Reset(bool haltGambling)
 	{
 		gambleQueue.pop();
 	}
-
-	if(haltGambling)
+	while(!itemsToSell.empty())
 	{
-		int totalGambled = stats.magic + stats.rares + stats.sets + stats.uniques;
-
-		if(totalGambled > 0)
-		{
-			server->GameStringf("ÿc3Gambleÿc0: ÿc3Magic: %d (%d%%)  ÿc9Rare: %d (%d%%)  ÿc2Set: %d (%d%%)  ÿc4Unique: %d (%d%%)ÿc0",
-				stats.magic, (int)(100 * (stats.magic / (float)totalGambled)),
-				stats.rares, (int)(100 * (stats.rares / (float)totalGambled)),
-				stats.sets, (int)(100 * (stats.sets / (float)totalGambled)),
-				stats.uniques, (int)(100 * (stats.uniques / (float)totalGambled)));
-		}
-
-		server->GamePrintInfo("ÿc3Gambleÿc0: Gamble ended");
-		me->CleanJobs();
-		me->EndNpcSession();
-		
-		while(!itemsToSell.empty())
-		{
-			itemsToSell.pop();
-		}
-
-		memset(&stats, 0, sizeof(GambleStats));
-		currentState = STATE_UNINITIALIZED;
-	}
-	else
-	{
-		StartGambling();
+		itemsToSell.pop();
 	}
 }
 
@@ -126,8 +123,6 @@ bool Gambler::StartGambling()
 					{
 						StartAutostocker();
 					}
-					//me->EndNpcSession();
-					//StartAutostocker();
 				}
 				else
 				{
@@ -137,7 +132,6 @@ bool Gambler::StartGambling()
 			}
 			else
 			{
-				//server->GameStringf("Try to sell again...");
 				SellQueuedItems();
 				return false;
 			}
@@ -149,7 +143,7 @@ bool Gambler::StartGambling()
 	{
 		server->GamePrintInfo("ÿc3Gambleÿc0: Failed to start gambling");
 		me->RedrawClient(false);
-		Reset(false);
+		StartGambling();
 		return false;
 	}
 
@@ -214,7 +208,6 @@ void Gambler::SellQueuedItems()
 	if(itemsToSell.empty())
 	{
 		StartGambling();
-		//Reset(false);
 		return;
 	}
 	
@@ -347,18 +340,17 @@ void Gambler::GambleQueuedItems()
 	DEBUG_TRACE();
 	if(gambleQueue.empty())
 	{
-		Reset(false);
+		StartGambling();
 		return;
 	}
 	
 	DWORD currentItemId = gambleQueue.front();
-	gambleQueue.pop();
-
 	if(!WillItemFit(currentItemId))
 	{
-		Reset(false);
+		SellQueuedItems();
 		return;
 	}
+	gambleQueue.pop();
 
 	if(!server->VerifyUnit(&gamblingNpc))
 	{
@@ -371,7 +363,8 @@ void Gambler::GambleQueuedItems()
 	if(!me->Gamble(currentItemId))
 	{
 		server->GamePrintInfo("ÿc3Gambleÿc0: Unable to buy item");
-		Reset(false);
+		ResetQueues();
+		StartGambling();
 		return;
 	}
 }
@@ -411,7 +404,6 @@ void Gambler::OnItemSold()
 		return;
 
 	DEBUG_TRACE();
-	server->GameStringf("Sold item, %d left in gamble queue", gambleQueue.size());
 	GambleQueuedItems();
 }
 
@@ -427,7 +419,8 @@ void Gambler::OnTick()
 			if(ticksTillGambleItemTimeout-- == 0)
 			{
 				server->GamePrintInfo("ÿc3Gambleÿc0: Timed out buying items");
-				Reset(false);
+				ResetQueues();
+				StartGambling();
 			}
 			break;
 		}
@@ -510,7 +503,7 @@ void Gambler::OnNpcSession(int success)
 		me->RedrawClient(FALSE);
 		me->MoveToUnit(&gamblingNpc, TRUE);
 		server->GamePrintInfo("ÿc3Gambleÿc0: NPC request failed");
-		Reset(false);
+		StartGambling();
 		return;
 	}
 
@@ -527,7 +520,7 @@ void Gambler::OnGoldPickup()
 		return;
 
 	DEBUG_TRACE();
-	Reset(false);
+	StartGambling();
 }
 
 /// <summary>
