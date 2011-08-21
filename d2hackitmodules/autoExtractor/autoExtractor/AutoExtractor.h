@@ -19,7 +19,7 @@ class AutoExtractor
 {
 	public:
 		AutoExtractor();
-		bool Start(bool useChat);
+		bool Start(int itemCount, bool useChat);
 		bool StartExtraction();
 		bool Init(bool useChat);
 
@@ -45,6 +45,7 @@ class AutoExtractor
 		std::vector<std::string> extractors;
 		stdext::hash_set<int> goodPrefix;
 		stdext::hash_set<int> goodSuffix;
+		int numberOfRunsRemaining;
 
 		States currentState;
 };

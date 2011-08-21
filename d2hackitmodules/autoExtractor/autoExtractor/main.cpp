@@ -5,16 +5,17 @@ AutoExtractor autoExtractor;
 
 CLIENTINFO
 (
-	1,4,
-	"Auto Extractor v1.4",
+	1,5,
+	"Auto Extractor v1.5",
 	"http://madbrahmin.googlepages.com/d2es/",
-	"Auto Extractor v1.4",
+	"Auto Extractor v1.5",
 	""
 )
 
 BOOL PRIVATE Start(char** argv, int argc)
 {
 	bool useChat = false;
+	int itemCount = INT_MAX;
 
 	if(argc >= 3)
 	{
@@ -22,10 +23,12 @@ BOOL PRIVATE Start(char** argv, int argc)
 		{
 			if(_stricmp(argv[i], "chat") == 0)
 				useChat = true;
+			if(atoi(argv[i]) != 0)
+				itemCount= atoi(argv[i]);
 		}
 	}
 
-	autoExtractor.Start(useChat);
+	autoExtractor.Start(itemCount, useChat);
 
 	return TRUE;
 }
@@ -89,7 +92,7 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 	{
 		"Start",
 		Start,
-		"Usage: Start [chat]",
+		"Usage: Start [count] [chat]",
 	},
 	{NULL}
 };

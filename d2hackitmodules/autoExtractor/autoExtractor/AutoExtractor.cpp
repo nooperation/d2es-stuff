@@ -71,8 +71,10 @@ bool AutoExtractor::ReadAffixFile(std::string configPath, stdext::hash_set<int> 
 /// Starts autoextractor
 /// </summary>
 /// <returns>true if success.</returns>
-bool AutoExtractor::Start(bool useChat)
+bool AutoExtractor::Start(int itemCount, bool useChat)
 {
+	numberOfRunsRemaining = itemCount;
+
 	if(!Init(useChat))
 	{
 		return false;
@@ -95,6 +97,12 @@ bool AutoExtractor::StartExtraction()
 			server->GameStringf("ÿc:AutoExtractorÿc0: Cube not opened");
 
 		return false;
+	}
+
+	if(numberOfRunsRemaining-- <= 0)
+	{
+		Abort();
+		return true;
 	}
 
 	// Only the items we use as extractors are presently in the cube. Store the item codes of all
