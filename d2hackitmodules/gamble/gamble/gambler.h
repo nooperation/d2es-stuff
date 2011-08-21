@@ -63,6 +63,7 @@ class Gambler
 		void ResetQueues();
 		bool WillItemFit(DWORD dwItemId);
 		bool WillItemFit(const char *itemCode);
+		void AttemptToMakeRoom();
 		DWORD FindGamblingNpc();
 
 		void StartAutostocker();

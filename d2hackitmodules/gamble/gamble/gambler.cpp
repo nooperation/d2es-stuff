@@ -24,6 +24,11 @@ Gambler::Gambler()
 	currentState = STATE_UNINITIALIZED;
 }
 
+/// <summary>
+/// Initializes the gambling process
+/// </summary>
+/// <param name="itemCodes">List of item codes we're gambling for</param>
+/// <returns>true on success, false on failure (no gambling npc)</returns>
 bool Gambler::Init(std::vector<std::string> itemCodes)
 {
 	DEBUG_TRACE();
@@ -43,10 +48,7 @@ bool Gambler::Init(std::vector<std::string> itemCodes)
 		return false;
 	}
 
-	while(!gambleQueue.empty())
-	{
-		gambleQueue.pop();
-	}
+	ResetQueues();
 	while(!itemsToSell.empty())
 	{
 		itemsToSell.pop();
@@ -55,6 +57,9 @@ bool Gambler::Init(std::vector<std::string> itemCodes)
 	return true;
 }
 
+/// <summary>
+/// Stops the entire gambling process.
+/// </summary>
 void Gambler::StopGambling()
 {
 	if(currentState == STATE_UNINITIALIZED)
@@ -77,6 +82,7 @@ void Gambler::StopGambling()
 	me->CleanJobs();
 	me->EndNpcSession();
 		
+	ResetQueues();
 	while(!itemsToSell.empty())
 	{
 		itemsToSell.pop();
@@ -86,7 +92,9 @@ void Gambler::StopGambling()
 	currentState = STATE_UNINITIALIZED;
 }
 
-
+/// <summary>
+/// Resets the queuest of items we are trying to buy from the current npc session
+/// </summary>
 void Gambler::ResetQueues()
 {
 	DEBUG_TRACE();
@@ -95,12 +103,42 @@ void Gambler::ResetQueues()
 	{
 		gambleQueue.pop();
 	}
-	while(!itemsToSell.empty())
-	{
-		itemsToSell.pop();
-	}
 }
 
+/// <summary>
+/// Attempts to make more inventory room by either selling or transmuting unwanted gambled items.
+/// </summary>
+void Gambler::AttemptToMakeRoom()
+{
+	DEBUG_TRACE();
+
+	if(!itemsToSell.empty())
+	{
+		SellQueuedItems();
+		return;
+	}
+
+	server->GameStringf("ÿc3Gambleÿc0: Not enough room");
+	if(transmuteEnabled && currentState != STATE_AUTOSTOCK_ENDED)
+	{
+		if(me->GetOpenedUI())
+		{
+			me->EndNpcSession();
+			currentState = STATE_UI_CLOSING_FOR_AUTOSTOCKER;
+			return;
+		}
+
+		StartAutostocker();
+		return;
+	}
+
+	StopGambling();
+}
+
+/// <summary>
+/// Begins another iteration of gambling. Inventory space remaining is checked prior to gambling and attempts
+///   are made to free some room if possible. Gambling ends if inventory is completely full.
+/// </summary>
 bool Gambler::StartGambling()
 {
 	DEBUG_TRACE();
@@ -109,32 +147,8 @@ bool Gambler::StartGambling()
 	{
 		if(!WillItemFit((*i).c_str()))
 		{
-			if(itemsToSell.empty())
-			{
-				server->GameStringf("ÿc3Gambleÿc0: Not enough room");
-				if(transmuteEnabled && currentState != STATE_AUTOSTOCK_ENDED)
-				{
-					if(me->GetOpenedUI())
-					{
-						me->EndNpcSession();
-						currentState = STATE_UI_CLOSING_FOR_AUTOSTOCKER;
-					}
-					else
-					{
-						StartAutostocker();
-					}
-				}
-				else
-				{
-					StopGambling();
-				}
-				return false;
-			}
-			else
-			{
-				SellQueuedItems();
-				return false;
-			}
+			AttemptToMakeRoom();
+			return false;
 		}
 	}
 
@@ -150,13 +164,19 @@ bool Gambler::StartGambling()
 	return true;
 }
 
+/// <summary>
+/// Attempts to request more gold by either asking our money bot or selling previously purchesd items.
+///   Gambling is ended if the previous two options are not available.
+/// </summary>
 void Gambler::RequestMoreGold()
 {
 	DEBUG_TRACE();
+
 	if(isRequestingGold)
 	{
 		me->CleanJobs();
 		me->EndNpcSession();
+		ResetQueues();
 		currentState = STATE_GOLD_WAIT;
 
 		char goldRequest[32];
@@ -179,9 +199,14 @@ void Gambler::RequestMoreGold()
 	}
 }
 
+/// <summary>
+/// Starts the autostocker. Completion of the autostocker is handled in the
+///   OnAutostockerEnded event handler.
+/// </summary>
 void Gambler::StartAutostocker()
 {
 	DEBUG_TRACE();
+
 	currentState = STATE_AUTOSTOCK_RUNNING;
 
 	std::string asCommand;
@@ -202,9 +227,15 @@ void Gambler::StartAutostocker()
 	me->Say(asCommand.c_str());
 }
 
+/// <summary>
+/// Attempts to sell a previously gambled item. Successful selling of the item will
+///   change to the STATE_GAMBLE_SOLDITEM state, which will be handled in the OnItemSold
+///   event handler.
+/// </summary>
 void Gambler::SellQueuedItems()
 {
 	DEBUG_TRACE();
+
 	if(itemsToSell.empty())
 	{
 		StartGambling();
@@ -229,9 +260,14 @@ void Gambler::SellQueuedItems()
 	}
 }
 
+/// <summary>
+/// Locates the nearest gambling NPC and returns its unique ID
+/// </summary>
+/// <returns>ID of the closest gambling NPC or 0 on failure</returns>
 DWORD Gambler::FindGamblingNpc()
 {
 	DEBUG_TRACE();
+
 	GAMEUNIT gameUnit;
 	const char *gamblingNpcNames[] = 
 	{
@@ -254,9 +290,14 @@ DWORD Gambler::FindGamblingNpc()
 	return 0;
 }
 
+/// <summary>
+/// Toggles requesting of the maximum amount of gold when gold runs out
+/// </summary>
+/// <param name="splitBy">Number of players listening to our request. Total amount requested is divided by this amount</param>
 void Gambler::ToggleRequestGold(int splitBy)
 {
 	DEBUG_TRACE();
+
 	isRequestingGold = !isRequestingGold;
 	requestedGoldSplitBy = splitBy;
 
@@ -266,11 +307,17 @@ void Gambler::ToggleRequestGold(int splitBy)
 		server->GamePrintInfo("ÿc3Gambleÿc0: Gold requesting ÿc1disabledÿc0");
 }
 
+/// <summary>
+/// Toggles the selling gambled items when inventory becomes full during gambling
+/// </summary>
+/// <param name="sellSet">Set items will be sold</param>
+/// <param name="sellRare">Rare items will be sold</param>
+/// <param name="sellUnique">Unique items will be sold</param>
 void Gambler::ToggleGambleSell(bool sellSet, bool sellRare, bool sellUnique)
 {
 	DEBUG_TRACE();
-	isSellingGambledItems = !isSellingGambledItems;
 
+	isSellingGambledItems = !isSellingGambledItems;
 	this->sellRare = sellRare;
 	this->sellSet = sellSet;
 	this->sellUnique = sellUnique;
@@ -290,9 +337,16 @@ void Gambler::ToggleGambleSell(bool sellSet, bool sellRare, bool sellUnique)
 	}
 }
 
+/// <summary>
+/// Toggles the usage of AutoStocker when inventory becomes full during gambling
+/// </summary>
+/// <param name="transmuteSet">Set items will be transmuted</param>
+/// <param name="transmuteRare">Rare items will be transmuted</param>
+/// <param name="transmuteUnique">Unique items will be transmuted</param>
 void Gambler::ToggleAutostock(bool transmuteSet, bool transmuteRare, bool transmuteUnique)
 {
 	DEBUG_TRACE();
+
 	transmuteEnabled = !transmuteEnabled;
 
 	if(transmuteEnabled)
@@ -311,9 +365,15 @@ void Gambler::ToggleAutostock(bool transmuteSet, bool transmuteRare, bool transm
 	}
 }
 
+/// <summary>
+/// Check to see if an exsiting item can fit in our inventory
+/// </summary>
+/// <param name="dwItemId">Unique ID of the item being checked</param>
+/// <returns>True if item can fit, false if it won't fit</returns>
 bool Gambler::WillItemFit(DWORD dwItemId)
 {
 	DEBUG_TRACE();
+
 	char itemCode[4];
 
 	if(!server->GetItemCode(dwItemId, itemCode, 4))
@@ -328,22 +388,34 @@ bool Gambler::WillItemFit(DWORD dwItemId)
 	return false;
 }
 
+/// <summary>
+/// Check to see if an item of specified item code can fit in our inventory
+/// </summary>
+/// <param name="itemCode">Code of item being checked</param>
+/// <returns>True if item can fit, false if it won't fit</returns>
 bool Gambler::WillItemFit(const char *itemCode)
 {
 	DEBUG_TRACE();
+
 	return me->FindFirstStorageSpace(STORAGE_INVENTORY, server->GetItemSize(itemCode), NULL) == TRUE;
 }
 
-// only when [next item to gamble]
+/// <summary>
+/// Attempt to buy all of the items we're interested in. If we're full we will attempt to sell any
+///   previously purchased items (if enabled)
+/// </summary>
 void Gambler::GambleQueuedItems()
 {
 	DEBUG_TRACE();
+
 	if(gambleQueue.empty())
 	{
 		StartGambling();
 		return;
 	}
 	
+	// Don't pop the item from the queue, we might be able to attempt another gamble after
+	//  selling items
 	DWORD currentItemId = gambleQueue.front();
 	if(!WillItemFit(currentItemId))
 	{
@@ -369,8 +441,10 @@ void Gambler::GambleQueuedItems()
 	}
 }
 
-
-// Called when NPC is listing items up for gamble, before NPC_SESSION message
+/// <summary>
+/// NPC is listing their inventory
+/// </summary>
+/// <param name="gambleItem">Item that can be purchased</param>
 void Gambler::OnNpcGambleItemList(ITEM &gambleItem)
 {
 	if(currentState != STATE_NPC_LISTINGITEMS)
@@ -384,6 +458,9 @@ void Gambler::OnNpcGambleItemList(ITEM &gambleItem)
 	}
 }
 
+/// <summary>
+/// We don't have enough money to buy the item(s), request more gold
+/// </summary>
 void Gambler::OnNotEnoughMoney()
 {
 	if(currentState != STATE_GAMBLE_WAITFORITEM)
@@ -395,9 +472,8 @@ void Gambler::OnNotEnoughMoney()
 }
 
 /// <summary>
-/// Item was sold to the vendor
+/// Item was sold to the vendor. Event occurs after game has processed it.
 /// </summary>
-/// <param name="">.</param>
 void Gambler::OnItemSold()
 {
 	if(currentState != STATE_GAMBLE_SOLDITEM)
@@ -511,9 +587,8 @@ void Gambler::OnNpcSession(int success)
 }
 
 /// <summary>
-/// 
+/// We have picked up more gold and are ready to gamble more
 /// </summary>
-/// <param name="">.</param>
 void Gambler::OnGoldPickup()
 {
 	if(currentState != STATE_GOLD_WAIT)
@@ -527,7 +602,6 @@ void Gambler::OnGoldPickup()
 /// Autostocker has completed, we will continue gambling if we requested autostocker to run
 ///   previously
 /// </summary>
-/// <param name="">.</param>
 bool Gambler::OnAutostockerEnded()
 {
 	if(currentState != STATE_AUTOSTOCK_RUNNING)
