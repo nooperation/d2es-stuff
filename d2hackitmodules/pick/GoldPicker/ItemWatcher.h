@@ -9,6 +9,9 @@
 
 struct WatchedItemData
 {
+public:
+	bool operator==(const WatchedItemData &rhs);
+
 	DWORD id;
 	int x;
 	int y;

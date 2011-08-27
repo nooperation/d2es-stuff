@@ -3,6 +3,12 @@
 #include "ItemWatcher.h"
 #include "../../d2hackit/includes/D2Client.h"
 
+bool WatchedItemData::operator==(const WatchedItemData &rhs)
+{
+	return this->id == rhs.id && 
+		this->x == rhs.x && 
+		this->y == rhs.y;
+}
 
 ItemWatcher::ItemWatcher()
 {
@@ -85,17 +91,22 @@ void ItemWatcher::CheckWatchedItems()
 
 	if(destroyedItemsSinceLastCheck.size() > 0)
 	{
+		std::list<WatchedItemData> itemsToStopWatching;
+
 		for(std::list<WatchedItemData>::iterator i = watchedItems.begin(); i != watchedItems.end(); i++)
 		{
 			for(std::vector<DWORD>::iterator j = destroyedItemsSinceLastCheck.begin(); j != destroyedItemsSinceLastCheck.end(); ++j)
 			{
 				if(i->id == *j)
 				{
-					//server->GameStringf("Erasing %X... [%d] (item destroyed)", i->id, watchedItems.size());
-					watchedItems.erase(i);
-					return;
+					itemsToStopWatching.push_back((*i));
 				}
 			}
+		}
+
+		for each(auto item in itemsToStopWatching)
+		{
+			watchedItems.remove(item);
 		}
 	}
 
@@ -116,6 +127,7 @@ void ItemWatcher::CheckWatchedItems()
 				if(i->isGold)
 				{
 					me->PickGroundItem(i->id, TRUE);
+					return;
 				}
 				else
 				{
@@ -123,6 +135,7 @@ void ItemWatcher::CheckWatchedItems()
 					{
 						//server->GameStringf("Pick item %02X", i->id);
 						me->PickGroundItem(i->id, TRUE);
+						return;
 						//watchedItems.erase(i++); // TODO: needs to check items on pickup to see if it worked
 					}
 					else
