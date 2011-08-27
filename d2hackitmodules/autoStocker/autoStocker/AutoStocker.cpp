@@ -905,28 +905,40 @@ bool AutoStocker::IsCrystalItem(LPCSTR itemCode)
 /// <returns>true if item should be cubed a stocker.</returns>
 bool AutoStocker::IsRerollItem(const ITEM &item)
 {
-	if(!item.iIdentified && item.iQuality == ITEM_LEVEL_MAGIC)
+	if(!item.iIdentified)
 	{
-		if(IsTransmutingUnidentifiedSmallCharms &&
-			item.iLevel <= MaxUnidentifiedSCharmLevel && 
-			strcmp(item.szItemCode, "cx1") == 0)
+		// Transmute unidentified magic charms based on settings from autostockerMisc.ini
+		if(item.iQuality == ITEM_LEVEL_MAGIC)
 		{
-			return true;
+			if(IsTransmutingUnidentifiedSmallCharms &&
+				item.iLevel <= MaxUnidentifiedSCharmLevel && 
+				strcmp(item.szItemCode, "cx1") == 0)
+			{
+				return true;
+			}
+			else if(IsTransmutingUnidentifiedLargeCharms &&
+				item.iLevel <= MaxUnidentifiedLCharmLevel && 
+				strcmp(item.szItemCode, "cx2") == 0)
+			{
+				return true;
+			}
+			else if(IsTransmutingUnidentifiedGrandCharms &&
+				item.iLevel <= MaxUnidentifiedGCharmLevel && 
+				strcmp(item.szItemCode, "cx3") == 0)
+			{
+				return true;
+			}
 		}
-		else if(IsTransmutingUnidentifiedLargeCharms &&
-			item.iLevel <= MaxUnidentifiedLCharmLevel && 
-			strcmp(item.szItemCode, "cx2") == 0)
+
+		// Don't transmute any other unidentified charms or jewels
+		if(strcmp(item.szItemCode, "cx1") == 0 ||
+			strcmp(item.szItemCode, "cx2") == 0 ||
+			strcmp(item.szItemCode, "cx3") == 0 ||
+			strcmp(item.szItemCode, "jew") == 0)
 		{
-			return true;
-		}
-		else if(IsTransmutingUnidentifiedGrandCharms &&
-			item.iLevel <= MaxUnidentifiedGCharmLevel && 
-			strcmp(item.szItemCode, "cx3") == 0)
-		{
-			return true;
+			return false;
 		}
 	}
-
 
 	if(item.iQuality == ITEM_LEVEL_MAGIC ||
 		(item.iQuality == ITEM_LEVEL_SET && transmuteSet) ||
