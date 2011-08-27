@@ -86,6 +86,13 @@ class AutoStocker
 		bool transmuteSet;
 		bool transmuteUnique;
 
+		bool IsTransmutingUnidentifiedSmallCharms;
+		bool IsTransmutingUnidentifiedLargeCharms;
+		bool IsTransmutingUnidentifiedGrandCharms;
+		int MaxUnidentifiedSCharmLevel;
+		int MaxUnidentifiedLCharmLevel;
+		int MaxUnidentifiedGCharmLevel;
+
 		unsigned int currentItem;
 		unsigned int currentStocker;
 		stdext::hash_set<int> goodPrefix;

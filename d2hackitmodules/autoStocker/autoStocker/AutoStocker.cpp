@@ -3,6 +3,8 @@
 #include <fstream>
 #include <string>
 
+#define CONFIG_FILE ".\\plugin\\autostockerMisc.ini"
+
 // Must match order of TransmuteStages
 char *stockerSetNames[] =
 {
@@ -44,6 +46,13 @@ bool AutoStocker::Init(bool useChat)
 	{
 		return false;
 	}
+
+	MaxUnidentifiedSCharmLevel = GetPrivateProfileInt("Autostocker", "MaxUnidentifiedSCharmLvl", 0, CONFIG_FILE);
+	MaxUnidentifiedLCharmLevel = GetPrivateProfileInt("Autostocker", "MaxUnidentifiedLCharmLvl", 0, CONFIG_FILE);
+	MaxUnidentifiedGCharmLevel = GetPrivateProfileInt("Autostocker", "MaxUnidentifiedGCharmLvl", 0, CONFIG_FILE);
+	IsTransmutingUnidentifiedSmallCharms = (GetPrivateProfileInt("Autostocker", "NonIDSmallCharms", 0, CONFIG_FILE) == 1);
+	IsTransmutingUnidentifiedLargeCharms = (GetPrivateProfileInt("Autostocker", "NonIDLargeCharms", 0, CONFIG_FILE) == 1);
+	IsTransmutingUnidentifiedGrandCharms = (GetPrivateProfileInt("Autostocker", "NonIDGrandCharms", 0, CONFIG_FILE) == 1);
 
 	return true;
 }
@@ -896,6 +905,32 @@ bool AutoStocker::IsCrystalItem(LPCSTR itemCode)
 /// <returns>true if item should be cubed a stocker.</returns>
 bool AutoStocker::IsRerollItem(const ITEM &item)
 {
+	if(!item.iIdentified && item.iQuality == ITEM_LEVEL_MAGIC)
+	{
+		if(IsTransmutingUnidentifiedSmallCharms &&
+			item.iLevel <= MaxUnidentifiedSCharmLevel && 
+			strcmp(item.szItemCode, "cx1") == 0)
+		{
+			server->GameStringf("Small charm lvl = %d <= %d", item.iLevel, MaxUnidentifiedSCharmLevel);
+			return true;
+		}
+		else if(IsTransmutingUnidentifiedLargeCharms &&
+			item.iLevel <= MaxUnidentifiedLCharmLevel && 
+			strcmp(item.szItemCode, "cx2") == 0)
+		{
+			server->GameStringf("Large charm lvl = %d <= %d", item.iLevel, MaxUnidentifiedLCharmLevel);
+			return true;
+		}
+		else if(IsTransmutingUnidentifiedGrandCharms &&
+			item.iLevel <= MaxUnidentifiedGCharmLevel && 
+			strcmp(item.szItemCode, "cx3") == 0)
+		{
+			server->GameStringf("Grand charm lvl = %d <= %d", item.iLevel, MaxUnidentifiedGCharmLevel);
+			return true;
+		}
+	}
+
+
 	if(item.iQuality == ITEM_LEVEL_MAGIC ||
 		(item.iQuality == ITEM_LEVEL_SET && transmuteSet) ||
 		(item.iQuality == ITEM_LEVEL_RARE && transmuteRare) ||
