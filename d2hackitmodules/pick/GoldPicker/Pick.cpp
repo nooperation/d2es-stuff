@@ -333,14 +333,14 @@ void DumpItemInfo(const ITEM& item)
 	}
 }
 
-DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
+VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 {   
 
 	if(enabled && (aPacket[0] == 0x9c || aPacket[0] == 0x9d))
 	{
 		ITEM item;
 		if(!server->ParseItem(aPacket, aLen, item))
-			return aLen;
+			return;
 		//server->GameStringf("Packet %02X %02X", aPacket[0], aPacket[1]);
 
 		if(aPacket[1] == ITEM_ACTION_FROM_STORAGE || aPacket[1] == ITEM_ACTION_PICK_UP || aPacket[1] == ITEM_ACTION_TO_CURSOR)
@@ -356,6 +356,4 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 			itemWatcher.OnItemAction(item);
 		}
 	}
-
-	return aLen;
 }
