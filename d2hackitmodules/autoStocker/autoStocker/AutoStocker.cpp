@@ -911,21 +911,18 @@ bool AutoStocker::IsRerollItem(const ITEM &item)
 			item.iLevel <= MaxUnidentifiedSCharmLevel && 
 			strcmp(item.szItemCode, "cx1") == 0)
 		{
-			server->GameStringf("Small charm lvl = %d <= %d", item.iLevel, MaxUnidentifiedSCharmLevel);
 			return true;
 		}
 		else if(IsTransmutingUnidentifiedLargeCharms &&
 			item.iLevel <= MaxUnidentifiedLCharmLevel && 
 			strcmp(item.szItemCode, "cx2") == 0)
 		{
-			server->GameStringf("Large charm lvl = %d <= %d", item.iLevel, MaxUnidentifiedLCharmLevel);
 			return true;
 		}
 		else if(IsTransmutingUnidentifiedGrandCharms &&
 			item.iLevel <= MaxUnidentifiedGCharmLevel && 
 			strcmp(item.szItemCode, "cx3") == 0)
 		{
-			server->GameStringf("Grand charm lvl = %d <= %d", item.iLevel, MaxUnidentifiedGCharmLevel);
 			return true;
 		}
 	}
