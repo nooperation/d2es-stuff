@@ -290,6 +290,14 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 
 		portalRequested = false;
 	}
+	else if(aPacket[0] == 0xa7)
+	{
+		// No more tp delay :)
+		if(aPacket[6] == 102)
+		{
+			return 0;
+		}
+	}
 
 	return aLen;
 }
