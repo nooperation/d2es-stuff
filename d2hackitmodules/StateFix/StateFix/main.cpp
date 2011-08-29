@@ -107,10 +107,20 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 
 		if(CheckAndFixStateData(stateDataBegin, remainingLength))
 		{
-			server->GameStringf("Fixing 0xAA packet...");
+		//	server->GameStringf("Fixing 0xAA packet...");
 		}
 	}
+	else if(aPacket[0] == 0xA8)
+	{
+		BYTE entityType = aPacket[1];
+		DWORD entityID = *((DWORD *)(aPacket+2));
 
+		// Ignore states from other players
+		if(entityType == UNIT_TYPE_PLAYER && entityID != me->GetID())
+		{
+			return 0;
+		}
+	}
 	return aLen;
 }
 
