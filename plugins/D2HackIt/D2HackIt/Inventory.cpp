@@ -43,13 +43,24 @@ void CInventory::ClearAll()
 
 void CInventory::OnGamePacketAfterReceived(const BYTE *aPacket, DWORD aLen)
 {	
-	if (aPacket[0] == 0x9c
-		&& (aPacket[1] == ITEM_ACTION_TO_STORAGE || aPacket[1] == ITEM_ACTION_SWITCH_STORAGE))
+	if ((aPacket[0] == 0x9c && (aPacket[1] == ITEM_ACTION_TO_STORAGE || aPacket[1] == ITEM_ACTION_SWITCH_STORAGE)) ||
+		(aPacket[0] == 0x9d && aPacket[1] == 0x15 ))
 	{
 		// to storage
 		ITEM item;
 		if (!D2ParseItem(aPacket, aLen, item))
 			return;
+
+		// Identification sends 0x9c15 with ilocation = 0. We must remove the previous item and replace it with the
+		//   updated item with the full identified stats on it.
+		if(aPacket[0] == 0x9d)
+		{
+			// Moving potions to/from belt may cause the 0x9c 0x15 packet, so ignore simple items (pots/etc)
+			if(item.iSimpleItem)
+				return;
+
+			RemoveFromInventory(item.dwItemID);
+		}
 
 		SIZE cs = D2GetItemSize(item.szItemCode);
 		switch (item.iStorageID)
