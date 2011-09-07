@@ -365,7 +365,7 @@ void Gambler::SetNoSellList(std::vector<std::string> noSellList)
 {
 	this->noSellList.clear();
 
-	server->GameStringf("Selling all items (not filtered by .gamble sell) of type: ");
+	server->GameStringf("Selling all items (that aren't filtered by .gamble sell) of type: ");
 	for each(auto item in noSellList)
 	{
 		this->noSellList.insert(item);
