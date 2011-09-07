@@ -10,13 +10,13 @@
 Gambler::Gambler()
 {
 	requestedGoldSplitBy = 1;
-	isSellingGambledItems = false;
 	isRequestingGold = false;
 	transmuteSet = false;
 	transmuteRare = false;
 	transmuteUnique = false;
 	transmuteEnabled = false;
 
+	sellMagic = false;
 	sellRare = false;
 	sellSet = false;
 	sellUnique = false;
@@ -37,6 +37,23 @@ bool Gambler::Init(std::vector<std::string> itemCodes)
 	for(int i = 0; i < (int)itemCodes.size(); i++)
 	{
 		itemsToGamble.insert(itemCodes[i]);
+	}
+
+	server->GameStringf("Gambling for types: ");
+	for each(auto item in itemCodes)
+	{
+		server->GameStringf("    [ÿc:%sÿc0] %s", item.c_str(), server->GetItemName(item.c_str()));
+	}
+
+	if(noSellList.size() > 0)
+	{
+		isUsingNoSellList = true;
+
+		server->GameStringf("ÿc1Warningÿc0: Selling all items that are not of type: ");
+		for each(auto item in noSellList)
+		{
+			server->GameStringf("    [ÿc1%sÿc0] %s", item.c_str(), server->GetItemName(item.c_str()));
+		}
 	}
 
 	gamblingNpc.dwUnitType = UNIT_TYPE_MONSTER;
@@ -188,7 +205,7 @@ void Gambler::RequestMoreGold()
 	}
 	else
 	{
-		if(isSellingGambledItems && !itemsToSell.empty())
+		if(!itemsToSell.empty())
 		{
 			SellQueuedItems();
 		}
@@ -310,30 +327,49 @@ void Gambler::ToggleRequestGold(int splitBy)
 /// <summary>
 /// Toggles the selling gambled items when inventory becomes full during gambling
 /// </summary>
+/// <param name="sellMagic">Magic items will be sold</param>
 /// <param name="sellSet">Set items will be sold</param>
 /// <param name="sellRare">Rare items will be sold</param>
 /// <param name="sellUnique">Unique items will be sold</param>
-void Gambler::ToggleGambleSell(bool sellSet, bool sellRare, bool sellUnique)
+void Gambler::ToggleGambleSell(bool sellMagic, bool sellSet, bool sellRare, bool sellUnique)
 {
 	DEBUG_TRACE();
 
-	isSellingGambledItems = !isSellingGambledItems;
+	this->sellMagic = sellMagic;
 	this->sellRare = sellRare;
 	this->sellSet = sellSet;
 	this->sellUnique = sellUnique;
 
-	if(isSellingGambledItems)
+	while(!itemsToSell.empty())
 	{
-		server->GameStringf("ÿc3Gambleÿc0: Selling ÿc3Magic%s%s%s", sellSet?" ÿc2Sets":"", sellRare?" ÿc9Rares":"", sellUnique?" ÿc4Uniques":"");
+		itemsToSell.pop();
+	}
+
+	if(sellMagic || sellSet || sellRare || sellUnique)
+	{
+		server->GameStringf("ÿc3Gambleÿc0: Selling %s%s%s%s", sellMagic?" ÿc3Magic":"", sellSet?" ÿc2Sets":"", sellRare?" ÿc9Rares":"", sellUnique?" ÿc4Uniques":"");
 	}
 	else
 	{
-		while(!itemsToSell.empty())
-		{
-			itemsToSell.pop();
-		}
-
 		server->GamePrintInfo("ÿc3Gambleÿc0: Selling gambled items ÿc1disabledÿc0");
+	}
+}
+
+/// <summary>
+/// Sets the list of items that should not be sold when gambling. All other item types will be sold. ToggleSell will still
+///  sell all items of a specific type. Set ToggleSell to magic|set|rare and NoSell to specific item code to sell all items
+///  that are not unique AND the specific item code.
+/// </summary>
+/// <param name="noSellList">List of items to be kept</param>
+void Gambler::SetNoSellList(std::vector<std::string> noSellList)
+{
+	this->noSellList.clear();
+
+	server->GameStringf("Selling all items (not filtered by .gamble sell) of type: ");
+	for each(auto item in noSellList)
+	{
+		this->noSellList.insert(item);
+		server->GameStringf("    [ÿc1%sÿc0] %s", item.c_str(), server->GetItemName(item.c_str()));
 	}
 }
 
@@ -518,30 +554,42 @@ void Gambler::OnItemToStorage(ITEM &gambleItem)
 
 	if(gambleItem.iQuality == ITEM_LEVEL_UNIQUE)
 	{
-		if(isSellingGambledItems && sellUnique)
+		server->GameStringf("Gamble: ÿc4Unique %s", itemName.c_str());
+		stats.uniques++;
+
+		if(sellUnique)
 		{
 			itemsToSell.push(gambleItem.dwItemID);
 		}
-
-		server->GameStringf("Gamble: ÿc4Unique %s", itemName.c_str());
-		stats.uniques++;
+		else if(isUsingNoSellList && (noSellList.count(gambleItem.szItemCode) == 0))
+		{
+			itemsToSell.push(gambleItem.dwItemID);
+		}
 	}
 	else if(gambleItem.iQuality == ITEM_LEVEL_SET)
 	{
-		if(isSellingGambledItems && sellSet)
+		server->GameStringf("Gamble: ÿc2Set %s", itemName.c_str());
+		stats.sets++;
+
+		if(sellSet)
 		{
 			itemsToSell.push(gambleItem.dwItemID);
 		}
-
-		server->GameStringf("Gamble: ÿc2Set %s", itemName.c_str());
-		stats.sets++;
+		else if(isUsingNoSellList && (noSellList.count(gambleItem.szItemCode) == 0))
+		{
+			itemsToSell.push(gambleItem.dwItemID);
+		}
 	}
 	else if(gambleItem.iQuality == ITEM_LEVEL_RARE)
 	{
 		server->GameStringf("Gamble: ÿc9Rare %s", itemName.c_str());
 		stats.rares++;
 
-		if(isSellingGambledItems && sellRare)
+		if(sellRare)
+		{
+			itemsToSell.push(gambleItem.dwItemID);
+		}
+		else if(isUsingNoSellList && (noSellList.count(gambleItem.szItemCode) == 0))
 		{
 			itemsToSell.push(gambleItem.dwItemID);
 		}
@@ -551,7 +599,11 @@ void Gambler::OnItemToStorage(ITEM &gambleItem)
 		server->GameStringf("Gamble: ÿc3Magic %s", itemName.c_str());
 		stats.magic++;
 
-		if(isSellingGambledItems)
+		if(sellMagic)
+		{
+			itemsToSell.push(gambleItem.dwItemID);
+		}
+		else if(isUsingNoSellList && (noSellList.count(gambleItem.szItemCode) == 0))
 		{
 			itemsToSell.push(gambleItem.dwItemID);
 		}

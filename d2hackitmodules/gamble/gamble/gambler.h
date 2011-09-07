@@ -42,9 +42,10 @@ class Gambler
 		void StopGambling();
 		bool StartGambling();
 		void SetAutostockStartDelay(int ticks);
-		void ToggleGambleSell(bool sellSet, bool sellRare, bool sellUnique);
+		void ToggleGambleSell(bool magics, bool sellSet, bool sellRare, bool sellUnique);
 		void ToggleRequestGold(int splitBy);
 		void ToggleAutostock(bool transmuteSet, bool transmuteRare, bool transmuteUnique);
+		void SetNoSellList(std::vector<std::string> noSellList);
 		
 		void OnItemToStorage(ITEM &gambleItem);
 		void OnNpcSession(int success);
@@ -73,7 +74,6 @@ class Gambler
 
 		int requestedGoldSplitBy;
 
-		bool isSellingGambledItems;
 		bool isRequestingGold;
 
 		bool transmuteEnabled;
@@ -81,15 +81,18 @@ class Gambler
 		bool transmuteRare;
 		bool transmuteUnique;
 
+		bool sellMagic;
 		bool sellRare;
 		bool sellSet;
 		bool sellUnique;
+		bool isUsingNoSellList;
 
 		GambleStats stats;
 		States currentState;
 		GAMEUNIT gamblingNpc;
 		std::queue<DWORD> gambleQueue;
 		std::queue<DWORD> itemsToSell;
+		stdext::hash_set<std::string> noSellList;
 		stdext::hash_set<std::string> itemsToGamble;
 };
 

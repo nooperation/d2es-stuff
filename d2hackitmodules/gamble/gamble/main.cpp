@@ -28,11 +28,10 @@ BOOL PRIVATE Start(char** argv, int argc)
 		}
 		else
 		{
-			server->GameStringf("ÿc3Gambleÿc0: Invalid item code %s", argv[i]);
+			server->GameStringf("ÿc3Gambleÿc0: Invalid item code %s (must be 3 characters)", argv[i]);
 			return FALSE;
 		}
 	}
-	
 
 	if(!gambler.Init(gambleFor))
 	{
@@ -41,6 +40,34 @@ BOOL PRIVATE Start(char** argv, int argc)
 
 	gambler.StartGambling();
 
+	return TRUE;
+}
+
+BOOL PRIVATE NoSell(char **argv, int argc)
+{
+	std::string itemCode;
+	std::vector<std::string> gambleFor;
+
+	if(argc < 3)
+	{
+		gambler.SetNoSellList(gambleFor);
+		return TRUE;
+	}
+	
+	for(int i = 2; i < argc; i++)
+	{
+		if(strlen(argv[i]) == 3)
+		{
+			gambleFor.push_back(argv[i]);
+		}
+		else
+		{
+			server->GameStringf("ÿc3Gambleÿc0: Invalid item code %s (must be 3 characters)", argv[i]);
+			return FALSE;
+		}
+	}
+
+	gambler.SetNoSellList(gambleFor);
 	return TRUE;
 }
 
@@ -148,26 +175,75 @@ BOOL PRIVATE Rings(char **argv, int argc)
 	return TRUE;
 }
 
-BOOL PRIVATE UniqueArmor(char **argv, int argc)
+BOOL PRIVATE StartWraithShroud(char **argv, int argc)
 {
-	server->GamePrintString("eht Spirit Crown");
-	server->GamePrintString("crn Crown");
-	server->GamePrintString("msk Mask");
-	server->GamePrintString("hgl Gauntlets");
-	server->GamePrintString("hbt Greaves");
-	server->GamePrintString("msb Muscle Wrap");
-	server->GamePrintString("ne5 Demon Head");
-	server->GamePrintString("pa4 Aerin Shield");
-	server->GamePrintString("pa5 Crown Shield");
+	server->GameCommandLine("gamble sell magic rare set");
+	server->GameCommandLine("gamble nosell yrb");
+	server->GameCommandLine("gamble start rob");
 
 	return TRUE;
 }
 
-BOOL PRIVATE UniqueWeapons(char **argv, int argc)
+BOOL PRIVATE StartExNihilo(char **argv, int argc)
 {
-	server->GamePrintString("wst War Staff");
-	server->GamePrintString("dgr Dagger");
-	server->GamePrintString("bld Blade");
+	server->GameCommandLine("gamble sell magic rare set");
+	server->GameCommandLine("gamble nosell amf");
+	server->GameCommandLine("gamble start am5");
+
+	return TRUE;
+}
+
+BOOL PRIVATE StartDeathwatchGuard(char **argv, int argc)
+{
+	server->GameCommandLine("gamble sell magic rare set");
+	server->GameCommandLine("gamble nosell yft");
+	server->GameCommandLine("gamble start fts");
+
+	return TRUE;
+}
+
+BOOL PRIVATE StartPolarStar(char **argv, int argc)
+{
+	server->GameCommandLine("gamble sell magic rare set");
+	server->GameCommandLine("gamble nosell ci3");
+	server->GameCommandLine("gamble start ci0");
+
+	return TRUE;
+}
+
+BOOL PRIVATE StartHeavyMetal(char **argv, int argc)
+{
+	server->GameCommandLine("gamble sell magic rare set");
+	server->GameCommandLine("gamble nosell 0gi");
+	server->GameCommandLine("gamble start gix");
+
+	return TRUE;
+}
+
+BOOL PRIVATE StartRadiance(char **argv, int argc)
+{
+	server->GameCommandLine("gamble sell magic rare set");
+	server->GameCommandLine("gamble nosell 0cr");
+	server->GameCommandLine("gamble start crs");
+
+	return TRUE;
+}
+
+BOOL PRIVATE StartFoc(char **argv, int argc)
+{
+
+	server->GameCommandLine("gamble sell magic rare set");
+	server->GameCommandLine("gamble nosell yul");
+	server->GameCommandLine("gamble start ful");
+
+	return TRUE;
+}
+
+BOOL PRIVATE StartID(char **argv, int argc)
+{
+	server->GameCommandLine("gamble sell magic rare set");
+	server->GameCommandLine("gamble nosell yul 0cr 0gi ci3 yft amf yrb");
+	server->GameCommandLine("gamble start ful gix crs ci0 fts am5 rob");
 
 	return TRUE;
 }
@@ -176,6 +252,8 @@ BOOL PRIVATE SetMaster(char **argv, int argc)
 {
 	if(argc != 3 || strlen(argv[2]) == 0 || strlen(argv[2]) >= sizeof(masterPlayer)/sizeof(masterPlayer[0]))
 	{
+		server->GameStringf("No master set", masterPlayer);
+		server->GameStringf("Gold dropping ÿc1disabledÿc0", masterPlayer);
 		return FALSE;
 	}
 
@@ -228,9 +306,14 @@ BOOL PRIVATE ToggleGambleSell(char **argv, int argc)
 	bool uniques = false;
 	bool rares = false;
 	bool sets = false;
+	bool magics = false;
 
 	for(int i = 2; i < argc; i++)
 	{
+		if(_stricmp(argv[i], "magics") == 0 || _stricmp(argv[i], "magic") == 0)
+		{
+			magics = true;
+		}
 		if(_stricmp(argv[i], "sets") == 0 || _stricmp(argv[i], "set") == 0)
 		{
 			sets = true;
@@ -245,7 +328,7 @@ BOOL PRIVATE ToggleGambleSell(char **argv, int argc)
 		}
 	}
 
-	gambler.ToggleGambleSell(sets, rares, uniques);
+	gambler.ToggleGambleSell(magics, sets, rares, uniques);
 
 	return TRUE;
 }
@@ -530,35 +613,70 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"Starts gambling for amulets"
 	},
 	{
-		"Rings",
-		Rings,
-		"Show ring codes"
+		"StartJewellery",
+		StartJewellery,
+		"Start gambling for rings and amulets",
 	},
 	{
-		"Armors",
-		UniqueArmor,
-		"Show various armor codes"
+		"StartFoc",
+		StartFoc,
+		"Starts gambling for FoC"
 	},
 	{
-		"Weapons",
-		UniqueWeapons,
-		"Show a few weapon codes"
+		"StartRadiance",
+		StartRadiance,
+		"Starts gambling for Radiance"
 	},
 	{
-		"Block",
-		ToggleIDBlock,
-		"Blocks the identify process when gambling"
+		"StartHeavyMetal",
+		StartHeavyMetal,
+		"Starts gambling for HeavyMetal"
 	},
+	{
+		"StartPolarStar",
+		StartPolarStar,
+		"Starts gambling for PolarStar"
+	},
+	{
+		"StartDeathwatchGuard",
+		StartDeathwatchGuard,
+		"Starts gambling for DeathwatchGuard"
+	},
+	{
+		"StartExNihilo",
+		StartExNihilo,
+		"Starts gambling for ExNihilo"
+	},
+	{
+		"StartWraithShroud",
+		StartWraithShroud,
+		"Starts gambling for WraithShroud"
+	},
+	//{
+	//	"Startiddqd",
+	//	StartID,
+	//	"Starts gambling for all IDDQD's uniques"
+	//},
+	//{
+	//	"Block",
+	//	ToggleIDBlock,
+	//	"Blocks the identify process when gambling"
+	//},
 	{
 		"Sell",
 		ToggleGambleSell,
 		"Sells magic items that were gambled when inventory's full"
 	},
 	{
-		"Gold",
-		ToggleGoldDrop,
-		"Drops gold when number is said in chat by [master]"
+		"NoSell",
+		NoSell,
+		"Sets the list of items that should not be sold when gambling. Set ToggleSell to magic set rare and set NoSell to a specific item code to sell all items that are not unique version of the specified item code(s).",
 	},
+	//{
+	//	"Gold",
+	//	ToggleGoldDrop,
+	//	"Drops gold when number is said in chat by [master]"
+	//},
 	{
 		"Master",
 		SetMaster,
@@ -573,11 +691,6 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"Autostock",
 		Autostock,
 		"Usage: autostock [sets] [rares] [uniques]"
-	},
-	{
-		"Jewellery",
-		StartJewellery,
-		"Start gambling for rings and amulets",
 	},
 	{NULL}
 };
