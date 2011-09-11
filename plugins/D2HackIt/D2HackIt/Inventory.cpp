@@ -427,7 +427,7 @@ BOOL CInventory::FindStoragePosition(int storageType, int itemWidth, int itemHei
 
 	if(startAt.x + itemWidth - 1 >= storageWidth || startAt.y + itemHeight -1 >= storageHeight)
 	{
-		GameErrorf("FindStoragePosition: Item too big to fit in that spot");
+		//GameErrorf("FindStoragePosition: Item too big to fit in that spot");
 		return FALSE;
 	}
 
