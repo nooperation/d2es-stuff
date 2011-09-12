@@ -322,12 +322,21 @@ void AutoExtractor::OnItemToInventory(const ITEM &item)
 
 	// We check 3 times to make sure there's room for the output + extractors (e.g: rare ring, key, rerolling orb).
 	//  when calling FindFirstStorageSpaceEx, it checks starting right after the previously found spot
-	for(int i = 0; i < 11*9; i++)
+	for(int i = 0; i < 3; i++)
 	{
-		if(me->FindFirstStorageSpaceEx(STORAGE_INVENTORY, itemSize, &emptySpot, emptySpot))
+		if(!me->FindFirstStorageSpaceEx(STORAGE_INVENTORY, itemSize, &emptySpot, emptySpot))
 		{
-			foundSpot = true;
-			break;
+			if(useChat)
+			{
+				me->Say("ÿc:AutoExtractorÿc0: No more room");
+			}
+			else
+			{
+				server->GameStringf("ÿc:AutoExtractorÿc0: No more room");
+			}
+
+			Abort();
+			return;
 		}
 
 		// Increment the current inventory spot so next time we check for an empty spot it will be right
@@ -338,21 +347,6 @@ void AutoExtractor::OnItemToInventory(const ITEM &item)
 			emptySpot.x = 0;
 			emptySpot.y++;
 		}
-	}
-
-	if(!foundSpot)
-	{
-		if(useChat)
-		{
-			me->Say("ÿc:AutoExtractorÿc0: No more room");
-		}
-		else
-		{
-			server->GameStringf("ÿc:AutoExtractorÿc0: No more room");
-		}
-
-		Abort();
-		return;
 	}
 
 	StartExtraction();
