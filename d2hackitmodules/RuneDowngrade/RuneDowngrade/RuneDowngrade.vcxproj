@@ -86,7 +86,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="oopsWroteTheWrongThing.cpp" />
     <ClCompile Include="RuneDowngrade.cpp" />
   </ItemGroup>
   <ItemGroup>
