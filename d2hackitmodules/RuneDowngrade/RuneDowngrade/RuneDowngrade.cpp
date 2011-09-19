@@ -35,6 +35,27 @@ RuneDowngrade::RuneDowngrade()
 	runes.insert("r19"); // ÿc9Ko Rune
 	runes.insert("r20"); // ÿc9Ra Rune
 	runes.insert("r21"); // ÿc9O Rune
+	runes.insert("r22"); // ÿc8Ho Rune
+	runes.insert("r23"); // ÿc8Me Rune
+	runes.insert("r24"); // ÿc8Ru Rune
+	runes.insert("r25"); // ÿc8Ta Rune
+	runes.insert("r26"); // ÿc8To Rune
+	runes.insert("r27"); // ÿc8Wa Rune
+	runes.insert("r28"); // ÿc8Ha Rune
+	runes.insert("r29"); // ÿc2Na Rune
+	runes.insert("r30"); // ÿc2Ni Rune
+	runes.insert("r31"); // ÿc2Se Rune
+	runes.insert("r32"); // ÿc2Fu Rune
+	runes.insert("r33"); // ÿc2Ma Rune
+	runes.insert("r34"); // ÿc2Hi Rune
+	runes.insert("r35"); // ÿc2Mo Rune
+	runes.insert("r36"); // ÿc4No Rune
+	runes.insert("r37"); // ÿc4Te Rune
+	runes.insert("r38"); // ÿc4Ro Rune
+	runes.insert("r39"); // ÿc4So Rune
+	runes.insert("r40"); // ÿc4Mu Rune
+	runes.insert("r41"); // ÿc4Ne Rune
+	runes.insert("r42"); // ÿc4Re Rune
 }
 
 /// <summary>
