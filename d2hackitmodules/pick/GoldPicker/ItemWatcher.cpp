@@ -18,70 +18,21 @@ ItemWatcher::ItemWatcher()
 	showEtherealSocketed = false;
 	showEthereal = false;
 	isPickingItems = true;
+
+	iddqdUniques.insert("yul");
+	iddqdUniques.insert("0cr"); 
+	iddqdUniques.insert("0gi");
+	iddqdUniques.insert("ci3");
+	iddqdUniques.insert("yft");
+	iddqdUniques.insert("amf");
+	iddqdUniques.insert("yrb");
 }
 
-void ItemWatcher::TogglePickItems()
+
+void ItemWatcher::Cleanup()
 {
-	isPickingItems = !isPickingItems;
-
-	if(isPickingItems)
-	{
-		server->GameInfof("Pick: Now picking items");
-	}
-	else
-	{
-		server->GameInfof("Pick: No longer picking items");
-	}
-}
-
-void ItemWatcher::SetRadius(int radius)
-{
-	server->GameInfof("Pick: Setting radius to %d", radius);
-	this->radius = radius;
-}
-
-void ItemWatcher::SetMinGold(int amount)
-{
-	server->GameInfof("Pick: Setting minimum gold amount to %d", amount);
-	minGold = amount;
-}
-
-void ItemWatcher::OnItemAction(ITEM &item)
-{
-	switch(item.iAction)
-	{
-		case ITEM_ACTION_NEW_GROUND:
-		case ITEM_ACTION_OLD_GROUND:
-		case ITEM_ACTION_DROP:
-		{
-			OnItemFind(item);
-		}
-		break;
-	}
-}
-
-void ItemWatcher::OnItemDestroy(DWORD itemId)
-{
-	destroyedItemsSinceLastCheck.push_back(itemId);
-}
-
-void ItemWatcher::SetTownPickup(bool enabled)
-{
-	townPickup = enabled;
-
-	if(enabled)
-	{
-		server->GamePrintInfo("Town pickup enabled");
-	}
-	else
-	{
-		server->GamePrintInfo("Town pickup disabled");
-	}
-}
-
-bool ItemWatcher::IsTownPickup()
-{
-	return townPickup;
+	watchedItems.clear();
+	destroyedItemsSinceLastCheck.clear();
 }
 
 void ItemWatcher::CheckWatchedItems()
@@ -108,6 +59,11 @@ void ItemWatcher::CheckWatchedItems()
 		{
 			watchedItems.remove(item);
 		}
+	}
+
+	if(me->GetOpenedUI() != 0)
+	{
+		return;
 	}
 
 	// No items will be added to destroyedItemsSinceLastCheck because Tick() and OnPacket() functions are only fired from the
@@ -159,103 +115,99 @@ void ItemWatcher::CheckWatchedItems()
 	}
 }
 
-bool ItemWatcher::loadItems()
+////////////////////////////////////////////
+//
+//               INTERFACE
+//
+/////////////////////////////////////////////
+void ItemWatcher::SetTownPickup(bool enabled)
+{
+	townPickup = enabled;
+
+	if(enabled)
+	{
+		server->GamePrintInfo("Town pickup enabled");
+	}
+	else
+	{
+		server->GamePrintInfo("Town pickup disabled");
+	}
+}
+
+void ItemWatcher::TogglePickItems()
+{
+	isPickingItems = !isPickingItems;
+
+	if(isPickingItems)
+	{
+		server->GameInfof("Pick: Now picking items");
+	}
+	else
+	{
+		server->GameInfof("Pick: No longer picking items");
+	}
+}
+
+void ItemWatcher::SetRadius(int radius)
+{
+	server->GameInfof("Pick: Setting radius to %d", radius);
+	this->radius = radius;
+}
+
+void ItemWatcher::SetMinGold(int amount)
+{
+	server->GameInfof("Pick: Setting minimum gold amount to %d", amount);
+	minGold = amount;
+}
+
+void ItemWatcher::ShowEthereal(bool show)
+{
+	showEthereal = show;
+
+	if(showEthereal)
+	{
+		server->GamePrintInfo("Showing ethereal items");
+	}
+	else
+	{
+		server->GamePrintInfo("Ignoring ethereal items");
+	}
+}
+
+void ItemWatcher::ShowEthSoc(bool show)
+{
+	showEtherealSocketed = show;
+
+	if(showEtherealSocketed)
+	{
+		server->GamePrintInfo("Showing ethereal socketed items");
+	}
+	else
+	{
+		server->GamePrintInfo("Ignoring ethereal socketed items");
+	}
+}
+
+////////////////////////////////////////////
+//
+//               HELPER FUNCTIONS
+//
+/////////////////////////////////////////////
+
+
+bool ItemWatcher::LoadItems()
 {
 	if(!loadItemMap(".\\plugin\\pickItems.txt", itemsToPick))
 	{
 		return false;
 	}
 
+	if(!loadItemMap(".\\plugin\\pickAnnounce.txt", itemsToAnnounce))
+	{
+		return false;
+	}
+
 	return true;
-}
-
-const char *ItemWatcher::GetItemDesc(ITEM &item)
-{
-	if(item.iQuality == ITEM_LEVEL_SET)
-	{
-		return server->GetItemSetName(item.szItemCode);
-	}
-	else
-	{
-		return server->GetItemName(item.szItemCode);
-	}
-}
-
-bool ItemWatcher::IsOkToPick(char *itemCode)
-{
-	if(itemsToPick.count(itemCode) > 0)
-		return true;
-
-	return false;
-}
-
-void ItemWatcher::OnItemFind(ITEM &item)
-{
-	char outputMessage[512];
-	tagMapPos myPos;
-	WatchedItemData itemData;
-
-	memset(&outputMessage, 0, sizeof(outputMessage));
-
-	itemData.id = item.dwItemID;
-	itemData.x = item.wPositionX;
-	itemData.y = item.wPositionY;
-	itemData.isGold = false;
-
-	if((townPickup || !me->IsInTown()) && item.iAction!= ITEM_ACTION_DROP)
-	{
-		if(strcmp(item.szItemCode, "gld") == 0 && item.dwGoldAmount >= minGold)
-		{
-			itemData.isGold = true;
-			watchedItems.push_front(itemData);
-			return;
-		}
-		else if(isPickingItems)
-		{
-			if(IsOkToPick(item.szItemCode))
-			{
-				itemData.itemSize = server->GetItemSize(item.szItemCode);
-				watchedItems.push_front(itemData);
-			}
-		}
-	}
-
-	if(item.iEthereal)
-	{
-		strcat_s(outputMessage, "ÿc0[ÿc5Ethÿc0]");
-	}
-	if(item.iSocketed)
-	{
-		sprintf_s(outputMessage, "%sÿc0[ÿc;socÿc0]", outputMessage);
-	}
-
-	switch(item.iQuality)
-	{
-		case ITEM_LEVEL_CRAFT:	
-			strcat_s(outputMessage, "ÿc1Craft ");
-			break;
-		case ITEM_LEVEL_UNIQUE:
-			strcat_s(outputMessage, "ÿc4Unique ");
-			break;
-		case ITEM_LEVEL_SET:	
-			strcat_s(outputMessage, "ÿc2Set ");
-			break;
-		case ITEM_LEVEL_RARE:
-			strcat_s(outputMessage, "ÿc9Rare ");
-			// keep going to next case
-		default:
-			if(!IsValidItem(item))
-			{
-				return;
-			}
-	}
-
-	strcat_s(outputMessage, GetItemDesc(item));
-	
-	myPos = me->GetPosition();
-	
-	sprintf_s(outputMessage, "%s ( ilvl = %d ) ÿc0- %s %d", outputMessage, item.iLevel, GetDirectionFrom(myPos.x, myPos.y, item.wPositionX, item.wPositionY), me->GetDistanceFrom(item.wPositionX, item.wPositionY));
-	server->GamePrintString(outputMessage);
 }
 
 bool ItemWatcher::loadItemMap(std::string fileName, stdext::hash_map<std::string, std::string> &itemMap)
@@ -299,68 +251,25 @@ bool ItemWatcher::loadItemMap(std::string fileName, stdext::hash_map<std::string
 	return true;
 }
 
-bool ItemWatcher::IsValidItem(ITEM &item)
+const char *ItemWatcher::GetItemDesc(const ITEM &item)
 {
-	if(IsGoodItemCode(item.szItemCode))
+	if(item.iQuality == ITEM_LEVEL_SET)
 	{
-		return true;
+		return server->GetItemSetName(item.szItemCode);
 	}
-
-	if(IsGoodItemOther(item))
+	else if(itemsToAnnounce.count(item.szItemCode) != 0)
 	{
-		return true;
+		// Use the string from pickannounce.txt instead of whatever d2hackit is defaulting to to let
+		//  the user customize the item name/colour
+		return itemsToAnnounce[item.szItemCode].c_str();
 	}
-
-	return false;
+	else
+	{
+		return server->GetItemName(item.szItemCode);
+	}
 }
 
-bool ItemWatcher::IsGoodItemOther(ITEM &item)
-{
-	if(item.iQuality == ITEM_LEVEL_RARE)
-	{
-		if(IsCharm(item.szItemCode))
-		{
-			return true;
-		}
-		if(IsRingAmulet(item.szItemCode))
-		{
-			return true;
-		}
-	}
-
-	if(showEtherealSocketed && item.iSocketed && item.iEthereal)
-	{
-		return true;
-	}
-	else if(showEthereal && item.iEthereal)
-	{
-		return true;
-	}
-
-	return false;
-}
-
-bool ItemWatcher::IsGoodItemCode(char *itemCode)
-{
-	if(strlen(itemCode) < 3)
-	{
-		return false;
-	}
-
-	if(IsRareSpecial(itemCode) || IsRuneDecalScroll(itemCode))
-	{
-		return true;
-	}
-
-	if(strcmp(itemCode, "jew") == 0)
-	{
-		return true;
-	}
-
-	return false;
-}
-
-char *ItemWatcher::GetDirectionFrom(WORD sourceX, WORD sourceY, WORD targetX, WORD targetY)
+const char *ItemWatcher::GetDirectionFrom(WORD sourceX, WORD sourceY, WORD targetX, WORD targetY)
 {
 	int x = targetX - sourceX;
 	int y = targetY - sourceY;
@@ -397,131 +306,170 @@ char *ItemWatcher::GetDirectionFrom(WORD sourceX, WORD sourceY, WORD targetX, WO
 	return "Hay";
 }
 
-bool ItemWatcher::IsCharm(char *itemCode)
+bool ItemWatcher::IsOkToPick(const char *itemCode)
 {
-	if(itemCode[0] == 'c' && (itemCode[1] == 'x' || itemCode[1] == 'm') && isdigit(itemCode[2]))
-	{
-		return true;
-	}
-
-	if((itemCode[0] == 'm' || itemCode[0] == 'n') && itemCode[1] == 'c' && isdigit(itemCode[2]))
-	{
-		// Charms and such
-		return true;
-	}
-
-	return false;
+	return itemsToPick.count(itemCode) > 0;
 }
 
-bool ItemWatcher::IsRareSpecial(char *itemCode)
+bool ItemWatcher::IsOkToAnnounce(const char *itemCode)
 {
-	// Unique boss parts
-	if(itemCode[0] == '0' && itemCode[1] == '0')
+	return itemsToAnnounce.count(itemCode) > 0;
+}
+
+////////////////////////////////////////////
+//
+//               EVENTS
+//
+/////////////////////////////////////////////
+
+void ItemWatcher::OnGameLeave()
+{
+	isInGame = false;
+	Cleanup();
+}
+
+void ItemWatcher::OnGameJoin()
+{
+	isInGame = true;
+}
+
+void ItemWatcher::OnTick()
+{
+	if(!isInGame)
 	{
-		if(itemCode[2] == 'g' || itemCode[2] == 't' || itemCode[2] == 'r' || itemCode[2] == 'h')
+		return;
+	}
+
+	CheckWatchedItems();
+}
+
+void ItemWatcher::OnItemDestroy(DWORD itemId)
+{
+	if(!isInGame)
+	{
+		return;
+	}
+
+	destroyedItemsSinceLastCheck.push_back(itemId);
+}
+
+void ItemWatcher::OnItemAction(const ITEM &item)
+{
+	if(!isInGame)
+	{
+		return;
+	}
+
+	switch(item.iAction)
+	{
+		case ITEM_ACTION_NEW_GROUND:
+		case ITEM_ACTION_OLD_GROUND:
+		case ITEM_ACTION_DROP:
 		{
-			return true;
+			OnItemFind(item);
+		}
+		break;
+	}
+}
+
+void ItemWatcher::OnItemFind(const ITEM &item)
+{
+	if(!isInGame)
+	{
+		return;
+	}
+
+	
+	WatchedItemData itemData;
+	itemData.id = item.dwItemID;
+	itemData.x = item.wPositionX;
+	itemData.y = item.wPositionY;
+	itemData.isGold = false;
+
+	if(item.iIdentified && strcmp(item.szItemCode, "ore") == 0)
+	{
+		return;
+	}
+
+	if((townPickup || !me->IsInTown()) && item.iAction!= ITEM_ACTION_DROP)
+	{
+		if(strcmp(item.szItemCode, "gld") == 0 && item.dwGoldAmount >= minGold)
+		{
+			itemData.isGold = true;
+			watchedItems.push_front(itemData);
+			return;
+		}
+		else if(isPickingItems)
+		{
+			if(IsOkToPick(item.szItemCode))
+			{
+				itemData.itemSize = server->GetItemSize(item.szItemCode);
+				watchedItems.push_front(itemData);
+			}
 		}
 	}
 
-	// D-Stone, cookbook, ancient decipherer, etc
-	if(itemCode[0] >= 'd' && itemCode[0] < 'z' && itemCode[0] == itemCode[1] && itemCode[1] == itemCode[2])
-	{
-		return true;
-	}
-
-	// Fake note, Maple leaf, Forging hammer, Holy symbol, socket donut
-	if(strcmp(itemCode, "fkn") == 0 ||
-		strcmp(itemCode, "map") == 0 ||
-		strcmp(itemCode, "hh2") == 0 ||
-		strcmp(itemCode, "hly") == 0 ||
-		strcmp(itemCode, "sdo") == 0)
-	{
-		return true;
-	}
-
-	// special potions
-	if(itemCode[0] == 'p' && itemCode[1] == 'o' && isdigit(itemCode[2]))
-	{
-		return true;
-	}
-
-	// Aura Stones, unique stones
-	if(itemCode[0] == 'a' && itemCode[1] == 'n' && (itemCode[2] >= '0' && itemCode[2] <= '9'))
-	{
-		return true;
-	}
-
-	return false;
+	AnnounceItem(item);
 }
 
-bool ItemWatcher::IsRuneDecalScroll(char *itemCode)
+void ItemWatcher::AnnounceItem(const ITEM &item)
 {
-	// Runes
-	if(itemCode[0] == 'r' && (itemCode[1] >= '0' && itemCode[1] <= '9'))
+	char outputMessage[512] = {0};
+	bool overrideAnnouncment = false;
+
+	if(item.iEthereal)
 	{
-		return true;
+		strcat_s(outputMessage, "ÿc0[ÿc5Ethÿc0]");
+	}
+	if(item.iSocketed)
+	{
+		sprintf_s(outputMessage, "%sÿc0[ÿc;socÿc0]", outputMessage);
 	}
 
-	// Decals, unidentified ancient scrolls
-	if(isdigit(itemCode[0]) && isdigit(itemCode[1]) && (itemCode[2] == 'b' || itemCode[2] == 'l' ))
+	switch(item.iQuality)
 	{
-		return true;
+		case ITEM_LEVEL_CRAFT:	
+			overrideAnnouncment = true;
+			strcat_s(outputMessage, "ÿc1Craft ");
+			break;
+		case ITEM_LEVEL_UNIQUE:
+			overrideAnnouncment = true;
+			if(iddqdUniques.find(item.szItemCode) != iddqdUniques.end())
+			{
+				strcat_s(outputMessage, "ÿc1IDDQD Unique ");
+			}
+			else
+			{
+				strcat_s(outputMessage, "ÿc4Unique ");
+			}
+			break;
+		case ITEM_LEVEL_SET:
+			overrideAnnouncment = true;
+			strcat_s(outputMessage, "ÿc2Set ");
+			break;
+		case ITEM_LEVEL_RARE:
+			strcat_s(outputMessage, "ÿc9Rare ");
+			break;
+		case ITEM_LEVEL_MAGIC:
+			strcat_s(outputMessage, "ÿc3Magic ");
+			break;
+		case ITEM_LEVEL_INFERIOR:
+			strcat_s(outputMessage, "ÿc5Inferior ");
+			break;
+		case ITEM_LEVEL_SUPERIOR:
+			strcat_s(outputMessage, "ÿc5Superior ");
+			break;
 	}
 
-	return false;
-}
-
-bool ItemWatcher::IsRingAmulet(char *itemCode)
-{
-	if(strcmp(itemCode, "amu") == 0 ||
-		strcmp(itemCode, "rin") == 0 ||
-		strcmp(itemCode, "zrn") == 0 ||
-		strcmp(itemCode, "srn") == 0 ||
-		strcmp(itemCode, "nrn") == 0 ||
-		strcmp(itemCode, "prn") == 0 ||
-		strcmp(itemCode, "brg") == 0 ||
-		strcmp(itemCode, "drn") == 0 ||
-		strcmp(itemCode, "arn") == 0 ||
-		strcmp(itemCode, "zam") == 0 ||
-		strcmp(itemCode, "sam") == 0 ||
-		strcmp(itemCode, "nam") == 0 ||
-		strcmp(itemCode, "pam") == 0 ||
-		strcmp(itemCode, "bam") == 0 ||
-		strcmp(itemCode, "dam") == 0 ||
-		strcmp(itemCode, "aam") == 0)
-
+	if(!overrideAnnouncment && !IsOkToAnnounce(item.szItemCode))
 	{
-		return true;
+		return;
 	}
 
-	return false;
-}
+	tagMapPos myPos = me->GetPosition();
+	const char *directionString =  GetDirectionFrom(myPos.x, myPos.y, item.wPositionX, item.wPositionY);
 
-void ItemWatcher::ShowEthereal(bool show)
-{
-	showEthereal = show;
-
-	if(showEthereal)
-	{
-		server->GamePrintInfo("Showing ethereal items");
-	}
-	else
-	{
-		server->GamePrintInfo("Ignoring ethereal items");
-	}
-}
-
-void ItemWatcher::ShowEthSoc(bool show)
-{
-	showEtherealSocketed = show;
-
-	if(showEtherealSocketed)
-	{
-		server->GamePrintInfo("Showing ethereal socketed items");
-	}
-	else
-	{
-		server->GamePrintInfo("Ignoring ethereal socketed items");
-	}
+	strcat_s(outputMessage, GetItemDesc(item));
+	sprintf_s(outputMessage, "%s ( ilvl = %d ) ÿc0- %s %d", outputMessage, item.iLevel, directionString, me->GetDistanceFrom(item.wPositionX, item.wPositionY));
+	server->GamePrintString(outputMessage);
 }

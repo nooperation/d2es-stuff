@@ -148,7 +148,7 @@ BOOL PRIVATE ReloadItemDefs(char** argv, int argc)
 {
 	server->GamePrintInfo("Reloading item definitions...");
 
-	if(!itemWatcher.loadItems())
+	if(!itemWatcher.LoadItems())
 	{
 		server->GamePrintError("There was an error loading the item files");
 	}
@@ -243,9 +243,19 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 	{NULL}
 };
 
+VOID EXPORT OnGameLeave(THISGAMESTRUCT* thisgame)
+{
+	itemWatcher.OnGameLeave();
+}
+
+VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
+{
+	itemWatcher.OnGameJoin();
+}
+
 BOOL EXPORT OnClientStart()
 {
-	if(!itemWatcher.loadItems())
+	if(!itemWatcher.LoadItems())
 	{
 		server->GameErrorf("Failed to load item tables. Do you have pickItems.txt?");
 		server->GameErrorf(" in the plugin directory?");
@@ -262,7 +272,7 @@ DWORD EXPORT OnGameTimerTick()
 {
 	if(enabled)
 	{
-		itemWatcher.CheckWatchedItems();
+		itemWatcher.OnTick();
 	}
 
 	return 0;
@@ -331,6 +341,15 @@ void DumpItemInfo(const ITEM& item)
 			}
 		}
 	}
+}
+DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
+{
+	if(aPacket[0] == 0x68)
+	{
+		itemWatcher.OnGameLeave();
+	}
+
+	return aLen;
 }
 
 VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
