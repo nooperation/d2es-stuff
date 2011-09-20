@@ -77,7 +77,7 @@ void ItemWatcher::CheckWatchedItems()
 		{
 			tagMapPos myPos = me->GetPosition();
 
-			if(server->GetDistance(myPos.x, myPos.y, i->x, i->y) <= radius)
+			if(server->GetDistance(myPos.x, myPos.y, i->x, i->y) <= radius && me->GetMode() != MODE_CAST)
 			{
 				//server->GameStringf("Picking %X... [%d]", i->id, watchedItems.size());
 				if(i->isGold)
@@ -396,7 +396,7 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 		if(strcmp(item.szItemCode, "gld") == 0 && item.dwGoldAmount >= minGold)
 		{
 			itemData.isGold = true;
-			watchedItems.push_front(itemData);
+			watchedItems.push_back(itemData);
 			return;
 		}
 		else if(isPickingItems)
