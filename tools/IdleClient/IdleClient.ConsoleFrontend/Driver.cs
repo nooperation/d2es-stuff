@@ -161,28 +161,29 @@ namespace IdleClient
 				newClient = availableClients.Dequeue();
 			}
 
+			Output("Waiting " + (settings.JoinDelay + TemporaryJoinDelay) + "ms...");
+			for (int i = 0; i < (settings.JoinDelay + TemporaryJoinDelay) / 100; i++)
+			{
+				System.Threading.Thread.Sleep(100);
+
+				if (isShuttindDown)
+				{
+					TemporaryJoinDelay = 0;
+					Output("Canceling PushBot()");
+					FireOnCompletion();
+					return;
+				}
+			}
+
+			TemporaryJoinDelay = 0;
+
+			newClient.OnClientDisconnect += new EventHandler(newClient_OnClientDisconnect);
+			newClient.OnEnterGame += new EventHandler(newClient_OnEnterGame);
+			newClient.OnFailure += new EventHandler<FailureArgs>(newClient_OnFailure);
+			newClient.OnShutdown += new EventHandler(newClient_OnShutdown);
+
 			lock (clients)
 			{
-				Output("Waiting " + (settings.JoinDelay + TemporaryJoinDelay) + "ms...");
-				for (int i = 0; i < (settings.JoinDelay + TemporaryJoinDelay) / 100; i++)
-				{
-					System.Threading.Thread.Sleep(100);
-
-					if (isShuttindDown)
-					{
-						Output("Canceling PushBot()");
-						FireOnCompletion();
-						return;
-					}
-				}
-
-				TemporaryJoinDelay = 0;
-
-				newClient.OnClientDisconnect += new EventHandler(newClient_OnClientDisconnect);
-				newClient.OnEnterGame += new EventHandler(newClient_OnEnterGame);
-				newClient.OnFailure += new EventHandler<FailureArgs>(newClient_OnFailure);
-				newClient.OnShutdown += new EventHandler(newClient_OnShutdown);
-
 				if (clients.Count == 0)
 				{
 					// Only one client should handle player count change events since this is where we handle adding/removing bots
@@ -196,8 +197,9 @@ namespace IdleClient
 				}
 
 				clients.Add(newClient);
-				newClient.Start();
 			}
+
+			newClient.Start();
 		}
 
 		/// <summary>
@@ -205,6 +207,8 @@ namespace IdleClient
 		/// </summary>
 		private void PopBot()
 		{
+			ClientDriver clientToRemove;
+
 			lock (clients)
 			{
 				// This is checked again after removing client
@@ -213,12 +217,12 @@ namespace IdleClient
 					return;
 				}
 
-				ClientDriver clientToRemove = clients[clients.Count - 1];
-				clientToRemove.Terminate();
+				clientToRemove = clients[clients.Count - 1];
 				clients.Remove(clientToRemove);
-
-				AddBotAsAvailable(clientToRemove);
 			}
+
+			clientToRemove.Terminate();
+			AddBotAsAvailable(clientToRemove);
 		}
 
 		/// <summary>
@@ -227,9 +231,12 @@ namespace IdleClient
 		/// <param name="message">Chat message</param>
 		public void Say(string message)
 		{
-			if (clients.Count > 0 && clients[0] != null)
+			lock (clients)
 			{
-				clients[0].Say(message);
+				if (clients.Count > 0 && clients[0] != null)
+				{
+					clients[0].Say(message);
+				}
 			}
 		}
 
@@ -400,9 +407,8 @@ namespace IdleClient
 
 			if (e.Type == FailureArgs.FailureTypes.GameserverDeniedConnection)
 			{
-				settings.JoinDelay += 500;
-				TemporaryJoinDelay = 10000;
-				Output("Increasing JoinDelay by 500ms and adding a 10second temporary join delay");
+				TemporaryJoinDelay += 5000;
+				Output("Adding a 5second temporary join delay");
 			}
 			else if (e.Type == FailureArgs.FailureTypes.FailedToJoinGame)
 			{

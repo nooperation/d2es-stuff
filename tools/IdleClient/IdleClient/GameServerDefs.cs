@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using BKSystem.IO;
+using CharacterEditor;
 
 namespace IdleClient.Game
 {
@@ -311,6 +313,24 @@ namespace IdleClient.Game
 		public override string ToString()
 		{
 			return ChatType + " " + CharacterName + " " + Message;
+		}
+	}
+
+	/// <summary>
+	/// Send whenever an item even occurs (0x9c)
+	/// </summary>
+	class WorldItemEventIn
+	{
+		public Item item;
+
+		public WorldItemEventIn(GameServerPacket packet)
+		{
+			//item = new Item(packet.GetBytes());
+		}
+
+		public override string ToString()
+		{
+			return "WorldItemEventIn";
 		}
 	}
 

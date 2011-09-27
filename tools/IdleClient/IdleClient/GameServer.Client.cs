@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net.Sockets;
+using CharacterEditor;
 
 namespace IdleClient.Game
 {
 	partial class GameServer : ClientBase
 	{
+		List<Item> items = new List<Item>();
+
 		/// <summary>
 		/// Handles packets sent from the game server
 		/// </summary>
@@ -22,9 +25,24 @@ namespace IdleClient.Game
 				case GameServerInPacketType.InformationMessage:
 					OnInformationMessage(packet);
 					break;
+				case GameServerInPacketType.WorldItemAction:
+					OnWorldItemAction(new WorldItemEventIn(packet));
+					break;
 				default:
 					break;
 			}
+		}
+
+		/// <summary>
+		/// Handles WorldItemAction (0x9c) packets. Keeps track of items in player's main inventory.
+		/// </summary>
+		/// <param name="packet">The packet.</param>
+		private void OnWorldItemAction(WorldItemEventIn packet)
+		{
+			//if (packet.item.Location == Item.ItemLocation.Stored && packet.item.StorageId == Item.StorageType.Inventory)
+			//{
+			//	items.Add(packet.item);
+			//}
 		}
 
 		/// <summary>
@@ -36,8 +54,6 @@ namespace IdleClient.Game
 		{
 			InformationMessageIn fromServer = new InformationMessageIn(packet);
 			Log(fromServer);
-
-			
 
 			switch (fromServer.Event)
 			{
@@ -120,6 +136,16 @@ namespace IdleClient.Game
 		public void Say(string message, string target)
 		{
 			SendMessageOut toServer = new SendMessageOut(message, target);
+			SendPacket(toServer);
+		}
+
+		/// <summary>
+		/// Causes this client to send an overhead message.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		public void SayOverhead(string message)
+		{
+			SendOverheadMessageOut toServer = new SendOverheadMessageOut(message);
 			SendPacket(toServer);
 		}
 

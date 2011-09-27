@@ -76,6 +76,45 @@ namespace IdleClient.Game
 	}
 
 	/// <summary>
+	/// Sends an overhead message
+	/// </summary>
+	struct SendOverheadMessageOut : IOutPacket
+	{
+		public string Message;
+
+		public SendOverheadMessageOut(string message)
+		{
+			this.Message = message;
+
+			if (this.Message.Length >= 255)
+			{
+				this.Message = Message.Substring(0, 254);
+			}
+		}
+
+		#region IOutPacket Members
+
+		public byte[] GetBytes()
+		{
+			MemoryStream ms = new MemoryStream();
+			BinaryWriter bw = new BinaryWriter(ms);
+
+			bw.Write((short)0);
+			Util.WriteString(bw, Message);
+			bw.Write((short)0);
+
+			return ms.ToArray();
+		}
+
+		public byte Id
+		{
+			get { return (byte)GameServerOutPacketType.SendOverheadMessage; }
+		}
+
+		#endregion
+	}
+
+	/// <summary>
 	/// Sends a chat message.
 	/// </summary>
 	struct SendMessageOut : IOutPacket
@@ -96,6 +135,11 @@ namespace IdleClient.Game
 			Message = message;
 			WhisperTarget = "";
 			Unknown = "";
+
+			if (this.Message.Length >= 255)
+			{
+				this.Message = Message.Substring(0, 254);
+			}
 		}
 
 		/// <summary>

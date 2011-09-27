@@ -6,6 +6,7 @@ using IdleClient.Game;
 using IdleClient.Chat;
 using IdleClient.Realm;
 using System.Threading;
+using CharacterEditor;
 
 namespace IdleClient
 {
@@ -89,6 +90,8 @@ namespace IdleClient
 		{
 			this.settings = settings;
 			this.ClientIndex = clientIndex;
+
+			ItemDefs.LoadItemDefs();
 		}
 
 		/// <summary>

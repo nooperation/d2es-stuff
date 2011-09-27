@@ -101,7 +101,7 @@ namespace IdleClient.Chat
 				}
 				if (settings.ShowPacketData)
 				{
-					LogDebug(string.Format("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length)));
+					LogDebug(Util.GetPacketDump(packet.GetBytes(), true));
 				}
 
 				switch (packet.Id)
@@ -249,7 +249,7 @@ namespace IdleClient.Chat
 			}
 			if (settings.ShowPacketData)
 			{
-				LogDebug(String.Format("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length)));
+				LogDebug(Util.GetPacketDump(packet.GetBytes(), false));
 			}
 
 			byte[] packetBytes = packet.GetBytes();

@@ -5,6 +5,7 @@ using System.Text;
 using System.Net.Sockets;
 using System.IO;
 using System.Threading;
+using CharacterEditor;
 
 namespace IdleClient.Game
 {
@@ -34,6 +35,9 @@ namespace IdleClient.Game
 		/// <summary> Thread to continously send ping to server so server doesn't drop us </summary>
 		private Thread pingThread;
 
+		private Timer AntiIdleTimer;
+		private uint AntiIdleCounter;
+
 		/// <summary> Arguments needed to connect to the game server </summary>
 		private Realm.GameServerArgs gameServerArgs;
 
@@ -59,6 +63,8 @@ namespace IdleClient.Game
 			this.port = gameServerArgs.Port;
 			this.MaxPlayers = gameServerArgs.MaxPlayers;
 			this.PlayerNames = gameServerArgs.PlayerNames;
+
+			items = new List<Item>();
 		}
 
 		/// <summary>
@@ -108,7 +114,7 @@ namespace IdleClient.Game
 					}
 					if (settings.ShowPacketData)
 					{
-						LogDebug(String.Format("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length)));
+						LogDebug(Util.GetPacketDump(packet.GetBytes(), true));
 					}
 
 					switch (packet.Id)
@@ -167,6 +173,18 @@ namespace IdleClient.Game
 			pingThread.IsBackground = true;
 
 			pingThread.Start();
+
+			AntiIdleCounter = 0;
+			AntiIdleTimer = new Timer(
+				n => 
+				{ 
+					SayOverhead(characterName + " Anti-Idle " + (AntiIdleCounter++));
+				},
+				null,
+				0,
+				300000
+			);
+
 			IsInGame = true;
 			FireOnEnterGameEvent();
 
@@ -308,7 +326,7 @@ namespace IdleClient.Game
 			}
 			if (settings.ShowPacketData)
 			{
-				LogDebug(String.Format("Data: {0:X2} {1}", (byte)packet.Id, Util.GetStringOfBytes(packet.Data, 0, packet.Data.Length)));
+				LogDebug(Util.GetPacketDump(packet.GetBytes(), false));
 			}
 
 			byte[] packetBytes = packet.GetBytes();

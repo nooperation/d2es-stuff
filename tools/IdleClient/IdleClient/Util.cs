@@ -29,6 +29,26 @@ namespace IdleClient
 			return sb.ToString();
 		}
 
+		public static string GetPacketDump(byte[] data, bool isFromServer)
+		{
+			if (data.Length == 0)
+			{
+				return "EMPTYPACKET ?";
+			}
+
+			StringBuilder sb = new StringBuilder();
+
+			sb.AppendFormat("byte[] {0} = {{", isFromServer?"fromServer":"toServer");
+			for (int i = 0; i < data.Length; i++)
+			{
+				sb.AppendFormat("0x{0:X2}, ", data[i]);
+			}
+			sb.Remove(sb.Length - 2, 1);
+			sb.Append("};");
+
+			return sb.ToString();
+		}
+
 		/// <summary>
 		/// Removes the beginning bytes of a byte array.
 		/// </summary>
