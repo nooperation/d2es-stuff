@@ -1,0 +1,2 @@
+100     Jeweler's               50       37        20       sock (4-4)                                                 weap  tors  shld  helm                    
+102     Jeweler's               72       57        12       sock (6-6)                                                 weap  tors                                

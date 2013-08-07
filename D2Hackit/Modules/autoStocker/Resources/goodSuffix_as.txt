@@ -1,0 +1,86 @@
+133     of Self-Repair             3 rep-dur                                                                                                             
+134     of Fast Repair             5 rep-dur                                                                                                             
+135     of Replenishing            5 rep-quant                                                                                                           
+136     of Propogation             10 rep-quant                                                                                                          
+137     of Ages                    indestruct                                                                                                            
+197     of Damage Amplification    hit-skill 5% CtC Lvl 4 Amplify Damage                                                                                 
+198     of Damage Amplification    hit-skill 6% CtC Lvl 5 Amplify Damage                                                                                 
+199     of Damage Amplification    hit-skill 7% CtC Lvl 6 Amplify Damage                                                                                 
+200     of Damage Amplification    hit-skill 8% CtC Lvl 7 Amplify Damage                                                                                 
+201     of Damage Amplification    hit-skill 9% CtC Lvl 8 Amplify Damage                                                                                 
+262     of the Tank                red-dmg% (8-15) 16 thorns/lvl ac% (50-200)                                                                            
+264     of Grand Mastery           dmg-ac (-15--15) swing2 (20-20) dmg% (100-100)                                                                        
+279     of Skill Master            Dodge oskill (1-8)                                                                                                    
+287     of Skill Master            Pierce oskill (1-8)                                                                                                   
+290     of Skill Master            Teleport oskill (1-4)                                                                                                 
+294     of Skill Master            Fire Mastery oskill (1-4)                                                                                             
+295     of Skill Master            Lightning Mastery oskill (1-4)                                                                                        
+296     of Skill Master            Cold Mastery oskill (1-4)                                                                                             
+311     of Skill Master            Lower Resist oskill (1-4)                                                                                             
+322     of Skill Master            Might oskill (1-16)                                                                                                   
+326     of Skill Master            Fanaticism oskill (1-12)                                                                                              
+328     of Skill Master            Sword Mastery oskill (1-4)                                                                                            
+332     of Skill Master            Throwing Mastery oskill (1-4)                                                                                         
+335     of Skill Master            Iron Skin oskill (1-4)                                                                                                
+336     of Skill Master            Battle Orders oskill (1-12)                                                                                           
+340     of Skill Master            Natural Resistance oskill (1-4)                                                                                       
+347     of Skill Master            Oak Sage oskill (1-8) Heart of Wolverine oskill (1-8)                                                         
+355     of Skill Master            Claw Mastery oskill (1-4)                                                                                             
+356     of Skill Master            Fade oskill (1-4)                                                                                                     
+363     of Aurora                  Defiance aura (1-12)                                                                                                  
+364     of Aurora                  Cleansing aura (1-12)                                                                                                 
+365     of Aurora                  Holy Fire T aura (1-12)                                                                                               
+366     of Aurora                  Holy Freeze T aura (1-12)                                                                                             
+367     of Aurora                  Vigor aura (1-9)                                                                                                      
+368     of Aurora                  Meditation aura (1-12)                                                                                                
+369     of Aurora                  Holy Shock T aura (1-12)                                                                                              
+370     of Aurora                  Salvation aura (1-9)                                                                                                  
+371     of Aurora                  Blessed Aim aura (1-9)                                                                                                
+372     of Aurora                  Sanctuary aura (1-9)                                                                                                  
+373     of Aurora                  Might aura (1-12)                                                                                                     
+374     of Aurora                  Fanaticism aura (1-9)                                                                                                 
+436     of Anthrax                 150 dmg-pois (513-513)                                                                                                
+440     of Anthrax                 150 dmg-pois (342-342)                                                                                                
+444     of Anthrax                 150 dmg-pois (171-171)                                                                                                
+465     of Greed                   gold% (22-30)                                                                                                         
+468     of Greed                   gold% (15-20)                                                                                                         
+471     of Greed                   gold% (8-10)                                                                                                          
+474     of Fortune                       70      47         2        mag% (22-30)                                                            lcha                                                           
+477     of Fortune                       73      50         2        mag% (15-20)                                                            mcha                                                           
+480     of Fortune                       76      53         2        mag% (8-10)                                                             scha                                                           
+489     of Vita                    hp (51-60)                                                                                                            
+496     of Vita                    hp (34-40)                                                                                                            
+500     of Vita                    hp (17-20)                                                                                                            
+524     of the Rogue                     85      44         1        3 mag%/lvl                                                              lcha                                                           
+526     of the Rogue                     85      46         1        2 mag%/lvl                                                              mcha                                                           
+527     of the Rogue                     85      48         1        1 mag%/lvl                                                              scha                                                           
+530     of the Collector           3 gold%/lvl                                                                                                           
+532     of the Collector           2 gold%/lvl                                                                                                           
+533     of the Collector           1 gold%/lvl                                                                                                           
+587     of Avarice                 gold% (10-40)                                                                                                         
+645     of Aurora                  Holy Fire H aura (1-6)                                                                                                
+646     of Aurora                  Holy Freeze H aura (1-6)                                                                                              
+647     of Aurora                  Holy Shock H aura (1-6)                                                                                               
+649     of Skill Master            Poison Mastery oskill (1-4)                                                                                           
+650     of Aurora                  Cancel Cres aura (1-1)                                                                                                
+651     of Aurora                  Super Salvation aura (1-1)                                                                                            
+652     of Aurora                  Poverty aura (1-1)                                                                                                    
+654     of Aurora                  Cancel Fres aura (1-1)                                                                                                
+436     of Anthrax                       85      78         1        150 dmg-pois (513-513)                                                  lcha                                                           
+440     of Anthrax                       89      81         1        150 dmg-pois (342-342)                                                  mcha                                                           
+444     of Anthrax                       91      83         1        150 dmg-pois (171-171)                                                  scha                                                           
+447     of Maiming                       47      39         2        dmg-max (7-9)                                                           lcha                                                           
+450     of Maiming                       50      42         2        dmg-max (5-6)                                                           mcha                                                           
+453     of Maiming                       53      45         2        dmg-max (3-3)                                                           scha                                                           
+465     of Greed                         70      47         2        gold% (22-30)                                                           lcha                                                           
+468     of Greed                         73      50         2        gold% (15-20)                                                           mcha                                                           
+471     of Greed                         76      53         2        gold% (8-10)                                                            scha                                                           
+489     of Vita                          49      41         4        hp (51-60)                                                              lcha                                                           
+496     of Vita                          49      41         5        hp (34-40)                                                              mcha                                                           
+500     of Vita                          48      40         6        hp (17-20)                                                              scha                                                           
+530     of the Collector                 85      44         1        3 gold%/lvl                                                             lcha                                                           
+532     of the Collector                 85      46         1        2 gold%/lvl                                                             mcha                                                           
+533     of the Collector                 85      48         1        1 gold%/lvl                                                             scha                                                           
+575     of Carnage                       25      18         10       dmg-max (13-24)                                                         jewl                                                           
+581     of Pestilence                    58      54         8        pois-min (656-656) pois-max (656-656) pois-len (100-100)                jewl                                                           
+669     of Emphasis                1     64      42         5        extra-ltng (2-4)                                                        jewl                                                           

@@ -1,0 +1,101 @@
+23      Cruel                 dmg% (201-300)                                
+24      Bloodlust             dmg% (400-400) howl (128-128) regen (-8--8)   
+48      Master's              att (151-250) dmg% (101-150)                  
+49      Grandmaster's         att (251-300) dmg% (151-200)                                       
+184     Valkyrie's            +3 ama skills                                 
+193     Arch-Angel's          +3 sor skills                                 
+202     Necromancer's         +3 nec skills                                 
+211     Priest's              +3 pal skills                                 
+220     Berserker's           +3 bar skills                                 
+229     Hierophant's          +3 dru skills                                 
+238     Witch-hunter's        +3 ass skills                                                              
+336     Shouting              20 dmg%/lvl                                   
+337     Screaming             24 dmg%/lvl                                   
+347     Joker's               16 dmg/lvl 8 att/lvl                          
+348     Trump                 20 dmg/lvl 10 att/lvl                         
+672     Excellent             att% (20-20) dmg% (31-45)                     
+375     Bloody                  52       46        2        dmg-min (7-9)                                              lcha                                      
+378     Bloody                  55       47        2        dmg-min (5-6)                                              mcha                                      
+381     Bloody                  58       50        2        dmg-min (3-3)                                              scha                                      
+388     Serrated                47       39        2        dmg-max (10-15)                                            lcha                                      
+393     Serrated                50       42        3        dmg-max (7-10)                                             mcha                                      
+396     Serrated                53       45        4        dmg-max (4-5)                                              scha                                      
+428     Sharp             1     53       37        2        att (51-75) dmg-max (7-9)                                  lcha                                      
+430     Sharp             1     51       37        3        att (26-50) dmg-max (4-6)                                  mcha                                      
+431     Fine              1     51       37        4        att (10-25) dmg-max (1-3)                                  scha                                      
+452     Shimmering              8-13     6         2        res-all (7-9)                                              lcha                                      
+453     Shimmering              14-34    10        2        res-all (10-12)                                            lcha                                      
+454     Shimmering              35       27        2        res-all (13-15)                                            lcha                                      
+455     Shimmering              17-33    12        2        res-all (5-7)                                              mcha                                      
+456     Shimmering              34       26        2        res-all (8-10)                                             mcha                                      
+457     Shimmering              33       25        2        res-all (3-5)                                              scha                                      
+506     Fletcher's        1     50       42        2        ama skilltab ( 1-1)                                        lcha                                      
+507     Acrobat's         1     50       42        2        ama skilltab ( 1-1)                                        lcha                                      
+508     Harpoonist's      1     50       42        2        ama skilltab ( 1-1)                                        lcha                                      
+509     Burning           1     50       42        2        sor skilltab ( 1-1)                                        lcha                                      
+510     Sparking          1     50       42        2        sor skilltab ( 1-1)                                        lcha                                      
+511     Chilling          1     50       42        2        sor skilltab ( 1-1)                                        lcha                                      
+512     Hexing            1     50       42        2        nec skilltab ( 1-1)                                        lcha                                      
+513     Fungal            1     50       42        2        nec skilltab ( 1-1)                                        lcha                                      
+514     Graverobber's     1     50       42        2        nec skilltab ( 1-1)                                        lcha                                      
+515     Lion Branded      1     50       42        2        pal skilltab ( 1-1)                                        lcha                                      
+516     Captain's         1     50       42        2        pal skilltab ( 1-1)                                        lcha                                      
+517     Preserver's       1     50       42        2        pal skilltab ( 1-1)                                        lcha                                      
+518     Expert's          1     50       42        2        bar skilltab ( 1-1)                                        lcha                                      
+519     Fanatic           1     50       42        2        bar skilltab ( 1-1)                                        lcha                                      
+520     Sounding          1     50       42        2        bar skilltab ( 1-1)                                        lcha                                      
+521     Trainer's         1     50       42        2        dru skilltab ( 1-1)                                        lcha                                      
+522     Spiritual         1     50       42        2        dru skilltab ( 1-1)                                        lcha                                      
+523     Nature's          1     50       42        2        dru skilltab ( 1-1)                                        lcha                                      
+524     Entrapping        1     50       42        2        ass skilltab ( 1-1)                                        lcha                                      
+525     Mentalist's       1     50       42        2        ass skilltab ( 1-1)                                        lcha                                      
+526     Shogukusha's      1     50       42        2        ass skilltab ( 1-1)                                        lcha                                      
+530     Hibernal                85       78        1        cold-len (35-35) cold-min (25-30) cold-max (46-60)         lcha                                      
+534     Hibernal                89       81        1        cold-len (25-25) cold-min (16-20) cold-max (31-40)         mcha                                      
+538     Hibernal                91       83        1        cold-len (15-15) cold-min (9-10) cold-max (16-20)          scha                                      
+542     Flaming                 85       78        1        fire-min (30-36) fire-max (55-72)                          lcha                                      
+546     Flaming                 89       81        1        fire-min (19-24) fire-max (37-48)                          mcha                                      
+550     Flaming                 91       83        1        fire-min (11-12) fire-max (19-24)                          scha                                      
+554     Shocking                85       78        1        ltng-min (1-1) ltng-max (116-150)                          lcha                                      
+558     Shocking                89       81        1        ltng-min (1-1) ltng-max (71-100)                           mcha                                      
+562     Shocking                91       83        1        ltng-min (1-1) ltng-max (36-50)                            scha                                      
+566     Pestilent               85       78        1        150 dmg-pois (513-513)                                     lcha                                      
+570     Pestilent               89       81        1        150 dmg-pois (342-342)                                     mcha                                      
+574     Pestilent               91       83        1        150 dmg-pois (171-171)                                     scha                                      
+593     Assailant's       1     25       14        2        1 dmg/lvl                                                  lcha                                      
+594     Assailant's       1     55       29        2        2 dmg/lvl                                                  lcha                                      
+595     Assailant's             85       44        1        3 dmg/lvl                                                  lcha                                      
+596     Assailant's       1     45       23        2        1 dmg/lvl                                                  mcha                                      
+597     Assailant's             85       46        1        2 dmg/lvl                                                  mcha                                      
+598     Assailant's             85       48        1        1 dmg/lvl                                                  scha                                      
+632     Vermillion              58       45        10       dmg-max (16-25)                                            jewl                                      
+635     Realgar           1     45       37        10       dmg% (26-40)                                               jewl                                      
+636     Ruby                    66       58        8        dmg% (41-60)                                               jewl                                      
+644     Argent                  44       36        8        att (61-120) 2 dmg/lvl                                     jewl                                      
+651     Scintillating           34       26        8        res-all (11-15)                                            jewl                                      
+662     Maiden's          1     72       48        6        ama (1-1) jewelflag (1-1)                                  jewl                                      
+663     Monk's            1     72       48        6        pal (1-1) jewelflag (2-2)                                  jewl                                      
+664     Summoner's        1     72       48        6        nec (1-1) jewelflag (3-3)                                  jewl                                      
+665     Angel's           1     72       48        6        sor (1-1) jewelflag (4-4)                                  jewl                                      
+666     Slayer's          1     72       48        6        bar (1-1) jewelflag (5-5)                                  jewl                                      
+667     Shaman's          1     72       48        6        dru (1-1) jewelflag (6-6)                                  jewl                                      
+668     Magekiller's      1     72       48        6        ass (1-1) jewelflag (7-7)                                  jewl                                      
+694     Vile              1     48       40        1        4 dmg%/lvl                                                 jewl                                      
+695     Vile                    72       60        1        5 dmg%/lvl                                                 jewl                                      
+699     Looter's                54       45        2        4 mag%/lvl                                                 jewl                                      
+700     Looter's                72       60        2        5 mag%/lvl                                                 jewl                                      
+701     Knowledgeable           85       67        12       allskills (1-1) jewelflag (8-8)                            jewl                                      
+732     Skillful          1     38       1         2        1 skill-rand (6-35)                                        mcha                                      
+733     Skillful          1     38       1         2        1 skill-rand (36-65)                                       mcha                                      
+734     Skillful          1     38       1         2        1 skill-rand (66-95)                                       mcha                                      
+735     Skillful          1     38       1         2        1 skill-rand (96-125)                                      mcha                                      
+736     Skillful          1     38       1         2        1 skill-rand (126-155)                                     mcha                                      
+737     Skillful          1     38       1         2        1 skill-rand (221-250)                                     mcha                                      
+738     Skillful          1     38       1         2        1 skill-rand (251-280)                                     mcha                                      
+739     Skillful          1     57       1         1        1 skill-rand (6-35) 1 skill-rand (6-35)                    mcha                                      
+740     Skillful          1     57       1         1        1 skill-rand (36-65) 1 skill-rand (36-65)                  mcha                                      
+741     Skillful          1     57       1         1        1 skill-rand (66-95) 1 skill-rand (66-95)                  mcha                                      
+742     Skillful          1     57       1         1        1 skill-rand (96-125) 1 skill-rand (96-125)                mcha                                      
+743     Skillful          1     57       1         1        1 skill-rand (126-155) 1 skill-rand (126-155)              mcha                                      
+744     Skillful          1     57       1         1        1 skill-rand (221-250) 1 skill-rand (221-250)              mcha                                      
+731     Dummy             1     1        1         1        437 oskill (1-1) 438 oskill (1-1) 439 oskill (1-1)         ycha                                      

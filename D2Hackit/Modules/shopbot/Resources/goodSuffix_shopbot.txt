@@ -1,0 +1,3 @@
+322     of Skill Master            Might oskill (1-16)      
+347     of Skill Master            1     56      42         4        Oak Sage oskill (1-8) Heart of Wolverine oskill (1-8)                   amul     ring     helm     tors     shld     belt     boot     
+132     of Shielding               1     90      65         12       res-all (25-25) res-all-max (5-10)                                      helm     tors     shld     belt     staf     wand              

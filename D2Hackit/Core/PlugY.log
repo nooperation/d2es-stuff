@@ -1,0 +1,201 @@
+<----------------------------------------------->
+
+		A Plugin by Yohann
+		version 5.06
+
+
+<---------- Starting Diablo II Plugin ---------->
+
+
+* PlugY is called from D2gfx.dll
+
+***** Load D2 Libraries *****
+SmackW32.dll loaded successfully at: 02830000
+D2Common.dll loaded successfully at: 02030000
+ijl11.dll loaded successfully at: 60000000
+D2Gdi.dll loaded successfully at: 6F830000
+D2Win.dll loaded successfully at: 6F8A0000
+D2sound.dll loaded successfully at: 6F980000
+D2Launch.dll loaded successfully at: 6FA10000
+D2gfx.dll loaded successfully at: 6FA70000
+D2Game.dll loaded successfully at: 6FC30000
+D2Client.dll loaded successfully at: 6FAA0000
+D2Net.dll loaded successfully at: 6FC00000
+D2Lang.dll loaded successfully at: 6FC10000
+D2CMP.dll loaded successfully at: 6FDF0000
+Bnclient.dll loaded successfully at: 6FF00000
+Fog.dll loaded successfully at: 6FF50000
+Storm.dll loaded successfully at: 6FFB0000
+
+
+***** Get dll versions *****
+version of D2Common.dll	1.10
+version of D2Gdi.dll	1.10
+version of D2Win.dll	1.10
+version of D2Launch.dll	1.10
+version of D2gfx.dll	1.10
+version of D2Client.dll	1.10
+version of D2Net.dll	1.10
+version of D2Lang.dll	1.10
+version of D2Game.dll	1.10
+version of Fog.dll	1.10
+version of Storm.dll	1.10
+
+
+Bad index fct 10326 for 02030000
+Bad index fct 10329 for 02030000
+Bad index fct 11007 for 02030000
+Bad index fct 10581 for 02030000
+Bad index fct 10598 for 02030000
+Bad index fct 10673 for 02030000
+***** PARAMETERS *****
+Fixed Parameters file is opened.
+
+Reading parameters.
+
+FIXED:	active_plugin			= 1
+FIXED:	active_logFile			= 0
+FIXED:	active_Commands			= 1
+FIXED:	active_CheckMemory		= 1
+DLL:	active_othersFeatures		= 0
+FIXED:	dllFilenames			= d2mod.dll|
+
+DLL:	active_ChangeLanguage		= 0
+DLL:	active_LanguageManagement	= 0
+
+DLL:	active_changingSavePath		= 0
+
+DLL:	active_VersionTextChange	= 0
+FIXED:	active_PrintPlugYVersion	= 0
+
+DLL:	active_bigStash			= 0
+DLL:	active_multiPageStash		= 0
+
+FIXED:	active_StatsPoints		= 0
+DLL:	active_StatsShiftClickLimit	= 0
+
+FIXED:	active_StatPerLevelUpChange	= 0
+DLL:	active_SkillsPoints		= 0
+
+FIXED:	active_SkillPerLevelUpChange	= 0
+FIXED:	active_WorldEvent		= 1
+FIXED:	showSOJSoldCounterInAllDiff	= 0
+FIXED:	itemsToSell			= dfc
+FIXED:	worldEventmonsterID		= 333
+FIXED:	valueOfOwnSOJSold		= 100
+FIXED:	valueInitSOJSoldMin		= 200
+FIXED:	valueInitSOJSoldDelta		= 2801
+FIXED:	triggerAtSolJSoldMin		= 50
+FIXED:	triggerAtSolJSoldDelta		= 51
+FIXED:	active_AutomaticSell		= 1
+FIXED:	timeBeforeAutoSellMin		= 0
+FIXED:	timeBeforeAutoSellDelta		= 800001
+
+FIXED:	active_newInterfaces		= 1
+FIXED:	selectMainPageOnOpenning	= 1
+DLL:	printBackgroundOnMainPage	= 1
+
+DLL:	active_alwaysRegenMapInSP	= 0
+DLL:	nbPlayersCommandByDefault	= 0
+DLL:	active_DisplayItemLevel		= 0
+DLL:	active_AlwaysDisplayLifeMana	= 0
+DLL:	active_RunLODs			= 0
+
+DLL:	active_EnabledTXTFilesWithMSExcel= 0
+
+Reading parameters end.
+
+
+***** Custom libraries *****
+Load custom libraries :
+d2mod.dll loaded successfully at: 02BA0000
+
+
+***** Unprotect Libraries *****
+D2Common.dll successfully hooked. (02031000,0008D000)
+D2Client.dll successfully hooked. (6FAA1000,000CC000)
+D2Lang.dll successfully hooked. (6FC11000,0000A000)
+D2Game.dll successfully hooked. (6FC31000,000F6000)
+Fog.dll successfully hooked. (6FF51000,00020000)
+Storm.dll successfully hooked. (6FFB1000,00030000)
+D2Launch.dll successfully hooked. (6FA11000,00020000)
+D2gfx.dll successfully hooked. (6FA71000,0000B000)
+
+
+***** INSTALL FUNCTIONS *****
+Patch D2Launch for set not on realm variable. (VariableonRealm)
+BYTE	6FA19915 : 81->E8
+DWORD	6FA19916 : 000400EC->932EB686
+BYTE	6FA1991A : 00->90
+BYTE	6FA19F99 : BD->E8
+DWORD	6FA19F9A : 00000001->932EB022
+BYTE	6FA1EC16 : BA->E8
+DWORD	6FA1EC17 : 00000400->932E63C5
+
+Patch D2Client for install commands. (Commands)
+BYTE	6FAD2BDD : 83->E8
+DWORD	6FAD2BDE : C08508C4->9322EC0E
+
+Patch D2Game for received button click message. (UpdateServer)
+BYTE	6FC86EA2 : C1->E8
+DWORD	6FC86EA3 : F88B08EE->9308DBC9
+
+Patch Storm to find custom file. (PlugYFiles)
+BYTE	6FFC8677 : FF->90
+BYTE	6FFC8678 : 15->E8
+DWORD	6FFC8679 : 771C2260->92D497B3
+
+Patch D2Client to load/free custom images. (PlugYImagesFiles)
+BYTE	6FAFE4B1 : B9->E8
+DWORD	6FAFE4B2 : 0000000C->93213BEA
+BYTE	6FAFE639 : B9->E8
+DWORD	6FAFE63A : 0000000C->93213A72
+
+Patch D2Common to load/free custom txt files. (PlugYTxtFiles)
+Warning : BYTE at 02040784 is already set to E8 (normal:E8)
+DWORD	02040785 : 00CD19E7
+Warning : BYTE at 02040466 is already set to E8 (normal:E8)
+DWORD	02040467 : 00CD1D15
+
+Patch D2Client for stats interface. (InterfaceStats)
+BYTE	6FAD0F86 : 5F->E9
+DWORD	6FAD0F87 : 815B5D5E->932375A5
+DWORD	6FAD133D : 6FB283D0->9323720F
+DWORD	6FAD151A : 6FB283D0->93237072
+
+Patch D2Client for new custom page interface. (NewInterfaces)
+BYTE	6FB23478 : 85->E8
+DWORD	6FB23479 : C2940FC0->931EA4B3
+DWORD	6FB21FAB : 6FACFD60->931EB7D1
+BYTE	6FAFF4C6 : B9->E8
+DWORD	6FAFF4C7 : 00000012->9320E375
+BYTE	6FAD12A5 : 8D->E8
+DWORD	6FAD12A6 : 00008088->9323C5F6
+BYTE	6FAD12AA : 00->90
+BYTE	6FAD148D : A1->E8
+DWORD	6FAD148E : 6FBBA748->9323C46E
+
+Patch D2Game for active World Event. (WorldEvent)
+DWORD	6FC6F720 : FFFFFAFC->930A576C
+DWORD	6FCC77D0 : 00054032->9304D71C
+DWORD	6FC33CE0 : 000057FC->930E10DC
+DWORD	6FC31AEF : 0000516D->930E361D
+
+
+DLL patched sucessfully.
+
+
+***** Reprotect Libraries *****
+D2Common.dll successfully unhooked. (02031000,0008D000)
+D2Client.dll successfully unhooked. (6FAA1000,000CC000)
+D2Lang.dll successfully unhooked. (6FC11000,0000A000)
+D2Game.dll successfully unhooked. (6FC31000,000F6000)
+Fog.dll successfully unhooked. (6FF51000,00020000)
+Storm.dll successfully unhooked. (6FFB1000,00030000)
+D2Launch.dll successfully unhooked. (6FA11000,00020000)
+D2gfx.dll successfully unhooked. (6FA71000,0000B000)
+
+
+***** Init custom libraries *****
+***** ENTERING DIABLO II *****
+

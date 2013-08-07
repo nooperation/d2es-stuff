@@ -1,0 +1,86 @@
+97      Mechanist's       1     52       47        16       sock (2-2)                                                 glov  belt  boot                          
+23      Cruel                 dmg% (201-300)                                
+24      Bloodlust             dmg% (400-400) howl (128-128) regen (-8--8)       
+49      Grandmaster's         att (251-300) dmg% (151-200)                                                       
+336     Shouting              20 dmg%/lvl                                   
+337     Screaming             24 dmg%/lvl                                   
+347     Joker's               16 dmg/lvl 8 att/lvl                          
+348     Fool's                20 dmg/lvl 10 att/lvl                                                                                                            
+624     Blanched          1     1        1         8        ac (10-30)                                                 jewl                                      
+625     Eburin            1     16       12        8        ac (31-60)                                                 jewl                                      
+626     Bone              1     32       24        8        ac (61-90)                                                 jewl                                      
+627     Ivory                   64       56        8        ac (91-180)                                                jewl                                      
+628     Scarlet           1     8        6         10       dmg-min (1-5)                                              jewl                                      
+629     Crimson           1     38       30        10       dmg-min (6-10)                                             jewl                                      
+630     Carbuncle         1     12       9         10       dmg-max (1-7)                                              jewl                                      
+631     Carmine           1     35       27        10       dmg-max (8-15)                                             jewl                                      
+632     Vermillion              58       45        10       dmg-max (16-25)                                            jewl                                      
+633     Cinnabar          1     1        1         12       dmg% (6-12)                                                jewl                                      
+634     Rusty             1     13       9         12       dmg% (13-25)                                               jewl                                      
+635     Realgar           1     45       37        10       dmg% (26-40)                                               jewl                                      
+636     Ruby                    66       58        8        dmg% (41-60)                                               jewl                                      
+637     Dun               1     7        5         10       dmg-to-mana (10-20)                                        jewl                                      
+638     Brown             1     39       31        8        regen-stam (15-30)                                         jewl                                      
+639     Chestnut          1     1        1         8        stam (10-15)                                               jewl                                      
+640     Maroon            1     17       12        8        stam (16-30)                                               jewl                                      
+641     Nickel            1     1        1         8        att (10-20) 2 dmg/lvl                                      jewl                                      
+642     Tin               1     8        6         8        att (21-40) 2 dmg/lvl                                      jewl                                      
+643     Silver            1     25       18        8        att (41-60) 2 dmg/lvl                                      jewl                                      
+644     Argent                  44       36        8        att (61-120) 2 dmg/lvl                                     jewl                                      
+645     Bright            1     1        1         8        light (1-1) 4 att/lvl                                      jewl                                      
+646     Emerald           1     16       12        10       mag% (10-30)                                               jewl                                      
+647     Zircon            1     1        1         10       mana (3-16)                                                jewl                                      
+648     Jacinth           1     28       21        10       mana (17-32)                                               jewl                                      
+649     Turquoise               45       37        10       mana (33-64)                                               jewl                                      
+650     Shimmering        1     16       12        8        res-all (5-10)                                             jewl                                      
+651     Scintillating           34       26        8        res-all (11-15)                                            jewl                                      
+652     Lapis Lazuli      1     2        1         10       res-cold (10-20)                                           jewl                                      
+653     Sapphire          1     19       14        10       res-cold (21-40)                                           jewl                                      
+654     Garnet            1     2        1         10       res-fire (10-20)                                           jewl                                      
+655     Ruby              1     18       13        10       res-fire (21-40)                                           jewl                                      
+656     Camphor           1     2        1         10       res-ltng (10-20)                                           jewl                                      
+657     Ambergris         1     19       14        10       res-ltng (21-40)                                           jewl                                      
+658     Beryl             1     2        1         10       res-pois (10-20)                                           jewl                                      
+659     Jade              1     19       14        10       res-pois (21-40)                                           jewl                                      
+660     Aureolin          1     22       16        10       mana-kill (4-12)                                           jewl                                      
+661     Diamond           1     16       19        8        att-demon (50-75) dmg-demon (50-75)                        jewl                                      
+662     Maiden's          1     72       48        6        ama (1-1) jewelflag (1-1)                                  jewl                                      
+663     Monk's            1     72       48        6        pal (1-1) jewelflag (2-2)                                  jewl                                      
+664     Summoner's        1     72       48        6        nec (1-1) jewelflag (3-3)                                  jewl                                      
+665     Angel's           1     72       48        6        sor (1-1) jewelflag (4-4)                                  jewl                                      
+666     Slayer's          1     72       48        6        bar (1-1) jewelflag (5-5)                                  jewl                                      
+667     Shaman's          1     72       48        6        dru (1-1) jewelflag (6-6)                                  jewl                                      
+668     Magekiller's      1     72       48        6        ass (1-1) jewelflag (7-7)                                  jewl                                      
+669     Pearl             1     8        13        8        att-undead (50-75) dmg-undead (50-75)                      jewl                                      
+670     Quality           1     13       9         8        att% (10-10) dmg% (8-15)                                   jewl                                      
+671     Superior          1     45       27        8        att% (15-15) dmg% (16-30)                                  jewl                                      
+672     Excellent               66       45        8        att% (20-20) dmg% (31-45)                                  jewl                                      
+673     Dazzling          1     29       25        8        regen-mana (15-30)                                         jewl                                      
+674     Fascinating             50       50        8        regen-mana (31-60)                                         jewl                                      
+675     Colorful                20       15        8        dmg-fire (20-30) dmg-cold (20-30) dmg-ltng (20-30)         jewl                                      
+676     Colorful                35       30        8        dmg-fire (40-60) dmg-cold (40-60) dmg-ltng (40-60)         jewl                                      
+677     Colorful                50       45        8        dmg-fire (80-120) dmg-cold (80-120) dmg-ltng (80-120)      jewl                                      
+678     Brisk             1     18       18        8        move1 (5-10)                                               jewl                                      
+679     Swift             1     38       25        8        move1 (11-15)                                              jewl                                      
+680     Strengthening     1     23       20        8        str (10-18)                                                jewl                                      
+681     Empowering        1     26       24        8        str (19-25)                                                jewl                                      
+682     Titan's                 45       38        8        str (26-30)                                                jewl                                      
+683     Bright            1     16       12        8        hp% (5-8)                                                  jewl                                      
+684     Solar             1     27       23        8        hp% (9-12)                                                 jewl                                      
+685     Vivid                   38       34        8        hp% (13-16)                                                jewl                                      
+686     Omniscient        1     16       12        8        mana% (5-8)                                                jewl                                      
+687     Sage              1     27       23        8        mana% (9-12)                                               jewl                                      
+688     Shrewd                  38       34        8        mana% (13-16)                                              jewl                                      
+689     Crystal           1     21       20        8        red-dmg (4-12)                                             jewl                                      
+690     Brilliant         1     21       20        8        red-mag (4-12)                                             jewl                                      
+691     Vile              1     6        5         2        1 dmg%/lvl                                                 jewl                                      
+692     Vile              1     12       10        2        2 dmg%/lvl                                                 jewl                                      
+693     Vile              1     24       20        2        3 dmg%/lvl                                                 jewl                                      
+694     Vile              1     48       40        1        4 dmg%/lvl                                                 jewl                                      
+695     Vile                    72       60        1        5 dmg%/lvl                                                 jewl                                      
+696     Looter's          1     6        5         2        1 mag%/lvl                                                 jewl                                      
+697     Looter's          1     18       15        2        2 mag%/lvl                                                 jewl                                      
+698     Looter's          1     36       30        2        3 mag%/lvl                                                 jewl                                      
+699     Looter's                54       45        2        4 mag%/lvl                                                 jewl                                      
+700     Looter's                72       60        2        5 mag%/lvl                                                 jewl                                      
+701     Knowledgeable           85       67        12       allskills (1-1) jewelflag (8-8)                            jewl                                      

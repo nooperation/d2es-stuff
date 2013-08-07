@@ -1,0 +1,53 @@
+23      Cruel                 dmg% (201-300)                                
+24      Bloodlust             dmg% (400-400) howl (128-128) regen (-8--8)   
+48      Master's              att (151-250) dmg% (101-150)                  
+49      Grandmaster's         att (251-300) dmg% (151-200)                                        
+184     Valkyrie's            +3 ama skills                                 
+193     Arch-Angel's          +3 sor skills                                 
+202     Necromancer's         +3 nec skills                                 
+211     Priest's              +3 pal skills                                 
+220     Berserker's           +3 bar skills                                 
+229     Hierophant's          +3 dru skills                                 
+238     Witch-hunter's        +3 ass skills                                                               
+336     Shouting              20 dmg%/lvl                                   
+337     Screaming             24 dmg%/lvl                                   
+347     Joker's               16 dmg/lvl 8 att/lvl                          
+348     Trump                 20 dmg/lvl 10 att/lvl                         
+452     Shimmering            res-all (7-9)                                 
+453     Shimmering            res-all (10-12)                               
+454     Shimmering            res-all (13-15)                               
+455     Shimmering            res-all (5-7)                                 
+456     Shimmering            res-all (8-10)                                
+457     Shimmering            res-all (3-5)                                 
+506     Fletcher's            ama skilltab ( 1-1)                           
+507     Acrobat's             ama skilltab ( 1-1)                           
+508     Harpoonist's          ama skilltab ( 1-1)                           
+509     Burning               sor skilltab ( 1-1)                           
+510     Sparking              sor skilltab ( 1-1)                           
+511     Chilling              sor skilltab ( 1-1)                           
+512     Hexing                nec skilltab ( 1-1)                           
+513     Fungal                nec skilltab ( 1-1)                           
+514     Graverobber's         nec skilltab ( 1-1)                           
+515     Lion Branded          pal skilltab ( 1-1)                           
+516     Captain's             pal skilltab ( 1-1)                           
+517     Preserver's           pal skilltab ( 1-1)                           
+518     Expert's              bar skilltab ( 1-1)                           
+519     Fanatic               bar skilltab ( 1-1)                           
+520     Sounding              bar skilltab ( 1-1)                           
+521     Trainer's             dru skilltab ( 1-1)                           
+522     Spiritual             dru skilltab ( 1-1)                           
+523     Nature's              dru skilltab ( 1-1)                           
+524     Entrapping            ass skilltab ( 1-1)                           
+525     Mentalist's           ass skilltab ( 1-1)                           
+526     Shogukusha's          ass skilltab ( 1-1)                           
+632     Vermillion              58       45        10       dmg-max (16-25)                                            jewl                                      
+636     Ruby                  dmg% (41-60)                                  
+662     Maiden's              ama (1-1) jewelflag (1-1)                     
+663     Monk's                pal (1-1) jewelflag (2-2)                     
+664     Summoner's            nec (1-1) jewelflag (3-3)                     
+665     Angel's               sor (1-1) jewelflag (4-4)                     
+666     Slayer's              bar (1-1) jewelflag (5-5)                     
+667     Shaman's              dru (1-1) jewelflag (6-6)                     
+668     Magekiller's          ass (1-1) jewelflag (7-7)                     
+672     Excellent             att% (20-20) dmg% (31-45)                     
+701     Knowledgeable         allskills (1-1) jewelflag (8-8)               
