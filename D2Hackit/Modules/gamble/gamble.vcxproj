@@ -78,7 +78,8 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\</Command>
+      <Command>xcopy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\
+xcopy /Y $(TargetPath) "C:\Program Files (x86)\Diablo II\plugin\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
