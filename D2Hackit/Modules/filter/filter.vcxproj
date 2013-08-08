@@ -79,7 +79,7 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y Resources $(SolutionDir)\..\$(Configuration)\
-copy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\</Command>
+xcopy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -104,7 +104,7 @@ copy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\</Command>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y Resources $(SolutionDir)\..\$(Configuration)\
-copy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\</Command>
+xcopy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
