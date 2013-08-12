@@ -9,6 +9,28 @@ namespace CharacterEditor
 {
 	public class Item : INotifyPropertyChanged
 	{
+		public enum ItemAction
+		{
+			NewGround		= 0x00,
+			Pickup			= 0x01,
+			Drop			= 0x02,
+			OldGround		= 0x03,
+			ToStorage		= 0x04,
+			FromStorage		= 0x05,
+			ToEquip			= 0x06,
+			FromEquip		= 0x08,
+			SwitchEquip		= 0x09,
+			ToStore			= 0x0B,
+			FromStore		= 0x0C,
+			SwitchStorage	= 0x0d,
+			ToBelt			= 0x0E,
+			FromBelt		= 0x0F,
+			SwitchBelt		= 0x10,
+			ToCursor		= 0x12,
+			ShiftBelt		= 0x15,
+		}
+
+
 		public enum ItemQuality
 		{
 			Unknown, // Shouldn't happen
@@ -179,6 +201,11 @@ namespace CharacterEditor
 			get { return (byte)GetDataValue("MessageID"); }
 			set { SetData("MessageID", value); }
 		}
+		public ItemAction Action
+		{
+			get { return (ItemAction)GetDataValue("Action"); }
+			set { SetData("Action", value); }
+		}
 		public byte Unknown0b
 		{
 			get { return (byte)GetDataValue("Unknown0b"); }
@@ -193,6 +220,17 @@ namespace CharacterEditor
 		{
 			get { return GetDataValue("ItemID"); }
 			set { SetData("ItemID", value); }
+		}
+
+		public ItemAction OwnerAction
+		{
+			get { return (ItemAction)GetDataValue("OwnerAction"); }
+			set { SetData("OwnerAction", value); }
+		}
+		public uint OwnerID
+		{
+			get { return GetDataValue("OwnerID"); }
+			set { SetData("OwnerID", value); }
 		}
 
 		// All items must contain these properties, if they don't it's an invalid item and should be caught
@@ -668,6 +706,12 @@ namespace CharacterEditor
 				ReadData("ItemID", 32);
 			}
 
+			if (PacketType == 0x9d)
+			{
+				ReadData("OwnerAction", 8);
+				ReadData("OwnerID", 32);
+			}
+
 			ReadData("IsEquipped", 1);
 			ReadData("Unknown0", 2);
 			ReadData("IsInSocket", 1);
@@ -694,10 +738,19 @@ namespace CharacterEditor
 			ReadData("IsRuneword", 1);
 			ReadData("Unknown7", 15);
 			ReadData("Location", 3);
-			ReadData("PositionOnBody", 4);
-			ReadData("PositionX", 4);
-			ReadData("PositionY", 4);
-			ReadData("StorageId", 3);
+
+			if (Location != ItemLocation.Ground)
+			{
+				ReadData("PositionOnBody", 4);
+				ReadData("PositionX", 4);
+				ReadData("PositionY", 4);
+				ReadData("StorageId", 3);
+			}
+			else
+			{
+				ReadData("PositionX", 16);
+				ReadData("PositionY", 16);
+			}
 		}
 
 		/// <summary>
@@ -1372,6 +1425,10 @@ namespace CharacterEditor
 			dataIndicies.Add("Unknown0b", index++);
 			dataIndicies.Add("PacketType", index++);
 			dataIndicies.Add("ItemID", index++);
+
+			// 0x9D packet data
+			dataIndicies.Add("OwnerAction", index++);
+			dataIndicies.Add("OwnerID", index++);
 
 			// Simple data
 			dataIndicies.Add("IsEquipped", index++);

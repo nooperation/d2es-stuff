@@ -135,14 +135,15 @@ namespace IdleClient
 
 					// Give the client some time to send the leave game packet to the server before
 					// disconnecting. After server get the message it should close our connection so
-					// it shouldn't take a full 1000ms
-					gameServerThread.Join(1000);
+					// it shouldn't take a full 2500ms
+					gameServerThread.Join(2500);
 				}
 
 				gameServer.Disconnect();
 
-				if (!gameServerThread.Join(1000))
+				if (!gameServerThread.Join(2500))
 				{
+					Log("!! Failed to join client thread after 2500ms, killing it!");
 					gameServerThread.Abort();
 				}
 

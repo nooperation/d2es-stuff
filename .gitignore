@@ -1,5 +1,8 @@
 Debug
 Release
+Bin
+Obj
+Output
 *.user
 *.sdf
 *.suo

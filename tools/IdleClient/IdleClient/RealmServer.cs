@@ -361,12 +361,17 @@ namespace IdleClient.Realm
 
 			while (true)
 			{
-				if (buffer.Length == 0 || needsMoreData)
+				if (buffer.Length == 0)
 				{
 					while (buffer.Length == 0)
 					{
 						Util.Receive(client.GetStream(), ref buffer);
 					}
+					needsMoreData = false;
+				}
+				if (needsMoreData)
+				{
+					Util.Receive(client.GetStream(), ref buffer);
 					needsMoreData = false;
 				}
 

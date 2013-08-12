@@ -68,64 +68,80 @@ namespace CharacterEditor
 
 		}
 
+		private bool ToBoolean(string data)
+		{
+			if (string.IsNullOrWhiteSpace(data))
+				return false;
+
+			return data.Trim() == "1";
+		}
+
+		private int ToInt(string data)
+		{
+			if (string.IsNullOrWhiteSpace(data))
+				return 0;
+
+			return int.Parse(data);
+		}
+
 		public ItemStatCost(string[] data)
 		{
 			int i = 0;
 
 			// TODO: Horrible cut+paste+replace mess
-			Stat = (string)data[i++];
-			ID = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			SendOther = (bool)StringUtils.ConvertFromString(data[i++], typeof(bool));
-			Signed = (bool)StringUtils.ConvertFromString(data[i++], typeof(bool));
-			SendBits = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			SendParamBits = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			UpdateAnimRate = (bool)StringUtils.ConvertFromString(data[i++], typeof(bool));
-			Saved = (bool)StringUtils.ConvertFromString(data[i++], typeof(bool));
-			CSvSigned = (bool)StringUtils.ConvertFromString(data[i++], typeof(bool));
-			CSvBits = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			CSvParam = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			FCallback = (bool)StringUtils.ConvertFromString(data[i++], typeof(bool));
-			FMin = (bool)StringUtils.ConvertFromString(data[i++], typeof(bool));
-			MinAccr = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Encode = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Add = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Multiply = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Divide = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			ValShift = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			OldSaveBits = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			OldSaveAdd = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			SaveBits = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			SaveAdd = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			SaveParamBits = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Keepzero = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Op = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			OpParam = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			OpBase = (string)data[i++];
-			OpStat1 = (string)data[i++];
-			OpStat2 = (string)data[i++];
-			OpStat3 = (string)data[i++];
-			Direct = (bool)StringUtils.ConvertFromString(data[i++], typeof(bool));
-			Maxstat = (string)data[i++];
-			Itemspecific = (bool)StringUtils.ConvertFromString(data[i++], typeof(bool));
-			Damagerelated = (bool)StringUtils.ConvertFromString(data[i++], typeof(bool));
-			Itemevent1 = (string)data[i++];
-			Itemeventfunc1 = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Itemevent2 = (string)data[i++];
-			Itemeventfunc2 = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Descpriority = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Descfunc = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Descval = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Descstrpos = (string)data[i++];
-			Descstrneg = (string)data[i++];
-			Descstr2 = (string)data[i++];
-			Dgrp = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Dgrpfunc = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Dgrpval = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Dgrpstrpos = (string)data[i++];
-			Dgrpstrneg = (string)data[i++];
-			Dgrpstr2 = (string)data[i++];
-			Stuff = (int)StringUtils.ConvertFromString(data[i++], typeof(int));
-			Eol = (bool)StringUtils.ConvertFromString(data[i++], typeof(bool));
+			Stat = data[i++];
+			ID = ToInt(data[i++]);
+			SendOther = ToBoolean(data[i++]);
+			Signed = ToBoolean(data[i++]);
+			SendBits = ToInt(data[i++]);
+			SendParamBits = ToInt(data[i++]);
+			UpdateAnimRate = ToBoolean(data[i++]);
+			Saved = ToBoolean(data[i++]);
+			CSvSigned = ToBoolean(data[i++]);
+			CSvBits = ToInt(data[i++]);
+			CSvParam = ToInt(data[i++]);
+			FCallback = ToBoolean(data[i++]);
+			FMin = ToBoolean(data[i++]);
+			MinAccr = ToInt(data[i++]);
+			Encode = ToInt(data[i++]);
+			Add = ToInt(data[i++]);
+			Multiply = ToInt(data[i++]);
+			Divide = ToInt(data[i++]);
+			ValShift = ToInt(data[i++]);
+			OldSaveBits = ToInt(data[i++]);
+			OldSaveAdd = ToInt(data[i++]);
+			SaveBits = ToInt(data[i++]);
+			SaveAdd = ToInt(data[i++]);
+			SaveParamBits = ToInt(data[i++]);
+			Keepzero = ToInt(data[i++]);
+			Op = ToInt(data[i++]);
+			OpParam = ToInt(data[i++]);
+			OpBase = data[i++];
+			OpStat1 = data[i++];
+			OpStat2 = data[i++];
+			OpStat3 = data[i++];
+			Direct = ToBoolean(data[i++]);
+			Maxstat = data[i++];
+			Itemspecific = ToBoolean(data[i++]);
+			Damagerelated = ToBoolean(data[i++]);
+			Itemevent1 = data[i++];
+			Itemeventfunc1 = ToInt(data[i++]);
+			Itemevent2 = data[i++];
+			Itemeventfunc2 = ToInt(data[i++]);
+			Descpriority = ToInt(data[i++]);
+			Descfunc = ToInt(data[i++]);
+			Descval = ToInt(data[i++]);
+			Descstrpos = data[i++];
+			Descstrneg = data[i++];
+			Descstr2 = data[i++];
+			Dgrp = ToInt(data[i++]);
+			Dgrpfunc = ToInt(data[i++]);
+			Dgrpval = ToInt(data[i++]);
+			Dgrpstrpos = data[i++];
+			Dgrpstrneg = data[i++];
+			Dgrpstr2 = data[i++];
+			Stuff = ToInt(data[i++]);
+			Eol = ToBoolean(data[i++]);
 		}
 
 		public static List<ItemStatCost> Read(StreamReader stream)

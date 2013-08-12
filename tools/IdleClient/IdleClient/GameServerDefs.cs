@@ -325,7 +325,7 @@ namespace IdleClient.Game
 
 		public WorldItemEventIn(GameServerPacket packet)
 		{
-			//item = new Item(packet.GetBytes());
+			item = new Item(packet.GetBytes());
 		}
 
 		public override string ToString()

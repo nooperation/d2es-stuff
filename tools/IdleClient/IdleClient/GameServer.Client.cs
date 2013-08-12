@@ -26,7 +26,14 @@ namespace IdleClient.Game
 					OnInformationMessage(packet);
 					break;
 				case GameServerInPacketType.WorldItemAction:
-					OnWorldItemAction(new WorldItemEventIn(packet));
+					try
+					{
+						OnWorldItemAction(new WorldItemEventIn(packet));
+					}
+					catch (Exception ex)
+					{
+						LogError("Failed to parse item: " + Util.GetPacketDump(packet.Data, true));
+					}
 					break;
 				default:
 					break;
@@ -39,6 +46,16 @@ namespace IdleClient.Game
 		/// <param name="packet">The packet.</param>
 		private void OnWorldItemAction(WorldItemEventIn packet)
 		{
+			//StringBuilder sb = new StringBuilder();
+			//
+			//sb.AppendLine("Item: " + packet.item);
+			//foreach (var item in packet.item.Properties)
+			//{
+			//	sb.AppendLine("  " + item);
+			//}
+			//sb.AppendLine("  " );
+			//LogDebug(sb);
+
 			//if (packet.item.Location == Item.ItemLocation.Stored && packet.item.StorageId == Item.StorageType.Inventory)
 			//{
 			//	items.Add(packet.item);

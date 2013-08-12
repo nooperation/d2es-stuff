@@ -478,13 +478,13 @@ namespace IdleClient
 		void Output(string message)
 		{
 			// TODO: Test
-			lock (outputLock)
+			if (OnOutput != null)
 			{
-				if (OnOutput != null)
-				{
-					OnOutput.BeginInvoke(message, null, null);
-				}
-				else
+				OnOutput.BeginInvoke(message, null, null);
+			}
+			else
+			{
+				lock (outputLock)
 				{
 					Console.WriteLine(message);
 				}

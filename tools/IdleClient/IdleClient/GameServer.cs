@@ -232,12 +232,17 @@ namespace IdleClient.Game
 
 			while (true)
 			{
-				if (buffer.Length == 0 || needsMoreData)
+				if (buffer.Length == 0)
 				{
 					while (buffer.Length == 0)
 					{
 						Util.Receive(ns, ref buffer);
 					}
+					needsMoreData = false;
+				}
+				if (needsMoreData)
+				{
+					Util.Receive(ns, ref buffer);
 					needsMoreData = false;
 				}
 

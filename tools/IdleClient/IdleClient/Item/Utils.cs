@@ -12,43 +12,6 @@ using System.Windows;
 // Utils for the silverlight app
 namespace CharacterEditor
 {
-	public class StringUtils
-	{
-		/// <summary>
-		/// Convert a string value into specified type. If string is null or empty, 
-		/// default value of type is returned (null for non-value types)
-		/// </summary>
-		/// <param name="value">String to parse for value</param>
-		/// <param name="t">Type of value</param>
-		/// <returns>Value of specified string for a given type</returns>
-		public static object ConvertFromString(string value, Type t)
-		{
-			if (value.Length == 0)
-			{
-				if (t.IsValueType)
-				{
-					return Activator.CreateInstance(t);
-				}
-				else
-				{
-					if (t == typeof(string))
-					{
-						return "";
-					}
-
-					return null;
-				}
-			}
-
-			if (t == typeof(bool) && value.Length == 1)
-			{
-				return value == "1";
-			}
-
-			return Convert.ChangeType(value, t, null);
-		}
-	}
-
 	public class ResourceUtils
 	{
 		public static Stream OpenResource(string assemblyName, string resourcePath)
