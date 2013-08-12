@@ -26,14 +26,10 @@ namespace IdleClient.Game
 					OnInformationMessage(packet);
 					break;
 				case GameServerInPacketType.WorldItemAction:
-					try
-					{
-						OnWorldItemAction(new WorldItemEventIn(packet));
-					}
-					catch (Exception ex)
-					{
-						LogError("Failed to parse item: " + Util.GetPacketDump(packet.Data, true));
-					}
+					OnWorldItemAction(packet);
+					break;
+				case GameServerInPacketType.PlayerInGame:
+					OnPlayerInGame(packet);
 					break;
 				default:
 					break;
@@ -41,24 +37,56 @@ namespace IdleClient.Game
 		}
 
 		/// <summary>
+		/// Handles inviting all players already in a game
+		/// </summary>
+		/// <param name="packet">The packet.</param>
+		private void OnPlayerInGame(GameServerPacket packet)
+		{
+			PlayerInGameIn fromServer = new PlayerInGameIn(packet);
+
+			if (fromServer.IsPlayerInParty)
+			{
+				return;
+			}
+
+			if (String.Compare(characterName, fromServer.PlayerName, System.StringComparison.OrdinalIgnoreCase) != 0)
+			{
+				// invite player...
+				Log(string.Format("Inviting player: {0}", fromServer.PlayerName));
+				SendPacket(new PartyRequestOut(PartyRequestOut.RequestType.Invite, fromServer.PlayerID));
+			}
+		}
+
+		/// <summary>
 		/// Handles WorldItemAction (0x9c) packets. Keeps track of items in player's main inventory.
 		/// </summary>
 		/// <param name="packet">The packet.</param>
-		private void OnWorldItemAction(WorldItemEventIn packet)
+		private void OnWorldItemAction(GameServerPacket packet)
 		{
+			WorldItemEventIn fromServer;
+
+			try
+			{
+				fromServer = new WorldItemEventIn(packet);
+			}
+			catch (Exception)
+			{
+				LogError("Failed to parse item: " + Util.GetPacketDump(packet.Data, true));
+			}
+
 			//StringBuilder sb = new StringBuilder();
 			//
-			//sb.AppendLine("Item: " + packet.item);
-			//foreach (var item in packet.item.Properties)
+			//sb.AppendLine("Item: " + fromServer.item);
+			//foreach (var item in fromServer.item.Properties)
 			//{
 			//	sb.AppendLine("  " + item);
 			//}
 			//sb.AppendLine("  " );
 			//LogDebug(sb);
 
-			//if (packet.item.Location == Item.ItemLocation.Stored && packet.item.StorageId == Item.StorageType.Inventory)
+			//if (fromServer.item.Location == Item.ItemLocation.Stored && fromServer.item.StorageId == Item.StorageType.Inventory)
 			//{
-			//	items.Add(packet.item);
+			//	items.Add(fromServer.item);
 			//}
 		}
 
@@ -95,6 +123,13 @@ namespace IdleClient.Game
 						Log(String.Format("{0}/{1} players total", PlayerNames.Count, MaxPlayers));
 
 						FireOnPlayerCountEvent(new PlayerCountArgs(PlayerNames.Count, MaxPlayers, fromServer.First, true, isBot));
+					}
+					break;
+				case InformationMessageIn.InformationEvents.PlayerRelation:
+					// Accept any party requests
+					if (fromServer.Action == 0x02 && fromServer.EntityType == 0x05)
+					{
+						SendPacket(new PartyRequestOut(PartyRequestOut.RequestType.Accept, fromServer.EntityID));
 					}
 					break;
 				default:
@@ -179,6 +214,5 @@ namespace IdleClient.Game
 
 			SendPacket(toServer);
 		}
-
 	}
 }

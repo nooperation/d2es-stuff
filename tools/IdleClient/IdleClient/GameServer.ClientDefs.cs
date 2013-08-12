@@ -258,4 +258,43 @@ namespace IdleClient.Game
 			get { return (byte)GameServerOutPacketType.GameLogonRequest; }
 		}
 	}
+
+
+	/// <summary>
+	/// Requests to enter the game we just joined.
+	/// </summary>
+	struct PartyRequestOut : IOutPacket
+	{
+		public enum RequestType
+		{
+			Invite = 0x06,
+			Cancel,
+			Accept
+		}
+
+		public uint PlayerID;
+		public RequestType Request;
+
+		public PartyRequestOut(RequestType request, uint playerID)
+		{
+			Request = request;
+			PlayerID = playerID;
+		}
+
+		public byte[] GetBytes()
+		{
+			MemoryStream ms = new MemoryStream();
+			BinaryWriter bw = new BinaryWriter(ms);
+
+			bw.Write((byte)Request);
+			bw.Write(PlayerID);
+
+			return ms.ToArray();
+		}
+
+		public byte Id
+		{
+			get { return (byte)GameServerOutPacketType.PartyRequest; }
+		}
+	}
 }

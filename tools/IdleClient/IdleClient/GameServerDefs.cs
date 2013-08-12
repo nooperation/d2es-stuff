@@ -334,6 +334,39 @@ namespace IdleClient.Game
 		}
 	}
 
+	class PlayerInGameIn
+	{
+		public uint PlayerID;
+		public byte   PlayerClass;
+		public string PlayerName;
+		public ushort PlayerLevel;
+		public ushort PlayerPartyID;
+
+		public bool IsPlayerInParty
+		{
+			get
+			{
+				return PlayerPartyID != ushort.MaxValue;
+			}
+		}
+
+		public PlayerInGameIn(GameServerPacket packet)
+		{
+			BinaryReader br = new BinaryReader(new MemoryStream(packet.Data));
+			ushort messageLength = br.ReadUInt16();
+			PlayerID = br.ReadUInt32();
+			PlayerClass = br.ReadByte();
+			PlayerName = Util.ReadSpecialString(br);
+			br.ReadBytes(15 - PlayerName.Length);
+			PlayerLevel = br.ReadUInt16();
+			PlayerPartyID = br.ReadUInt16();
+		}
+
+		public override string ToString()
+		{
+			return "PlayerInGameIn";
+		}
+	}
 
 	/// <summary>
 	/// Sent as an update for various events such as players joining/leaving/being killed
