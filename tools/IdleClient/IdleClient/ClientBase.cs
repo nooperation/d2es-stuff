@@ -48,6 +48,9 @@ namespace IdleClient
 		/// <summary> The server port </summary>
 		protected int port;
 
+		/// <summary>In-game player id for this client</summary>
+		protected uint clientPlayerId;
+
 		/// <summary>
 		/// Creates a new client.
 		/// </summary>

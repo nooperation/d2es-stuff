@@ -35,8 +35,14 @@ namespace IdleClient.Game
 		/// <summary> Thread to continously send ping to server so server doesn't drop us </summary>
 		private Thread pingThread;
 
+		// TODO: Move to player class
 		private Timer AntiIdleTimer;
 		private uint AntiIdleCounter;
+		private int CurrentAct;
+		private ushort PositionX;
+		private ushort PositionY;
+		bool AlreadyDispersed = false;
+
 
 		/// <summary> Arguments needed to connect to the game server </summary>
 		private Realm.GameServerArgs gameServerArgs;

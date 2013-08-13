@@ -297,4 +297,35 @@ namespace IdleClient.Game
 			get { return (byte)GameServerOutPacketType.PartyRequest; }
 		}
 	}
+
+	/// <summary>
+	/// Runs to specified coordinates
+	/// </summary>
+	struct RunToLocationOut : IOutPacket
+	{
+		public ushort X;
+		public ushort Y;
+
+		public RunToLocationOut(ushort x, ushort y)
+		{
+			X = x;
+			Y = y;
+		}
+
+		public byte[] GetBytes()
+		{
+			MemoryStream ms = new MemoryStream();
+			BinaryWriter bw = new BinaryWriter(ms);
+
+			bw.Write(X);
+			bw.Write(Y);
+
+			return ms.ToArray();
+		}
+
+		public byte Id
+		{
+			get { return (byte)GameServerOutPacketType.RunToLocation; }
+		}
+	}
 }

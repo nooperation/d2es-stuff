@@ -31,9 +31,96 @@ namespace IdleClient.Game
 				case GameServerInPacketType.PlayerInGame:
 					OnPlayerInGame(packet);
 					break;
+				case GameServerInPacketType.LoadAct:
+					OnLoadAct(packet);
+					break;
+				case GameServerInPacketType.AssignPlayer:
+					OnAssignPlayer(packet);
+					break;
+				case GameServerInPacketType.PlayerMove:
+					OnPlayerMove(packet);
+					break;
+				case GameServerInPacketType.PlayerReassign:
+					OnPlayerReassign(packet);
+					break;
 				default:
 					break;
 			}
+		}
+
+		private void OnPlayerReassign(GameServerPacket packet)
+		{
+			PlayerReassignIn fromServer = new PlayerReassignIn(packet);
+			if (fromServer.ID != clientPlayerId)
+			{
+				Log("Reassign from other client");
+				return;
+			}
+
+			PositionX = fromServer.X;
+			PositionY = fromServer.Y;
+			Log(string.Format("Reassigned player to {0}, {1}", PositionX, PositionY));
+
+			if (AlreadyDispersed)
+				return;
+
+			AlreadyDispersed = true;
+
+			ushort moveToX = PositionX;
+			ushort moveToY = PositionY;
+
+			switch (CurrentAct)
+			{
+				case 1:
+					moveToY -= 20;
+					break;
+				case 2:
+					moveToY += 20;
+					break;
+				case 3:
+					moveToX += 20;
+					moveToY += 20;
+					break;
+				case 4:
+					moveToX -= 40;
+					moveToY += 20;
+					break;
+				case 5:
+					moveToX += 20;
+					break;
+			}
+
+			SendPacket(new RunToLocationOut(moveToX, moveToY));
+
+		}
+
+		private void OnPlayerMove(GameServerPacket packet)
+		{
+			PlayerMoveIn fromServer = new PlayerMoveIn(packet);
+		}
+
+		private void OnAssignPlayer(GameServerPacket packet)
+		{
+			AssignPlayerIn fromServer = new AssignPlayerIn(packet);
+
+			if (fromServer.X == 0 && fromServer.Y == 0 && String.Compare(fromServer.Name, characterName, StringComparison.OrdinalIgnoreCase) == 0)
+			{
+				// This bot
+				clientPlayerId = fromServer.ID;
+			}
+			else
+			{
+				// Other players
+			}
+		}
+
+		private void OnLoadAct(GameServerPacket packet)
+		{
+			LoadActIn fromServer = new LoadActIn(packet);
+
+			CurrentAct = fromServer.Act + 1;
+
+			Log("Entering act " + CurrentAct);
 		}
 
 		/// <summary>
@@ -157,14 +244,15 @@ namespace IdleClient.Game
 
 			if (fromServer.ChatType == GameMessageIn.ChatTypes.ChatMessage)
 			{
-				if (fromServer.CharacterName.ToLower() == settings.MasterName.ToLower())
+				if (String.CompareOrdinal(fromServer.CharacterName, settings.MasterName) == 0)
 				{
-					if (fromServer.Message == "#exit")
+					switch (fromServer.Message.Trim().ToLower())
 					{
-						Say("Bye");
-						FireOnShutdownEvent();
-						LeaveGame();
-						return;
+						case "#exit":
+							Say("Bye");
+							FireOnShutdownEvent();
+							LeaveGame();
+							return;
 					}
 				}
 			}

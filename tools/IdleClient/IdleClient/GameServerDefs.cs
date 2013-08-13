@@ -334,6 +334,121 @@ namespace IdleClient.Game
 		}
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	class LoadActIn
+	{
+		public byte Act;
+		public uint Seed1;
+		public ushort AreaId;
+		public uint Seed2;
+
+		public LoadActIn(GameServerPacket packet)
+		{
+			BinaryReader br = new BinaryReader(new MemoryStream(packet.Data));
+			Act = br.ReadByte();
+			Seed1 = br.ReadUInt32();
+			AreaId = br.ReadUInt16();
+			Seed2 = br.ReadUInt32();
+		}
+
+		public override string ToString()
+		{
+			return "LoadActIn";
+		}
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	class AssignPlayerIn
+	{
+		public uint ID;
+		public byte Class;
+		public string Name;
+		public ushort X;
+		public ushort Y;
+
+		public AssignPlayerIn(GameServerPacket packet)
+		{
+			BinaryReader br = new BinaryReader(new MemoryStream(packet.Data));
+			ID = br.ReadUInt32();
+			Class = br.ReadByte();
+			Name = Util.ReadSpecialString(br);
+			br.ReadBytes(15 - Name.Length);
+			X = br.ReadUInt16();
+			Y = br.ReadUInt16();
+		}
+
+		public override string ToString()
+		{
+			return "AssignPlayerIn";
+		}
+	}
+
+	/// <summary>
+	/// Initially sent to client to let it know it's location, also sent for other players(?)
+	/// </summary>
+	class PlayerReassignIn
+	{
+		public byte EntityType;
+		public uint ID;
+		public ushort X;
+		public ushort Y;
+		public byte UnknownFlag;
+
+		public PlayerReassignIn(GameServerPacket packet)
+		{
+			BinaryReader br = new BinaryReader(new MemoryStream(packet.Data));
+			EntityType = br.ReadByte();
+			ID = br.ReadUInt32();
+			X = br.ReadUInt16();
+			Y = br.ReadUInt16();
+			UnknownFlag = br.ReadByte();
+		}
+
+		public override string ToString()
+		{
+			return "PlayerReassignIn";
+		}
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	class PlayerMoveIn
+	{
+		private byte Type;
+		public uint ID;
+		public byte MovementType;
+		public ushort DestX;
+		public ushort DestY;
+		public byte Unknown;
+		public ushort SourceX;
+		public ushort SourceY;
+
+		public PlayerMoveIn(GameServerPacket packet)
+		{
+			BinaryReader br = new BinaryReader(new MemoryStream(packet.Data));
+			ID = br.ReadUInt32();
+			MovementType = br.ReadByte();
+			DestX = br.ReadUInt16();
+			DestY = br.ReadUInt16();
+			Unknown = br.ReadByte();
+			SourceX = br.ReadUInt16();
+			SourceY = br.ReadUInt16();
+		}
+
+		public override string ToString()
+		{
+			return "PlayerMoveIn";
+		}
+	}
+
+	/// <summary>
+	/// Recieved for each player that is already in the game when joining.
+	/// </summary>
 	class PlayerInGameIn
 	{
 		public uint PlayerID;
