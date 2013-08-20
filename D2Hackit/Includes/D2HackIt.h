@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <tlhelp32.h>
 #include "LinkedList\LinkedList.h"
+#include <map>
 
 #ifdef __cplusplus
 extern "C" {            /* Assume C declarations for C++ */
@@ -285,6 +286,10 @@ BOOL EXPORT GetItemCode(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars);
 BOOL EXPORT GetItemCodeEx(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars, int maxRetryCount, int delayBeteenRetries);
 
 // ++ B
+int EXPORT D2GetCurrentRoomNum();
+BOOL EXPORT D2GetRoomCoords(int roomNum, LPMAPPOS roomCoords);
+DWORD EXPORT D2GetAllRoomCoords(ROOMPOS *allRoomCoords, DWORD capacity);
+
 int EXPORT GetItemQuality(DWORD dwItemID);
 BOOL EXPORT LeftClickHere();
 BOOL EXPORT RightClickHere();

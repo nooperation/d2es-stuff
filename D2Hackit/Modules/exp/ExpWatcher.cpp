@@ -31,7 +31,7 @@ void ExpWatcher::CheckForExp()
 		lastExp = currentExp;
 	}
 
-	if(currentExp - lastExp > 0)
+	if(currentExp != lastExp)
 	{
 		expGainsIndex = (expGainsIndex + 1) % (sizeof(expGains) / sizeof(expGains[0]));
 		expGains[expGainsIndex] = currentExp - lastExp;
@@ -44,10 +44,6 @@ void ExpWatcher::CheckForExp()
 		lastExp = currentExp;
 		UpdateExpAverage();
 
-	}
-	else if(currentExp - lastExp < 0)
-	{
-		lastExp = currentExp;
 	}
 }
 

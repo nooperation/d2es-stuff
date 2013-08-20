@@ -38,14 +38,14 @@ class Gambler
 {
 	public:
 		Gambler();
-		bool Init(std::vector<std::string> itemCodes);
+		bool Init(const std::vector<std::string> &itemCodes);
 		void StopGambling();
 		bool StartGambling();
 		void SetAutostockStartDelay(int ticks);
 		void ToggleGambleSell(bool magics, bool sellSet, bool sellRare, bool sellUnique);
 		void ToggleRequestGold(int splitBy);
 		void ToggleAutostock(bool transmuteSet, bool transmuteRare, bool transmuteUnique);
-		void SetNoSellList(std::vector<std::string> noSellList);
+		void SetNoSellList(const std::vector<std::string> &noSellList);
 		
 		void OnItemToStorage(ITEM &gambleItem);
 		void OnNpcSession(int success);

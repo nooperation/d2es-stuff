@@ -35,7 +35,7 @@ class ItemFilter
 		bool OnItemFind(ITEM &item);
 		bool IsFiltered(char *itemCode);
 		bool IsAllowed(char *itemCode);
-		bool LoadItemMap(std::string fileName, stdext::hash_map<std::string, std::string> &itemMap);
+		bool LoadItemMap(const std::string &fileName, stdext::hash_map<std::string, std::string> &itemMap);
 		bool IsValidItem(ITEM &item);
 		bool IsGoodItemOther(ITEM &item);
 		bool IsGoodItemCode(char *itemCode);

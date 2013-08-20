@@ -37,7 +37,7 @@ class AutoExtractor
 		bool IsGoodPrefix(int prefixId);
 		bool IsGoodSuffix(int suffixId);
 		bool IsItemAnExtractor(const ITEM &item);
-		bool ReadAffixFile(std::string configPath, stdext::hash_set<int> &readTo);
+		bool ReadAffixFile(const std::string &configPath, stdext::hash_set<int> &readTo);
 
 		bool useChat;
 		DWORD extractedItemID;

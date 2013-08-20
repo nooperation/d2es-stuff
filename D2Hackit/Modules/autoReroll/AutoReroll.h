@@ -10,8 +10,8 @@
 struct GemCanStuff
 {
 	DWORD GemCanID;
-	bool GemCanMoved;
 	DWORD CanOpenerID;
+	bool GemCanMoved;
 	bool CanOpenerMoved;
 };
 
@@ -56,7 +56,7 @@ class AutoReroll
 		void MoveNextGemToCube();
 		void FinishedEmptyCube();
 
-		bool ReadAffixConfig(std::string configPath, stdext::hash_set<int> &readTo);
+		bool ReadAffixConfig(const std::string &configPath, stdext::hash_set<int> &readTo);
 
 		bool loadedEmptyCube;
 		bool rerollItemNeedsToGoBackToCube;

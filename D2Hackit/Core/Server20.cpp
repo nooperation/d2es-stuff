@@ -20,9 +20,13 @@
 #include "ScrollDraw.h"
 #include "SpellDef.h"
 #include "KeyDef.h"
+#include <map>
 
 BOOL RevealPresetUnits(CArrayEx<PRESETUNIT, const PRESETUNIT&>& aUnits);
 void FindPresetUnitsFromRoom2(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, CArrayEx<PRESETUNIT, const PRESETUNIT&>& aUnits);
+void GetRoomsRecursive(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, std::vector<RoomOther *>& allRooms);
+BOOL GetRooms(std::vector<RoomOther *> &allRooms);
+
 BOOL operator==(const PRESETUNIT& lhs, const PRESETUNIT& rhs)
 {
 	return ::memcmp(&lhs, &rhs, sizeof(PRESETUNIT)) == 0;
@@ -1131,6 +1135,80 @@ BOOL EXPORT GetItemCodeEx(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars, in
 	return TRUE;
 }
 
+
+DWORD EXPORT D2GetAllRoomCoords(ROOMPOS *allRoomCoords, DWORD capacity)
+{
+	std::vector<RoomOther *> rooms;
+
+	if(!GetRooms(rooms))
+	{
+		GamePrintError("Failed to traverse map");
+		return FALSE;
+	}
+
+	if(rooms.size() == 0)
+	{
+		return FALSE;
+	}
+
+	for(int i = 0; i < capacity && i < rooms.size(); ++i)
+	{
+		allRoomCoords[i].roomnum = (WORD)rooms[i]->pPresetType2info->roomNum;
+		allRoomCoords[i].pos.x = (WORD)rooms[i]->xPos;
+		allRoomCoords[i].pos.y = (WORD)rooms[i]->yPos;
+	}
+
+	return rooms.size();
+}
+
+BOOL EXPORT D2GetRoomCoords(int roomNum, LPMAPPOS roomCoords)
+{
+	std::vector<RoomOther *> rooms;
+
+	if(!GetRooms(rooms))
+	{
+		GamePrintError("Failed to traverse map");
+	}
+
+	for(auto iter = rooms.begin(); iter != rooms.end(); ++iter)
+	{
+		if((*iter)->pPresetType2info->roomNum == roomNum)
+		{
+			roomCoords->x = (WORD)(*iter)->xPos;
+			roomCoords->y = (WORD)(*iter)->yPos;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+int EXPORT D2GetCurrentRoomNum()
+{
+	UnitAny *player=D2CLIENT_GetPlayerUnit();
+	if(!player)
+	{
+		GamePrintError("Invalid player");
+		return 0;
+	}
+
+	Room * playerRoom = D2COMMON_GetRoomFromUnit(player);
+	if(!playerRoom)
+	{
+		GamePrintError("Invalid player room");
+		return 0;
+	}
+
+	RoomOther *curRoomOther = playerRoom->ptRoomOther;
+	if(!curRoomOther)
+	{
+		GamePrintError("Invalid Room2");
+		return 0;
+	}
+
+	return curRoomOther->pPresetType2info->roomNum;
+}
+
 BOOL EXPORT GetItemCode(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars)
 {
 	if (lpszBuffer == NULL ||dwMaxChars == 0)
@@ -1152,6 +1230,77 @@ BOOL EXPORT GetItemCode(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars)
 	::strncpy(lpszBuffer, ptxt->szCode, min(dwMaxChars, 3));
 	return strlen(lpszBuffer);
 }
+
+
+
+
+
+BOOL GetRooms(std::vector<RoomOther *> &allRooms)
+{
+	CArrayEx<DWORD, DWORD> aChecked;
+	allRooms.clear();
+
+	UnitAny *player=D2CLIENT_GetPlayerUnit();
+	if(!player)
+	{
+		GamePrintError("Invalid player");
+		return FALSE;
+	}
+
+	Room *curRoom=D2COMMON_GetRoomFromUnit(player);
+	if(!curRoom)
+	{
+		GamePrintError("Invalid Room");
+		return FALSE;
+	}
+	
+	RoomOther *curRoomOther = curRoom->ptRoomOther;
+	if(!curRoomOther)
+	{
+		GamePrintError("Invalid Room2");
+		return FALSE;
+	}
+
+	GetRoomsRecursive(curRoomOther, aChecked, allRooms);
+	return !allRooms.empty();
+}
+
+void GetRoomsRecursive(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, std::vector<RoomOther *>& allRooms)
+{
+	if(ro->ptDrlgLevel->LevelNo!=GetCurrentMapID())
+		return;
+
+	if (aChecked.Find((DWORD)ro) != -1)
+		return;
+
+	BOOL add_room=FALSE;
+	if(!ro->pRoom)
+	{
+		add_room=TRUE;
+		D2COMMON_AddRoomData(D2CLIENT_GetPlayerUnit()->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, D2CLIENT_GetPlayerUnit());
+	}
+
+	aChecked.Add((DWORD)ro);
+	aChecked.Sort();
+	
+	allRooms.push_back(ro);
+
+	RoomOther **n = ro->ptList;
+	for(int i=0;i<ro->nRoomList;i++)
+	{
+		GetRoomsRecursive(n[i], aChecked, allRooms);
+	}
+	if(add_room)
+	{
+		D2COMMON_RemoveRoomData(D2CLIENT_GetPlayerUnit()->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, D2CLIENT_GetPlayerUnit());
+	}
+}
+
+
+
+
+
+
 
 BOOL RevealPresetUnits(CArrayEx<PRESETUNIT, const PRESETUNIT&>& aUnits)
 {

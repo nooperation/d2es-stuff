@@ -693,7 +693,7 @@ bool AutoStocker::FindStockers(const std::vector<ITEM> &itemsInInventory)
 /// </summary>
 /// <param name="configPath">Path of config file.</param>
 /// <returns>true if successful, false if failed.</returns>
-bool AutoStocker::ReadConfig(std::string configPath)
+bool AutoStocker::ReadConfig(const std::string &configPath)
 {
 	std::string readLineBuff;
 	std::string currentSectionName;
@@ -716,6 +716,9 @@ bool AutoStocker::ReadConfig(std::string configPath)
 	while(inFile.good())
 	{
 		std::getline(inFile, readLineBuff);
+		if(readLineBuff.size() == 0)
+			continue;
+
 		if(readLineBuff[0] == '[')
 		{
 			currentSectionName = readLineBuff.substr(1, readLineBuff.size()-2);
@@ -730,7 +733,7 @@ bool AutoStocker::ReadConfig(std::string configPath)
 			}
 			if(i == TRANSMUTE_END)
 			{
-				server->GameStringf("ÿc:AutoStockerÿc0: Invalid section in config -> %s", currentSectionName);
+				server->GameStringf("ÿc:AutoStockerÿc0: Invalid section in config -> %s", currentSectionName.c_str());
 				inFile.close();
 				return false;
 			}
@@ -757,7 +760,7 @@ bool AutoStocker::ReadConfig(std::string configPath)
 /// <param name="configPath">Path of config file.</param>
 /// <param name="readTo">Map to read good affix values into.</param>
 /// <returns>true if successful, false if failed.</returns>
-bool AutoStocker::ReadAffixConfig(std::string configPath, stdext::hash_set<int> &readTo)
+bool AutoStocker::ReadAffixConfig(const std::string &configPath, stdext::hash_set<int> &readTo)
 {
 	std::string readLineBuff;
 	int readNum = 0;

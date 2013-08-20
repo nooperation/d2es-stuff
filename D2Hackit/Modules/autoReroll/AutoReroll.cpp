@@ -121,7 +121,7 @@ bool AutoReroll::Init(bool useChat)
 /// <param name="configPath">Path of config file.</param>
 /// <param name="readTo">Map to read good affix values into.</param>
 /// <returns>true if successful, false if failed.</returns>
-bool AutoReroll::ReadAffixConfig(std::string configPath, stdext::hash_set<int> &readTo)
+bool AutoReroll::ReadAffixConfig(const std::string &configPath, stdext::hash_set<int> &readTo)
 {
 	std::string readLineBuff;
 	int readNum = 0;

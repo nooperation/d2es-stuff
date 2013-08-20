@@ -29,7 +29,7 @@ Gambler::Gambler()
 /// </summary>
 /// <param name="itemCodes">List of item codes we're gambling for</param>
 /// <returns>true on success, false on failure (no gambling npc)</returns>
-bool Gambler::Init(std::vector<std::string> itemCodes)
+bool Gambler::Init(const std::vector<std::string> &itemCodes)
 {
 	DEBUG_TRACE();
 	itemsToGamble.clear();
@@ -361,7 +361,7 @@ void Gambler::ToggleGambleSell(bool sellMagic, bool sellSet, bool sellRare, bool
 ///  that are not unique AND the specific item code.
 /// </summary>
 /// <param name="noSellList">List of items to be kept</param>
-void Gambler::SetNoSellList(std::vector<std::string> noSellList)
+void Gambler::SetNoSellList(const std::vector<std::string> &noSellList)
 {
 	this->noSellList.clear();
 

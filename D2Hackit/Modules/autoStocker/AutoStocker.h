@@ -52,8 +52,8 @@ class AutoStocker
 		
 
 	private:
-		bool ReadConfig(std::string iniPath);
-		bool ReadAffixConfig(std::string configPath, stdext::hash_set<int> &readTo);
+		bool ReadConfig(const std::string &iniPath);
+		bool ReadAffixConfig(const std::string &configPath, stdext::hash_set<int> &readTo);
 
 		void FindItemsToTransmute(const std::vector<ITEM> &itemsInInventory);
 		bool FindStockers(const std::vector<ITEM> &itemsInInventory);

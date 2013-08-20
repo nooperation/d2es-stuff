@@ -9,11 +9,11 @@ ShopBot::ShopBot()
 	currentState = STATE_UNINITIALIZED;
 	
 	memset(&merchantNpc, 0, sizeof(GAMEUNIT));
-	currentTeleport = 1;
+	currentTeleportIndex = 1;
 	merchantName = "";
 }
 
-bool ShopBot::LoadItemMap(std::string fileName, stdext::hash_map<std::string, std::string> &itemMap)
+bool ShopBot::LoadItemMap(const std::string &fileName, stdext::hash_map<std::string, std::string> &itemMap)
 {
 	std::ifstream inFile(fileName.c_str());
 
@@ -54,7 +54,7 @@ bool ShopBot::LoadItemMap(std::string fileName, stdext::hash_map<std::string, st
 	return true;
 }
 
-bool ShopBot::ReadConfig(std::string configPath, stdext::hash_set<int> &readTo)
+bool ShopBot::ReadConfig(const std::string &configPath, stdext::hash_set<int> &readTo)
 {
 	std::string readLineBuff;
 	int readNum = 0;
@@ -84,12 +84,12 @@ bool ShopBot::ReadConfig(std::string configPath, stdext::hash_set<int> &readTo)
 	return true;
 }
 
-bool ShopBot::Start(const std::vector<MAPPOS> &customPath, std::string merchant)
+bool ShopBot::Start(const std::vector<MAPPOS> &customPath, const std::string &merchant)
 {
 	memset(&merchantNpc, 0, sizeof(GAMEUNIT));
 	merchantName = merchant;
 	teleportPath = customPath;
-	currentTeleport = 1;
+	currentTeleportIndex = 1;
 
 	if(!ReadConfig(".\\plugin\\goodPrefix_shopbot.txt", goodPrefix))
 		return false;
@@ -193,7 +193,7 @@ bool ShopBot::WillItemFit(DWORD dwItemId)
 		}
 	}
 
-	return me->FindFirstStorageSpace(STORAGE_INVENTORY, server->GetItemSize(itemCode), NULL);
+	return me->FindFirstStorageSpace(STORAGE_INVENTORY, server->GetItemSize(itemCode), NULL)  == true;
 }
 
 void ShopBot::PurchaseQueuedItems()
@@ -248,7 +248,7 @@ void ShopBot::OnTick()
 		{
 			me->CloseAllUIs();
 
-			currentTeleport++;
+			currentTeleportIndex++;
 			currentState = STATE_NEXTTELEPORT;
 
 			break;
@@ -260,9 +260,7 @@ void ShopBot::OnTick()
 		}
 		case STATE_NEXTTELEPORT:
 		{
-			currentState = STATE_WAITINGFORNEXTSTATE;
-
-			MAPPOS dest = teleportPath[currentTeleport];
+			MAPPOS dest = teleportPath[currentTeleportIndex];
 
 			currentState = STATE_TELEPORTING;
 			me->CastOnMap(D2S_TELEPORT, dest.x, dest.y, TRUE);
@@ -273,7 +271,7 @@ void ShopBot::OnTick()
 		{
 			currentState = STATE_WAITINGFORNEXTSTATE;
 
-			if(currentTeleport == 0)
+			if(currentTeleportIndex == 0)
 			{
 				merchantNpc.dwUnitType = UNIT_TYPE_MONSTER;
 				merchantNpc.dwUnitID = FindMerchant();
@@ -297,18 +295,18 @@ void ShopBot::OnTick()
 			}
 			else
 			{
-				if(currentTeleport+1 >= teleportPath.size())
+				if(currentTeleportIndex+1 >= teleportPath.size())
 				{
 					backToTown = true;
 				}
 
 				if(backToTown)
 				{
-					currentTeleport--;
+					currentTeleportIndex--;
 				}
 				else
 				{
-					currentTeleport++;
+					currentTeleportIndex++;
 				}
 
 				currentState = STATE_NEXTTELEPORT;

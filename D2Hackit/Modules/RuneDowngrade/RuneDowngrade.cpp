@@ -87,7 +87,7 @@ bool RuneDowngrade::CheckCubeForExtractor()
 	return false;
 }
 
-void RuneDowngrade::Start(std::vector<std::string> runeTypesToDowngrade)
+void RuneDowngrade::Start(const std::vector<std::string> &runeTypesToDowngrade)
 {
 	m_indexOfCurrentItemToDowngrade = 0;
 	m_itemTypesToDowngrade = runeTypesToDowngrade;

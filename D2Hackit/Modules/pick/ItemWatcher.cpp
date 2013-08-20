@@ -44,7 +44,7 @@ void ItemWatcher::CheckWatchedItems()
 	{
 		std::list<WatchedItemData> itemsToStopWatching;
 
-		for(std::list<WatchedItemData>::iterator i = watchedItems.begin(); i != watchedItems.end(); i++)
+		for(std::list<WatchedItemData>::iterator i = watchedItems.begin(); i != watchedItems.end(); ++i)
 		{
 			for(std::vector<DWORD>::iterator j = destroyedItemsSinceLastCheck.begin(); j != destroyedItemsSinceLastCheck.end(); ++j)
 			{
@@ -210,7 +210,7 @@ bool ItemWatcher::LoadItems()
 	return true;
 }
 
-bool ItemWatcher::loadItemMap(std::string fileName, stdext::hash_map<std::string, std::string> &itemMap)
+bool ItemWatcher::loadItemMap(const std::string &fileName, stdext::hash_map<std::string, std::string> &itemMap)
 {
 	std::ifstream inFile(fileName.c_str());
 

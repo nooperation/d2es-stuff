@@ -26,7 +26,7 @@ class ShopBot
 {
 	public:
 		ShopBot();
-		bool Start(const std::vector<MAPPOS> &customPath, std::string merchant);
+		bool Start(const std::vector<MAPPOS> &customPath, const std::string &merchant);
 		void OnTick();
 		void OnMapBlink();
 		void OnNpcSession(int success);
@@ -37,8 +37,8 @@ class ShopBot
 		void Stop();
 
 	private:
-		bool ReadConfig(std::string configPath, stdext::hash_set<int> &readTo);
-		bool LoadItemMap(std::string fileName, stdext::hash_map<std::string, std::string> &itemMap);
+		bool ReadConfig(const std::string &configPath, stdext::hash_set<int> &readTo);
+		bool LoadItemMap(const std::string &fileName, stdext::hash_map<std::string, std::string> &itemMap);
 		bool IsItemGood(const ITEM &item);
 		void PurchaseQueuedItems();
 		bool WillItemFit(DWORD dwItemId);
@@ -47,7 +47,7 @@ class ShopBot
 		std::vector<MAPPOS> teleportPath;
 
 		DWORD FindMerchant();
-		int currentTeleport;
+		unsigned int currentTeleportIndex;
 		int minPrefix;
 		int minSuffix;
 		bool backToTown;

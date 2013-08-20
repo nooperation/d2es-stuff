@@ -10,7 +10,7 @@
 #include "Server20.h"
 #include "Constants.h"
 
-#define TP_RANGE		35		// Miximum teleport range
+#define TP_RANGE		30		// Miximum teleport range
 #define RANGE_INVALID	10000  // invalid range flag
 #define DIM				1000 // maximum graph dimension(worst case only)
 
@@ -355,7 +355,7 @@ BYTE CPathFinder::CalculatePathTo(WORD x, WORD y, LPPATH lpBuffer, int nAdjust)
 	if (!Search())
 		return 0;
 
-	GameInfof("Mapsize %d, %d", m_rightBottom.x - m_lefttTop.x, m_rightBottom.y - m_lefttTop.y);
+	//GameInfof("Mapsize %d, %d", m_rightBottom.x - m_lefttTop.x, m_rightBottom.y - m_lefttTop.y);
 
 	m_ptAbsDest.x = x;
 	m_ptAbsDest.y = y;
@@ -363,7 +363,7 @@ BYTE CPathFinder::CalculatePathTo(WORD x, WORD y, LPPATH lpBuffer, int nAdjust)
 	m_ptRelDest = m_ptAbsDest;
 	MapToGraph(m_ptRelDest);
 
-	GameInfof("des %d, %d", m_ptRelDest.x, m_ptRelDest.y);
+	//GameInfof("des %d, %d", m_ptRelDest.x, m_ptRelDest.y);
 
 	// verify destination, see if it's in our map
 	if (!IsValidPos(m_ptRelDest))

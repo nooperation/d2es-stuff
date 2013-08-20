@@ -11,6 +11,7 @@
 
 #include <windows.h>
 #include "Constants.h"
+#include <map>
 
 ////////////////////////////////////////////////////////////////////
 // D2 Game Map Position
@@ -22,7 +23,15 @@ typedef struct tagMapPos
 } MAPPOS, *LPMAPPOS;
 typedef const tagMapPos* LPCMAPPOS;
 
-////////////////////////////////////////////////////////////////////
+typedef struct tagRoomPos
+{
+	DWORD roomnum;
+	MAPPOS pos;
+} ROOMPOS, *LPROOMPOS;
+typedef const tagRoomPos* LPCROOMPOS;
+
+///////////////////////////////////////
+/////////////////////////////
 // Stuff for Screen Text Drawing
 // Added v2.00 by Abin
 ////////////////////////////////////////////////////////////////////
@@ -412,6 +421,12 @@ typedef LPCSTR (__cdecl *fnGetGameName)();
 typedef LPCSTR (__cdecl *fnGetGamePassword)();
 typedef LPCSTR (__cdecl *fnGetGameIP)();
 
+
+typedef int (__cdecl *fnD2GetCurrentRoomNum)();
+typedef BOOL (__cdecl *fnD2GetRoomCoords)(int roomNum, LPMAPPOS roomCoords);
+typedef DWORD (__cdecl *fnD2GetAllRoomCoords)(ROOMPOS *allRoomCoords, DWORD capacity);
+
+
 typedef BOOL (__cdecl *fnEnumPresetUnits)(fnEnumPresetUnitProc lpfnEnumPresetUnitProc, LPARAM lParam); //lparam = 0
 typedef BYTE (__cdecl *fnCalculatePath)(WORD x, WORD y, LPPATH lpBuffer, int nAdjust); // nAdjust = 5
 typedef BOOL (__cdecl *fnGetItemCode)(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars);
@@ -529,6 +544,10 @@ typedef struct functionentrypoints_t
 	fnGetKeyName					GetKeyName;				// 2.00 (Abin)
 
 	// ++ B
+	fnD2GetCurrentRoomNum						D2GetCurrentRoomNum;			// 2.00 (Abin)
+	fnD2GetRoomCoords							D2GetRoomCoords;			// 2.00 (Abin)
+	fnD2GetAllRoomCoords						D2GetAllRoomCoords;			// 2.00 (Abin)
+
 	fnLeftClickHere					LeftClickHere;
 	fnRightClickHere				RightClickHere;	
 	// -- B

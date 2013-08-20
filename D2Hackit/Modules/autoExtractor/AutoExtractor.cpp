@@ -36,7 +36,7 @@ bool AutoExtractor::Init(bool useChat)
 /// <param name="configPath">Path of config file.</param>
 /// <param name="readTo">Map to read good affix values into.</param>
 /// <returns>true if successful, false if failed.</returns>
-bool AutoExtractor::ReadAffixFile(std::string configPath, stdext::hash_set<int> &readTo)
+bool AutoExtractor::ReadAffixFile(const std::string &configPath, stdext::hash_set<int> &readTo)
 {
 	std::string readLineBuff;
 	int readNum = 0;

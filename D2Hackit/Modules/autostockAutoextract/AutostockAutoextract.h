@@ -37,9 +37,9 @@ struct ExtractorStuff
 {
 	char restockerCode[4];
 	DWORD restockerID;
-	bool movedRestocker;
 	char extractorCode[4];
 	DWORD extractorID;
+	bool movedRestocker;
 	bool movedExtractor;
 };
 

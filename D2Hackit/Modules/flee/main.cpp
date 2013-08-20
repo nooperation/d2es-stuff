@@ -40,9 +40,9 @@ void ReadConfig()
 	portalId = 0;
 
 	//fastPortalEnabled = GetPrivateProfileInt("Flee", "FastPortal", TRUE, CONFIG_FILE);
-	saveAndExitEnabled = GetPrivateProfileInt("Flee", "SaveAndExit", FALSE, CONFIG_FILE);
-	saveAndExitWhenNoTpEnabled = GetPrivateProfileInt("Flee", "SaveAndExitWhenNoTp", FALSE, CONFIG_FILE);
-	hotkeyInTown = GetPrivateProfileInt("Flee", "HotkeyInTown", FALSE, CONFIG_FILE);
+	saveAndExitEnabled = GetPrivateProfileInt("Flee", "SaveAndExit", FALSE, CONFIG_FILE) == TRUE;
+	saveAndExitWhenNoTpEnabled = GetPrivateProfileInt("Flee", "SaveAndExitWhenNoTp", FALSE, CONFIG_FILE) == TRUE;
+	hotkeyInTown = GetPrivateProfileInt("Flee", "HotkeyInTown", FALSE, CONFIG_FILE) == TRUE;
 	fleeAmount = GetPrivateProfileInt("Flee", "HpPercentage", 25, CONFIG_FILE);
 	portalKey = GetPrivateProfileInt("Flee", "PortalKey", VK_BACK, CONFIG_FILE);
 	fleeKey = GetPrivateProfileInt("Flee", "FleeKey", 0, CONFIG_FILE);

@@ -44,7 +44,7 @@ class ItemWatcher
 		void AnnounceItem(const ITEM &item);
 		void CheckWatchedItems();
 		void Cleanup();
-		bool loadItemMap(std::string fileName, stdext::hash_map<std::string, std::string> &itemMap);
+		bool loadItemMap(const std::string &fileName, stdext::hash_map<std::string, std::string> &itemMap);
 
 		const char *GetItemDesc(const ITEM &item);
 		const char *GetDirectionFrom(WORD sourceX, WORD sourceY, WORD targetX, WORD targetY);

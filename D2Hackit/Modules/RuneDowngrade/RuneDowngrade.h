@@ -19,7 +19,7 @@ class RuneDowngrade
 {
 public:
 	RuneDowngrade();
-	void Start(std::vector<std::string> runeTypesToDowngrade);
+	void Start(const std::vector<std::string> &runeTypesToDowngrade);
 	void OnItemToCube(const ITEM &item);
 	void OnItemFromCube(const ITEM &item);
 	void OnItemToInventory(const ITEM &item);

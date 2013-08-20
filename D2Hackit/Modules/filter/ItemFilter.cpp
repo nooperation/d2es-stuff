@@ -32,23 +32,23 @@ bool ItemFilter::LoadItems()
 
 	//filterTown		= GetPrivateProfileInt("Filter", "FilterTown", 1, FILTER_SETTINGS_PATH); 
 
-	showUnique			= GetPrivateProfileInt("WeaponArmor", "Unique", 1, FILTER_SETTINGS_PATH);
-	showRare			= GetPrivateProfileInt("WeaponArmor", "Rare", 1, FILTER_SETTINGS_PATH);
-	showCraft			= GetPrivateProfileInt("WeaponArmor", "Craft", 1, FILTER_SETTINGS_PATH);
-	showSet				= GetPrivateProfileInt("WeaponArmor", "Set", 1, FILTER_SETTINGS_PATH);
-	showMagic			= GetPrivateProfileInt("WeaponArmor", "Magic", 0, FILTER_SETTINGS_PATH);
-	showEthSoc			= GetPrivateProfileInt("WeaponArmor", "EthSock", 0, FILTER_SETTINGS_PATH); 
-	showEthereal		= GetPrivateProfileInt("WeaponArmor", "Ethereal", 0, FILTER_SETTINGS_PATH); 
-	showSocketed		= GetPrivateProfileInt("WeaponArmor", "Socketed", 0, FILTER_SETTINGS_PATH); 
-	showSuperior		= GetPrivateProfileInt("WeaponArmor", "Superior", 0, FILTER_SETTINGS_PATH); 
-	showNormal			= GetPrivateProfileInt("WeaponArmor", "Normal", 0, FILTER_SETTINGS_PATH);
-	showInferior		= GetPrivateProfileInt("WeaponArmor", "Inferior", 0, FILTER_SETTINGS_PATH);
+	showUnique			= GetPrivateProfileInt("WeaponArmor", "Unique", 1, FILTER_SETTINGS_PATH) == TRUE;
+	showRare			= GetPrivateProfileInt("WeaponArmor", "Rare", 1, FILTER_SETTINGS_PATH) == TRUE;
+	showCraft			= GetPrivateProfileInt("WeaponArmor", "Craft", 1, FILTER_SETTINGS_PATH) == TRUE;
+	showSet				= GetPrivateProfileInt("WeaponArmor", "Set", 1, FILTER_SETTINGS_PATH) == TRUE;
+	showMagic			= GetPrivateProfileInt("WeaponArmor", "Magic", 0, FILTER_SETTINGS_PATH) == TRUE;
+	showEthSoc			= GetPrivateProfileInt("WeaponArmor", "EthSock", 0, FILTER_SETTINGS_PATH) == TRUE; 
+	showEthereal		= GetPrivateProfileInt("WeaponArmor", "Ethereal", 0, FILTER_SETTINGS_PATH) == TRUE; 
+	showSocketed		= GetPrivateProfileInt("WeaponArmor", "Socketed", 0, FILTER_SETTINGS_PATH) == TRUE; 
+	showSuperior		= GetPrivateProfileInt("WeaponArmor", "Superior", 0, FILTER_SETTINGS_PATH) == TRUE; 
+	showNormal			= GetPrivateProfileInt("WeaponArmor", "Normal", 0, FILTER_SETTINGS_PATH) == TRUE;
+	showInferior		= GetPrivateProfileInt("WeaponArmor", "Inferior", 0, FILTER_SETTINGS_PATH) == TRUE;
 
-	showMagicRingAmulet	= GetPrivateProfileInt("Jewellery", "MagicRingAmulet", 1, FILTER_SETTINGS_PATH);
-    showRareRingAmulet	= GetPrivateProfileInt("Jewellery", "RareRingAmulet", 1, FILTER_SETTINGS_PATH);
+	showMagicRingAmulet	= GetPrivateProfileInt("Jewellery", "MagicRingAmulet", 1, FILTER_SETTINGS_PATH) == TRUE;
+    showRareRingAmulet	= GetPrivateProfileInt("Jewellery", "RareRingAmulet", 1, FILTER_SETTINGS_PATH) == TRUE;
 
-	showMagicCharms		= GetPrivateProfileInt("Charms", "MagicCharms", 1, FILTER_SETTINGS_PATH);
-    showRareCharms		= GetPrivateProfileInt("Charms", "RareCharms", 1, FILTER_SETTINGS_PATH);
+	showMagicCharms		= GetPrivateProfileInt("Charms", "MagicCharms", 1, FILTER_SETTINGS_PATH) == TRUE;
+    showRareCharms		= GetPrivateProfileInt("Charms", "RareCharms", 1, FILTER_SETTINGS_PATH) == TRUE;
 	return true;
 }
 
@@ -149,7 +149,7 @@ bool ItemFilter::OnItemFind(ITEM &item)
 	return true;
 }
 
-bool ItemFilter::LoadItemMap(std::string fileName, stdext::hash_map<std::string, std::string> &itemMap)
+bool ItemFilter::LoadItemMap(const std::string &fileName, stdext::hash_map<std::string, std::string> &itemMap)
 {
 	std::ifstream inFile(fileName.c_str());
 

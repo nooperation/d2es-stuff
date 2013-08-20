@@ -11,8 +11,6 @@ char masterPlayer[128];
 
 BOOL PRIVATE Start(char** argv, int argc)
 {
-	std::string itemCode;
-
 	if(argc < 3)
 	{
 		return FALSE;
@@ -45,7 +43,6 @@ BOOL PRIVATE Start(char** argv, int argc)
 
 BOOL PRIVATE NoSell(char **argv, int argc)
 {
-	std::string itemCode;
 	std::vector<std::string> gambleFor;
 
 	if(argc < 3)
@@ -408,7 +405,7 @@ DWORD EXPORT OnGameTimerTick()
 BOOL EXPORT OnClientStart()
 {
 	memset(&masterPlayer, 0, sizeof(masterPlayer)/sizeof(masterPlayer[0]));
-	DWORD lastGoldAmount = me->GetStat(STAT_GOLD);
+	lastGoldAmount = me->GetStat(STAT_GOLD);
 
 	return TRUE;
 }
