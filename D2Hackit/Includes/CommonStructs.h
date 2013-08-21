@@ -802,6 +802,48 @@ typedef struct tagScreenEntryPoints
 	fnClearScroll					ClearScroll;			// 2.00 (Abin)
 } SCREENENTRYPOINTS, *PSCREENENTRYPOINTS;
 
+enum  {
+	WAYPOINTDEST_CloseMenu              = 0x00,
+	WAYPOINTDEST_RogueEncampment        = 0x01,
+	WAYPOINTDEST_ColdPlains             = 0x03,
+	WAYPOINTDEST_StonyFields            = 0x04,
+	WAYPOINTDEST_DarkWood               = 0x05,
+	WAYPOINTDEST_BlackMarsh             = 0x06,
+	WAYPOINTDEST_OuterCloister          = 0x1B,
+	WAYPOINTDEST_JailLevel1             = 0x1D,
+	WAYPOINTDEST_InnerCloister          = 0x20,
+	WAYPOINTDEST_CataCombsLevel2        = 0x23,
+	WAYPOINTDEST_LutGholein             = 0x28,
+	WAYPOINTDEST_SewersLevel2           = 0x30,
+	WAYPOINTDEST_DryHills               = 0x2A,
+	WAYPOINTDEST_HallsOfTheDeadLevel2   = 0x39,
+	WAYPOINTDEST_FarOasis               = 0x2B,
+	WAYPOINTDEST_LostCity               = 0x2C,
+	WAYPOINTDEST_PalaceCellarLevel1     = 0x34,
+	WAYPOINTDEST_ArcainSanctuary        = 0x4A,
+	WAYPOINTDEST_CanyonOfTheMagi        = 0x2E,
+	WAYPOINTDEST_KurastDocks            = 0x4B,
+	WAYPOINTDEST_SpiderForest           = 0x4C,
+	WAYPOINTDEST_GreatMarsh             = 0x4D,
+	WAYPOINTDEST_FlayerJungle           = 0x4E,
+	WAYPOINTDEST_LowerKurast            = 0x4F,
+	WAYPOINTDEST_KurastBazaar           = 0x50,
+	WAYPOINTDEST_UpperKurast            = 0x51,
+	WAYPOINTDEST_Travincal              = 0x53,
+	WAYPOINTDEST_DuranceOfHateLevel2    = 0x65,
+	WAYPOINTDEST_ThePandeminoumFortress = 0x67,
+	WAYPOINTDEST_CityOfTheDamned        = 0x6A,
+	WAYPOINTDEST_RiverOfFlame           = 0x6B,
+	WAYPOINTDEST_Harrogath              = 0x6D,
+	WAYPOINTDEST_FrigidHighlands        = 0x6F,
+	WAYPOINTDEST_ArreatPlateau          = 0x70,
+	WAYPOINTDEST_CrystallinePassage     = 0x71,
+	WAYPOINTDEST_GlacialTrail           = 0x73,
+	WAYPOINTDEST_HallsOfPain            = 0x7B,
+	WAYPOINTDEST_FrozenTundra           = 0x75,
+	WAYPOINTDEST_TheAncientsWay         = 0x76,
+	WAYPOINTDEST_WorldstoneKeepLevel2   = 0x81,
+};
 
 #endif // __COMMONSTRUCTS_H__
 
