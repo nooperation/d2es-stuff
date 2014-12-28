@@ -2,6 +2,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include <queue>
 
 #include "../../Includes/ClientCore.cpp"
 
@@ -10,91 +11,353 @@ enum States
 	STATE_Idle,
 	STATE_TeleportingToStairsRoom,
 	STATE_TeleportingToStairsObject,
-	STATE_UsingStairs
+	STATE_UsingStairs,
+	STATE_UsingWaypoint,
+	STATE_BackToTown,
 };
+
+struct StairsData
+{
+	StairsData()
+	{
+		Id = 0;
+		XOffset = 0;
+		YOffset = 0;
+	}
+	StairsData(DWORD id, WORD xOffset, WORD yOffset)
+	{
+		Id = id;
+		XOffset = xOffset;
+		YOffset = yOffset;
+	}
+
+	DWORD Id;
+	short XOffset;
+	short YOffset;
+};
+
+struct BotTravelData
+{
+	void InitSteps(int numSteps)
+	{
+		RoomTransitions.resize(numSteps);
+		NumSteps = numSteps;
+		CurrentStep = -1;
+	}
+
+	void Reset()
+	{
+		CurrentStep = -1;
+	}
+
+	std::map<DWORD, StairsData> &Current()
+	{
+		return RoomTransitions[CurrentStep];
+	}
+
+	std::string Name;
+	int WaypointDestination;
+	std::vector<std::map<DWORD, StairsData>> RoomTransitions;
+	unsigned int CurrentStep;
+	unsigned int NumSteps;
+};
+
+bool CheckForOurStairs();
+void NextStep();
+BOOL CALLBACK enumUnitProc(LPCGAMEUNIT lpUnit, LPARAM lParam);
 
 States currentState = STATE_Idle;
 
-std::set<DWORD> stairRooms;
-std::set<DWORD> levelWarpsDown;
-std::set<DWORD> levelWarpsUp;
+int stairsRoomNum = 0;
 
 GAMEUNIT stairsGameUnit;
 PATH path;
 int pathIndex = 0;
 
+
+BotTravelData toBloodRaven;
+BotTravelData toBloodRavenLair;
+BotTravelData toCountress;
+BotTravelData toAndarial;
+
+BotTravelData toMephisto;
+BotTravelData toBaal;
+BotTravelData toDeadEnd;
+
+std::vector<BotTravelData *> allTravelData;
+BotTravelData *currentTravelData = nullptr;
+
+#include "../../Core/definitions.h"
+
+
 BOOL PRIVATE Pos(char **argv, int argc)
 {
-		MAPPOS myPos = me->GetPosition();
-	server->GameStringf("Player position %d, %d  room %d", myPos.x, myPos.y, server->D2GetCurrentRoomNum());
+	MAPPOS coords;
+	RoomOther *room = (RoomOther*)server->D2GetRoomCoords(server->D2GetCurrentRoomNum(), &coords, nullptr);
+	
+	if(room == nullptr)
+	{
+		server->GameStringf("Failed to find room 1026");
+		return TRUE;
+	}
+
+	if(room->pRoom == nullptr)
+	{
+		server->GameStringf("room->pRoom == nullptr");
+		return TRUE;
+	}
+
+	MAPPOS myPos = me->GetPosition();
+
+	
+	server->GameStringf("Room %d: %d, %d", room->pPresetType2info->roomNum, room->pRoom->pColl->nPosRoomX, room->pRoom->pColl->nPosRoomY);
+
+	//server->GameStringf("Player position %d, %d  room %d offset x: %d y: %d", (int)myPos.x, (int)myPos.y, server->D2GetCurrentRoomNum(), (int)myPos.x - (int)room->pRoom->pColl->nPosGameX, (int)myPos.y - (int)room->pRoom->pColl->nPosGameY);
+
 	return TRUE;
 }
-BOOL PRIVATE Start(char** argv, int argc)
+
+
+BOOL CALLBACK enumUnitProc(LPCGAMEUNIT lpUnit, LPARAM lParam)
 {
+
+	DWORD unitClassId = server->GetUnitClassID(lpUnit);
+	if(unitClassId == 0)
+	{
+		return TRUE;
+	}
+
+	//server->GameStringf("Unit class %d", unitClassId);
+	
+	if(currentTravelData->Current()[stairsRoomNum].Id != unitClassId)
+	{
+		return TRUE;
+	}
+
+	//UnitAny *unit = (UnitAny *)server->VerifyUnit(lpUnit);
+	//if(unit == nullptr)
+	//{
+	//	server->GameStringf("unit == nullptr");
+	//	return TRUE;
+	//}
+	//if(unit->hPath == nullptr)
+	//{
+	//	server->GameStringf("unit->hPath == nullptr");
+	//	return TRUE;
+	//}
+	//if(unit->hOPath->ptRoom == nullptr)
+	//{
+	//	server->GameStringf("unit->hOPath->ptRoom == nullptr");
+	//	return TRUE;
+	//}
+	//if(unit->hOPath->ptRoom->ptRoomOther == nullptr)
+	//{
+	//	server->GameStringf("unit->hOPath->ptRoom->ptRoomOther == nullptr");
+	//	return TRUE;
+	//}
+	//if(unit->hOPath->ptRoom->ptRoomOther->pPresetType2info == nullptr)
+	//{
+	//	server->GameStringf("unit->hOPath->ptRoom->ptRoomOther->pPresetType2info == nullptr");
+	//	return TRUE;
+	//}
+	//
+	//int roomNum = unit->hOPath->ptRoom->ptRoomOther->pPresetType2info->roomNum;
+
+	GAMEUNIT *previouslyFoundStairs = (GAMEUNIT *)lParam;
+	if(previouslyFoundStairs->dwUnitID != 0 && previouslyFoundStairs->dwUnitType != 0)
+	{
+		MAPPOS previousStairsPos = server->GetUnitPosition(previouslyFoundStairs);
+		MAPPOS thisStairsPos = server->GetUnitPosition(lpUnit);
+
+		double distanceToPreviousStairs = me->GetDistanceFrom(previousStairsPos.x, previousStairsPos.y);
+		double distanceToThisStairs = me->GetDistanceFrom(thisStairsPos.x, thisStairsPos.y);
+		
+		if(distanceToThisStairs < distanceToPreviousStairs)
+		{
+			*((GAMEUNIT*)lParam) = *lpUnit;
+		}
+	}
+	else
+	{
+		*((GAMEUNIT*)lParam) = *lpUnit;
+	}
+
+	return TRUE;
+}
+
+struct GameUnitDistance
+{
+	GAMEUNIT unit;
+	float distance;
+};
+
+
+bool CheckForOurStairs()
+{
+	//server->GameStringf("%s", __FUNCTION__);
+	// A cave/stairs/entrance has come into range, check to see if it's our staircase
+		
+	stairsGameUnit.dwUnitID = 0;
+	stairsGameUnit.dwUnitType = 0;
+
+	server->EnumUnits(UNIT_TYPE_ROOMTILE, enumUnitProc, (LPARAM)&stairsGameUnit);
+	if(stairsGameUnit.dwUnitID == 0 && stairsGameUnit.dwUnitType == 0)
+	{
+		return false;
+	}
+
+	MAPPOS stairsPos = server->GetUnitPosition(&stairsGameUnit);
+	//server->GameStringf("Our stairs = %d", server->GetUnitClassID(&stairsGameUnit));
+
+	currentState = STATE_TeleportingToStairsObject;
+
+	pathIndex = 0;
+	server->CalculatePath(stairsPos.x, stairsPos.y, &path, 5);
+		
+	return true;
+}
+
+
+void NextStep()
+{
+	//server->GameStringf("%s", __FUNCTION__);
+
+	if(pathIndex >= path.iNodeCount)
+	{
+		if(currentState == STATE_TeleportingToStairsObject)
+		{
+			//server->GameStringf("We have arrived at our stairs [class %X]", server->GetUnitClassID(&stairsGameUnit));
+
+			MAPPOS stairsPosition = server->GetUnitPosition(&stairsGameUnit);
+			currentState = STATE_UsingStairs;
+			me->Interact(&stairsGameUnit);
+			return;
+		}
+
+		server->GameStringf("We have arrived at our room, checking for stairs...");
+		if(!CheckForOurStairs())
+		{
+			currentState = STATE_Idle;
+			server->GameStringf("Failed to find stairs, aborting!");
+			return;
+		}
+
+		// Fall through...
+	}
+		
+
+	me->CastOnMap(D2S_TELEPORT, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y, false);
+	++pathIndex;
+}
+
+void NextRoomTransition()
+{
+	//server->GameStringf("%s", __FUNCTION__);
+
 	pathIndex = 0;
 	memset(&path, 0, sizeof(PATH));
 	memset(&stairsGameUnit, 0, sizeof(GAMEUNIT));
 	currentState = STATE_Idle;
 
-	MAPPOS stairRoomCoord;
+	if(currentTravelData->CurrentStep + 1 < currentTravelData->NumSteps)
+	{
+		currentTravelData->CurrentStep++;
+	}
 
-	MAPPOS myPos = me->GetPosition();
-	//server->GameStringf("Player position %d, %d  room %d", myPos.x, myPos.y, server->D2GetCurrentRoomNum());
-
-	ROOMPOS allRoomCoords[64];
+	ROOMPOS allRoomCoords[256];
 	DWORD numRooms = server->D2GetAllRoomCoords(allRoomCoords, ARRAYSIZE(allRoomCoords));
-
 	if(numRooms == 0)
 	{
 		server->GameStringf("Failed to find all rooms");
-		return TRUE;
+		return;
 	}
 
-	bool foundStairsRoom = false;
+
+	MAPPOS stairRoomCoord;
+	std::map<DWORD, StairsData>::iterator foundStairs;
+	std::map<DWORD, StairsData> &currentStairsData = currentTravelData->Current();
+
 	for(unsigned int i = 0; i < numRooms; ++i)
 	{
-		if(stairRooms.find(allRoomCoords[i].roomnum) != stairRooms.end())
+		foundStairs = currentStairsData.find(allRoomCoords[i].roomnum);
+		if(foundStairs != currentStairsData.end())
 		{
-			foundStairsRoom = true;
+			stairsRoomNum = allRoomCoords[i].roomnum;
 			stairRoomCoord = allRoomCoords[i].pos;
 			break;
 		}
 	}
 
-	if(!foundStairsRoom)
+	if(foundStairs == currentStairsData.end())
 	{
 		server->GameStringf("No stairs found");
-		return TRUE;
+		return;
 	}
+
+	//server->GameStringf("stairRoomCoord %d, %d",stairRoomCoord.x, stairRoomCoord.y);
+
+	stairRoomCoord.x = stairRoomCoord.x*5 + foundStairs->second.XOffset;
+	stairRoomCoord.y = stairRoomCoord.y*5 + foundStairs->second.YOffset;
 	
-	stairRoomCoord.x *= 5;
-	stairRoomCoord.y *= 5;
-	
-	//server->GameStringf("target position %d, %d", stairRoomCoord.x, stairRoomCoord.y);
-	
-	BYTE steps;
-	for (int i = 0; i < 3; i++)
-	{
-		steps = server->CalculatePath(stairRoomCoord.x + 5 + 3*i, stairRoomCoord.y + 5 + 3*i, &path, 5);
-		if(steps != 0)
-		{
-			server->GameStringf("Found path after %d iterations", i);
-			break;
-		}
-	}
-	if(steps == 0)
+	//server->GameStringf("stairRoomCoord MOD %d, %d",stairRoomCoord.x, stairRoomCoord.y);
+
+
+	if(server->CalculatePath(stairRoomCoord.x, stairRoomCoord.y, &path, 5) == 0)
 	{
 		server->GameStringf("Failed to find spot :(");
+		return;
+	}
+
+	//for(int i =0 ;i <= path.iNodeCount; ++i)
+	//{
+	//	server->GameStringf("%d, %d", path.aPathNodes[i].x, path.aPathNodes[i].y);
+	//}
+	
+	//server->GameStringf("Teleporing to room %d", stairsRoomNum);
+	currentState = STATE_TeleportingToStairsRoom;
+	NextStep();
+}
+
+void ShowUsage()
+{
+	server->GameStringf("Usage: .bot start #");
+	for(unsigned int i = 0; i < allTravelData.size(); ++i)
+	{
+		server->GameStringf("  %d: %s", i+1, allTravelData[i]->Name.c_str());
+	}
+}
+
+BOOL PRIVATE Start(char** argv, int argc)
+{
+	server->GameStringf("%s", __FUNCTION__);
+
+	if(argc != 3)
+	{
+		ShowUsage();
+		return TRUE;
+	}
+
+	unsigned int travelIndex = (unsigned int)atoi(argv[2]);
+	if(travelIndex == 0 || travelIndex > allTravelData.size())
+	{
+		ShowUsage();
+		return TRUE;
+	}
+
+	currentTravelData = allTravelData[travelIndex - 1];
+	currentTravelData->Reset();
+
+	if(!me->IsInTown())
+	{
+		currentState = STATE_BackToTown;
+		server->GameCommandf("load flee");
+		server->GameCommandf("flee tp");
 		return TRUE;
 	}
 	
-	currentState = STATE_TeleportingToStairsRoom;
-
-	//server->GameStringf("pathIndex = %d  nodeCount = %d  (%d, %d)", pathIndex, path.iNodeCount, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y);
-	
-
-	me->CastOnMap(D2S_TELEPORT, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y, false);
-	++pathIndex;
+	currentState = STATE_UsingWaypoint;
+	server->GameCommandf("load wp");
+	server->GameCommandf("wp start %d", currentTravelData->WaypointDestination);
 
 	return TRUE;
 }
@@ -106,186 +369,120 @@ BOOL PRIVATE Start(char** argv, int argc)
 //
 /////////////////////////////////////////////
 
-DWORD EXPORT OnGameTimerTick()
-{
-	return 0;
-}
-
 VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
 {
+	server->GameStringf("%s", __FUNCTION__);
 	currentState = STATE_Idle;
 }
 
 VOID EXPORT OnGameLeave(THISGAMESTRUCT* thisgame)
 {
+	currentState = STATE_Idle;
 }
 
 BOOL EXPORT OnClientStart()
 {
-	stairRooms.insert(51); //Act 1 - Cave Entrance	
-	stairRooms.insert(52); //Act 1 - DOE Entrance	
+	currentTravelData = &toCountress;
 
-	stairRooms.insert(87); // Act 1 - Cave Next W
-	stairRooms.insert(88); // Act 1 - Cave Next E
-	stairRooms.insert(89); // Act 1 - Cave Next S
-	stairRooms.insert(90); // Act 1 - Cave Next N
-	stairRooms.insert(91); // Act 1 - Cave Down W
-	stairRooms.insert(92); // Act 1 - Cave Down E
-	stairRooms.insert(93); // Act 1 - Cave Down S
-	stairRooms.insert(94); // Act 1 - Cave Down N
-	stairRooms.insert(143); // Act 1 - Crypt Next W
-	stairRooms.insert(144); // Act 1 - Crypt Next E
-	stairRooms.insert(145); // Act 1 - Crypt Next S
-	stairRooms.insert(146); // Act 1 - Crypt Next N
-	stairRooms.insert(198); // Act 1 - Barracks Next W
-	stairRooms.insert(199); // Act 1 - Barracks Next E
-	stairRooms.insert(200); // Act 1 - Barracks Next S
-	stairRooms.insert(201); // Act 1 - Barracks Next N
-	stairRooms.insert(240); // Act 1 - Jail Next W
-	stairRooms.insert(241); // Act 1 - Jail Next E
-	stairRooms.insert(242); // Act 1 - Jail Next S
-	stairRooms.insert(243); // Act 1 - Jail Next N
-	stairRooms.insert(291); // Act 1 - Catacombs Next W
-	stairRooms.insert(292); // Act 1 - Catacombs Next E
-	stairRooms.insert(293); // Act 1 - Catacombs Next S
-	stairRooms.insert(294); // Act 1 - Catacombs Next N
-	stairRooms.insert(337); // Act 2 - Sewer Next W
-	stairRooms.insert(338); // Act 2 - Sewer Next E
-	stairRooms.insert(339); // Act 2 - Sewer Next S
-	stairRooms.insert(340); // Act 2 - Sewer Next N
-	stairRooms.insert(448); // Act 2 - Tomb Next W
-	stairRooms.insert(449); // Act 2 - Tomb Next E
-	stairRooms.insert(450); // Act 2 - Tomb Next S
-	stairRooms.insert(451); // Act 2 - Tomb Next N
-	stairRooms.insert(501); // Act 2 - Lair Next W
-	stairRooms.insert(502); // Act 2 - Lair Next E
-	stairRooms.insert(503); // Act 2 - Lair Next S
-	stairRooms.insert(504); // Act 2 - Lair Next N
-	stairRooms.insert(699); // Act 3 - Dungeon Next W
-	stairRooms.insert(700); // Act 3 - Dungeon Next E
-	stairRooms.insert(701); // Act 3 - Dungeon Next S
-	stairRooms.insert(702); // Act 3 - Dungeon Next N
-	stairRooms.insert(788); // Act 3 - Mephisto Next W
-	stairRooms.insert(789); // Act 3 - Mephisto Next E
-	stairRooms.insert(790); // Act 3 - Mephisto Next S
-	stairRooms.insert(791); // Act 3 - Mephisto Next N
-	stairRooms.insert(1022); // Act 5 - Ice Next W
-	stairRooms.insert(1023); // Act 5 - Ice Next E
-	stairRooms.insert(1024); // Act 5 - Ice Next S
-	stairRooms.insert(1025); // Act 5 - Ice Next N
-	stairRooms.insert(1078); // Act 5 - Baal Next N
-	stairRooms.insert(1079); // Act 5 - Baal Next S
-	stairRooms.insert(1080); // Act 5 - Baal Next E
-	stairRooms.insert(1081); // Act 5 - Baal Next W
+	toDeadEnd.Name = "Dead End";
+	toDeadEnd.InitSteps(6);
+	toDeadEnd.WaypointDestination = WAYPOINTDEST_TheAncientsWay;
+	toDeadEnd.RoomTransitions[0][1026] = StairsData(75, 13, 29); //	Act 5 - Ice Down W
+	toDeadEnd.RoomTransitions[0][1027] = StairsData(75, 21, 24); //	Act 5 - Ice Down E
+	toDeadEnd.RoomTransitions[0][1028] = StairsData(75, 36, 24); //	Act 5 - Ice Down S
+	toDeadEnd.RoomTransitions[0][1029] = StairsData(75, 10, 39); //	Act 5 - Ice Down N
+	for(int i = 1; i <= 3; ++i)
+	{
+		toDeadEnd.RoomTransitions[i][1018] = StairsData(73, 14, 7); //	Act 5 - Ice Prev W
+		toDeadEnd.RoomTransitions[i][1019] = StairsData(73, 12, 19); //	Act 5 - Ice Prev E
+		toDeadEnd.RoomTransitions[i][1020] = StairsData(73, 0, 0); //	Act 5 - Ice Prev S
+		toDeadEnd.RoomTransitions[i][1021] = StairsData(73, 12, 25); //	Act 5 - Ice Prev N
+	}
 
+	allTravelData.push_back(&toDeadEnd);
 
-	levelWarpsUp.insert(	4	); //	Act 1 Cave Up
-	levelWarpsUp.insert(	8	); //	Act 1 Crypt Up
-	levelWarpsUp.insert(	13	); //	Act 1 Jail Up
-	levelWarpsUp.insert(	16	); //	Act 1 Catacombs to Cathedral
-	levelWarpsUp.insert(	17	); //	Act 1 Catacombs Up
-	levelWarpsUp.insert(	22	); //	Act 2 Sewer Up
-	levelWarpsUp.insert(	26	); //	Act 2 Harem Up 1
-	levelWarpsUp.insert(	27	); //	Act 2 Harem Up 2
-	levelWarpsUp.insert(	30	); //	Act 2 Basement Up 1
-	levelWarpsUp.insert(	31	); //	Act 2 Basement Up 2
-	levelWarpsUp.insert(	45	); //	Act 2 Tomb Up
-	levelWarpsUp.insert(	48	); //	Act 2 Lair Up
-	levelWarpsUp.insert(	55	); //	Act 3 Dungeon Up
-	levelWarpsUp.insert(	58	); //	Act 3 Sewer Up L
-	levelWarpsUp.insert(	59	); //	Act 3 Sewer Up R
-	levelWarpsUp.insert(	62	); //	Act 3 Temple Up L
-	levelWarpsUp.insert(	63	); //	Act 3 Temple Up R
-	levelWarpsUp.insert(	65	); //	Act 3 Mephisto Up L
-	levelWarpsUp.insert(	66	); //	Act 3 Mephisto Up R
-	levelWarpsUp.insert(	73	); //	Act 5 Ice Caves Up
-	levelWarpsUp.insert(	73	); //	Act 5 Ice Caves Up
-	levelWarpsUp.insert(	78	); //	Act 5 Temple Up
-	levelWarpsUp.insert(	81	); //	Act 5 Baal Temple Up
-	levelWarpsUp.insert(	81	); //	Act 5 Baal Temple Up
+	// BlackMarsh -> Countress
+	toCountress.Name = "Countress";
+	toCountress.InitSteps(3);
+	toCountress.WaypointDestination = WAYPOINTDEST_BlackMarsh;
+	toCountress.RoomTransitions[0][163] = StairsData(10, 14, 14); //	Act 1 Wilderness to Tower
+	toCountress.RoomTransitions[1][164] = StairsData(12, 2, 12); //	Act 1 Tower to Crypt
+	toCountress.RoomTransitions[2][143] = StairsData(9, 22, 14); //	Crypt Next W DOWN
+	toCountress.RoomTransitions[2][144] = StairsData(9, 2, 21); //	Crypt Next E DOWN
+	toCountress.RoomTransitions[2][145] = StairsData(9, 7, 19); //	Crypt Next S DOWN
+	toCountress.RoomTransitions[2][146] = StairsData(9, 7, 20); //	Crypt Next N DOWN
+	allTravelData.push_back(&toCountress);
 
+	toAndarial.Name = "Andarial";
+	toAndarial.InitSteps(1);
+	toAndarial.WaypointDestination = WAYPOINTDEST_CataCombsLevel2;
+	toAndarial.RoomTransitions[0][291] = StairsData(18, 0, 0); // Act 1 - Catacombs Next W	
+	toAndarial.RoomTransitions[0][292] = StairsData(18, 24, 29); // Act 1 - Catacombs Next E	
+	toAndarial.RoomTransitions[0][293] = StairsData(18, 29, 19); // Act 1 - Catacombs Next S	
+	toAndarial.RoomTransitions[0][294] = StairsData(18, 29, 38); // Act 1 - Catacombs Next N	
+	allTravelData.push_back(&toAndarial);
 
-	levelWarpsDown.insert(	0	); //	Act 1 Wilderness to Cave Cliff L
-	levelWarpsDown.insert(	1	); //	Act 1 Wilderness to Cave Cliff R
-	levelWarpsDown.insert(	2	); //	Act 1 Wilderness to Cave Floor L
-	levelWarpsDown.insert(	3	); //	Act 1 Wilderness to Cave Floor R
-	levelWarpsDown.insert(	5	); //	Act 1 Cave Down
-	levelWarpsDown.insert(	6	); //	Act 1 Graveyard to Crypt 1
-	levelWarpsDown.insert(	7	); //	Act 1 Graveyard to Crypt 2
-	levelWarpsDown.insert(	9	); //	Act 1 Crypt Down
-	levelWarpsDown.insert(	10	); //	Act 1 Wilderness to Tower
-	levelWarpsDown.insert(	11	); //	Act 1 Tower to Wilderness
-	levelWarpsDown.insert(	12	); //	Act 1 Tower to Crypt
-	levelWarpsDown.insert(	14	); //	Act 1 Jail Down
-	levelWarpsDown.insert(	15	); //	Act 1 Cathedral To Catacombs
-	levelWarpsDown.insert(	18	); //	Act 1 Catacombs Down
-	levelWarpsDown.insert(	19	); //	Act 2 Town to Sewer Trap
-	levelWarpsDown.insert(	20	); //	Act 2 Town to Sewer Dock
-	levelWarpsDown.insert(	21	); //	Act 2 Sewer Dock to Town
-	levelWarpsDown.insert(	23	); //	Act 2 Sewer Down
-	levelWarpsDown.insert(	24	); //	Act 2 Town to Harem
-	levelWarpsDown.insert(	25	); //	Act 2 Harem to Town
-	levelWarpsDown.insert(	28	); //	Act 2 Harem Down 1
-	levelWarpsDown.insert(	29	); //	Act 2 Harem Down 2
-	levelWarpsDown.insert(	32	); //	Act 2 Basement Down
-	levelWarpsDown.insert(	33	); //	Act 2 Desert to Tomb L 1
-	levelWarpsDown.insert(	34	); //	Act 2 Desert to Tomb L 2
-	levelWarpsDown.insert(	35	); //	Act 2 Desert to Tomb R 1
-	levelWarpsDown.insert(	36	); //	Act 2 Desert to Tomb R 2
-	levelWarpsDown.insert(	37	); //	Act 2 Desert to Tomb Viper
-	levelWarpsDown.insert(	38	); //	Act 2 Desert to Tomb Tal 1
-	levelWarpsDown.insert(	39	); //	Act 2 Desert to Tomb Tal 2
-	levelWarpsDown.insert(	40	); //	Act 2 Desert to Tomb Tal 3
-	levelWarpsDown.insert(	41	); //	Act 2 Desert to Tomb Tal 4
-	levelWarpsDown.insert(	42	); //	Act 2 Desert to Tomb Tal 5
-	levelWarpsDown.insert(	43	); //	Act 2 Desert to Tomb Tal 6
-	levelWarpsDown.insert(	44	); //	Act 2 Desert to Tomb Tal 7
-	levelWarpsDown.insert(	46	); //	Act 2 Tomb Down
-	levelWarpsDown.insert(	47	); //	Act 2 Desert to Lair
-	levelWarpsDown.insert(	49	); //	Act 2 Lair Down
-	levelWarpsDown.insert(	50	); //	Act 2 Desert to Sewer Trap
-	levelWarpsDown.insert(	51	); //	Act 3 Jungle to Spider
-	levelWarpsDown.insert(	52	); //	Act 3 Spider to Jungle
-	levelWarpsDown.insert(	53	); //	Act 3 Jungle to Dungeon Fort
-	levelWarpsDown.insert(	54	); //	Act 3 Jungle to Dungeon Hole
-	levelWarpsDown.insert(	56	); //	Act 3 Dungeon Down
-	levelWarpsDown.insert(	57	); //	Act 3 Kurast to Sewer
-	levelWarpsDown.insert(	60	); //	Act 3 Sewer Down
-	levelWarpsDown.insert(	61	); //	Act 3 Kurast to Temple
-	levelWarpsDown.insert(	64	); //	Act 3 Travincal to Mephisto
-	levelWarpsDown.insert(	67	); //	Act 3 Mephisto Down L
-	levelWarpsDown.insert(	68	); //	Act 3 Mephisto Down R
-	levelWarpsDown.insert(	69	); //	Act 4 Mesa to Lava
-	levelWarpsDown.insert(	70	); //	Act 4 Lava to Mesa
-	levelWarpsDown.insert(	71	); //	Act 5 Barricade Down Wall
-	levelWarpsDown.insert(	71	); //	Act 5 Barricade Down Wall
-	levelWarpsDown.insert(	72	); //	Act 5 Barricade Down Floor
-	levelWarpsDown.insert(	74	); //	Act 5 Ice Caves Down
-	levelWarpsDown.insert(	74	); //	Act 5 Ice Caves Down
-	levelWarpsDown.insert(	75	); //	Act 5 Ice Caves Down Floor
-	levelWarpsDown.insert(	76	); //	Act 5 Temple Entrance
-	levelWarpsDown.insert(	77	); //	Act 5 Temple Down
-	levelWarpsDown.insert(	79	); //	Act 5 Mountain Top To Ice
-	levelWarpsDown.insert(	80	); //	Act 5 Mountain Top To Baal
-	levelWarpsDown.insert(	82	); //	Act 5 Baal Temple Down
-	levelWarpsDown.insert(	82	); //	Act 5 Baal Temple Down
+	toBloodRaven.Name = "Blood raven 1";
+	toBloodRaven.InitSteps(1);
+	toBloodRaven.WaypointDestination = WAYPOINTDEST_OuterCloister;
+	toBloodRaven.RoomTransitions[0][51] = StairsData(3, 15, 20); // Act 1 - Cave Entrance
+	allTravelData.push_back(&toBloodRaven);
+
+	toBloodRavenLair.Name = "Blood raven 2";
+	toBloodRavenLair.InitSteps(1);
+	toBloodRavenLair.WaypointDestination = WAYPOINTDEST_OuterCloister;
+	toBloodRavenLair.RoomTransitions[0][51] = StairsData(3, 15, 20); // Act 1 - Cave Entrance
+	toBloodRavenLair.RoomTransitions[0][91] = StairsData(5, 0, 0); // Act 1 - Cave Down W	
+	toBloodRavenLair.RoomTransitions[0][92] = StairsData(5, 0, 0); // Act 1 - Cave Down E	
+	toBloodRavenLair.RoomTransitions[0][93] = StairsData(5, 5, 34); // Act 1 - Cave Down S	
+	toBloodRavenLair.RoomTransitions[0][94] = StairsData(5, 16, 14); // Act 1 - Cave Down N	
+	allTravelData.push_back(&toBloodRavenLair);
+
+	toMephisto.Name = "Mephisto";
+	toMephisto.InitSteps(1);
+	toMephisto.WaypointDestination = WAYPOINTDEST_DuranceOfHateLevel2;
+	toMephisto.RoomTransitions[0][788] = StairsData(67, 17, 12); // Act 3 - Mephisto Next W
+	toMephisto.RoomTransitions[0][789] = StairsData(67, 12, 29); // Act 3 - Mephisto Next E
+	toMephisto.RoomTransitions[0][790] = StairsData(67, 29, 12); // Act 3 - Mephisto Next S
+	toMephisto.RoomTransitions[0][791] = StairsData(67, 7, 28); // Act 3 - Mephisto Next N
+	allTravelData.push_back(&toMephisto);
+
+	toBaal.Name = "Throne of destruction";
+	toBaal.InitSteps(1);
+	toBaal.WaypointDestination = WAYPOINTDEST_WorldstoneKeepLevel2;
+	toBaal.RoomTransitions[0][1078] = StairsData(82, 17, 18); // Act 3 - Mephisto Next W
+	toBaal.RoomTransitions[0][1079] = StairsData(82, 17, 19); // Act 3 - Mephisto Next E
+	toBaal.RoomTransitions[0][1080] = StairsData(82, 18, 17); // Act 3 - Mephisto Next S
+	toBaal.RoomTransitions[0][1081] = StairsData(82, 19, 17); // Act 3 - Mephisto Next N
+	allTravelData.push_back(&toBaal);
 
 	return TRUE;
 }
 
 DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 {
+	//if(aPacket[0] == 0x13)
+	//{
+	//	DWORD unitType = *((DWORD *)&aPacket[1]);
+	//	DWORD unitId = *((DWORD *)&aPacket[5]);
+	//
+	//	GAMEUNIT gu;
+	//	gu.dwUnitID = unitId;
+	//	gu.dwUnitType = unitType;
+	//
+	//	DWORD classId = server->GetUnitClassID(&gu);
+	//	server->GameStringf("Interact with: transitions[%d] = %d;", server->D2GetCurrentRoomNum(), classId);
+	//}
+
 	if(aPacket[0] == 0x15 && aPacket[1] == 0x01)
 	{
 		char *chatMessage = (char *)(aPacket+3);
 
 		if(strncmp(chatMessage, "ÿc5Waypointÿc0:", 15) == 0)
 		{
-			if(strcmp(chatMessage, "ÿc5Waypointÿc0: Complete") == 0)
+			if(strcmp(chatMessage, "ÿc5Waypointÿc0: Complete") != 0)
 			{
-			}
-			else
-			{
+				currentState = STATE_Idle;
 			}
 
 			return 0;
@@ -298,83 +495,21 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 
 VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 {
+	//if(currentState == STATE_TeleportingToStairsRoom && aPacket[0] == 0x09 && aPacket[1] == 0x05)
+	//{
+	//	CheckForOurStairs();
+	//}
 
-}
-
-BOOL CALLBACK enumUnitProc(LPCGAMEUNIT lpUnit, LPARAM lParam)
-{
-	if(lpUnit->dwUnitType != UNIT_TYPE_ROOMTILE)
-		return TRUE;
-
-	DWORD unitClassId = server->GetUnitClassID(lpUnit);
-	if(unitClassId == 0)
-		return TRUE;
-
-	//server->GameStringf("unitClassId = %d", unitClassId);
-
-	if(levelWarpsDown.find(unitClassId) == levelWarpsDown.end())
-		return TRUE;
-
-	*((GAMEUNIT*)lParam) = *lpUnit;
-
-	return FALSE;
-}
-
-DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
-{
-	if(currentState == STATE_TeleportingToStairsRoom && aPacket[0] == 0x09 && aPacket[1] == 0x05)
-	{
-		// A cave/stairs/entrance has come into range, check to see if it's our staircase
-		
-		if(server->EnumUnits(UNIT_TYPE_ROOMTILE, enumUnitProc, (LPARAM)&stairsGameUnit))
-		{
-			return aLen;
-		}
-		
-		MAPPOS stairsPos = server->GetUnitPosition(&stairsGameUnit);
-		
-		//server->GameStringf("!! Stairs object Found at (%d, %d)", stairsPos.x, stairsPos.y);
-		
-		currentState = STATE_TeleportingToStairsObject;
-		
-		me->CleanJobs();
-		pathIndex = 0;
-		server->CalculatePath(stairsPos.x +5, stairsPos.y+ 5, &path, 15);
-		
-		me->CastOnMap(D2S_TELEPORT, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y, false);
-		++pathIndex;
-	}
-
-	else if(aPacket[0] == 0x15 && *((DWORD *)&aPacket[2]) == me->GetID())
+	if(aPacket[0] == 0x15 && *((DWORD *)&aPacket[2]) == me->GetID())
 	{
 		if(currentState != STATE_TeleportingToStairsRoom && currentState != STATE_TeleportingToStairsObject)
 		{
-			return aLen;
+			return;
 		}
 
-		//server->GamePrintPacket(true, aPacket, aLen);
-		// We have been re-assigned (happens after teleporting and other actions (?))
-		if(pathIndex >= path.iNodeCount)
-		{
-		
-			//server->GameStringf("We have arrived at our destination");
-		
-			if(currentState == STATE_TeleportingToStairsObject)
-			{
-				server->GameStringf("Using stairs...");
-				currentState = STATE_UsingStairs;
-				me->Interact(&stairsGameUnit);
-			}
-		
-			return aLen;
-		}
-		
-		//server->GameStringf("pathIndex = %d  nodeCount = %d  (%d, %d)", pathIndex, path.iNodeCount, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y);
-		
-		me->CastOnMap(D2S_TELEPORT, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y, false);
-		++pathIndex;
+		NextStep();
 	}
-	return aLen;
+	return;
 }
 
 VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
@@ -389,16 +524,28 @@ VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
 	}
 	else if(nMessage == PM_MAPCHANGE)
 	{
-		if(currentState == STATE_UsingStairs)
+		//server->GameStringf("PM_MAPCHANGE");
+		if(currentState == STATE_UsingStairs || currentState == STATE_UsingWaypoint)
 		{
 			currentState = STATE_Idle;
-			Start(nullptr, 0);
+			NextRoomTransition();
+		}
+		else if(currentState == STATE_BackToTown)
+		{
+			currentState = STATE_UsingWaypoint;
+			server->GameCommandf("load wp");
+			server->GameCommandf("wp start %d", currentTravelData->WaypointDestination);
+			return;
 		}
 	}
 }
 
 BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 {
+	if(iKeyCode == VK_SPACE)
+	{
+		currentState = STATE_Idle;
+	}
 	return iKeyCode;
 }
 

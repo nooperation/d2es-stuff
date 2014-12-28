@@ -47,7 +47,7 @@ BOOL D2IsWeapon(LPCSTR itemCode)
 	if(!itemsLoaded)
 		LoadItems();
 
-	return itemMapWeapons.count(itemCode) > 0;
+	return itemMapWeapons.find(itemCode) != itemMapWeapons.end();
 }
 
 BOOL D2IsArmor(LPCSTR itemCode)
@@ -55,7 +55,7 @@ BOOL D2IsArmor(LPCSTR itemCode)
 	if(!itemsLoaded)
 		LoadItems();
 
-	return itemMapArmor.count(itemCode) > 0;
+	return itemMapArmor.find(itemCode) != itemMapArmor.end();
 }
 
 BOOL D2IsStackable(LPCSTR itemCode)
@@ -63,7 +63,7 @@ BOOL D2IsStackable(LPCSTR itemCode)
 	if(!itemsLoaded)
 		LoadItems();
 
-	return itemMapStackable.count(itemCode) > 0;
+	return itemMapStackable.find(itemCode) != itemMapStackable.end();
 }
 
 LPCSTR D2GetItemSetName(LPCSTR itemCode)
@@ -71,14 +71,13 @@ LPCSTR D2GetItemSetName(LPCSTR itemCode)
 	if(!itemsLoaded)
 		LoadItems();
 
-	if(itemMapSets.count(itemCode) == 0)
+	auto itemMapSetsIter = itemMapSets.find(itemCode);
+	if(itemMapSetsIter == itemMapSets.end())
 	{
 		return "Unknown";
 	}
-	else
-	{
-		return itemMapSets[itemCode].c_str();
-	}
+
+	return itemMapSetsIter->second.c_str();
 }
 
 LPCSTR D2GetItemName(LPCSTR itemCode)
@@ -86,14 +85,13 @@ LPCSTR D2GetItemName(LPCSTR itemCode)
 	if(!itemsLoaded)
 		LoadItems();
 
-	if(itemMapAll.count(itemCode) == 0)
+	auto itemMapIter = itemMapAll.find(itemCode);
+	if(itemMapIter == itemMapAll.end())
 	{
 		return "Unknown";
 	}
-	else
-	{
-		return itemMapAll[itemCode].c_str();
-	}
+
+	return itemMapIter->second.c_str();
 }
 
 bool LoadItems()

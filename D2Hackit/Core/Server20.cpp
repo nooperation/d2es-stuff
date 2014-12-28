@@ -1135,7 +1135,6 @@ BOOL EXPORT GetItemCodeEx(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars, in
 	return TRUE;
 }
 
-
 DWORD EXPORT D2GetAllRoomCoords(ROOMPOS *allRoomCoords, DWORD capacity)
 {
 	std::vector<RoomOther *> rooms;
@@ -1151,17 +1150,19 @@ DWORD EXPORT D2GetAllRoomCoords(ROOMPOS *allRoomCoords, DWORD capacity)
 		return FALSE;
 	}
 
-	for(int i = 0; i < capacity && i < rooms.size(); ++i)
+	for(size_t i = 0; i < capacity && i < rooms.size(); ++i)
 	{
 		allRoomCoords[i].roomnum = (WORD)rooms[i]->pPresetType2info->roomNum;
 		allRoomCoords[i].pos.x = (WORD)rooms[i]->xPos;
 		allRoomCoords[i].pos.y = (WORD)rooms[i]->yPos;
+		allRoomCoords[i].size.x = (WORD)rooms[i]->xSize;
+		allRoomCoords[i].size.x = (WORD)rooms[i]->ySize;
 	}
 
 	return rooms.size();
 }
 
-BOOL EXPORT D2GetRoomCoords(int roomNum, LPMAPPOS roomCoords)
+BOOL EXPORT D2GetRoomCoords(int roomNum, LPMAPPOS roomCoords, void **room)
 {
 	std::vector<RoomOther *> rooms;
 
@@ -1176,7 +1177,7 @@ BOOL EXPORT D2GetRoomCoords(int roomNum, LPMAPPOS roomCoords)
 		{
 			roomCoords->x = (WORD)(*iter)->xPos;
 			roomCoords->y = (WORD)(*iter)->yPos;
-			return TRUE;
+			return (BOOL)(*iter);
 		}
 	}
 
@@ -1206,6 +1207,12 @@ int EXPORT D2GetCurrentRoomNum()
 		return 0;
 	}
 
+	if(!curRoomOther->pPresetType2info)
+	{
+		GamePrintError("!curRoomOther->pPresetType2info");
+		return 0;
+	}
+
 	return curRoomOther->pPresetType2info->roomNum;
 }
 
@@ -1230,9 +1237,6 @@ BOOL EXPORT GetItemCode(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars)
 	::strncpy(lpszBuffer, ptxt->szCode, min(dwMaxChars, 3));
 	return strlen(lpszBuffer);
 }
-
-
-
 
 
 BOOL GetRooms(std::vector<RoomOther *> &allRooms)
@@ -1267,6 +1271,9 @@ BOOL GetRooms(std::vector<RoomOther *> &allRooms)
 
 void GetRoomsRecursive(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, std::vector<RoomOther *>& allRooms)
 {
+	if(ro == nullptr)
+		return;
+
 	if(ro->ptDrlgLevel->LevelNo!=GetCurrentMapID())
 		return;
 
@@ -1286,6 +1293,9 @@ void GetRoomsRecursive(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, std::vec
 	allRooms.push_back(ro);
 
 	RoomOther **n = ro->ptList;
+	if(n == nullptr)
+		return;
+
 	for(int i=0;i<ro->nRoomList;i++)
 	{
 		GetRoomsRecursive(n[i], aChecked, allRooms);

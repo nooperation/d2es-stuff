@@ -101,6 +101,8 @@ BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 		}
 		if(iKeyCode == dropToCubeHotkey)
 		{
+			if(me->DropCursorItemToGround())
+
 			me->Transmute();
 		}
 	}

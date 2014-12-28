@@ -27,6 +27,7 @@ typedef struct tagRoomPos
 {
 	DWORD roomnum;
 	MAPPOS pos;
+	MAPPOS size;
 } ROOMPOS, *LPROOMPOS;
 typedef const tagRoomPos* LPCROOMPOS;
 
@@ -423,7 +424,7 @@ typedef LPCSTR (__cdecl *fnGetGameIP)();
 
 
 typedef int (__cdecl *fnD2GetCurrentRoomNum)();
-typedef BOOL (__cdecl *fnD2GetRoomCoords)(int roomNum, LPMAPPOS roomCoords);
+typedef BOOL (__cdecl *fnD2GetRoomCoords)(int roomNum, LPMAPPOS roomCoords, void **room);
 typedef DWORD (__cdecl *fnD2GetAllRoomCoords)(ROOMPOS *allRoomCoords, DWORD capacity);
 
 
