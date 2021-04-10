@@ -1,7 +1,6 @@
 //#include "stdafx.h"
 #include "item.h"
 #include "bitfields.h"
-#include "itemsize.h"
 #include <stdio.h>
 #include <fstream>
 #include <unordered_set>
@@ -16,6 +15,7 @@ std::unordered_map<std::string, std::string> itemMapSets;
 std::unordered_map<std::string, std::string> itemMapWeapons;
 std::unordered_map<std::string, std::string> itemMapArmor;
 std::unordered_map<std::string, std::string> itemMapStackable;
+std::unordered_map<std::string, SIZE> itemSizes;
 
 std::unordered_set<std::string> itemIddqdUniques;
 std::unordered_set<std::string> itemRingsAmulets;
@@ -26,23 +26,19 @@ std::unordered_set<std::string> itemSpecialItems;
 
 CRITICAL_SECTION csLoadingItems;
 
-SIZE D2GetItemSize(LPCTSTR lpszItemCode)
+SIZE D2GetItemSize(LPCTSTR itemCode)
 {
-	SIZE val = { 0 };
-	if (lpszItemCode == NULL)
-		return val;
+	if (!itemsLoaded)
+		LoadItems();
 
-	for (int i = 0; ITEM_SIZE_TB[i].code; i++)
+	auto itemSizeIter = itemSizes.find(itemCode);
+	if (itemSizeIter == itemSizes.end())
 	{
-		if (_stricmp(lpszItemCode, ITEM_SIZE_TB[i].code) == 0)
-		{
-			val.cx = ITEM_SIZE_TB[i].x;
-			val.cy = ITEM_SIZE_TB[i].y;
-			return val;
-		}
+		SIZE val = { 0 };
+		return val;
 	}
-
-	return val;
+	
+	return itemSizeIter->second;
 }
 
 BOOL D2IsWeapon(LPCSTR itemCode)
@@ -164,8 +160,6 @@ void DumpAllItems(char *path)
 	fclose(outFile);
 }
 
-
-
 bool LoadItems()
 {
 	// I figure it's better to just wait for one thread to read and set the data
@@ -177,6 +171,8 @@ bool LoadItems()
 		LeaveCriticalSection(&csLoadingItems);
 		return true;
 	}
+
+	LoadItemSizeMap(".\\plugin\\ItemSizes.txt", itemSizes);
 
 	if (!std::filesystem::exists(".\\plugin\\AllItems.txt"))
 	{
@@ -500,6 +496,50 @@ bool LoadItems()
 
 	itemsLoaded = true;
 	LeaveCriticalSection(&csLoadingItems);
+
+	return true;
+}
+
+bool LoadItemSizeMap(std::string fileName, std::unordered_map<std::string, SIZE> &itemSizeMap)
+{
+	std::ifstream inFile(fileName.c_str());
+	std::string readBuff;
+
+	if (!inFile)
+	{
+		return false;
+	}
+
+	itemSizeMap.clear();
+
+	while (inFile.good())
+	{
+		std::getline(inFile, readBuff);
+		if (readBuff.length() <= 0)
+		{
+			continue;
+		}
+
+		auto itemName = readBuff.substr(0, 3);
+		auto itemSize = readBuff.substr(4);
+
+		if (itemName.length() < 3)
+		{
+			continue;
+		}
+
+		int width = 0;
+		int height = 0;
+		if (sscanf_s(itemSize.c_str(), "%d %d", &width, &height) != 2)
+		{
+			throw std::exception(("Invalid item size in " + fileName).c_str());
+		}
+
+		itemSizeMap[itemName].cx = width;
+		itemSizeMap[itemName].cy = height;
+	}
+
+	inFile.close();
 
 	return true;
 }

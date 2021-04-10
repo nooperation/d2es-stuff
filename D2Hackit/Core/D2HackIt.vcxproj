@@ -391,7 +391,6 @@ xcopy /Y $(TargetDir)$(TargetName).pdb "C:\Program Files (x86)\Diablo II\plugin\
     <ClInclude Include="definitions.h" />
     <ClInclude Include="Inventory.h" />
     <ClInclude Include="item.h" />
-    <ClInclude Include="itemsize.h" />
     <ClInclude Include="KeyDef.h" />
     <ClInclude Include="MapDef.h" />
     <ClInclude Include="MapDll.h" />
@@ -412,6 +411,9 @@ xcopy /Y $(TargetDir)$(TargetName).pdb "C:\Program Files (x86)\Diablo II\plugin\
     <None Include="Resources\MagicSuffix_all.txt" />
     <None Include="Resources\Sets.txt" />
     <None Include="Resources\Weapons.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\ItemSizes.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

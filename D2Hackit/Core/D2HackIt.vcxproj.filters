@@ -178,9 +178,6 @@
     <ClInclude Include="item.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="itemsize.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="KeyDef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -237,5 +234,10 @@
     <None Include="Resources\Weapons.txt">
       <Filter>Resources</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\ItemSizes.txt">
+      <Filter>Resources</Filter>
+    </Text>
   </ItemGroup>
 </Project>

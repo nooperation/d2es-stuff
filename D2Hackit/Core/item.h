@@ -10,10 +10,11 @@
 
 bool LoadItems();
 bool LoadItemMap(std::string fileName, std::unordered_map<std::string, std::string> &itemMap);
+bool LoadItemSizeMap(std::string fileName, std::unordered_map<std::string, SIZE> &itemSizeMap);
 
 // Exports in server
 BOOL D2ParseItem(const BYTE* aPacket, DWORD aLen, ITEM& item); // Parses item info from a packet
-SIZE D2GetItemSize(LPCSTR lpszItemCode);
+SIZE D2GetItemSize(LPCSTR itemCode);
 LPCSTR D2GetItemName(LPCSTR itemCode);
 LPCSTR D2GetItemSetName(LPCSTR itemCode);
 BOOL D2IsStackable(LPCSTR itemCode);
