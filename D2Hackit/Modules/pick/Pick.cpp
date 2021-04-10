@@ -4,7 +4,6 @@
 #include "../../Includes/itemSuffix.h"
 #include "ItemWatcher.h"
 
-BOOL PRIVATE ToggleTownPickup(char **argv, int argc);
 BOOL PRIVATE ShowEthSoc(char **argv, int argc);
 BOOL PRIVATE Radius(char** argv, int argc);
 BOOL PRIVATE MinGold(char** argv, int argc);
@@ -358,9 +357,10 @@ VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 	if(enabled && (aPacket[0] == 0x9c || aPacket[0] == 0x9d))
 	{
 		ITEM item;
-		if(!server->ParseItem(aPacket, aLen, item))
+		if (!server->ParseItem(aPacket, aLen, item))
+		{
 			return;
-		//server->GameStringf("Packet %02X %02X", aPacket[0], aPacket[1]);
+		}
 
 		if(aPacket[1] == ITEM_ACTION_FROM_STORAGE || aPacket[1] == ITEM_ACTION_PICK_UP || aPacket[1] == ITEM_ACTION_TO_CURSOR)
 		{

@@ -46,7 +46,7 @@ class ItemWatcher
 
 		const char *GetItemDesc(const ITEM &item);
 		const char *GetDirectionFrom(WORD sourceX, WORD sourceY, WORD targetX, WORD targetY);
-		bool IsOkToPick(const char *itemCode);
+		bool IsOkToPick(const std::string &itemCode);
 		bool IsOkToAnnounce(const char *itemCode);
 
 		std::vector<DWORD> destroyedItemsSinceLastCheck;

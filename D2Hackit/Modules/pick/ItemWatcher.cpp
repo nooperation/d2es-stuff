@@ -38,25 +38,22 @@ void ItemWatcher::Cleanup()
 
 void ItemWatcher::CheckWatchedItems()
 {
-	GAMEUNIT itemUnit;
-	itemUnit.dwUnitType = UNIT_TYPE_ITEM;
-
 	if(destroyedItemsSinceLastCheck.size() > 0)
 	{
 		std::list<WatchedItemData> itemsToStopWatching;
 
-		for(std::list<WatchedItemData>::iterator i = watchedItems.begin(); i != watchedItems.end(); ++i)
+		for(auto &watchedItem: watchedItems)
 		{
-			for(std::vector<DWORD>::iterator j = destroyedItemsSinceLastCheck.begin(); j != destroyedItemsSinceLastCheck.end(); ++j)
+			for(auto &destroyedItemId: destroyedItemsSinceLastCheck)
 			{
-				if(i->id == *j)
+				if(watchedItem.id == destroyedItemId)
 				{
-					itemsToStopWatching.push_back((*i));
+					itemsToStopWatching.push_back(watchedItem);
 				}
 			}
 		}
 
-		for each(auto item in itemsToStopWatching)
+		for (auto &item: itemsToStopWatching)
 		{
 			watchedItems.remove(item);
 		}
@@ -71,48 +68,40 @@ void ItemWatcher::CheckWatchedItems()
 	//  same thread (Proc_OnGameTimerTick() server20.cpp)
 	destroyedItemsSinceLastCheck.clear();
 
-	for(std::list<WatchedItemData>::iterator i = watchedItems.begin(); i != watchedItems.end(); )
+	for(auto itemIter = watchedItems.begin(); itemIter != watchedItems.end(); )
 	{
-		itemUnit.dwUnitID = i->id;
-		if(server->VerifyUnit(&itemUnit))
+		GAMEUNIT itemUnit;
+		itemUnit.dwUnitType = UNIT_TYPE_ITEM;
+		itemUnit.dwUnitID = itemIter->id;
+		if(!server->VerifyUnit(&itemUnit))
 		{
-			tagMapPos myPos = me->GetPosition();
+			itemIter = watchedItems.erase(itemIter);
+			continue;
+		}
 
-			if(server->GetDistance(myPos.x, myPos.y, i->x, i->y) <= radius && me->GetMode() != MODE_CAST)
-			{
-				//server->GameStringf("Picking %X... [%d]", i->id, watchedItems.size());
-				if(i->isGold)
-				{
-					me->PickGroundItem(i->id, TRUE);
-					return;
-				}
-				else
-				{
-					if(me->FindFirstStorageSpace(STORAGE_INVENTORY, i->itemSize, NULL))
-					{
-						//server->GameStringf("Pick item %02X", i->id);
-						me->PickGroundItem(i->id, TRUE);
-						return;
-						//watchedItems.erase(i++); // TODO: needs to check items on pickup to see if it worked
-					}
-					else
-					{
-						server->GameStringf("ÿc1Pickÿc0: ÿc:Not enough room for item, skipping");
-						watchedItems.erase(i++);
-					}
-				}
-				return;
-			}
-			else
-			{
-				++i;
-			}
-		}
-		else
+		const auto myPos = me->GetPosition();
+		if (server->GetDistance(myPos.x, myPos.y, itemIter->x, itemIter->y) > radius || me->GetMode() != MODE_CAST)
 		{
-			//server->GameStringf("Erasing %X... [%d]", i->id, watchedItems.size());
-			watchedItems.erase(i++);
+			++itemIter;
+			continue;
 		}
+
+		//server->GameStringf("Picking %X... [%d]", i->id, watchedItems.size());
+		if(itemIter->isGold)
+		{
+			me->PickGroundItem(itemIter->id, TRUE);
+			return;
+		}
+
+		if(me->FindFirstStorageSpace(STORAGE_INVENTORY, itemIter->itemSize, NULL))
+		{
+			me->PickGroundItem(itemIter->id, TRUE);
+			return;
+		}
+
+		server->GameStringf("ÿc1Pickÿc0: ÿc:Not enough room for item, skipping");
+		itemIter = watchedItems.erase(itemIter);
+		return;
 	}
 }
 
@@ -215,20 +204,16 @@ bool ItemWatcher::loadItemMap(const std::string &fileName, std::unordered_map<st
 {
 	std::ifstream inFile(fileName.c_str());
 
-	std::string itemName;
-	std::string itemDesc;
-	std::string readBuff;
-
 	if(!inFile)
 	{
 		return false;
 	}
 
 	itemMap.clear();
-
 	
 	while(inFile.good())
 	{
+		std::string readBuff;
 		std::getline(inFile, readBuff);
 
 		if(readBuff.length() <= 0)
@@ -236,16 +221,18 @@ bool ItemWatcher::loadItemMap(const std::string &fileName, std::unordered_map<st
 			continue;
 		}
 
-		itemName = readBuff.substr(0, 3);
-		itemDesc = readBuff.substr(4);
+		auto itemName = readBuff.substr(0, 3);
+		auto itemDesc = readBuff.substr(4);
 
 		if(itemName.length() < 3)
 		{
 			continue;
 		}
 
-		if(itemMap.count(itemName) == 0)
+		if (itemMap.count(itemName) == 0)
+		{
 			itemMap[itemName] = itemDesc;
+		}
 	}
 
 	inFile.close();
@@ -307,7 +294,7 @@ const char *ItemWatcher::GetDirectionFrom(WORD sourceX, WORD sourceY, WORD targe
 	return "Hay";
 }
 
-bool ItemWatcher::IsOkToPick(const char *itemCode)
+bool ItemWatcher::IsOkToPick(const std::string &itemCode)
 {
 	return itemsToPick.count(itemCode) > 0;
 }
@@ -379,7 +366,6 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 	{
 		return;
 	}
-
 	
 	WatchedItemData itemData;
 	itemData.id = item.dwItemID;
@@ -387,14 +373,16 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 	itemData.y = item.wPositionY;
 	itemData.isGold = false;
 
-	if(item.iIdentified && strcmp(item.szItemCode, "ore") == 0)
+	const auto itemCode = std::string(item.szItemCode);
+
+	if(item.iIdentified && itemCode == "ore")
 	{
 		return;
 	}
 
 	if((townPickup || !me->IsInTown()) && item.iAction!= ITEM_ACTION_DROP)
 	{
-		if(strcmp(item.szItemCode, "gld") == 0 && item.dwGoldAmount >= minGold)
+		if(itemCode == "gld" && item.dwGoldAmount >= minGold)
 		{
 			itemData.isGold = true;
 			watchedItems.push_back(itemData);
@@ -402,7 +390,7 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 		}
 		else if(isPickingItems)
 		{
-			if(IsOkToPick(item.szItemCode))
+			if(IsOkToPick(itemCode))
 			{
 				itemData.itemSize = server->GetItemSize(item.szItemCode);
 				watchedItems.push_front(itemData);
@@ -417,6 +405,7 @@ void ItemWatcher::AnnounceItem(const ITEM &item)
 {
 	char outputMessage[512] = {0};
 	bool overrideAnnouncment = false;
+	const auto itemCode = std::string(item.szItemCode);
 
 	if(item.iEthereal)
 	{
@@ -435,7 +424,7 @@ void ItemWatcher::AnnounceItem(const ITEM &item)
 			break;
 		case ITEM_LEVEL_UNIQUE:
 			overrideAnnouncment = true;
-			if(iddqdUniques.find(item.szItemCode) != iddqdUniques.end())
+			if(iddqdUniques.find(itemCode) != iddqdUniques.end())
 			{
 				strcat_s(outputMessage, "ÿc1IDDQD Unique ");
 			}
@@ -462,7 +451,7 @@ void ItemWatcher::AnnounceItem(const ITEM &item)
 			break;
 	}
 
-	if(!overrideAnnouncment && !IsOkToAnnounce(item.szItemCode))
+	if(!overrideAnnouncment && !IsOkToAnnounce(itemCode.c_str()))
 	{
 		return;
 	}
