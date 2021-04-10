@@ -219,9 +219,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\AllItems.txt">
-      <Filter>Resources</Filter>
-    </None>
     <None Include="Resources\Armor.txt">
       <Filter>Resources</Filter>
     </None>

@@ -406,10 +406,6 @@ xcopy /Y $(TargetDir)$(TargetName).pdb "C:\Program Files (x86)\Diablo II\plugin\
     <ClInclude Include="SpellDef.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\AllItems.txt">
-      <FileType>Text</FileType>
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="Resources\Armor.txt" />
     <None Include="Resources\D2HackIt.ini" />
     <None Include="Resources\MagicPrefix_all.txt" />

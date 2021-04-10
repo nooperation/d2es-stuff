@@ -5,7 +5,10 @@
 #include <stdio.h>
 #include <fstream>
 #include <unordered_set>
+#include <filesystem>
+
 #include "criticalSections.h"
+#include "d2functions.h"
 
 bool itemsLoaded = false;
 std::unordered_map<std::string, std::string> itemMapAll;
@@ -94,6 +97,75 @@ LPCSTR D2GetItemName(LPCSTR itemCode)
 	return itemMapIter->second.c_str();
 }
 
+std::wstring FixDisplayText(std::wstring input)
+{
+	std::wstring output = L"";
+
+	for (size_t i = 0; i < input.length(); i++)
+	{
+		if (input[i] == '\n')
+		{
+			output += ' ';
+		}
+		else
+		{
+			output += input[i];
+		}
+	}
+
+	return output;
+}
+
+void DumpAllItems(char *path)
+{
+	FILE *outFile = nullptr;
+	fopen_s(&outFile, path, "w");
+
+	if (outFile == nullptr)
+	{
+		return;
+	}
+
+	for (int i = 0; i < 1000000; i++)
+	{
+		auto itemTxt = D2COMMON_GetItemTxt(i);
+		if (itemTxt == nullptr)
+		{
+			break;
+		}
+
+		auto rawLocalTxt = D2LANG_GetLocaleText(itemTxt->nLocaleTxtNo);
+		auto displayTxt = FixDisplayText(rawLocalTxt);
+
+		if (itemTxt->szCode[0] == 0)
+		{
+			fprintf(outFile, "??? ");
+		}
+		if (itemTxt->szCode[1] == 0)
+		{
+			fprintf(outFile, "%c ", itemTxt->szCode[0]);
+		}
+		else if (itemTxt->szCode[2] == 0)
+		{
+			fprintf(outFile, "%c%c ", itemTxt->szCode[0], itemTxt->szCode[1]);
+		}
+		else if (itemTxt->szCode[3] == 0)
+		{
+			fprintf(outFile, "%c%c%c ", itemTxt->szCode[0], itemTxt->szCode[1], itemTxt->szCode[2]);
+		}
+		else
+		{
+			fprintf(outFile, "%c%c%c%c ", itemTxt->szCode[0], itemTxt->szCode[1], itemTxt->szCode[2], itemTxt->szCode[3]);
+		}
+
+		fwprintf(outFile, L"%s\n", displayTxt.c_str());
+	}
+
+	fclose(outFile);
+}
+
+
+
 bool LoadItems()
 {
 	// I figure it's better to just wait for one thread to read and set the data
@@ -102,27 +174,37 @@ bool LoadItems()
 	EnterCriticalSection(&csLoadingItems);
 	if(itemsLoaded)
 	{
+		LeaveCriticalSection(&csLoadingItems);
 		return true;
+	}
+
+	if (!std::filesystem::exists(".\\plugin\\AllItems.txt"))
+	{
+		DumpAllItems(".\\plugin\\AllItems.txt");
 	}
 
 	if(!LoadItemMap(".\\plugin\\AllItems.txt", itemMapAll))
 	{
 		GameErrorf("Unable to open .\\plugin\\AllItems.txt");
+		LeaveCriticalSection(&csLoadingItems);
 		return false;
 	}
 	if(!LoadItemMap(".\\plugin\\Armor.txt", itemMapArmor))
 	{
 		GameErrorf("Unable to open .\\plugin\\Armor.txt");
+		LeaveCriticalSection(&csLoadingItems);
 		return false;
 	}
 	if(!LoadItemMap(".\\plugin\\Weapons.txt", itemMapWeapons))
 	{
 		GameErrorf("Unable to open .\\plugin\\Weapons.txt");
+		LeaveCriticalSection(&csLoadingItems);
 		return false;
 	}
 	if(!LoadItemMap(".\\plugin\\Sets.txt", itemMapSets))
 	{
 		GameErrorf("Unable to open .\\plugin\\Weapons.txt");
+		LeaveCriticalSection(&csLoadingItems);
 		return false;
 	}
 
