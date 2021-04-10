@@ -133,19 +133,19 @@ void DumpAllItems(char *path)
 		auto rawLocalTxt = D2LANG_GetLocaleText(itemTxt->nLocaleTxtNo);
 		auto displayTxt = FixDisplayText(rawLocalTxt);
 
-		if (itemTxt->szCode[0] == 0)
+		if (itemTxt->szCode[0] == ' ')
 		{
 			fprintf(outFile, "??? ");
 		}
-		if (itemTxt->szCode[1] == 0)
+		if (itemTxt->szCode[1] == ' ')
 		{
 			fprintf(outFile, "%c ", itemTxt->szCode[0]);
 		}
-		else if (itemTxt->szCode[2] == 0)
+		else if (itemTxt->szCode[2] == ' ')
 		{
 			fprintf(outFile, "%c%c ", itemTxt->szCode[0], itemTxt->szCode[1]);
 		}
-		else if (itemTxt->szCode[3] == 0)
+		else if (itemTxt->szCode[3] == ' ')
 		{
 			fprintf(outFile, "%c%c%c ", itemTxt->szCode[0], itemTxt->szCode[1], itemTxt->szCode[2]);
 		}

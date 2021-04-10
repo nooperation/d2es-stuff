@@ -15,6 +15,9 @@ public:
 	int x;
 	int y;
 	bool isGold;
+	bool isTpScroll;
+	bool isIdScroll;
+	byte keyCount;
 	SIZE itemSize;
 };
 

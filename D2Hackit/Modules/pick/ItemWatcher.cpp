@@ -36,6 +36,32 @@ void ItemWatcher::Cleanup()
 	destroyedItemsSinceLastCheck.clear();
 }
 
+struct TomeInfo {
+	int totalTomesOfTownPortal;
+	int totalTomesOfIdentify;
+	int totalKeys;
+};
+
+BOOL CALLBACK searchForTomesItemProc(LPCITEM item, LPARAM lParam)
+{
+	auto tomeInfo = (TomeInfo *)lParam;
+
+	if (strcmp(item->szItemCode, "tbk") == 0)
+	{
+		tomeInfo->totalTomesOfTownPortal++;
+	}
+	else if (strcmp(item->szItemCode, "ibk") == 0)
+	{
+		tomeInfo->totalTomesOfIdentify++;
+	}
+	else if (strcmp(item->szItemCode, "key") == 0)
+	{
+		tomeInfo->totalKeys += item->iQuantity;
+	}
+
+	return TRUE;
+}
+
 void ItemWatcher::CheckWatchedItems()
 {
 	if(destroyedItemsSinceLastCheck.size() > 0)
@@ -80,7 +106,7 @@ void ItemWatcher::CheckWatchedItems()
 		}
 
 		const auto myPos = me->GetPosition();
-		if (server->GetDistance(myPos.x, myPos.y, itemIter->x, itemIter->y) > radius || me->GetMode() != MODE_CAST)
+		if (server->GetDistance(myPos.x, myPos.y, itemIter->x, itemIter->y) > radius || me->GetMode() == MODE_CAST)
 		{
 			++itemIter;
 			continue;
@@ -89,6 +115,56 @@ void ItemWatcher::CheckWatchedItems()
 		//server->GameStringf("Picking %X... [%d]", i->id, watchedItems.size());
 		if(itemIter->isGold)
 		{
+			me->PickGroundItem(itemIter->id, TRUE);
+			return;
+		}
+
+		if (itemIter->isIdScroll)
+		{
+			TomeInfo info{ 0, 0, 0 };
+			me->EnumStorageItems(STORAGE_INVENTORY, searchForTomesItemProc, (LPARAM)&info);
+
+			const auto numCharges = me->GetSpellCharges(D2S_TOMEOFIDENTIFY);
+			const auto maxCharges = info.totalTomesOfIdentify * 40;
+
+			if (maxCharges - numCharges < 2)
+			{
+				itemIter = watchedItems.erase(itemIter);
+				continue;
+			}
+
+			me->PickGroundItem(itemIter->id, TRUE);
+			return;
+		}
+
+		if (itemIter->isTpScroll)
+		{
+			TomeInfo info{ 0, 0, 0 };
+			me->EnumStorageItems(STORAGE_INVENTORY, searchForTomesItemProc, (LPARAM)&info);
+
+			const auto numCharges = me->GetSpellCharges(D2S_TOMEOFTOWNPORTAL);
+			const auto maxCharges = info.totalTomesOfTownPortal * 40;
+
+			if (maxCharges - numCharges < 2)
+			{
+				itemIter = watchedItems.erase(itemIter);
+				continue;
+			}
+
+			me->PickGroundItem(itemIter->id, TRUE);
+			return;
+		}
+
+		if (itemIter->keyCount > 0)
+		{
+			TomeInfo info{ 0, 0, 0};
+			me->EnumStorageItems(STORAGE_INVENTORY, searchForTomesItemProc, (LPARAM)&info);
+			if ((info.totalKeys + itemIter->keyCount) > 20)
+			{
+				itemIter = watchedItems.erase(itemIter);
+				continue;
+			}
+
 			me->PickGroundItem(itemIter->id, TRUE);
 			return;
 		}
@@ -372,6 +448,8 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 	itemData.x = item.wPositionX;
 	itemData.y = item.wPositionY;
 	itemData.isGold = false;
+	itemData.isTpScroll = false;
+	itemData.isIdScroll = false;
 
 	const auto itemCode = std::string(item.szItemCode);
 
@@ -392,7 +470,11 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 		{
 			if(IsOkToPick(itemCode))
 			{
-				itemData.itemSize = server->GetItemSize(item.szItemCode);
+				itemData.isTpScroll = itemCode == "tsc";
+				itemData.isIdScroll = itemCode == "isc";
+				itemData.keyCount = itemCode == "key" ? item.iQuantity : 0;
+
+				itemData.itemSize = server->GetItemSize(itemCode.c_str());
 				watchedItems.push_front(itemData);
 			}
 		}
