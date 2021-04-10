@@ -251,6 +251,8 @@ D2VARPTR(STORM, dwUnk, DWORD, 0x3A1E4);
 D2VARPTR(D2LAUNCH, bnData, BnetData*, 0x2CD44);
 D2VARPTR(BNCLIENT, bnClient, DWORD*, 0x1D158);
 
+D2FUNCPTR(D2LANG, GetLocaleText, wchar_t *__fastcall, (WORD nLocaleTxtNo), -10004)
+
 #define D2OTHER_END p_BNCLIENT_bnClient
 
 #endif // __D2PTRS_H__

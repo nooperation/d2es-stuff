@@ -179,7 +179,8 @@ D2EXPFUNC(D2COMMON, GetObjectTxt, ObjectTxt * __stdcall, (DWORD objno))
 D2EXPFUNC(D2COMMON, GetLevelTxt, LevelTxt * __stdcall, (DWORD levelno))
 D2EXPFUNC(D2COMMON, GetSuperuniqueTxt, SuperuniqueTxt * __stdcall, (DWORD monno))
 
-
+/* D2Lang.dll */
+D2EXPFUNC(D2LANG, GetLocaleText, wchar_t *__fastcall, (WORD nLocaleTxtNo))
 
 /*  D2Gfx.dll  */
 

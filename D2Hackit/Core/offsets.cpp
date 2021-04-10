@@ -289,6 +289,10 @@ void DefineOffsets()
 	D2VARPTR(D2LAUNCH, bnData, BnetData*, 0x2CD44);
 	D2VARPTR(BNCLIENT, bnClient, DWORD*, 0x1D158);
 
+
+
+	D2FUNCPTR(D2LANG, GetLocaleText, wchar_t *__fastcall, (WORD nLocaleTxtNo), -10004)
+
 	#pragma pop_macro("D2FUNCPTR")
 	#pragma pop_macro("D2VARPTR")
 	#pragma pop_macro("D2ASMPTR")
