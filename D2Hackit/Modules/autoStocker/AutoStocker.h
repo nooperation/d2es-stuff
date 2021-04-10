@@ -2,7 +2,7 @@
 #define _AUTOSTOCKER_H_
 
 #include <vector>
-#include <hash_set>
+#include <unordered_set>
 #include <windows.h>
 #include "../../Includes/D2Client.h"
 
@@ -53,7 +53,7 @@ class AutoStocker
 
 	private:
 		bool ReadConfig(const std::string &iniPath);
-		bool ReadAffixConfig(const std::string &configPath, stdext::hash_set<int> &readTo);
+		bool ReadAffixConfig(const std::string &configPath, std::unordered_set<int> &readTo);
 
 		void FindItemsToTransmute(const std::vector<ITEM> &itemsInInventory);
 		bool FindStockers(const std::vector<ITEM> &itemsInInventory);
@@ -80,7 +80,7 @@ class AutoStocker
 		std::vector<std::vector<DWORD>> itemsToTransmute;
 		std::vector<DWORD> restockers;
 		std::vector<POINT> restockerPositions;
-		stdext::hash_set<std::string> stockerItems[TRANSMUTE_END];
+		std::unordered_set<std::string> stockerItems[TRANSMUTE_END];
 		DWORD itemWaitingOn;
 		bool useChat;
 		bool transmuteRare;
@@ -96,8 +96,8 @@ class AutoStocker
 
 		unsigned int currentItem;
 		unsigned int currentStocker;
-		stdext::hash_set<int> goodPrefix;
-		stdext::hash_set<int> goodSuffix;
+		std::unordered_set<int> goodPrefix;
+		std::unordered_set<int> goodSuffix;
 		States currentState;
 };
 

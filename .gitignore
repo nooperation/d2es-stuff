@@ -8,3 +8,4 @@ Output
 *.suo
 *.ipch
 *.opensdf
+.vs

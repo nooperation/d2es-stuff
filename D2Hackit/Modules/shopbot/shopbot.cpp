@@ -13,7 +13,7 @@ ShopBot::ShopBot()
 	merchantName = "";
 }
 
-bool ShopBot::LoadItemMap(const std::string &fileName, stdext::hash_map<std::string, std::string> &itemMap)
+bool ShopBot::LoadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap)
 {
 	std::ifstream inFile(fileName.c_str());
 
@@ -54,7 +54,7 @@ bool ShopBot::LoadItemMap(const std::string &fileName, stdext::hash_map<std::str
 	return true;
 }
 
-bool ShopBot::ReadConfig(const std::string &configPath, stdext::hash_set<int> &readTo)
+bool ShopBot::ReadConfig(const std::string &configPath, std::unordered_set<int> &readTo)
 {
 	std::string readLineBuff;
 	int readNum = 0;

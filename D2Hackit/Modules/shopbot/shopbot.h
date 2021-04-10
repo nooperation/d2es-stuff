@@ -1,6 +1,6 @@
 #include <queue>
-#include <hash_set>
-#include <hash_map>
+#include <unordered_set>
+#include <unordered_map>
 #include "../../Includes/D2Client.h"
 
 enum States
@@ -37,8 +37,8 @@ class ShopBot
 		void Stop();
 
 	private:
-		bool ReadConfig(const std::string &configPath, stdext::hash_set<int> &readTo);
-		bool LoadItemMap(const std::string &fileName, stdext::hash_map<std::string, std::string> &itemMap);
+		bool ReadConfig(const std::string &configPath, std::unordered_set<int> &readTo);
+		bool LoadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap);
 		bool IsItemGood(const ITEM &item);
 		void PurchaseQueuedItems();
 		bool WillItemFit(DWORD dwItemId);
@@ -53,9 +53,9 @@ class ShopBot
 		bool backToTown;
 		States currentState;
 		std::string merchantName;
-		stdext::hash_set<int> goodPrefix;
-		stdext::hash_set<int> goodSuffix;
-		stdext::hash_map<std::string, std::string> targetItems;
+		std::unordered_set<int> goodPrefix;
+		std::unordered_set<int> goodSuffix;
+		std::unordered_map<std::string, std::string> targetItems;
 
 		GAMEUNIT merchantNpc;
 

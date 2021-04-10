@@ -2,7 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
-#include <hash_map>
+#include <unordered_map>
 
 int NumberOfItemsInCube();
 BOOL CALLBACK enumItemProc(LPCITEM item, LPARAM lParam);
@@ -22,7 +22,7 @@ enum StockerType
 	STOCKER_CANOPENER = 900,
 };
 
-stdext::hash_map<std::string, int> stockers;
+std::unordered_map<std::string, int> stockers;
 
 std::vector<std::string> gemCan;
 std::vector<std::string> runesA;
@@ -675,7 +675,7 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 
 BOOL CALLBACK enumItemProc(LPCITEM item, LPARAM lParam)
 {
-	((std::vector<const std::string>*)lParam)->push_back((*item).szItemCode);
+	((std::vector<std::string>*)lParam)->push_back((*item).szItemCode);
 
 	return TRUE;
 }

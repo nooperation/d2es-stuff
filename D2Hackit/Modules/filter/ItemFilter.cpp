@@ -149,7 +149,7 @@ bool ItemFilter::OnItemFind(ITEM &item)
 	return true;
 }
 
-bool ItemFilter::LoadItemMap(const std::string &fileName, stdext::hash_map<std::string, std::string> &itemMap)
+bool ItemFilter::LoadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap)
 {
 	std::ifstream inFile(fileName.c_str());
 

@@ -2,8 +2,8 @@
 #define _ITEMWATCHER_H_
 
 #include <list>
-#include <hash_map>
-#include <hash_set>
+#include <unordered_map>
+#include <unordered_set>
 #include <string>
 #include "../../Includes/D2Client.h"
 //#include "_item.h"
@@ -11,8 +11,6 @@
 struct WatchedItemData
 {
 public:
-	bool operator==(const WatchedItemData &rhs);
-
 	DWORD id;
 	int x;
 	int y;
@@ -44,7 +42,7 @@ class ItemWatcher
 		void AnnounceItem(const ITEM &item);
 		void CheckWatchedItems();
 		void Cleanup();
-		bool loadItemMap(const std::string &fileName, stdext::hash_map<std::string, std::string> &itemMap);
+		bool loadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap);
 
 		const char *GetItemDesc(const ITEM &item);
 		const char *GetDirectionFrom(WORD sourceX, WORD sourceY, WORD targetX, WORD targetY);
@@ -54,9 +52,9 @@ class ItemWatcher
 		std::vector<DWORD> destroyedItemsSinceLastCheck;
 		std::list<WatchedItemData> watchedItems;
 
-		stdext::hash_set<std::string> iddqdUniques;
-		stdext::hash_map<std::string, std::string> itemsToAnnounce;
-		stdext::hash_map<std::string, std::string> itemsToPick;
+		std::unordered_set<std::string> iddqdUniques;
+		std::unordered_map<std::string, std::string> itemsToAnnounce;
+		std::unordered_map<std::string, std::string> itemsToPick;
 
 		unsigned int radius;
 		unsigned int minGold;

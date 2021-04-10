@@ -1,7 +1,7 @@
 #ifndef _GAMBLER_H_
 #define _GAMBLER_H_
 
-#include <hash_set>
+#include <unordered_set>
 #include <string>
 #include <queue>
 #include "../../Includes/D2Client.h"
@@ -92,8 +92,8 @@ class Gambler
 		GAMEUNIT gamblingNpc;
 		std::queue<DWORD> gambleQueue;
 		std::queue<DWORD> itemsToSell;
-		stdext::hash_set<std::string> noSellList;
-		stdext::hash_set<std::string> itemsToGamble;
+		std::unordered_set<std::string> noSellList;
+		std::unordered_set<std::string> itemsToGamble;
 };
 
 #endif

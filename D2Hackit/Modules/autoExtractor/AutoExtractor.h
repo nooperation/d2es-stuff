@@ -4,7 +4,7 @@
 #include <vector>
 #include <windows.h>
 #include <string>
-#include <hash_set>
+#include <unordered_set>
 #include "../../Includes/D2Client.h"
 
 enum States
@@ -37,15 +37,15 @@ class AutoExtractor
 		bool IsGoodPrefix(int prefixId);
 		bool IsGoodSuffix(int suffixId);
 		bool IsItemAnExtractor(const ITEM &item);
-		bool ReadAffixFile(const std::string &configPath, stdext::hash_set<int> &readTo);
+		bool ReadAffixFile(const std::string &configPath, std::unordered_set<int> &readTo);
 
 		bool useChat;
 		DWORD extractedItemID;
 		int itemsExpectedToCube;
 		int ticksTillTransmuteTimeout;
 		std::vector<std::string> extractors;
-		stdext::hash_set<int> goodPrefix;
-		stdext::hash_set<int> goodSuffix;
+		std::unordered_set<int> goodPrefix;
+		std::unordered_set<int> goodSuffix;
 		int numberOfRunsRemaining;
 
 		States currentState;

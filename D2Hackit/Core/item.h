@@ -5,11 +5,11 @@
 #include <windows.h>
 #include "D2HackIt.h"
 #include "CommonStructs.h"
-#include <hash_map>
+#include <unordered_map>
 #include <string>
 
 bool LoadItems();
-bool LoadItemMap(std::string fileName, stdext::hash_map<std::string, std::string> &itemMap);
+bool LoadItemMap(std::string fileName, std::unordered_map<std::string, std::string> &itemMap);
 
 // Exports in server
 BOOL D2ParseItem(const BYTE* aPacket, DWORD aLen, ITEM& item); // Parses item info from a packet

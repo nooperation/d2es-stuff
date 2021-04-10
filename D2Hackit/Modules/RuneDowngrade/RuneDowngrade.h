@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <string>
-#include <hash_set>
+#include <unordered_set>
 #include "../../Includes/D2Client.h"
 
 enum States
@@ -44,5 +44,5 @@ private:
 	DWORD m_extractedItemID;
 	DWORD m_itemToDowngradeID;
 
-	stdext::hash_set<std::string> runes;
+	std::unordered_set<std::string> runes;
 };

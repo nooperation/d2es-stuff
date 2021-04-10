@@ -4,22 +4,22 @@
 #include "itemsize.h"
 #include <stdio.h>
 #include <fstream>
-#include <hash_set>
+#include <unordered_set>
 #include "criticalSections.h"
 
 bool itemsLoaded = false;
-stdext::hash_map<std::string, std::string> itemMapAll;
-stdext::hash_map<std::string, std::string> itemMapSets;
-stdext::hash_map<std::string, std::string> itemMapWeapons;
-stdext::hash_map<std::string, std::string> itemMapArmor;
-stdext::hash_map<std::string, std::string> itemMapStackable;
+std::unordered_map<std::string, std::string> itemMapAll;
+std::unordered_map<std::string, std::string> itemMapSets;
+std::unordered_map<std::string, std::string> itemMapWeapons;
+std::unordered_map<std::string, std::string> itemMapArmor;
+std::unordered_map<std::string, std::string> itemMapStackable;
 
-stdext::hash_set<std::string> itemIddqdUniques;
-stdext::hash_set<std::string> itemRingsAmulets;
-stdext::hash_set<std::string> itemRunes;
-stdext::hash_set<std::string> itemDecals;
-stdext::hash_set<std::string> itemAncientScrolls;
-stdext::hash_set<std::string> itemSpecialItems;
+std::unordered_set<std::string> itemIddqdUniques;
+std::unordered_set<std::string> itemRingsAmulets;
+std::unordered_set<std::string> itemRunes;
+std::unordered_set<std::string> itemDecals;
+std::unordered_set<std::string> itemAncientScrolls;
+std::unordered_set<std::string> itemSpecialItems;
 
 CRITICAL_SECTION csLoadingItems;
 
@@ -422,7 +422,7 @@ bool LoadItems()
 	return true;
 }
 
-bool LoadItemMap(std::string fileName, stdext::hash_map<std::string, std::string> &itemMap)
+bool LoadItemMap(std::string fileName, std::unordered_map<std::string, std::string> &itemMap)
 {
 	std::ifstream inFile(fileName.c_str());
 

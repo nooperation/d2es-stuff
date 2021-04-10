@@ -760,7 +760,7 @@ bool AutoStocker::ReadConfig(const std::string &configPath)
 /// <param name="configPath">Path of config file.</param>
 /// <param name="readTo">Map to read good affix values into.</param>
 /// <returns>true if successful, false if failed.</returns>
-bool AutoStocker::ReadAffixConfig(const std::string &configPath, stdext::hash_set<int> &readTo)
+bool AutoStocker::ReadAffixConfig(const std::string &configPath, std::unordered_set<int> &readTo)
 {
 	std::string readLineBuff;
 	int readNum = 0;

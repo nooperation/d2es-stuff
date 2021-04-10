@@ -160,7 +160,7 @@ bool Gambler::StartGambling()
 {
 	DEBUG_TRACE();
 
-	for(stdext::hash_set<std::string>::iterator i = itemsToGamble.begin(); i != itemsToGamble.end(); ++i)
+	for(std::unordered_set<std::string>::iterator i = itemsToGamble.begin(); i != itemsToGamble.end(); ++i)
 	{
 		if(!WillItemFit((*i).c_str()))
 		{

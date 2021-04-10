@@ -2940,5 +2940,6 @@ static const ITEM_SIZE ITEM_SIZE_TB[]=
 	{"md3",1,1},
 	{"md4",1,1},
 	{"md5",1,1},
+	{"toa", 1,1},
 	{NULL,-1,-1}
 };

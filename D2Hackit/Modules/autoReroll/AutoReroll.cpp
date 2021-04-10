@@ -6,9 +6,9 @@
 #include "../../Includes/itemPrefix.h"
 #include "../../Includes/itemSuffix.h"
 
-stdext::hash_set<std::string> gemItemCodes;
-stdext::hash_set<std::string> gemCanItemCodes;
-stdext::hash_set<std::string> canOpenerItemCodes;
+std::unordered_set<std::string> gemItemCodes;
+std::unordered_set<std::string> gemCanItemCodes;
+std::unordered_set<std::string> canOpenerItemCodes;
 
 AutoReroll::AutoReroll()
 {
@@ -121,7 +121,7 @@ bool AutoReroll::Init(bool useChat)
 /// <param name="configPath">Path of config file.</param>
 /// <param name="readTo">Map to read good affix values into.</param>
 /// <returns>true if successful, false if failed.</returns>
-bool AutoReroll::ReadAffixConfig(const std::string &configPath, stdext::hash_set<int> &readTo)
+bool AutoReroll::ReadAffixConfig(const std::string &configPath, std::unordered_set<int> &readTo)
 {
 	std::string readLineBuff;
 	int readNum = 0;

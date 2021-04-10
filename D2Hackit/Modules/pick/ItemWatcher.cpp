@@ -3,11 +3,11 @@
 #include "ItemWatcher.h"
 #include "../../Includes/D2Client.h"
 
-bool WatchedItemData::operator==(const WatchedItemData &rhs)
+bool operator==(const WatchedItemData &lhs, const WatchedItemData &rhs)
 {
-	return this->id == rhs.id && 
-		this->x == rhs.x && 
-		this->y == rhs.y;
+	return lhs.id == rhs.id &&
+		lhs.x == rhs.x &&
+		lhs.y == rhs.y;
 }
 
 ItemWatcher::ItemWatcher()
@@ -19,13 +19,14 @@ ItemWatcher::ItemWatcher()
 	showEthereal = false;
 	isPickingItems = true;
 
-	iddqdUniques.insert("yul");
-	iddqdUniques.insert("0cr"); 
 	iddqdUniques.insert("0gi");
+	iddqdUniques.insert("yul");
 	iddqdUniques.insert("ci3");
 	iddqdUniques.insert("yft");
-	iddqdUniques.insert("amf");
+	iddqdUniques.insert("0ts");
 	iddqdUniques.insert("yrb");
+	iddqdUniques.insert("0cr");
+	iddqdUniques.insert("ytp");
 }
 
 
@@ -210,7 +211,7 @@ bool ItemWatcher::LoadItems()
 	return true;
 }
 
-bool ItemWatcher::loadItemMap(const std::string &fileName, stdext::hash_map<std::string, std::string> &itemMap)
+bool ItemWatcher::loadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap)
 {
 	std::ifstream inFile(fileName.c_str());
 

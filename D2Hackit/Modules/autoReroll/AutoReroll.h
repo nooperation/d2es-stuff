@@ -2,7 +2,7 @@
 #define _AutoExtractor_H_
 
 #include <vector>
-#include <hash_set>
+#include <unordered_set>
 #include <windows.h>
 #include <string>
 #include "../../Includes/D2Client.h"
@@ -56,7 +56,7 @@ class AutoReroll
 		void MoveNextGemToCube();
 		void FinishedEmptyCube();
 
-		bool ReadAffixConfig(const std::string &configPath, stdext::hash_set<int> &readTo);
+		bool ReadAffixConfig(const std::string &configPath, std::unordered_set<int> &readTo);
 
 		bool loadedEmptyCube;
 		bool rerollItemNeedsToGoBackToCube;
@@ -67,8 +67,8 @@ class AutoReroll
 		DWORD itemToRerollID;
 		int currentGemIndex;
 		std::vector<DWORD> gemsInInventory;
-		stdext::hash_set<int> goodPrefix;
-		stdext::hash_set<int> goodSuffix;
+		std::unordered_set<int> goodPrefix;
+		std::unordered_set<int> goodSuffix;
 
 		States currentState;
 		GemCanStuff gemCanAndOpener;
