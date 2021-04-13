@@ -269,6 +269,16 @@ void ShopBot::OnTick()
 		}
 		case STATE_TELEPORTCOMPLETE:
 		{
+			if (currentTeleportIndex == 0)
+			{
+				// Wait for 2x cost of teleport before continuing...
+				const auto myMana = me->GetStat(STAT_MANA);
+				if (myMana < 20)
+				{
+					return;
+				}
+			}
+
 			currentState = STATE_WAITINGFORNEXTSTATE;
 
 			if(currentTeleportIndex == 0)
