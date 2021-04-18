@@ -2,6 +2,7 @@
 #define _AutoExtractor_H_
 
 #include <vector>
+#include <queue>
 #include <windows.h>
 #include <string>
 #include <unordered_set>
@@ -14,6 +15,12 @@ enum States
 	STATE_TRANSMUTE,
 	STATE_PICKUPEXTRACTEDITEM,
 	STATE_EXTRACTEDTOINVENTORY,
+};
+
+struct ExtractorInfo
+{
+	std::string itemCode;
+	std::vector<ITEMPROPERTY> oreCounts;
 };
 
 class AutoExtractor
@@ -38,12 +45,14 @@ class AutoExtractor
 		bool IsGoodSuffix(int suffixId);
 		bool IsItemAnExtractor(const ITEM &item);
 		bool ReadAffixFile(const std::string &configPath, std::unordered_set<int> &readTo);
+		int GetNumberOfExpectredOutputs() const;
+		void PickupNextExtractedItem();
 
 		bool useChat;
-		DWORD extractedItemID;
+		std::queue<DWORD> extractedItemIDs;
 		int itemsExpectedToCube;
 		int ticksTillTransmuteTimeout;
-		std::vector<std::string> extractors;
+		std::vector<ExtractorInfo> extractors;
 		std::unordered_set<int> goodPrefix;
 		std::unordered_set<int> goodSuffix;
 		int numberOfRunsRemaining;

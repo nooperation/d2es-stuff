@@ -108,11 +108,20 @@ bool AutoExtractor::StartExtraction()
 	//  items in the cube in 'extractors' list.
 	extractors.clear();
 	me->EnumStorageItems(STORAGE_CUBE, enumFindExtractors, (LPARAM)&extractors);
+	if (extractors.empty())
+	{
+		Abort();
+		server->GameStringf("ÿc:AutoExtractorÿc0: Nothing found to extract");
+		return true;
+	}
 
 	// Reset count of items expected after transmute to the number of extractors + 1 for the output
 	//   e.g: key + rerolling orb + rare ring
-	extractedItemID = 0;
-	itemsExpectedToCube = extractors.size()+1;
+	while (!extractedItemIDs.empty())
+	{
+		extractedItemIDs.pop();
+	}
+	itemsExpectedToCube = GetNumberOfExpectredOutputs();
 
 	// Make sure we still have the cube open, slightly lessens the chance of being kicked if user closes
 	//  it during the extraction process
@@ -186,7 +195,7 @@ bool AutoExtractor::IsItemAnExtractor(const ITEM &item)
 {
 	for(int i = 0; i < (int)extractors.size(); i++)
 	{
-		if(_stricmp(extractors[i].c_str(), item.szItemCode) == 0)
+		if(_stricmp(extractors[i].itemCode.c_str(), item.szItemCode) == 0)
 		{
 			return true;
 		}
@@ -260,11 +269,12 @@ void AutoExtractor::OnItemFromCube(const ITEM &item)
 	if(currentState != STATE_PICKUPEXTRACTEDITEM)
 		return;
 	
+
 	// Make sure the item that moved to our hand from the cube is the output from the extraction
 	//  process (e.g: rare ring). If it's not, then we need to abort because there's going to be
 	//  a request to pickup the extracted item from the cube while we have this item in our hand,
 	//  the server will kick us.
-	if(item.dwItemID != extractedItemID)
+	if(item.dwItemID != extractedItemIDs.front())
 	{
 		if(useChat)
 		{
@@ -302,7 +312,7 @@ void AutoExtractor::OnItemToInventory(const ITEM &item)
 
 	// Make sure the item that was moved to the inventory is the same one that was extracted, otherwise
 	//   ignore it
-	if(item.dwItemID != extractedItemID)
+	if(item.dwItemID != extractedItemIDs.front())
 	{
 		if(useChat)
 		{
@@ -348,7 +358,16 @@ void AutoExtractor::OnItemToInventory(const ITEM &item)
 		}
 	}
 
-	StartExtraction();
+	extractedItemIDs.pop();
+	if (!extractedItemIDs.empty())
+	{
+		// We still have expected items. Pickup the next extracted item.
+		PickupNextExtractedItem();
+	}
+	else
+	{
+		StartExtraction();
+	}
 }
 
 /// <summary>
@@ -371,7 +390,7 @@ void AutoExtractor::OnItemToCube(const ITEM &item)
 	//  good affix
 	if(!IsItemAnExtractor(item))
 	{
-		extractedItemID = item.dwItemID;
+		extractedItemIDs.push(item.dwItemID);
 		CheckExtractedItem(item);
 	}
 
@@ -379,23 +398,62 @@ void AutoExtractor::OnItemToCube(const ITEM &item)
 	{
 		// reset the expected item count back to the number of extractors we use plus 1 for the output
 		//   (e.g: key + rerollingOrb + rare ring = 3 items expected)
-		itemsExpectedToCube = extractors.size()+1;
+		itemsExpectedToCube = GetNumberOfExpectredOutputs();
 		
 		if(!CheckCubeUI())
 		{
 			return;
 		}
 
-		currentState = STATE_PICKUPEXTRACTEDITEM;
-		if(!me->PickStorageItemToCursor(extractedItemID))
-		{
-			if(useChat)
-				me->Say("ÿc:AutoExtractorÿc0: Failed drop pickup extracted item");
-
-			server->GameStringf("ÿc:AutoExtractorÿc0: Failed drop pickup extracted item");
-			Abort();
-		}
+		PickupNextExtractedItem();
 	}
+}
+
+void AutoExtractor::PickupNextExtractedItem()
+{
+	currentState = STATE_PICKUPEXTRACTEDITEM;
+	auto extractedItemId = extractedItemIDs.front();
+	if (!me->PickStorageItemToCursor(extractedItemId))
+	{
+		if (useChat)
+		{
+			me->Say("ÿc:AutoExtractorÿc0: Failed drop pickup extracted item");
+		}
+
+		server->GameStringf("ÿc:AutoExtractorÿc0: Failed drop pickup extracted item");
+		Abort();
+	}
+}
+
+int AutoExtractor::GetNumberOfExpectredOutputs() const
+{
+	// Ore has a special case for determining number of outputs. See 'enumFindExtractors'
+	if (this->extractors.size() == 1 && this->extractors[0].itemCode == "ore")
+	{
+		auto &ore = this->extractors[0];
+		if (ore.oreCounts.size() == 0)
+		{
+			// empty ore -> note + note + note
+			return 3;
+		}
+
+		auto numberOfExpectedOutputs = 1;
+
+		for (auto &item : this->extractors[0].oreCounts)
+		{
+			if (item.value > 1)
+			{
+				// ore -> ore + gem + gem
+				return 3;
+			}
+		}
+
+		// ore -> ore + gem
+		return 2;
+	}
+	
+	// #extractors -> #extractors + output
+	return this->extractors.size() + 1;
 }
 
 /// <summary>
@@ -405,7 +463,21 @@ void AutoExtractor::OnItemToCube(const ITEM &item)
 /// <param name="lParam">a std::vector<string>* used to store all found item codes<param>
 BOOL CALLBACK enumFindExtractors(LPCITEM item, LPARAM lParam)
 {
-	((std::vector<std::string>*)lParam)->push_back(item->szItemCode);
+	auto extractors = (std::vector<ExtractorInfo> *)lParam;
+
+	ExtractorInfo info;
+	info.itemCode = item->szItemCode;
+
+	if (info.itemCode == "ore")
+	{
+		for (auto i = 0; i < item->iNumProperties; ++i)
+		{
+			info.oreCounts.push_back(item->aProperties[i]);
+		}
+	}
+
+	extractors->push_back(info);
 
 	return TRUE;
 }
+

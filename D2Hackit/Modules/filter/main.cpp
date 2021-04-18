@@ -88,6 +88,11 @@ BOOL EXPORT OnClientStart()
 
 DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 {   
+	if (aPacket == nullptr)
+	{
+		return 0;
+	}
+
 	if(enabled && (aPacket[0] == 0x9c))
 	{
 		ITEM item;
