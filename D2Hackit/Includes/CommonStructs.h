@@ -66,6 +66,12 @@ typedef const tagItemMod* LPCITEMMOD;
 #define ITEM_MAX_MOD	25
 #define ITEM_MAX_PREFIX 3
 #define ITEM_MAX_SUFFIX ITEM_MAX_PREFIX
+#define ITEM_PROPERTIES_MAX 32
+
+typedef struct tagItemProperty {
+	int id;
+	int value;
+} ITEMPROPERTY;
 
 // The ITEM struct
 typedef struct tagItem
@@ -116,6 +122,9 @@ typedef struct tagItem
 	WORD wSuffix[ITEM_MAX_SUFFIX];
 	WORD wSetUniqueID;
 	ITEMMOD aMods[ITEM_MAX_MOD];			// mods
+
+	DWORD iNumProperties; // this value doesn't actually exist and is just equal to the number of filled entries in aProperties.
+	ITEMPROPERTY aProperties[ITEM_PROPERTIES_MAX]; // This is a complete hack and only used to check ore properties.
 } ITEM, *LPITEM;
 typedef const tagItem* LPCITEM;
 

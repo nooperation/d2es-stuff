@@ -585,6 +585,33 @@ bool LoadItemMap(std::string fileName, std::unordered_map<std::string, std::stri
 	return true;
 }
 
+// This can actually read the majority of item properties, except for thoses with a 'Send Param' - these properties contain nested and potentially recursive properties. I only care about ores right now for autoextraction stuff.
+void ReadOreProperties(BitFields iPacket, ITEM &item)
+{
+	while (item.iNumProperties < ITEM_PROPERTIES_MAX)
+	{
+		// Property IDs are all 9bits. All item property lists end with the propertyId of 0x1ff
+		const auto currentPropertyID = iPacket.GetField(9);
+		if (currentPropertyID == 0x1ff)
+		{
+			break;
+		}
+
+		// xtal_00 - xtal_11 (ItemStatCost.txt)
+		if (currentPropertyID < 470 || currentPropertyID > 481)
+		{
+			break;
+		}
+
+		// HACK: See 'Send Bits' field in ItemStatCosts.txt. This is hardcoded for the ore proerties "xtal_00 - xtal_11"
+		const auto val = iPacket.GetField(18);
+
+		item.aProperties[item.iNumProperties].id = currentPropertyID;
+		item.aProperties[item.iNumProperties].value = val;
+		item.iNumProperties++;
+	}
+}
+
 BOOL D2ParseItem(const BYTE *aPacket, DWORD aLen, ITEM& item)
 {
 	::memset(&item, 0 ,sizeof(ITEM));
@@ -817,12 +844,18 @@ BOOL D2ParseItem(const BYTE *aPacket, DWORD aLen, ITEM& item)
 	{
 		item.iQuantity = (WORD)iPacket.GetField(9);
 	}
-
+	
 	if(!item.iIdentified)
 		return TRUE;
 
+	if (_stricmp(item.szItemCode, "ore") == 0)
+	{
+		ReadOreProperties(iPacket, item);
+	}
+
 	return TRUE;
 }
+
 
 
 BYTE D2GetBeltRows(LPCTSTR lpszItemCode)
