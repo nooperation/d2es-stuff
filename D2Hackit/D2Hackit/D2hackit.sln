@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "D2HackIt", "..\Core\D2HackIt.vcxproj", "{898D8E93-EA8A-48A3-B052-1822DF4209B5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{04B15F92-1FDF-4FDB-91D6-B9E54D5AAC4B}"
@@ -48,6 +50,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "waypoint", "..\Modules\waypoint\waypoint.vcxproj", "{48DDFD5B-7097-4C3F-ADCA-CE8E720E17AC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bot", "..\Modules\bot\bot.vcxproj", "{52592CEE-29BC-4723-A838-F4784E691334}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "autoSell", "..\Modules\autoSell\autoSell.vcxproj", "{D92FD3C9-082F-4DFB-B414-3538D1F9DE28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -143,6 +147,10 @@ Global
 		{52592CEE-29BC-4723-A838-F4784E691334}.Debug|Win32.Build.0 = Debug|Win32
 		{52592CEE-29BC-4723-A838-F4784E691334}.Release|Win32.ActiveCfg = Release|Win32
 		{52592CEE-29BC-4723-A838-F4784E691334}.Release|Win32.Build.0 = Release|Win32
+		{D92FD3C9-082F-4DFB-B414-3538D1F9DE28}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D92FD3C9-082F-4DFB-B414-3538D1F9DE28}.Debug|Win32.Build.0 = Debug|Win32
+		{D92FD3C9-082F-4DFB-B414-3538D1F9DE28}.Release|Win32.ActiveCfg = Release|Win32
+		{D92FD3C9-082F-4DFB-B414-3538D1F9DE28}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,5 +178,9 @@ Global
 		{E6F0F48D-3BDF-4D4C-B198-20CA750E201E} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
 		{48DDFD5B-7097-4C3F-ADCA-CE8E720E17AC} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
 		{52592CEE-29BC-4723-A838-F4784E691334} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
+		{D92FD3C9-082F-4DFB-B414-3538D1F9DE28} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7DAE5C20-C224-4A1A-8147-796AF2BFCA24}
 	EndGlobalSection
 EndGlobal
