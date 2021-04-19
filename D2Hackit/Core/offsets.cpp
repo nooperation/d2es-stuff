@@ -292,6 +292,11 @@ void DefineOffsets()
 
 
 	D2FUNCPTR(D2LANG, GetLocaleText, wchar_t *__fastcall, (WORD nLocaleTxtNo), -10004)
+	D2VARPTR(D2CLIENT, InteractedNPCUniqueID, DWORD, 0x115CF5);
+	D2VARPTR(D2CLIENT, IsInteractedWithNPC, BOOL, 0x115CF9);
+	D2VARPTR(D2CLIENT, InteractedNPCClassID, DWORD, 0x115CFD);
+	D2VARPTR(D2CLIENT, InteractedWPUniqueID, DWORD, 0x11A9B5);
+	D2VARPTR(D2CLIENT, IsNotInteractedWithWP, BOOL, 0x11A9BD);
 
 	#pragma pop_macro("D2FUNCPTR")
 	#pragma pop_macro("D2VARPTR")

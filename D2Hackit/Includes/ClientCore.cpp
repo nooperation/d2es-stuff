@@ -266,6 +266,12 @@ BOOL PRIVATE SetupClient(HMODULE hModule, LPCSTR szModule)
 	BIND_TO_PLAYER(DumpStorage);
 	BIND_TO_PLAYER(GetCubeID);
 	BIND_TO_PLAYER(OpenCube);
+
+	BIND_AND_CHECK(GetInteractedNPCUniqueID);
+	BIND_AND_CHECK(IsInteractedWithNPC);
+	BIND_AND_CHECK(GetInteractedNPCClassID);
+	BIND_AND_CHECK(GetInteractedWPUniqueID);
+	BIND_AND_CHECK(IsNotInteractedWithWP);
 	// -- B
 
 	// Bind player functions

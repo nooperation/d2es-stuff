@@ -286,6 +286,8 @@ BOOL EXPORT GetItemCode(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars);
 BOOL EXPORT GetItemCodeEx(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars, int maxRetryCount, int delayBeteenRetries);
 
 // ++ B
+// NOTE: DON'T FORGET TO BIND_AND_CHECK in D2Hackit\Includes\ClientCore.cpp otherwise these will all be null
+
 int EXPORT D2GetCurrentRoomNum();
 BOOL EXPORT D2GetRoomCoords(int roomNum, LPMAPPOS roomCoords, void **room);
 DWORD EXPORT D2GetAllRoomCoords(ROOMPOS *allRoomCoords, DWORD capacity);
@@ -302,6 +304,11 @@ BOOL EXPORT FindFirstStorageSpaceEx(int nStorageType, SIZE minSize, LPPOINT lpBu
 BOOL EXPORT FindItemPosition(int nStorageType, DWORD dwItemID, LPPOINT position);
 BOOL EXPORT OpenCube();
 DWORD EXPORT GetCubeID();
+DWORD EXPORT GetInteractedNPCUniqueID();
+BOOL EXPORT IsInteractedWithNPC();
+DWORD EXPORT GetInteractedNPCClassID();
+DWORD EXPORT GetInteractedWPUniqueID();
+BOOL EXPORT IsNotInteractedWithWP();
 // -- B
 
 BOOL EXPORT LeftClick(long x, long y);

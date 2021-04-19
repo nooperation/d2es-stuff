@@ -1004,6 +1004,57 @@ BOOL EXPORT RightClickHere()
 	sender.RightClick(pt.x, pt.y);
 	return TRUE;
 }
+
+DWORD EXPORT GetInteractedNPCUniqueID()
+{
+	if (p_D2CLIENT_InteractedNPCUniqueID == nullptr)
+	{
+		return 0;
+	}
+
+	return *p_D2CLIENT_InteractedNPCUniqueID;
+}
+
+BOOL EXPORT IsInteractedWithNPC()
+{
+	if (p_D2CLIENT_IsInteractedWithNPC == nullptr)
+	{
+		return false;
+	}
+
+	return *p_D2CLIENT_IsInteractedWithNPC;
+}
+
+DWORD EXPORT GetInteractedNPCClassID()
+{
+	if (p_D2CLIENT_InteractedNPCClassID == nullptr)
+	{
+		return 0;
+	}
+
+	return *p_D2CLIENT_InteractedNPCClassID;
+}
+
+DWORD EXPORT GetInteractedWPUniqueID()
+{
+	if (p_D2CLIENT_InteractedWPUniqueID == nullptr)
+	{
+		return 0;
+	}
+
+	return *p_D2CLIENT_InteractedWPUniqueID;
+}
+
+BOOL EXPORT IsNotInteractedWithWP()
+{
+	if (p_D2CLIENT_IsNotInteractedWithWP == nullptr)
+	{
+		return false;
+	}
+
+	return *p_D2CLIENT_IsNotInteractedWithWP;
+}
+
 // -- B
 
 DWORD EXPORT GetSpellName(WORD wSpell, LPSTR lpszBuffer, DWORD dwMaxChars)

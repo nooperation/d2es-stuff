@@ -452,6 +452,12 @@ typedef void (__cdecl *fnDebugTest)(); // For debug only
 typedef int (__cdecl *fnGetItemQuality)(DWORD dwItemId);
 typedef BOOL (__cdecl *fnLeftClickHere)();
 typedef BOOL (__cdecl *fnRightClickHere)();
+
+typedef DWORD(__cdecl *fnGetInteractedNPCUniqueID)();
+typedef BOOL(__cdecl *fnIsInteractedWithNPC)();
+typedef DWORD(__cdecl *fnGetInteractedNPCClassID)();
+typedef DWORD(__cdecl *fnGetInteractedWPUniqueID)();
+typedef BOOL(__cdecl *fnIsNotInteractedWithWP)();
 // -- B
 typedef struct functionentrypoints_t
 {
@@ -560,6 +566,12 @@ typedef struct functionentrypoints_t
 
 	fnLeftClickHere					LeftClickHere;
 	fnRightClickHere				RightClickHere;	
+
+	fnGetInteractedNPCUniqueID     	GetInteractedNPCUniqueID;
+	fnIsInteractedWithNPC			IsInteractedWithNPC;
+	fnGetInteractedNPCClassID		GetInteractedNPCClassID;
+	fnGetInteractedWPUniqueID		GetInteractedWPUniqueID;
+	fnIsNotInteractedWithWP			IsNotInteractedWithWP;
 	// -- B
 } FUNCTIONENTRYPOINTS, *PFUNCTIONENTRYPOINTS;
 

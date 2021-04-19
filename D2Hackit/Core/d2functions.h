@@ -91,6 +91,11 @@ D2EXPVAR(D2CLIENT, IsPaused, bool);
 D2EXPVAR(D2CLIENT, PlayerUnit, UnitPlayer *);
 D2EXPVAR(D2CLIENT, FirstRosterPet, RosterPet *);
 D2EXPVAR(D2CLIENT, FirstRosterUnit, Roster *);
+D2EXPVAR(D2CLIENT, InteractedNPCUniqueID, DWORD);
+D2EXPVAR(D2CLIENT, IsInteractedWithNPC, BOOL);
+D2EXPVAR(D2CLIENT, InteractedNPCClassID, DWORD);
+D2EXPVAR(D2CLIENT, InteractedWPUniqueID, DWORD);
+D2EXPVAR(D2CLIENT, IsNotInteractedWithWP, BOOL);
 
 //redefine some stuff:
 #define D2CLIENT_HasHighlight *p_D2CLIENT_HasHighlight
@@ -109,6 +114,7 @@ D2EXPASM(D2CLIENT, CallChatHandler);
 D2EXPASM(D2CLIENT, CallGamePlayerInfoHandler);
 D2EXPASM(D2CLIENT, CallGameReceivePacketHandler);
 D2EXPFUNC(D2CLIENT, GetMonsterTxt, MonsterTxt * __fastcall, (DWORD monno))
+
 
 /*  D2Common.dll  */
 
