@@ -25,11 +25,11 @@ class AutoSell
 {
 public:
 	AutoSell();
-	void OnTick();
 
-	bool Start();
-	void OnItemSold();
+	bool Start(bool silentMode=false);
 	void Stop();
+	void OnItemSold();
+	void OnNPCShopScreenOpened();
 	void ProcessInventoryItem(const ITEM *item);
 
 private:
@@ -39,6 +39,8 @@ private:
 
 	std::queue<ItemToSell> itemsToSell;
 
+	bool isFullyAutomatic;
+	bool isAnnouncingSoldItems;
 	State currentState;
 	std::unordered_map<std::string, std::string> targetItems;
 };

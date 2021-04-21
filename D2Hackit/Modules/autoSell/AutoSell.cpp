@@ -4,11 +4,16 @@
 #include "../../Core/npc.h"
 #include "../../Core/npc.cpp" // TODO: Let's not do this
 
+#define CONFIG_PATH ".\\plugin\\AutoSell.ini"
+
 BOOL CALLBACK FindStuffToSellCallback(LPCITEM item, LPARAM lParam);
 
 AutoSell::AutoSell()
 {
-	currentState = State::Uninitialized;
+	this->currentState = State::Uninitialized;
+
+	this->isFullyAutomatic = GetPrivateProfileInt("AutoSell", "IsAutomatic", false, CONFIG_PATH);
+	this->isAnnouncingSoldItems = GetPrivateProfileInt("AutoSell", "IsAnnouncingSoldItems", true, CONFIG_PATH);
 }
 
 bool AutoSell::LoadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap)
@@ -97,7 +102,7 @@ bool AutoSell::SellItem(DWORD dwItemID) const
 	return server->GameSendPacketToServer(aPacket, 17);
 }
 
-bool AutoSell::Start()
+bool AutoSell::Start(bool silentStart)
 {
 	if (currentState != State::Uninitialized)
 	{
@@ -111,20 +116,29 @@ bool AutoSell::Start()
 
 	if (!LoadItemMap(".\\plugin\\AutoSell_items.txt", targetItems))
 	{
-		server->GameStringf("ÿc:AutoSellÿc0: Failed to read from .\\plugin\\AutoSell_items.txt");
+		if (!silentStart)
+		{
+			server->GameStringf("ÿc:AutoSellÿc0: Failed to read from .\\plugin\\AutoSell_items.txt");
+		}
 		return false;
 	}
 
 	if (targetItems.empty())
 	{
-		server->GameStringf("ÿc:AutoSellÿc0: No items found in .\\plugin\\AutoSell_items.txt");
+		if (!silentStart)
+		{
+			server->GameStringf("ÿc:AutoSellÿc0: No items found in .\\plugin\\AutoSell_items.txt");
+		}
 		return false;
 	}
 
 	me->EnumStorageItems(STORAGE_INVENTORY, FindStuffToSellCallback, (LPARAM)this);
 	if (this->itemsToSell.empty())
 	{
-		server->GameStringf("ÿc:AutoSellÿc0: Found nothing to sell");
+		if (!silentStart)
+		{
+			server->GameStringf("ÿc:AutoSellÿc0: Found nothing to sell");
+		}
 		this->Stop();
 		return true;
 	}
@@ -157,12 +171,15 @@ void AutoSell::SellQueuedItems()
 	itemsToSell.pop();
 
 	const auto itemName = server->GetItemName(itemToSell.ItemCode.c_str());
-	server->GameStringf("ÿc:AutoSellÿc0: Selling '%s'", itemName);
+	if (isAnnouncingSoldItems)
+	{
+		server->GameStringf("ÿc:AutoSellÿc0: Selling '%s'", itemName);
+	}
 
 	currentState = State::WaitForItemToSell;
 	if (!SellItem(itemToSell.ItemId))
 	{
-		server->GameErrorf("ÿc:AutoSellÿc0: Unable to sell item");
+		server->GameErrorf("ÿc:AutoSellÿc0: Unable to sell %s", itemName);
 		this->Stop();
 		return;
 	}
@@ -176,6 +193,16 @@ void AutoSell::OnItemSold()
 	}
 	
 	SellQueuedItems();
+}
+
+void AutoSell::OnNPCShopScreenOpened()
+{
+	if (!this->isFullyAutomatic)
+	{
+		return;
+	}
+
+	Start(true);
 }
 
 void AutoSell::ProcessInventoryItem(const ITEM *item)

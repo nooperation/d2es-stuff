@@ -31,5 +31,8 @@
     <None Include="Resources\AutoSell_items.txt">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Resources\AutoSell.ini">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -19,6 +19,25 @@ BOOL PRIVATE Start(char** argv, int argc)
 	return TRUE;
 }
 
+bool isTrading = false;
+DWORD EXPORT OnGameTimerTick()
+{
+	if (me->IsUIOpened(UI_NPCSHOP))
+	{
+		if (!isTrading)
+		{
+			isTrading = true;
+			autoSell.OnNPCShopScreenOpened();
+		}
+	}
+	else
+	{
+		isTrading = false;
+	}
+
+	return 0;
+}
+
 void EXPORT OnGamePacketAfterReceived(BYTE *aPacket, DWORD aLen)
 {
 	if (aPacket[0] == 0x2a) // npc transation
@@ -53,7 +72,12 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 	{
 		"Start",
 		Start,
-		"Usage: Start [count] [chat]",
+		"Usage: Start",
+	},
+	{
+		"All",
+		Start,
+		"Alias for start",
 	},
 	{NULL}
 };

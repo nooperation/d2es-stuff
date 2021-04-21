@@ -115,6 +115,7 @@ xcopy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\</Command>
     <ClInclude Include="AutoSell.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\AutoSell.ini" />
     <None Include="Resources\AutoSell_items.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
