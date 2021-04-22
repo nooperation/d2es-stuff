@@ -14,6 +14,7 @@ enum States
 	STATE_UsingStairs,
 	STATE_UsingWaypoint,
 	STATE_BackToTown,
+	STATE_SearchingForStairs
 };
 
 struct StairsData
@@ -67,13 +68,14 @@ void NextStep();
 BOOL CALLBACK enumUnitProc(LPCGAMEUNIT lpUnit, LPARAM lParam);
 
 States currentState = STATE_Idle;
+unsigned long currentStateTicks = 0;
 
 int stairsRoomNum = 0;
 
 GAMEUNIT stairsGameUnit;
 PATH path;
 int pathIndex = 0;
-
+int attemptingPathIndex = 0;
 
 BotTravelData toBloodRaven;
 BotTravelData toBloodRavenLair;
@@ -86,9 +88,21 @@ BotTravelData toDeadEnd;
 
 std::vector<BotTravelData *> allTravelData;
 BotTravelData *currentTravelData = nullptr;
+bool isLeftHandCasting = false;
 
 #include "../../Core/definitions.h"
 
+void SetState(States newState)
+{
+	currentState = newState;
+	currentStateTicks = 0;
+}
+
+void InteractWithStairs()
+{
+	SetState(STATE_UsingStairs);
+	me->Interact(&stairsGameUnit);
+}
 
 BOOL PRIVATE Pos(char **argv, int argc)
 {
@@ -108,11 +122,10 @@ BOOL PRIVATE Pos(char **argv, int argc)
 	}
 
 	MAPPOS myPos = me->GetPosition();
-
 	
 	server->GameStringf("Room %d: %d, %d", room->pPresetType2info->roomNum, room->pRoom->pColl->nPosRoomX, room->pRoom->pColl->nPosRoomY);
 
-	//server->GameStringf("Player position %d, %d  room %d offset x: %d y: %d", (int)myPos.x, (int)myPos.y, server->D2GetCurrentRoomNum(), (int)myPos.x - (int)room->pRoom->pColl->nPosGameX, (int)myPos.y - (int)room->pRoom->pColl->nPosGameY);
+	server->GameStringf("Player position %d, %d  room %d offset x: %d y: %d", (int)myPos.x, (int)myPos.y, server->D2GetCurrentRoomNum(), (int)myPos.x - (int)room->pRoom->pColl->nPosGameX, (int)myPos.y - (int)room->pRoom->pColl->nPosGameY);
 
 	return TRUE;
 }
@@ -120,17 +133,20 @@ BOOL PRIVATE Pos(char **argv, int argc)
 
 BOOL CALLBACK enumUnitProc(LPCGAMEUNIT lpUnit, LPARAM lParam)
 {
+	//char buff[1024] = {};
+	//server->GetUnitName(lpUnit, buff, 1024);
+	//server->GameStringf("Unit %d: %s", lpUnit->dwUnitType, buff);
 
 	DWORD unitClassId = server->GetUnitClassID(lpUnit);
 	if(unitClassId == 0)
 	{
+		//server->GameStringf("unitClassId == 0");
 		return TRUE;
 	}
 
-	//server->GameStringf("Unit class %d", unitClassId);
-	
 	if(currentTravelData->Current()[stairsRoomNum].Id != unitClassId)
 	{
+		//server->GameStringf("currentTravelData->Current()[stairsRoomNum].Id != unitClassId");
 		return TRUE;
 	}
 
@@ -203,51 +219,116 @@ bool CheckForOurStairs()
 	server->EnumUnits(UNIT_TYPE_ROOMTILE, enumUnitProc, (LPARAM)&stairsGameUnit);
 	if(stairsGameUnit.dwUnitID == 0 && stairsGameUnit.dwUnitType == 0)
 	{
+		server->GameStringf("stairsGameUnit.dwUnitID == 0 && stairsGameUnit.dwUnitType == 0");
 		return false;
 	}
 
-	MAPPOS stairsPos = server->GetUnitPosition(&stairsGameUnit);
+	auto stairsPosition = server->GetUnitPosition(&stairsGameUnit);
 	//server->GameStringf("Our stairs = %d", server->GetUnitClassID(&stairsGameUnit));
 
-	currentState = STATE_TeleportingToStairsObject;
+	SetState(STATE_TeleportingToStairsObject);
 
 	pathIndex = 0;
-	server->CalculatePath(stairsPos.x, stairsPos.y, &path, 5);
-		
+	if (!server->CalculatePath(stairsPosition.x, stairsPosition.y, &path, 5))
+	{
+		server->GameStringf("Failed to calculate path. Trying a direct teleport path...");
+		path.iNodeCount = 1;
+		path.aPathNodes[0] = stairsPosition;
+		path.posStart = me->GetPosition();
+		path.posEnd = stairsPosition;
+	}
+
 	return true;
 }
+
+DWORD EXPORT OnGameTimerTick()
+{
+	if (currentState == STATE_Idle)
+	{
+		return 0;
+	}
+
+	auto tickRate = server->GetTickRate();
+	auto oneSecond = 1 * (1000.0 / tickRate);
+	if (currentStateTicks > 5 * oneSecond)
+	{
+		//server->GameStringf("SLOWSTATE: TickCount = %d | state = %d", currentStateTicks, currentState);
+	}
+
+	currentStateTicks++;
+
+	if (currentState == STATE_SearchingForStairs)
+	{
+		currentStateTicks = 0;
+		NextStep();
+	}
+	else if (currentState == STATE_UsingStairs && currentStateTicks > 0.250 * oneSecond)
+	{
+		//server->GameStringf("TickCount = %d for STATE_UsingStairs, trying again", currentStateTicks);
+		currentStateTicks = 0;
+
+		InteractWithStairs();
+	}
+	else if (currentState == STATE_TeleportingToStairsRoom && currentStateTicks > 1 * oneSecond)
+	{
+		//server->GameStringf("TickCount = %d for STATE_TeleportingToStairsRoom, trying again", currentStateTicks);
+		currentStateTicks = 0;
+
+		if (pathIndex > 0)
+		{
+			pathIndex = attemptingPathIndex;
+			NextStep();
+		}
+	}
+	else if (currentState == STATE_TeleportingToStairsObject && currentStateTicks > 1 * oneSecond)
+	{
+		//server->GameStringf("TickCount = %d for STATE_TeleportingToStairsObject, trying again", currentStateTicks);
+		currentStateTicks = 0;
+
+		if (pathIndex > 0)
+		{
+			pathIndex = attemptingPathIndex;
+			NextStep();
+		}
+	}
+
+	return 0;
+}
+
 
 
 void NextStep()
 {
-	//server->GameStringf("%s", __FUNCTION__);
-
 	if(pathIndex >= path.iNodeCount)
 	{
 		if(currentState == STATE_TeleportingToStairsObject)
 		{
 			//server->GameStringf("We have arrived at our stairs [class %X]", server->GetUnitClassID(&stairsGameUnit));
-
-			MAPPOS stairsPosition = server->GetUnitPosition(&stairsGameUnit);
-			currentState = STATE_UsingStairs;
-			me->Interact(&stairsGameUnit);
+			//MAPPOS stairsPosition = server->GetUnitPosition(&stairsGameUnit);
+			InteractWithStairs();
 			return;
 		}
 
 		server->GameStringf("We have arrived at our room, checking for stairs...");
 		if(!CheckForOurStairs())
 		{
-			currentState = STATE_Idle;
-			server->GameStringf("Failed to find stairs, aborting!");
+			SetState(STATE_SearchingForStairs);
 			return;
 		}
 
-		// Fall through...
+		// STATE_TeleportingToStairsObject on successful CheckForOurStairs check
+		// CheckForOurStairs will do another pathfinding check to walk to the stairs
 	}
-		
 
-	me->CastOnMap(D2S_TELEPORT, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y, false);
-	++pathIndex;
+	// path is possibly modified in CheckForOurStairs...
+	if (pathIndex < path.iNodeCount)
+	{
+		attemptingPathIndex = pathIndex;
+		if (me->CastOnMap(D2S_TELEPORT, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y, isLeftHandCasting))
+		{
+			++pathIndex;
+		}
+	}
 }
 
 void NextRoomTransition()
@@ -257,7 +338,7 @@ void NextRoomTransition()
 	pathIndex = 0;
 	memset(&path, 0, sizeof(PATH));
 	memset(&stairsGameUnit, 0, sizeof(GAMEUNIT));
-	currentState = STATE_Idle;
+	SetState(STATE_Idle);
 
 	if(currentTravelData->CurrentStep + 1 < currentTravelData->NumSteps)
 	{
@@ -314,7 +395,7 @@ void NextRoomTransition()
 	//}
 	
 	//server->GameStringf("Teleporing to room %d", stairsRoomNum);
-	currentState = STATE_TeleportingToStairsRoom;
+	SetState(STATE_TeleportingToStairsRoom);
 	NextStep();
 }
 
@@ -327,10 +408,15 @@ void ShowUsage()
 	}
 }
 
+void GoBackToTown()
+{
+	SetState(STATE_BackToTown);
+	server->GameCommandf("load flee");
+	server->GameCommandf("flee tp");
+}
+
 BOOL PRIVATE Start(char** argv, int argc)
 {
-	server->GameStringf("%s", __FUNCTION__);
-
 	if(argc != 3)
 	{
 		ShowUsage();
@@ -344,14 +430,27 @@ BOOL PRIVATE Start(char** argv, int argc)
 		return TRUE;
 	}
 
+
+	if (me->GetSelectedSpell(true) == D2S_TELEPORT)
+	{
+		isLeftHandCasting = true;
+	}
+	else if (me->GetSelectedSpell(false) == D2S_TELEPORT)
+	{
+		isLeftHandCasting = false;
+	}
+	else
+	{
+		server->GamePrintInfo("You must select the teleport skill before starting.");
+		return TRUE;
+	}
+
 	currentTravelData = allTravelData[travelIndex - 1];
 	currentTravelData->Reset();
 
 	if(!me->IsInTown())
 	{
-		currentState = STATE_BackToTown;
-		server->GameCommandf("load flee");
-		server->GameCommandf("flee tp");
+		GoBackToTown();
 		return TRUE;
 	}
 	
@@ -371,7 +470,6 @@ BOOL PRIVATE Start(char** argv, int argc)
 
 VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
 {
-	server->GameStringf("%s", __FUNCTION__);
 	currentState = STATE_Idle;
 }
 
@@ -482,7 +580,7 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 		{
 			if(strcmp(chatMessage, "ÿc5Waypointÿc0: Complete") != 0)
 			{
-				currentState = STATE_Idle;
+				SetState(STATE_Idle);
 			}
 
 			return 0;
@@ -499,7 +597,7 @@ VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 	//{
 	//	CheckForOurStairs();
 	//}
-
+		
 	if(aPacket[0] == 0x15 && *((DWORD *)&aPacket[2]) == me->GetID())
 	{
 		if(currentState != STATE_TeleportingToStairsRoom && currentState != STATE_TeleportingToStairsObject)
@@ -527,15 +625,30 @@ VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
 		//server->GameStringf("PM_MAPCHANGE");
 		if(currentState == STATE_UsingStairs || currentState == STATE_UsingWaypoint)
 		{
-			currentState = STATE_Idle;
+			if (me->IsInTown())
+			{
+				server->GameStringf("Unexpected map change. Aborting.");
+				SetState(STATE_Idle);
+				return;
+			}
+
 			NextRoomTransition();
 		}
 		else if(currentState == STATE_BackToTown)
 		{
-			currentState = STATE_UsingWaypoint;
+			SetState(STATE_UsingWaypoint);
 			server->GameCommandf("load wp");
 			server->GameCommandf("wp start %d", currentTravelData->WaypointDestination);
 			return;
+		}
+		else
+		{
+			server->GameStringf("Unexpected map change. Aborting.");
+			if (!me->IsInTown())
+			{
+				GoBackToTown();
+			}
+			SetState(STATE_Idle);
 		}
 	}
 }

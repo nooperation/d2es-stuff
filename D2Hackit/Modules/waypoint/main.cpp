@@ -322,7 +322,6 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 	return aLen;
 }
 
-DWORD foundWaypoint = false;
 VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 {
 	if (currentState == STATE_Idle)
@@ -360,7 +359,7 @@ VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 			return;
 		}
 
-		foundWaypoint = true;
+		SendUseWaypointPacket(targetWaypointGameUnit.dwUnitID, destinationMapId);
 	}
 	else if (aPacket[0] == 0x15 && *((DWORD *)&aPacket[2]) == me->GetID())
 	{
@@ -376,21 +375,6 @@ VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 	}
 }
 
-DWORD EXPORT OnGameTimerTick()
-{
-	if (currentState == STATE_Idle)
-	{
-		return 0;
-	}
-
-	if (foundWaypoint && server->IsInteractedWithWP())
-	{
-		SendUseWaypointPacket(targetWaypointGameUnit.dwUnitID, destinationMapId);
-		foundWaypoint = false;
-	}
-
-	return 0;
-}
 
 DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 {

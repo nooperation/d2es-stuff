@@ -1035,6 +1035,7 @@ DWORD EXPORT GetInteractedNPCClassID()
 	return *p_D2CLIENT_InteractedNPCClassID;
 }
 
+// NOTE: This is never cleared, only updated to whatever the last WP was that the user opened. If the user closes the wp, it retains the previous value
 DWORD EXPORT GetInteractedWPUniqueID()
 {
 	if (p_D2CLIENT_InteractedWPUniqueID == nullptr)
@@ -1045,6 +1046,7 @@ DWORD EXPORT GetInteractedWPUniqueID()
 	return *p_D2CLIENT_InteractedWPUniqueID;
 }
 
+// NOTE: This flag is only set if the Act1 tab of the WP window is open
 BOOL EXPORT IsInteractedWithWP()
 {
 	if (p_D2CLIENT_IsNotInteractedWithWP == nullptr)
