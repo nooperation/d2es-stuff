@@ -1045,14 +1045,14 @@ DWORD EXPORT GetInteractedWPUniqueID()
 	return *p_D2CLIENT_InteractedWPUniqueID;
 }
 
-BOOL EXPORT IsNotInteractedWithWP()
+BOOL EXPORT IsInteractedWithWP()
 {
 	if (p_D2CLIENT_IsNotInteractedWithWP == nullptr)
 	{
 		return false;
 	}
 
-	return *p_D2CLIENT_IsNotInteractedWithWP;
+	return !(*p_D2CLIENT_IsNotInteractedWithWP);
 }
 
 // -- B

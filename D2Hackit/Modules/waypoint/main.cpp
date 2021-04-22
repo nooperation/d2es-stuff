@@ -54,7 +54,7 @@ void Output(const char *message)
 /// </summary>
 /// <param name="waypointId">ID of the waypoint we're using.</param>
 /// <param name="destination">Destination we're teleporting to.</param>
-void UseWaypoint(DWORD waypointId, DWORD destination)
+void SendUseWaypointPacket(DWORD waypointId, DWORD destination)
 {
 	unsigned char packet[9];
 
@@ -119,7 +119,14 @@ void TakeNextStep()
 		OpenWaypoint(targetWaypointGameUnit.dwUnitID);
 		return;
 	}
-		
+	
+	if (!me->HaveSpell(D2S_TELEPORT))
+	{
+		Output("Teleport spell not found.");
+		currentState = STATE_Idle;
+		return;
+	}
+
 	me->CastOnMap(D2S_TELEPORT, pathToWaypoint.aPathNodes[currentPathToWaypointIndex].x, pathToWaypoint.aPathNodes[currentPathToWaypointIndex].y, false);
 	++currentPathToWaypointIndex;
 }
@@ -152,6 +159,12 @@ BOOL PRIVATE TeleportTo(char** argv, int argc)
 	if(argc < 3 || argc > 4)
 	{
 		Output("Usage: .wp start [destination = 0..111] [chat = 0..1]");
+		return FALSE;
+	}
+
+	if (!me->HaveSpell(D2S_TELEPORT))
+	{
+		Output("Teleport spell not found.");
 		return FALSE;
 	}
 
@@ -276,6 +289,7 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 	return aLen;
 }
 
+DWORD foundWaypoint = false;
 VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 {
 	// Packet 0x63 - Waypoint status sent after we open the waypoint UI
@@ -283,20 +297,16 @@ VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 	if(currentState == STATE_OpeningWaypoint && aPacket[0] == 0x63)
 	{
 		DWORD waypointId = *((DWORD *)&aPacket[1]);
-
-		if(targetWaypointGameUnit.dwUnitID != waypointId)
-		{
-			return;
-		}
+		BYTE *availableWaypoints = &aPacket[7];
 
 		// There are 8*14 bits of waypoint flags starting at byte 7 to determine
 		//   if we have access to the specified waypoint. Use 'waypointBitIndices'
 		//   to get the index of the bit we need to check to see if we have access
 		//   to the waypoint.
-		BYTE *availableWaypoints = &aPacket[7];
-		if(waypointBitIndices.find(destinationMapId) == waypointBitIndices.end())
+		if (waypointBitIndices.find(destinationMapId) == waypointBitIndices.end())
 		{
 			Output("Invalid waypoint");
+			currentState = STATE_Idle;
 			return;
 		}
 
@@ -305,14 +315,27 @@ VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 		int bitIndex = waypointBitIndex % 8;
 		int byteIndex = waypointBitIndex / 8;
 
-		if(((*(availableWaypoints + byteIndex)) & (1 << bitIndex)) == 0)
+		if (((*(availableWaypoints + byteIndex)) & (1 << bitIndex)) == 0)
 		{
 			Output("Waypoint not available");
+			currentState = STATE_Idle;
 			return;
 		}
 
-		UseWaypoint(targetWaypointGameUnit.dwUnitID, destinationMapId);
+		foundWaypoint = true;
 	}
+}
+
+DWORD EXPORT OnGameTimerTick()
+{
+	if (foundWaypoint && server->IsInteractedWithWP())
+	{
+		auto currentWaypointId = server->GetInteractedWPUniqueID();
+		SendUseWaypointPacket(currentWaypointId, destinationMapId);
+		foundWaypoint = false;
+	}
+
+	return 0;
 }
 
 DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)

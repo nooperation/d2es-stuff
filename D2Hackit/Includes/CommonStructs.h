@@ -457,7 +457,7 @@ typedef DWORD(__cdecl *fnGetInteractedNPCUniqueID)();
 typedef BOOL(__cdecl *fnIsInteractedWithNPC)();
 typedef DWORD(__cdecl *fnGetInteractedNPCClassID)();
 typedef DWORD(__cdecl *fnGetInteractedWPUniqueID)();
-typedef BOOL(__cdecl *fnIsNotInteractedWithWP)();
+typedef BOOL(__cdecl *fnIsInteractedWithWP)();
 // -- B
 typedef struct functionentrypoints_t
 {
@@ -571,7 +571,7 @@ typedef struct functionentrypoints_t
 	fnIsInteractedWithNPC			IsInteractedWithNPC;
 	fnGetInteractedNPCClassID		GetInteractedNPCClassID;
 	fnGetInteractedWPUniqueID		GetInteractedWPUniqueID;
-	fnIsNotInteractedWithWP			IsNotInteractedWithWP;
+	fnIsInteractedWithWP			IsInteractedWithWP;
 	// -- B
 } FUNCTIONENTRYPOINTS, *PFUNCTIONENTRYPOINTS;
 

@@ -308,7 +308,7 @@ DWORD EXPORT GetInteractedNPCUniqueID();
 BOOL EXPORT IsInteractedWithNPC();
 DWORD EXPORT GetInteractedNPCClassID();
 DWORD EXPORT GetInteractedWPUniqueID();
-BOOL EXPORT IsNotInteractedWithWP();
+BOOL EXPORT IsInteractedWithWP();
 // -- B
 
 BOOL EXPORT LeftClick(long x, long y);
