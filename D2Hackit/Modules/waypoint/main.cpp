@@ -23,6 +23,8 @@ GAMEUNIT targetWaypointGameUnit;
 PRESETUNIT targetWaypointPresetUnit;
 DWORD destinationMapId;
 
+bool leftHandCasting = true;
+
 bool isUsingChat = false;
 
 unsigned int currentPathToWaypointIndex;
@@ -116,19 +118,31 @@ void TakeNextStep()
 			return;
 		}
 
-		OpenWaypoint(targetWaypointGameUnit.dwUnitID);
-		return;
+		auto myPosition = me->GetPosition();
+		auto waypointPosition = server->GetUnitPosition(&targetWaypointGameUnit);
+		if (server->GetDistance(myPosition.x, myPosition.y, waypointPosition.x, waypointPosition.y) < 4)
+		{
+			OpenWaypoint(targetWaypointGameUnit.dwUnitID);
+			return;
+		}
+		else
+		{
+			Output("Still too far away from waypoint. Retrying step");
+			--currentPathToWaypointIndex;
+		}
 	}
-	
-	if (!me->HaveSpell(D2S_TELEPORT))
+
+	if (me->GetSelectedSpell(leftHandCasting) != D2S_TELEPORT)
 	{
-		Output("Teleport spell not found.");
+		Output("Teleport not selected.");
 		currentState = STATE_Idle;
 		return;
 	}
 
-	me->CastOnMap(D2S_TELEPORT, pathToWaypoint.aPathNodes[currentPathToWaypointIndex].x, pathToWaypoint.aPathNodes[currentPathToWaypointIndex].y, false);
-	++currentPathToWaypointIndex;
+	if (me->CastOnMap(D2S_TELEPORT, pathToWaypoint.aPathNodes[currentPathToWaypointIndex].x, pathToWaypoint.aPathNodes[currentPathToWaypointIndex].y, leftHandCasting))
+	{
+		++currentPathToWaypointIndex;
+	}
 }
 
 /// <summary>
@@ -162,10 +176,19 @@ BOOL PRIVATE TeleportTo(char** argv, int argc)
 		return FALSE;
 	}
 
-	if (!me->HaveSpell(D2S_TELEPORT))
+	if (me->GetSelectedSpell(true) == D2S_TELEPORT)
 	{
-		Output("Teleport spell not found.");
-		return FALSE;
+		leftHandCasting = true;
+	}
+	else if (me->GetSelectedSpell(false) == D2S_TELEPORT)
+	{
+		leftHandCasting = false;
+	}
+	else
+	{
+		Output("Teleport not selected.");
+		currentState = STATE_Idle;
+		return TRUE;
 	}
 
 	destinationMapId = atoi(argv[2]);
@@ -186,7 +209,12 @@ BOOL PRIVATE TeleportTo(char** argv, int argc)
 		return TRUE;
 	}
 
-	server->CalculatePath(targetWaypointPresetUnit.x, targetWaypointPresetUnit.y, &pathToWaypoint, 15);
+	if (server->CalculatePath(targetWaypointPresetUnit.x, targetWaypointPresetUnit.y, &pathToWaypoint, 15) == 0)
+	{
+		Output("Calculate path returned 0 nodes");
+		return TRUE;
+	}
+
 	currentPathToWaypointIndex = 0;
 
 	currentState = STATE_TeleportingToWaypoint;
@@ -273,6 +301,11 @@ BOOL EXPORT OnClientStart()
 
 DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 {
+	if (currentState == STATE_Idle)
+	{
+		return aLen;
+	}
+
 	// Packet 0x49 - waypoint interaction
 	// Packet 0x49 with a destination of 0 is sent to the server when we close the Waypoint UI.
 	//  Unfortunatly the UI isn't closed automaticly when we use the WP via sending the packet
@@ -292,6 +325,11 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 DWORD foundWaypoint = false;
 VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 {
+	if (currentState == STATE_Idle)
+	{
+		return;
+	}
+
 	// Packet 0x63 - Waypoint status sent after we open the waypoint UI
 	// If we get this far then we should be good to go and teleport to our destination.
 	if(currentState == STATE_OpeningWaypoint && aPacket[0] == 0x63)
@@ -324,14 +362,30 @@ VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 
 		foundWaypoint = true;
 	}
+	else if (aPacket[0] == 0x15 && *((DWORD *)&aPacket[2]) == me->GetID())
+	{
+		// Packet 0x15 is the reassignment packet, meaning a character has been assigned to a new 
+		//  position. Happens mostly during teleporting and players coming into view.
+
+		if (currentState != STATE_TeleportingToWaypoint)
+		{
+			return;
+		}
+		
+		TakeNextStep();
+	}
 }
 
 DWORD EXPORT OnGameTimerTick()
 {
+	if (currentState == STATE_Idle)
+	{
+		return 0;
+	}
+
 	if (foundWaypoint && server->IsInteractedWithWP())
 	{
-		auto currentWaypointId = server->GetInteractedWPUniqueID();
-		SendUseWaypointPacket(currentWaypointId, destinationMapId);
+		SendUseWaypointPacket(targetWaypointGameUnit.dwUnitID, destinationMapId);
 		foundWaypoint = false;
 	}
 
@@ -340,16 +394,9 @@ DWORD EXPORT OnGameTimerTick()
 
 DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 {
-	// Packet 0x15 is the reassignment packet, meaning a character has been assigned to a new 
-	//  position. Happens mostly during teleporting and players coming into view.
-	if(aPacket[0] == 0x15 && *((DWORD *)&aPacket[2]) == me->GetID())
+	if (currentState == STATE_Idle)
 	{
-		if(currentState != STATE_TeleportingToWaypoint)
-		{
-			return aLen;
-		}
-
-		TakeNextStep();
+		return aLen;
 	}
 
 	return aLen;
@@ -357,6 +404,11 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 
 BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 {
+	if (currentState == STATE_Idle)
+	{
+		return iKeyCode;
+	}
+
 	if(iKeyCode == VK_SPACE)
 	{
 		currentState = STATE_Idle;
