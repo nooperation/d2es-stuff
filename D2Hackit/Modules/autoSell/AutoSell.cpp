@@ -1,6 +1,7 @@
 #include "AutoSell.h"
 #include <fstream>
 #include <string>
+#include <sstream>
 #include "../../Core/npc.h"
 #include "../../Core/npc.cpp" // TODO: Let's not do this
 
@@ -143,6 +144,7 @@ bool AutoSell::Start(bool silentStart)
 		return true;
 	}
 
+	this->startingGold = me->GetStat(STAT_GOLD);
 	SellQueuedItems();
 
 	return true;
@@ -152,8 +154,15 @@ void AutoSell::Stop()
 {
 	if (currentState != State::Uninitialized)
 	{
+		const auto currentGold = me->GetStat(STAT_GOLD);
+		const auto goldEarned = (currentGold - startingGold);
+
+		std::stringstream ss;
+		ss.imbue(std::locale(""));
+		ss << std::fixed << goldEarned;
+		
 		me->CleanJobs();
-		server->GameStringf("ÿc:AutoSellÿc0: complete");
+		server->GameStringf("ÿc:AutoSellÿc0: Total: ÿc4%sÿc0", ss.str().c_str());
 		currentState = State::Uninitialized;
 	}
 }

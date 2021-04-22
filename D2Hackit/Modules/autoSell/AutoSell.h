@@ -41,6 +41,8 @@ private:
 
 	bool isFullyAutomatic;
 	bool isAnnouncingSoldItems;
+	long startingGold;
+
 	State currentState;
 	std::unordered_map<std::string, std::string> targetItems;
 };
