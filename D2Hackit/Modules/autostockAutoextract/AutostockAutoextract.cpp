@@ -68,11 +68,14 @@ bool AutostockAutoextract::StartAsAe()
 	//   cube before we start.
 	memset(&extractorStuff, 0, sizeof(ExtractorStuff));
 	me->EnumStorageItems(STORAGE_CUBE, enumFindCubeItems, (LPARAM)&extractorStuff);
-	if(strlen(extractorStuff.extractorCode) == 0 || strlen(extractorStuff.restockerCode) == 0)
+	if (strlen(extractorStuff.extractorCode) == 0 || strlen(extractorStuff.restockerCode) == 0)
 	{
-		server->GameStringf("ÿc5AutostockAutoextractÿc0: Place extractors in cube before starting");
-		Abort();
-		return false;
+		if (strcmp(extractorStuff.extractorCode, "ore") != 0)
+		{
+			server->GameStringf("ÿc5AutostockAutoextractÿc0: Place extractors in cube before starting");
+			Abort();
+			return false;
+		}
 	}
 
 	// Load required modules

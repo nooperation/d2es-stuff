@@ -55,6 +55,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "autoSell", "..\Modules\auto
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "autoAncientScroll", "..\Modules\autoAncientScroll\autoAncientScroll.vcxproj", "{FF4D7C7F-7217-4447-F996-98DBF93EF41C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AutoOre", "..\Modules\autoOre\AutoOre.vcxproj", "{832CCF50-B3EA-4201-9FFF-90C6FD82FF3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -157,6 +159,10 @@ Global
 		{FF4D7C7F-7217-4447-F996-98DBF93EF41C}.Debug|Win32.Build.0 = Debug|Win32
 		{FF4D7C7F-7217-4447-F996-98DBF93EF41C}.Release|Win32.ActiveCfg = Release|Win32
 		{FF4D7C7F-7217-4447-F996-98DBF93EF41C}.Release|Win32.Build.0 = Release|Win32
+		{832CCF50-B3EA-4201-9FFF-90C6FD82FF3A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{832CCF50-B3EA-4201-9FFF-90C6FD82FF3A}.Debug|Win32.Build.0 = Debug|Win32
+		{832CCF50-B3EA-4201-9FFF-90C6FD82FF3A}.Release|Win32.ActiveCfg = Release|Win32
+		{832CCF50-B3EA-4201-9FFF-90C6FD82FF3A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -186,6 +192,7 @@ Global
 		{52592CEE-29BC-4723-A838-F4784E691334} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
 		{D92FD3C9-082F-4DFB-B414-3538D1F9DE28} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
 		{FF4D7C7F-7217-4447-F996-98DBF93EF41C} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
+		{832CCF50-B3EA-4201-9FFF-90C6FD82FF3A} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7DAE5C20-C224-4A1A-8147-796AF2BFCA24}

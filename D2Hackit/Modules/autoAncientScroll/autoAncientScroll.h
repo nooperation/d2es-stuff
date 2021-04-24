@@ -1,5 +1,4 @@
-#ifndef _AUTOSTOCKER_H_
-#define _AUTOSTOCKER_H_
+#pragma once
 
 #include <vector>
 #include <windows.h>
@@ -51,5 +50,3 @@ private:
 
 BOOL CALLBACK enumItemProc(LPCITEM item, LPARAM lParam);
 BOOL CALLBACK enumItemCountProc(LPCITEM item, LPARAM lParam);
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _AutoExtractor_H_
-#define _AutoExtractor_H_
+#pragma once
 
 #include <vector>
 #include <queue>
@@ -61,5 +60,3 @@ class AutoExtractor
 };
 
 BOOL CALLBACK enumFindExtractors(LPCITEM item, LPARAM lParam);
-
-#endif
