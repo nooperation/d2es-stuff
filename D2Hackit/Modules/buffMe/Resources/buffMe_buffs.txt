@@ -1,0 +1,13 @@
+# Format: BuffId StateId Name
+#   BuffId - Column 'Id' of skills.txt
+#   StateId - Read column 'aurastate' of skills.txt and use it to lookup 'state' in states.txt. Use id column from states.txt
+#   Name - User defined. Mostly just for commenting
+155 51 Battle Command
+149 32 Battle Orders
+138 26 Shout
+40 10 Shock armor
+50 88 Fire Shield
+386 215 Thunderstorm (Barb)
+58 30 Energy Shield
+267 159 Fade
+226 149 OakSage

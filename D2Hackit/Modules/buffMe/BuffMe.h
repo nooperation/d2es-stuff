@@ -2,6 +2,7 @@
 #define _BUFFME_H_
 
 #include <vector>
+#include <unordered_map>
 #include "../../Includes/D2Client.h"
 
 enum BuffStates
@@ -11,6 +12,20 @@ enum BuffStates
 	STATE_IDLE,
 };
 
+struct BuffData
+{
+	BuffData(int buffId, int affectId, const std::string &name) 
+	{
+		this->buffId = buffId;
+		this->affectId = affectId;
+		this->name = name;
+	}
+
+	int buffId;
+	int affectId;
+	std::string name;
+};
+
 class BuffMe
 {
 	public:
@@ -18,17 +33,16 @@ class BuffMe
 		void Start();
 		void OnAffect(size_t affectID);
 		void OnDisAffect(size_t affectID);
-		void OnManaDown();
 		void OnTick();
 		void NextBuff();
 	private:
 		void CastCurrentBuff();
 		void OnCompletion();
+		bool ReadBuffs(const std::string &fileName);
 
-		std::vector<int> buffs;
-		std::vector<int> affects;
+		std::vector<BuffData> desiredBuffs;
+		size_t currentBuffIndex;
 
-		size_t currentBuff;
 		BuffStates currentState;
 		bool needsRebuff;
 		int startingSkill;

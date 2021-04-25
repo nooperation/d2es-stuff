@@ -2,51 +2,58 @@
 #include "../../Includes/D2Client.h"
 
 #include <fstream>
+#include <string>
+#include <sstream>
+#include <unordered_map>
+#include <regex>
 
 BuffMe::BuffMe()
 {
 	currentState = STATE_IDLE;
-	currentBuff = 0;
+	currentBuffIndex = 0;
 
-	affects.clear();
-	buffs.clear();
+	ReadBuffs(".\\plugin\\buffMe_buffs.txt");
+}
 
+bool BuffMe::ReadBuffs(const std::string &fileName)
+{
+	desiredBuffs.clear();
 
+	std::ifstream inFile(fileName.c_str());
+	if (!inFile)
+	{
+		return false;
+	}
 
-	// todo: not hardcoded
-	affects.push_back(AFFECT_BATTLECOMMAND);
-	buffs.push_back(D2S_BATTLECOMMAND);
-	
-	affects.push_back(AFFECT_BATTLECOMMAND);
-	buffs.push_back(D2S_BATTLECOMMAND);
+	while (inFile.good())
+	{
+		std::string readBuff;
+		std::getline(inFile, readBuff);
 
-	affects.push_back(AFFECT_BATTLEORDERS);
-	buffs.push_back(D2S_BATTLEORDERS);
+		if (readBuff.length() <= 0)
+		{
+			continue;
+		}
 
-	affects.push_back(AFFECT_SHOUT);
-	buffs.push_back(D2S_SHOUT);
+		if (!isdigit(readBuff[0]))
+		{
+			continue;
+		}
 
-	// shock armor
-	affects.push_back(AFFECT_FROZENARMOR);
-	buffs.push_back(D2S_FROZENARMOR);
+		int buffId;
+		int affectId;
+		std::string name;
 
-	// Fire shield
-	affects.push_back(0x58);
-	buffs.push_back(0x32);
+		std::stringstream ss(readBuff);
+		ss >> buffId >> affectId;
+		ss.ignore(1);
+		std::getline(ss, name);
 
-	//// eagle eye
-	//affects.push_back(0xc9);
-	//buffs.push_back(0x16a);
+		desiredBuffs.emplace_back(buffId, affectId, name);
+	}
 
-
-
-	// No affect if already enchanted!
-	affects.push_back(AFFECT_ES_BARBTHUNDERSTORM);
-	buffs.push_back(D2S_ES_BARBTHUNDERSTORM);
-
-	// No affect if already enchanted!
-	affects.push_back(AFFECT_ENERGYSHIELD);
-	buffs.push_back(D2S_ENERGYSHIELD);
+	inFile.close();
+	return true;
 }
 
 /// <summary>
@@ -54,9 +61,14 @@ BuffMe::BuffMe()
 /// </summary>
 void BuffMe::Start()
 {
-	currentBuff = 0;
+	currentBuffIndex = 0;
 	currentState = STATE_SENDING;
 	startingSkill = me->GetSelectedSpell(FALSE);
+
+	for (auto &item : desiredBuffs)
+	{
+		server->GameStringf("BuffId = %d | AffectId = %d | Name = %s", item.buffId, item.affectId, item.name.c_str());
+	}
 
 	CastCurrentBuff();
 }
@@ -82,9 +94,9 @@ void BuffMe::OnDisAffect(size_t affectID)
 		return;
 	}
 
-	for each(auto item in affects)
+	for each(auto &item in desiredBuffs)
 	{
-		if(item == affectID)
+		if(item.affectId == affectID)
 		{
 			server->GameStringf("ÿc3Warningÿc0: ÿc2Rebuff needed");
 			needsRebuff = true;
@@ -106,7 +118,12 @@ void BuffMe::OnAffect(size_t affectID)
 	}
 	
 	// Check to see if this is the affect we're waiting on
-	if(currentBuff >= affects.size() || affects[currentBuff] != affectID)
+	if (currentBuffIndex >= desiredBuffs.size())
+	{
+		return;
+	}
+
+	if(desiredBuffs[currentBuffIndex].affectId != affectID)
 	{
 		return;
 	}
@@ -127,7 +144,12 @@ void BuffMe::OnTick()
 	}
 
 	// Check to see if this is the affect we're waiting on
-	if(currentBuff >= affects.size() || !me->GetAffection(affects[currentBuff]))
+	if (currentBuffIndex >= desiredBuffs.size())
+	{
+		return;
+	}
+
+	if(!me->GetAffection(desiredBuffs[currentBuffIndex].affectId))
 	{
 		return;
 	}
@@ -140,8 +162,8 @@ void BuffMe::OnTick()
 /// </summary>
 void BuffMe::NextBuff()
 {
-	currentBuff++;
-	if(currentBuff >= buffs.size())
+	currentBuffIndex++;
+	if(currentBuffIndex >= desiredBuffs.size())
 	{
 		OnCompletion();
 		return;
@@ -158,18 +180,23 @@ void BuffMe::NextBuff()
 /// </summary>
 void BuffMe::CastCurrentBuff()
 {
-	while(currentBuff < buffs.size() && !me->HaveSpell(buffs[currentBuff]))
+	while(currentBuffIndex < desiredBuffs.size())
 	{
+		if (me->HaveSpell(desiredBuffs[currentBuffIndex].buffId))
+		{
+			break;
+		}
+
 		//server->GameStringf("Don't have spell %d", currentBuff);
-		currentBuff++;
+		currentBuffIndex++;
 	}
 
-	if(currentBuff >= buffs.size())
+	if(currentBuffIndex >= desiredBuffs.size())
 	{
 		OnCompletion();
 		return;
 	}
 
 	currentState = STATE_WAITINGFORAFFECT;
-	me->CastNoTarget(buffs[currentBuff], FALSE);
+	me->CastNoTarget(desiredBuffs[currentBuffIndex].buffId, FALSE);
 }

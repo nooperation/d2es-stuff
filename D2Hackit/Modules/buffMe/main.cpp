@@ -10,7 +10,7 @@ bool isShowingSelectedSkill = false;
 
 CLIENTINFO
 (
-	0,1,
+	1,0,
 	"",
 	"",
 	"buffMe",
