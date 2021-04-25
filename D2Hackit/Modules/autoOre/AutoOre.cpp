@@ -229,7 +229,10 @@ void AutoOre::ProcessInventoryItem(const ITEM &item)
 {
 	if (strcmp(item.szItemCode, "ore") == 0)
 	{
-		this->oreIds.push_back(item.dwItemID);
+		if (item.iIdentified)
+		{
+			this->oreIds.push_back(item.dwItemID);
+		}
 	}
 	else if (strcmp(item.szItemCode, "fkn") == 0)
 	{
