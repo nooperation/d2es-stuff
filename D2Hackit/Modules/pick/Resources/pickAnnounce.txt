@@ -1,0 +1,192 @@
+ore ore
+jew jewel
+yyy ÿc9Cookbook
+r01 ÿc/I Rune
+r02 ÿc/U Rune
+r03 ÿc/Shi Rune
+r04 ÿc/Ka Rune
+r05 ÿc/N Rune
+r06 ÿc/Ku Rune
+r07 ÿc/Yo Rune
+r08 ÿc1Ki Rune
+r09 ÿc1Ri Rune
+r10 ÿc1Mi Rune
+r11 ÿc1Ya Rune
+r12 ÿc1A Rune
+r13 ÿc1Tsu Rune
+r14 ÿc1Chi Rune
+r15 ÿc9Sa Rune
+r16 ÿc9Yu Rune
+r17 ÿc9Ke Rune
+r18 ÿc9E Rune
+r19 ÿc9Ko Rune
+r20 ÿc9Ra Rune
+r21 ÿc9O Rune
+r22 ÿc8Ho Rune
+r23 ÿc8Me Rune
+r24 ÿc8Ru Rune
+r25 ÿc8Ta Rune
+r26 ÿc8To Rune
+r27 ÿc8Wa Rune
+r28 ÿc8Ha Rune
+r29 ÿc2Na Rune
+r30 ÿc2Ni Rune
+r31 ÿc2Se Rune
+r32 ÿc2Fu Rune
+r33 ÿc2Ma Rune
+r34 ÿc2Hi Rune
+r35 ÿc2Mo Rune
+r36 ÿc4No Rune
+r37 ÿc4Te Rune
+r38 ÿc4Ro Rune
+r39 ÿc4So Rune
+r40 ÿc4Mu Rune
+r41 ÿc4Ne Rune
+r42 ÿc4Re Rune
+r43 ÿc;Su Rune
+r44 ÿc;He Rune
+r45 ÿc;Nu Rune
+r46 ÿc;Wo Rune
+r50 ÿc;Null Rune
+r47 Ka Rune
+r48 Hu Rune
+r51 El Rune
+r52 Eld Rune
+r53 Tir Rune
+r54 Nef Rune
+r55 Eth Rune
+r56 Ith Rune
+r57 Tal Rune
+r58 Ral Rune
+r59 Ort Rune
+r60 Thul Rune
+r61 Amn Rune
+r62 Sol Rune
+r63 Shael Rune
+r64 Dol Rune
+r65 Hel Rune
+r66 Io Rune
+r67 Lum Rune
+r68 Ko Rune
+r69 Fal Rune
+r70 Lem Rune
+r71 Pul Rune
+r72 Um Rune
+r73 Mal Rune
+r74 Ist Rune
+r75 Gul Rune
+r76 Vex Rune
+r77 Ohm Rune
+r78 Lo Rune
+r79 Sur Rune
+r80 Ber Rune
+r81 Jah Rune
+r82 Cham Rune
+r83 Zod Rune
+01l (I -> El) ÿc4Ancient Decal
+02l (U -> Eld) ÿc4Ancient Decal
+03l (Shi -> Tir) ÿc4Ancient Decal
+04l (Ka -> Nef) ÿc4Ancient Decal
+05l (N -> Eth) ÿc4Ancient Decal
+06l (Ku -> Ith) ÿc4Ancient Decal
+07l (Yo -> Tal) ÿc4Ancient Decal
+08l (Ki -> Ral) ÿc4Ancient Decal
+09l (Ri -> Ort) ÿc4Ancient Decal
+10l (Mi -> Thul) ÿc4Ancient Decal
+11l (Ya -> Amn) ÿc4Ancient Decal
+12l (A -> Sol) ÿc4Ancient Decal
+13l (Tsu -> Shael) ÿc4Ancient Decal
+14l (Chi -> Dol) ÿc4Ancient Decal
+15l (Sa -> Hel) ÿc4Ancient Decal
+16l (Yu -> Io) ÿc4Ancient Decal
+17l (Ke -> Lum) ÿc4Ancient Decal
+18l (E -> Ko) ÿc4Ancient Decal
+19l (Ko -> Fal) ÿc4Ancient Decal
+20l (Ra -> Lem) ÿc4Ancient Decal
+21l (Ho -> Pul) ÿc4Ancient Decal
+22l (Ru -> Um) ÿc4Ancient Decal
+23l (To -> Mal) ÿc4Ancient Decal
+24l (Ha -> Ist) ÿc4Ancient Decal
+25l (Ni -> Gul) ÿc4Ancient Decal
+26l (Fu -> Vex) ÿc4Ancient Decal
+27l (Hi -> Ohm) ÿc4Ancient Decal
+28l (No -> Lo) ÿc4Ancient Decal
+29l (Ro -> Sur) ÿc4Ancient Decal
+30l (Mu -> Ber) ÿc4Ancient Decal
+31l (Re -> Jah) ÿc4Ancient Decal
+32l (He -> Cham) ÿc4Ancient Decal
+33l (Wo -> Zod) ÿc4Ancient Decal
+00b ÿc4Ancient Scroll
+01b ÿc4Ancient Scroll 1
+02b ÿc4Ancient Scroll 2
+03b ÿc4Ancient Scroll 3
+04b ÿc4Ancient Scroll 4
+05b ÿc4Ancient Scroll 5
+06b ÿc4Ancient Scroll 6
+07b ÿc4Ancient Scroll 7
+08b ÿc4Ancient Scroll 8
+09b ÿc4Ancient Scroll 9
+10b ÿc4Ancient Scroll 10
+11b ÿc4Ancient Scroll 11
+12b ÿc4Ancient Scroll 12
+13b ÿc4Ancient Scroll 13
+14b ÿc4Ancient Scroll 14
+15b ÿc4Ancient Scroll 15
+16b ÿc4Ancient Scroll 16
+17b ÿc4Ancient Scroll 17
+18b ÿc4Ancient Scroll 18
+19b ÿc4Ancient Scroll 19
+20b ÿc4Ancient Scroll 20
+21b ÿc4Ancient Scroll 21
+22b ÿc4Ancient Scroll 22
+23b ÿc4Ancient Scroll 23
+24b ÿc4Ancient Scroll 24
+25b ÿc4Ancient Scroll 25
+26b ÿc4Ancient Scroll 26
+27b ÿc4Ancient Scroll 27
+28b ÿc4Ancient Scroll 28
+29b ÿc4Ancient Scroll 29
+30b ÿc4Ancient Scroll 30
+31b ÿc4Ancient Scroll 31
+32b ÿc4Ancient Scroll 32
+33b ÿc4Ancient Scroll 33
+34b ÿc4Ancient Scroll 34
+35b ÿc4Ancient Scroll 35
+36b ÿc4Ancient Scroll 36
+37b ÿc4Ancient Scroll 37
+38b ÿc4Ancient Scroll 38
+39b ÿc4Ancient Scroll 39
+40b ÿc4Ancient Scroll 40
+41b ÿc4Ancient Scroll 41
+42b ÿc4Ancient Scroll 42
+43b ÿc4Ancient Scroll 43
+44b ÿc4Ancient Scroll 44
+45b ÿc4Ancient Scroll 45
+46b ÿc4Ancient Scroll 46
+47b ÿc4Ancient Scroll 47
+48b ÿc4Ancient Scroll 48
+49b ÿc4Ancient Scroll 49
+50b ÿc4Ancient Scroll 50
+an3 ÿc2Green Aura Stone
+an4 ÿc1Red Aura Stone
+an5 ÿc;Violet Aura Stone
+an6 ÿc9Yellow Aura Stone
+an7 ÿc5Black Aura Stone
+an8 ÿc/White Aura Stone
+an9 ÿc3Blue Aura Stone
+map ÿc4Maple Leaf
+sss ÿc5Spider's Silk
+ggg ÿc3Crushed Gem
+eee ÿc1Blackmoor
+hly ÿc/Holy Symbol
+hh2 ÿc7Forging Hammer
+ttt ÿc5Tyranium Ore
+ppp ÿc;Dragon Stone
+sdo ÿc8Socket Donut
+00g Griswold's Hand
+00t Treehead WoodFist's Arm
+00r Radament's Head
+00h Hephasto's Hand
+toa Right-click to reset Stat/Skill Points Token of Absolution
+sbk Right-Click To Add A ÿc1Skill Point ÿc4Not Radamant's Skill Book  
+zz0 ÿc1Radÿc8iaÿc9nt ÿc/Aura ÿc5Stone
