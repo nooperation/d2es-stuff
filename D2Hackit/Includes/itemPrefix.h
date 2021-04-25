@@ -1,7 +1,7 @@
 #ifndef _ITEM_PREFIX_H_
 #define _ITEM_PREFIX_H_
 
-#define ITEM_PREFIX_COUNT 756
+#define ITEM_PREFIX_COUNT 761
 const char *Prefix[ITEM_PREFIX_COUNT] = 
 {
 	"",
@@ -760,6 +760,11 @@ const char *Prefix[ITEM_PREFIX_COUNT] =
 	"Intensifying",
 	"Intensifying",
 	"Commander's",
+	"",
+	"Jagged",
+	"Serrated",
+	"",
+	"Jeweler's",
 };
 
 const char *PrefixDetails[ITEM_PREFIX_COUNT] = 
@@ -1520,5 +1525,10 @@ const char *PrefixDetails[ITEM_PREFIX_COUNT] =
 	"extra-mag2 (1-3)",
 	"extra-wind (1-3)",
 	"extra-summ (4-8)",
+	"",
+	"dmg - max(5 - 15)",
+	"dmg - max(15 - 35)",
+	"",
+	"sock (6-6)"
 };
 #endif
