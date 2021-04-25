@@ -84,3 +84,5 @@
 699     Looter's                54       45        2        4 mag%/lvl                                                 jewl                                      
 700     Looter's                72       60        2        5 mag%/lvl                                                 jewl                                      
 701     Knowledgeable           85       67        12       allskills (1-1) jewelflag (8-8)                            jewl                                      
+760     Jeweler's         1     72       57        12       sock (6-6)                                                 tors                                                                
+758     Serrated                40       40        4        dmg-max (15-35)                                            arrm boqm                                                           

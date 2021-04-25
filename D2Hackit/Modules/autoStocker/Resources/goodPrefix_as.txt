@@ -99,3 +99,14 @@
 743     Skillful          1     57       1         1        1 skill-rand (126-155) 1 skill-rand (126-155)              mcha                                      
 744     Skillful          1     57       1         1        1 skill-rand (221-250) 1 skill-rand (221-250)              mcha                                      
 731     Dummy             1     1        1         1        437 oskill (1-1) 438 oskill (1-1) 439 oskill (1-1)         ycha                                      
+745     Adjudging         1     72       48        4        pierce-fire (1-3)                                          jewl                                      
+746     Adjudging         1     72       48        4        pierce-cold (1-3)                                          jewl                                      
+747     Adjudging         1     72       48        4        pierce-ltng (1-3)                                          jewl                                      
+748     Adjudging         1     72       48        4        pierce-pois (1-3)                                          jewl                                      
+749     Intensifying      1     64       42        6        extra-fire (2-4)                                           jewl                                      
+750     Intensifying      1     64       42        6        extra-cold (2-4)                                           jewl                                      
+751     Intensifying      1     64       42        6        extra-ltng (2-4)                                           jewl                                      
+752     Intensifying      1     64       42        6        extra-pois (2-4)                                           jewl                                      
+753     Intensifying      1     64       42        6        extra-mag2 (1-3)                                           jewl                                      
+754     Intensifying      1     64       42        6        extra-wind (1-3)                                           jewl                                      
+755     Commander's       1     64       42        6        extra-summ (4-8)                                           jewl                                      

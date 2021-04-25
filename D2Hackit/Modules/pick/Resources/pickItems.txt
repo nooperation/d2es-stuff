@@ -648,3 +648,6 @@ pam Holy Pendant
 bam Totemic Pebble
 dam Druidic Necklace
 aam Assassin's Choker
+toa Right-click to reset Stat/Skill Points Token of Absolution
+sbk Right-Click To Add A ÿc1Skill Point ÿc4Not Radamant's Skill Book  
+zz0 ÿc1Radÿc8iaÿc9nt ÿc/Aura ÿc5Stone

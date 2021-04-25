@@ -1,1 +1,5 @@
 322     of Skill Master            1     56      42         3        Might oskill (1-16)   
+638     of Molasses                1     60      40         1        slow (25-25)                                                            arrm boqm                                                
+639     of Piercing                1     60      40         1        pierce (25-25)                                                          arrm boqm                                                
+657     of Damage                  1     45      30         1        dmg% (20-20)                                                            arrm boqm                                                
+658     of Damage                  1     45      30         1        dmg% (20-20)                                                            arrm boqm                                                

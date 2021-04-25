@@ -83,4 +83,10 @@
 533     of the Collector                 85      48         1        1 gold%/lvl                                                             scha                                                           
 575     of Carnage                       25      18         10       dmg-max (13-24)                                                         jewl                                                           
 581     of Pestilence                    58      54         8        pois-min (656-656) pois-max (656-656) pois-len (100-100)                jewl                                                           
+667     of Emphasis                1     64      42         5        extra-fire (2-4)                                                        jewl                                                           
+668     of Emphasis                1     64      42         5        extra-cold (2-4)                                                        jewl                                                           
 669     of Emphasis                1     64      42         5        extra-ltng (2-4)                                                        jewl                                                           
+670     of Emphasis                1     64      42         5        extra-pois (2-4)                                                        jewl                                                           
+671     of Emphasis                1     64      42         5        extra-mag2 (1-3)                                                        jewl                                                           
+672     of Emphasis                1     64      42         5        extra-wind (1-3)                                                        jewl                                                           
+673     of Command                 1     64      42         5        extra-summ (4-8)                                                        jewl                                                           
