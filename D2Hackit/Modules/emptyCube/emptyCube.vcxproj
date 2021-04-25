@@ -10,6 +10,11 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <PropertyGroup>
+    <Diablo2Path Condition="'$(Diablo2Path)' == '' ">
+      C:\Program Files (x86)\Diablo II
+    </Diablo2Path>
+  </PropertyGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2B4AFF46-945E-4ECB-9ED0-AAD23B78B287}</ProjectGuid>
     <RootNamespace>emptyCube</RootNamespace>
@@ -76,9 +81,10 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\
-xcopy /Y $(TargetPath) "C:\Program Files (x86)\Diablo II\plugin\"
-xcopy /Y $(TargetDir)$(TargetName).pdb "C:\Program Files (x86)\Diablo II\plugin\"</Command>
+      <Command>xcopy /Y Resources $(SolutionDir)\..\$(Configuration)\
+xcopy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\
+xcopy /Y $(TargetPath) "$(Diablo2Path)\plugin\"
+xcopy /Y $(TargetDir)$(TargetName).pdb "$(Diablo2Path)\plugin\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -102,7 +108,8 @@ xcopy /Y $(TargetDir)$(TargetName).pdb "C:\Program Files (x86)\Diablo II\plugin\
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\</Command>
+      <Command>xcopy /Y Resources $(SolutionDir)\..\$(Configuration)\
+xcopy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

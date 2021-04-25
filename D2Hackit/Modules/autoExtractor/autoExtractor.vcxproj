@@ -10,6 +10,11 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <PropertyGroup>
+    <Diablo2Path Condition="'$(Diablo2Path)' == '' ">
+      C:\Program Files (x86)\Diablo II
+    </Diablo2Path>
+  </PropertyGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D92FD3C9-082F-4DFB-B414-3538D1F9DE24}</ProjectGuid>
     <RootNamespace>AutoExtractor</RootNamespace>
@@ -78,8 +83,8 @@
     <PostBuildEvent>
       <Command>xcopy /Y Resources $(SolutionDir)\..\$(Configuration)\
 xcopy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\
-xcopy /Y $(TargetPath) "C:\Program Files (x86)\Diablo II\plugin\"
-xcopy /Y $(TargetDir)$(TargetName).pdb "C:\Program Files (x86)\Diablo II\plugin\"</Command>
+xcopy /Y $(TargetPath) "$(Diablo2Path)\plugin\"
+xcopy /Y $(TargetDir)$(TargetName).pdb "$(Diablo2Path)\plugin\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

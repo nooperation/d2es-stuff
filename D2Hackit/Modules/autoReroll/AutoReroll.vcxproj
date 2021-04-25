@@ -10,6 +10,11 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <PropertyGroup>
+    <Diablo2Path Condition="'$(Diablo2Path)' == '' ">
+      C:\Program Files (x86)\Diablo II
+    </Diablo2Path>
+  </PropertyGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C3471967-795E-4068-8F47-1601556945F3}</ProjectGuid>
     <RootNamespace>AutoReroll</RootNamespace>
@@ -80,8 +85,8 @@
     <PostBuildEvent>
       <Command>xcopy /Y Resources $(SolutionDir)\..\$(Configuration)\
 xcopy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\
-xcopy /Y $(TargetPath) "C:\Program Files (x86)\Diablo II\plugin\"
-xcopy /Y $(TargetDir)$(TargetName).pdb "C:\Program Files (x86)\Diablo II\plugin\"</Command>
+xcopy /Y $(TargetPath) "$(Diablo2Path)\plugin\"
+xcopy /Y $(TargetDir)$(TargetName).pdb "$(Diablo2Path)\plugin\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
