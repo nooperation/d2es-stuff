@@ -100,7 +100,7 @@ bool AutoExtractor::StartExtraction()
 
 	if(numberOfRunsRemaining-- <= 0)
 	{
-		Abort();
+		currentState = STATE_COMPLETE;
 		return true;
 	}
 

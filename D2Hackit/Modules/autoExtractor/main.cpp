@@ -19,12 +19,16 @@ BOOL PRIVATE Start(char** argv, int argc)
 
 	if(argc >= 3)
 	{
-		for(int i = 2; i < argc; i++)
+		for (int i = 2; i < argc; i++)
 		{
-			if(_stricmp(argv[i], "chat") == 0)
+			if (_stricmp(argv[i], "chat") == 0)
+			{
 				useChat = true;
-			if(atoi(argv[i]) != 0)
-				itemCount= atoi(argv[i]);
+			}
+			if (isdigit(argv[i][0]))
+			{
+				itemCount = atoi(argv[i]);
+			}
 		}
 	}
 
