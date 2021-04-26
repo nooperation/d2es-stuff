@@ -310,6 +310,7 @@ BOOL EXPORT IsInteractedWithNPC();
 DWORD EXPORT GetInteractedNPCClassID();
 DWORD EXPORT GetInteractedWPUniqueID();
 BOOL EXPORT IsInteractedWithWP();
+DWORD EXPORT GetSpellChargesReal(WORD wSpellID);
 // -- B
 
 BOOL EXPORT LeftClick(long x, long y);

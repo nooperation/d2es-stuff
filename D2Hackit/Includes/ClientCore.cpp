@@ -273,6 +273,8 @@ BOOL PRIVATE SetupClient(HMODULE hModule, LPCSTR szModule)
 	BIND_AND_CHECK(GetInteractedNPCClassID);
 	BIND_AND_CHECK(GetInteractedWPUniqueID);
 	BIND_AND_CHECK(IsInteractedWithWP);
+	BIND_TO_PLAYER(GetSpellChargesReal);
+
 	// -- B
 
 	// Bind player functions

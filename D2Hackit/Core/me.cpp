@@ -2877,6 +2877,27 @@ DWORD EXPORT GetSpellCharges(WORD wSpellID)
 	return g_aSkillCharges[nIndex].dwCharges;
 }
 
+DWORD EXPORT GetSpellChargesReal(WORD wSpellID)
+{
+	auto fakeCharges = GetSpellCharges(wSpellID);
+	if (fakeCharges != 0)
+	{
+		return fakeCharges;
+	}
+
+	// Check normal spells
+	UnitPlayer *pPlayer = D2CLIENT_GetPlayerUnit();
+	for (Skill *pSkill = D2COMMON_GetStartSkill(pPlayer); pSkill && pSkill->pSkillInfo; pSkill = pSkill->pNextSkill)
+	{
+		if (wSpellID == pSkill->pSkillInfo->Id)
+		{
+			return pSkill->Charges;
+		}
+	}
+
+	return -1;
+}
+
 int EXPORT GetUnidItemCount()
 {
 	UnitPlayer* p = D2CLIENT_GetPlayerUnit();

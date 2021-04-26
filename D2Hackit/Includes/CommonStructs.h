@@ -680,6 +680,7 @@ typedef BOOL (__cdecl *fnFindFirstStorageSpaceEx)(int nStorageType, SIZE minSize
 typedef BOOL (__cdecl *fnDropCursorItemToStorageEx)(int nStorageType, POINT preferedPosition);
 typedef BOOL (__cdecl *fnDropItemToStorage)(int nStorageType, DWORD dwItemID);
 typedef BOOL (__cdecl *fnDropItemToStorageEx)(int nStorageType, POINT preferedPosition, DWORD dwItemID);
+typedef DWORD(__cdecl *fnGetSpellChargesReal)(WORD wSpellID);
 // B--
 
 typedef struct tagPlayerEntryPoints
@@ -780,6 +781,7 @@ typedef struct tagPlayerEntryPoints
 	fnRemoveFromStorage				RemoveFromStorage;
 	fnDumpStorage					DumpStorage;
 	fnGetNumberOfFreeStorageSlots   GetNumberOfFreeStorageSlots;
+	fnGetSpellChargesReal			GetSpellChargesReal;
 	// -- B
 } PLAYERENTRYPOINTS, *PPLAYERENTRYPOINTS;
 

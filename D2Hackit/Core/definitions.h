@@ -634,7 +634,8 @@ struct Skill {				// 0x40 bytes long
 	DWORD SkillLevel;		// 0x28
 	DWORD dwUnk3[2];		// 0x2C
 	DWORD Flags;			// 0x34
-	DWORD dwUnk5[2];		// 0x38
+	DWORD Charges;	    	// 0x38
+	DWORD dwUnk5;		    // 0x3C
 };
 
 struct Info
