@@ -4,7 +4,10 @@
 #include <string>
 #include <unordered_map>
 
+bool useChat = false;
+
 int NumberOfItemsInCube();
+void Finish();
 BOOL CALLBACK enumItemProc(LPCITEM item, LPARAM lParam);
 BOOL CALLBACK enumItemCountProc(LPCITEM item, LPARAM lParam);
 
@@ -509,9 +512,14 @@ VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
 
 BOOL PRIVATE TransmuteTo(char** argv, int argc)
 {
-	if(argc != 3)
+	useChat = false;
+
+	for (int i = 2; i < argc; i++)
 	{
-		return FALSE;
+		if (_stricmp(argv[i], "chat") == 0)
+		{
+			useChat = true;
+		}
 	}
 
 	std::vector<std::string> itemsInCube;
@@ -521,17 +529,34 @@ BOOL PRIVATE TransmuteTo(char** argv, int argc)
 
 	if(itemsInCube.size() > 1)
 	{
+		if (useChat)
+		{
+			me->Say("ÿc:Transmuteÿc0: Too many items in cube");
+		}
 		server->GameStringf("ÿc:Transmuteÿc0: Too many items in cube");
+		Finish();
+		return TRUE;
 	}
-	else if(itemsInCube.size() == 0)
+
+	if(itemsInCube.size() == 0)
 	{
+		if (useChat)
+		{
+			me->Say("ÿc:Transmuteÿc0: Nothing in clube");
+		}
 		server->GameStringf("ÿc:Transmuteÿc0: Nothing in clube");
+		Finish();
 		return TRUE;
 	}
 
 	if(stockers.count(itemsInCube[0]) == 0)
 	{
+		if (useChat)
+		{
+			me->Say("ÿc:Transmuteÿc0: Invalid stocker");
+		}
 		server->GameStringf("ÿc:Transmuteÿc0: %s is not a stocker", server->GetItemName(itemsInCube[0].c_str()));
+		Finish();
 		return TRUE;
 	}
 
@@ -589,22 +614,48 @@ BOOL PRIVATE TransmuteTo(char** argv, int argc)
 		stockerOffset = stockerIndex - STOCKER_GEMCAN;
 	}
 
+	// Check for start of name only
+	for (size_t i = 0; i < stockerTarget->size(); i++)
+	{
+		const auto &currentStockerItem = (*stockerTarget)[i];
+
+		if (currentStockerItem.find(argv[2], 0) == 0)
+		{
+			int transmuteCount = i - stockerOffset;
+
+			if (transmuteCount < 0)
+				transmuteCount += stockerTarget->size();
+
+			server->GameCommandf("t count %d %s", transmuteCount, useChat ? "chat" : "");
+
+			return TRUE;
+		}
+	}
+
+	// Check anywhere in name
 	for(size_t i = 0; i < stockerTarget->size(); i++)
 	{
-		if(strstr((*stockerTarget)[i].c_str(), argv[2]) != NULL)
+		const auto &currentStockerItem = (*stockerTarget)[i];
+
+		if(currentStockerItem.find(argv[2]) != std::string::npos)
 		{
 			int transmuteCount = i - stockerOffset;
 
 			if(transmuteCount < 0)
 				transmuteCount += stockerTarget->size();
 
-			server->GameCommandf("t count %d", transmuteCount);
+			server->GameCommandf("t count %d %s", transmuteCount, useChat ? "chat" : "");
 
 			return TRUE;
 		}
 	}
 
+	if (useChat)
+	{
+		me->Say("ÿc:Transmuteÿc0: Target not found");
+	}
 	server->GameStringf("ÿc:Transmuteÿc0: %s not found, check case?", argv[2]);
+	Finish();
 
 	return TRUE;
 
@@ -612,13 +663,27 @@ BOOL PRIVATE TransmuteTo(char** argv, int argc)
 
 BOOL PRIVATE TransmuteRepeat(char** argv, int argc)
 {
-	if(argc == 3)
+	useChat = false;
+
+	if(argc >= 3)
 	{
+		for (int i = 3; i < argc; i++)
+		{
+			if (_stricmp(argv[i], "chat") == 0)
+			{
+				useChat = true;
+			}
+		}
+
 		int count = atoi(argv[2]);
 
 		if(count < 0)
 			count = 0;
 
+		if (useChat)
+		{
+			me->Say("ÿc:Transmuteÿc0: Transmuting");
+		}
 		server->GameStringf("ÿc:Transmuteÿc0: transmuting %d times", count);
 
 		for(int i = 0; i < count; i++)
@@ -626,10 +691,22 @@ BOOL PRIVATE TransmuteRepeat(char** argv, int argc)
 			me->Transmute();
 		}
 
+		Finish();
+
 		return TRUE;
 	}
 
 	return FALSE;
+}
+
+void Finish()
+{
+	if (useChat)
+	{
+		me->Say("ÿc:Transmuteÿc0: Transmute Ended");
+	}
+
+	server->GameStringf("ÿc:Transmuteÿc0: Transmute Ended");
 }
 
 DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
