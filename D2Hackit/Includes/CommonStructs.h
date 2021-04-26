@@ -675,6 +675,7 @@ typedef BOOL (__cdecl *fnOpenCube)();
 typedef DWORD (__cdecl *fnGetCubeID)();
 typedef BOOL (__cdecl *fnRemoveFromStorage)(int storageType, DWORD dwItemID);
 typedef BOOL (__cdecl *fnDumpStorage)(LPCSTR path);
+typedef BOOL (__cdecl *fnGetNumberOfFreeStorageSlots)(int storageType);
 typedef BOOL (__cdecl *fnFindFirstStorageSpaceEx)(int nStorageType, SIZE minSize, LPPOINT lpBuffer, POINT preferedPosition);
 typedef BOOL (__cdecl *fnDropCursorItemToStorageEx)(int nStorageType, POINT preferedPosition);
 typedef BOOL (__cdecl *fnDropItemToStorage)(int nStorageType, DWORD dwItemID);
@@ -778,6 +779,7 @@ typedef struct tagPlayerEntryPoints
 	fnDropItemToStorage				DropItemToStorage;
 	fnRemoveFromStorage				RemoveFromStorage;
 	fnDumpStorage					DumpStorage;
+	fnGetNumberOfFreeStorageSlots   GetNumberOfFreeStorageSlots;
 	// -- B
 } PLAYERENTRYPOINTS, *PPLAYERENTRYPOINTS;
 

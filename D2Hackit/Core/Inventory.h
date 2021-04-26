@@ -59,6 +59,7 @@ public:
 	void OnGamePacketAfterReceived(const BYTE* aPacket, DWORD aLen);
 	void ClearAll();	
 	BOOL Dump(LPCSTR lpszFile) const;
+	BOOL GetNumberOfFreeStorageSlots(int storageType) const;
 
 private:
 	BOOL IsOnSecondary(DWORD dwItemID) const;

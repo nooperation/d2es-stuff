@@ -2351,6 +2351,11 @@ BOOL EXPORT DumpStorage(LPCSTR path)
 	return g_inventory.Dump(path);
 }
 
+int EXPORT GetNumberOfFreeStorageSlots(int storageType)
+{
+	return g_inventory.GetNumberOfFreeStorageSlots(storageType);
+}
+
 BOOL EXPORT EnumStorageItems(int nSTorageType, fnEnumItemProc lpfnEnumItemProc, LPARAM lParam)
 {
 	return g_inventory.EnumStorageItems(nSTorageType, lpfnEnumItemProc, lParam);

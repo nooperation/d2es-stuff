@@ -264,6 +264,7 @@ BOOL PRIVATE SetupClient(HMODULE hModule, LPCSTR szModule)
 
 	BIND_TO_PLAYER(RemoveFromStorage);
 	BIND_TO_PLAYER(DumpStorage);
+	BIND_TO_PLAYER(GetNumberOfFreeStorageSlots);
 	BIND_TO_PLAYER(GetCubeID);
 	BIND_TO_PLAYER(OpenCube);
 

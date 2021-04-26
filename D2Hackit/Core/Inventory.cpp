@@ -163,6 +163,53 @@ BOOL CInventory::Dump(LPCSTR lpszFile) const
 	return TRUE;
 }
 
+int CInventory::GetNumberOfFreeStorageSlots(int storageType) const
+{
+	int numFreeSpots = 0;
+
+	if (storageType == STORAGE_INVENTORY)
+	{
+		for (auto j = 0; j < INV_ROW; j++)
+		{
+			for (auto i = 0; i < INV_COL; i++)
+			{
+				if (m_aInventory[j][i] == 0)
+				{
+					numFreeSpots++;
+				}
+			}
+		}
+	}
+	else if (storageType == STORAGE_STASH)
+	{
+		for (auto j = 0; j < INV_ROW; j++)
+		{
+			for (auto i = 0; i < INV_COL; i++)
+			{
+				if (m_aStash[j][i] == 0)
+				{
+					numFreeSpots++;
+				}
+			}
+		}
+	}
+	else if (storageType == STORAGE_CUBE)
+	{
+		for (auto j = 0; j < INV_ROW; j++)
+		{
+			for (auto i = 0; i < INV_COL; i++)
+			{
+				if (m_aCube[j][i] == 0)
+				{
+					numFreeSpots++;
+				}
+			}
+		}
+	}
+
+	return numFreeSpots;
+}
+
 BOOL CInventory::GetStorageDimensions(int storageType, int &storageWidth, int &storageHeight) const
 {
 	switch(storageType)
