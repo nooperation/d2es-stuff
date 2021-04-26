@@ -22,6 +22,65 @@ BOOL PRIVATE Start(char** argv, int argc)
 	return TRUE;
 }
 
+DWORD EXPORT OnGamePacketBeforeSent(BYTE *aPacket, DWORD aLen)
+{
+	if (aPacket[0] == 0x15 && aPacket[1] == 0x01)
+	{
+		char *chatMessage = (char *)(aPacket + 3);
+
+		if (strncmp(chatMessage, "ÿc:AutoExtractorÿc0:", 20) == 0)
+		{
+			const auto message = std::string_view(chatMessage + 21);
+			if (!autoAncientScroll.OnAutoExtractorMessage(message))
+			{
+				return aLen;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else if (strncmp(chatMessage, "ÿc:Autostockerÿc0:", 18) == 0)
+		{
+			const auto message = std::string_view(chatMessage + 19);
+			if (!autoAncientScroll.OnAutoStockerMessage(message))
+			{
+				return aLen;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else if (strncmp(chatMessage, "ÿc:Transmuteÿc0:", 16) == 0)
+		{
+			const auto message = std::string_view(chatMessage + 17);
+			if (!autoAncientScroll.OnTransmuteMessage(message))
+			{
+				return aLen;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else if (strncmp(chatMessage, "ÿc5EmptyCubeÿc0:", 16) == 0)
+		{
+			const auto message = std::string_view(chatMessage + 17);
+			if (!autoAncientScroll.OnEmptyCubeMessage(message))
+			{
+				return aLen;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+	}
+
+	return aLen;
+}
+
 VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
 {
 	if(nMessage == PM_UICLOSED)
