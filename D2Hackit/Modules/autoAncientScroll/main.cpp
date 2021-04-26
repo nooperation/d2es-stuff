@@ -8,10 +8,10 @@ int hotkey = 0;
 
 CLIENTINFO
 (
-	1,0,
-	"Auto Ancient Scroll v1.0",
+	2,0,
+	"Auto Ancient Scroll v2.0",
 	"",
-	"Auto Ancient Scroll v1.0",
+	"Auto Ancient Scroll v2.0",
 	""
 )
 
