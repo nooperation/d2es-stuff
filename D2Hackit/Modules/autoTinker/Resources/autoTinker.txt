@@ -1,0 +1,14 @@
+1 hrt ÿc1Heart
+1 sol ÿc3Soul
+1 fng ÿc5Fang
+1 hrn ÿc:Horn
+1 spe ÿc;Spleen
+1 tal ÿc8Tail
+2 jaw ÿc7Jawbone
+1 scz ÿc:Scalp
+1 qll ÿc5Quill
+1 00g Griswold's Hand
+1 00t Treehead WoodFist's Arm
+1 00r Radament's Head
+1 00h Hephasto's Hand
+2 xt7 ÿc1Enigmatic Cinnabar
