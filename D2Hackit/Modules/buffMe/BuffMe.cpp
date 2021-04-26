@@ -65,11 +65,6 @@ void BuffMe::Start()
 	currentState = STATE_SENDING;
 	startingSkill = me->GetSelectedSpell(FALSE);
 
-	for (auto &item : desiredBuffs)
-	{
-		server->GameStringf("BuffId = %d | AffectId = %d | Name = %s", item.buffId, item.affectId, item.name.c_str());
-	}
-
 	CastCurrentBuff();
 }
 
@@ -184,10 +179,23 @@ void BuffMe::CastCurrentBuff()
 	{
 		if (me->HaveSpell(desiredBuffs[currentBuffIndex].buffId))
 		{
-			break;
+			// numCharges will equal 0 when we actually have a spell. Selecting a spell we only have charges for
+			//  will disconnect you due to an invalid select spell packet (d2hackit problem, complex item parsing problem)
+			const auto numCharges = me->GetSpellChargesReal(desiredBuffs[currentBuffIndex].buffId);
+			if (numCharges == 0)
+			{
+				break;
+			}
+			else
+			{
+				//server->GameStringf("Skipping %s: It's granted via item charges", desiredBuffs[currentBuffIndex].name.c_str());
+			}
+		}
+		else
+		{
+			//server->GameStringf("Skipping %s: we don't have it", desiredBuffs[currentBuffIndex].name.c_str());
 		}
 
-		//server->GameStringf("Don't have spell %d", currentBuff);
 		currentBuffIndex++;
 	}
 
