@@ -213,17 +213,14 @@ void ShopBot::PurchaseQueuedItems()
 	if(!WillItemFit(currentItemId))
 	{
 		server->GameStringf("ÿc:Shopbotÿc0: skipping item");
-		currentState = STATE_PURCHASE_NEXTITEM;
-
-
-		//currentState = STATE_COMPLETE;
+		currentState = STATE_COMPLETE;
 		return;
 	}
 
 	if(!server->VerifyUnit(&merchantNpc))
 	{
 		server->GamePrintInfo("ÿc:Shopbotÿc0: Could not verify npc unit");
-		currentState = STATE_COMPLETE;
+		currentState = STATE_PURCHASE_DONE;
 		return;
 	}
 
@@ -297,7 +294,7 @@ void ShopBot::OnTick()
 				if(!me->StartNpcSession(&merchantNpc, NPC_TRADE))
 				{
 					server->GamePrintString("ÿc:Shopbotÿc0: Failed to start npc session");
-					currentState = STATE_COMPLETE;
+					currentState = STATE_PURCHASE_DONE;
 					return;
 				}
 
@@ -409,7 +406,7 @@ void ShopBot::OnNpcSession(int success)
 		me->RedrawClient(FALSE);
 		me->MoveToUnit(&merchantNpc, TRUE);
 		server->GamePrintInfo("ÿc:Shopbotÿc0: NPC request failed");
-		currentState = STATE_TELEPORTCOMPLETE; // try again
+		currentState = STATE_PURCHASE_DONE; // try again
 		return;
 	}
 
