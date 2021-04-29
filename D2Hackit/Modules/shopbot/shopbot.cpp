@@ -90,6 +90,7 @@ bool ShopBot::Start(const std::vector<MAPPOS> &customPath, const std::string &me
 	merchantName = merchant;
 	teleportPath = customPath;
 	currentTeleportIndex = 1;
+	ticksSinceLastTeleport = 0;
 
 	if(!ReadConfig(".\\plugin\\goodPrefix_shopbot.txt", goodPrefix))
 		return false;
@@ -232,10 +233,18 @@ void ShopBot::PurchaseQueuedItems()
 	}
 }
 
+
 void ShopBot::OnTick()
 {
 	switch(currentState)
 	{
+		case STATE_TELEPORTING:
+		{
+			if (ticksSinceLastTeleport++ > 100)
+			{
+				currentState = STATE_NEXTTELEPORT;
+			}
+		}
 		case STATE_PURCHASE_NEXTITEM:
 		{
 			PurchaseQueuedItems();
@@ -259,8 +268,11 @@ void ShopBot::OnTick()
 		{
 			MAPPOS dest = teleportPath[currentTeleportIndex];
 
-			currentState = STATE_TELEPORTING;
-			me->CastOnMap(D2S_TELEPORT, dest.x, dest.y, TRUE);
+			ticksSinceLastTeleport = 0;
+			if (me->CastOnMap(D2S_TELEPORT, dest.x, dest.y, TRUE))
+			{
+				currentState = STATE_TELEPORTING;
+			}
 
 			break;
 		}

@@ -50,6 +50,7 @@ class ShopBot
 		unsigned int currentTeleportIndex;
 		int minPrefix;
 		int minSuffix;
+		int ticksSinceLastTeleport;
 		bool backToTown;
 		States currentState;
 		std::string merchantName;

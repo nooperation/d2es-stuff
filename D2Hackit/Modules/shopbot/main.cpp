@@ -115,8 +115,31 @@ BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 	return iKeyCode;
 }
 
+//DWORD EXPORT OnGamePacketBeforeSent(BYTE *aPacket, DWORD aLen)
+//{
+//	if (aPacket[0] == 0x05 || aPacket[0] == 0x08)
+//	{
+//		if (rand() % 2 == 1)
+//		{
+//			server->GameStringf("ÿc:Shopbotÿc0: Simulated packetloss of cast skill");
+//			return 0;
+//		}
+//	}
+//
+//	return aLen;
+//}
+
 DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 {   
+	//if (aLen == 11 && aPacket[0] == 0x15)
+	//{
+	//	if (rand() % 2 == 1)
+	//	{
+	//		server->GameStringf("ÿc:Shopbotÿc0: Simulated packetloss of map blink");
+	//		return 0;
+	//	}
+	//}
+
 	if(aPacket[0] == 0x9c)
 	{
 		ITEM currentItem;
