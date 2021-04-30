@@ -59,6 +59,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AutoOre", "..\Modules\autoO
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "autoTinker", "..\Modules\autoTinker\autoTinker.vcxproj", "{117F3113-ACE4-4FC4-BF9E-80FE8827BB69}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QualityOfLife", "..\Modules\QualityOfLife\QualityOfLife.vcxproj", "{EA69AB6D-FFC2-4CB7-83C8-5D43CDAFF036}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -169,6 +171,10 @@ Global
 		{117F3113-ACE4-4FC4-BF9E-80FE8827BB69}.Debug|Win32.Build.0 = Debug|Win32
 		{117F3113-ACE4-4FC4-BF9E-80FE8827BB69}.Release|Win32.ActiveCfg = Release|Win32
 		{117F3113-ACE4-4FC4-BF9E-80FE8827BB69}.Release|Win32.Build.0 = Release|Win32
+		{EA69AB6D-FFC2-4CB7-83C8-5D43CDAFF036}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EA69AB6D-FFC2-4CB7-83C8-5D43CDAFF036}.Debug|Win32.Build.0 = Debug|Win32
+		{EA69AB6D-FFC2-4CB7-83C8-5D43CDAFF036}.Release|Win32.ActiveCfg = Release|Win32
+		{EA69AB6D-FFC2-4CB7-83C8-5D43CDAFF036}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -200,6 +206,7 @@ Global
 		{FF4D7C7F-7217-4447-F996-98DBF93EF41C} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
 		{832CCF50-B3EA-4201-9FFF-90C6FD82FF3A} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
 		{117F3113-ACE4-4FC4-BF9E-80FE8827BB69} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
+		{EA69AB6D-FFC2-4CB7-83C8-5D43CDAFF036} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7DAE5C20-C224-4A1A-8147-796AF2BFCA24}
