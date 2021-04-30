@@ -232,7 +232,7 @@ void Gambler::StartAutostocker()
 		gambleQueue.pop();
 
 	asCommand = server->GetCommandCharacter();
-	asCommand += "as start_rares chat";
+	asCommand += "as start_rares -cx1 -cx2 -cx3 -jew chat";
 
 	if(transmuteSet)
 		asCommand += " sets";
