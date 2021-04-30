@@ -145,7 +145,7 @@ bool AutostockAutoextract::OnEmptyCubeMessage(const std::string_view &message)
 	{
 		// Now that the cube is empty, we can start the autostocker
 		currentState = STATE_RUNAUTOSTOCKER;
-		server->GameCommandf("as start_rares chat%s%s%s", transmuteSet ? " Sets" : "", transmuteRare ? " Rares" : "", transmuteUnique ? " Uniques" : "");
+		server->GameCommandf("as start_rares -27a -30a chat%s%s%s", transmuteSet ? " Sets" : "", transmuteRare ? " Rares" : "", transmuteUnique ? " Uniques" : "");
 	}
 
 	return true;

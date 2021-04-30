@@ -38,10 +38,10 @@ class AutoStocker
 {
 	public:
 		AutoStocker();
-		bool Start(bool useChat);
+		bool Start(bool useChat, const std::unordered_set<std::string> &ignoredItemCodes);
 		bool BeginAutostocking();
 		bool Init(bool useChat);
-		bool StartRares(bool transmuteSet, bool transmuteRare, bool transmuteUnique, bool useChat);
+		bool StartRares(bool transmuteSet, bool transmuteRare, bool transmuteUnique, bool useChat, const std::unordered_set<std::string> &ignoredItemCodes);
 		void OnItemFromInventory(const ITEM &item);
 		void OnItemToCube(const ITEM &item);
 		void OnItemToInventory(const ITEM &item);
@@ -81,6 +81,8 @@ class AutoStocker
 		std::vector<DWORD> restockers;
 		std::vector<POINT> restockerPositions;
 		std::unordered_set<std::string> stockerItems[TRANSMUTE_END];
+		std::unordered_set<std::string> ignoredItemCodes;
+
 		DWORD itemWaitingOn;
 		bool useChat;
 		bool transmuteRare;
