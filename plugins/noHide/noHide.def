@@ -1,0 +1,3 @@
+LIBRARY	"noHide"
+EXPORTS
+	QueryInterface=QueryInterface
