@@ -107,8 +107,8 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y Resources $(SolutionDir)\..\$(Configuration)\
-copy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\</Command>
+      <Command>xcopy /Y Resources $(SolutionDir)\Publish_$(Configuration)\
+xcopy /Y $(TargetPath) $(SolutionDir)\Publish_$(Configuration)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -153,8 +153,8 @@ copy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\</Command>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y Resources $(SolutionDir)\..\$(Configuration)\
-xcopy /Y $(TargetPath) $(SolutionDir)\..\$(Configuration)\
+      <Command>xcopy /Y Resources $(SolutionDir)\Publish_$(Configuration)\
+xcopy /Y $(TargetPath) $(SolutionDir)\Publish_$(Configuration)\
 xcopy /Y $(TargetPath) "$(Diablo2Path)\plugin\"
 xcopy /Y $(TargetDir)$(TargetName).pdb "$(Diablo2Path)\plugin\"</Command>
     </PostBuildEvent>

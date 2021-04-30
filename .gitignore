@@ -9,3 +9,5 @@ Output
 *.ipch
 *.opensdf
 .vs
+Publish_Release
+Publish_Debug

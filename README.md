@@ -4,24 +4,24 @@
 
 ### AutoOre
 [![IdleClient Video](https://img.youtube.com/vi/ZYaeNO5gIFc/0.jpg)](https://www.youtube.com/watch?v=ZYaeNO5gIFc) \
-https://www.youtube.com/watch?v=ZYaeNO5gIFc \
+https://www.youtube.com/watch?v=ZYaeNO5gIFc
 > .load ore \
-> .ore start \
+> .ore start
 
 
 ### AutoScroll
 [![IdleClient Video](https://img.youtube.com/vi/zirDj9hemR0/0.jpg)](https://www.youtube.com/watch?v=zirDj9hemR0) \
-https://www.youtube.com/watch?v=zirDj9hemR0 \
+https://www.youtube.com/watch?v=zirDj9hemR0
 > .load scroll \
-> .scroll start \
+> .scroll start
 
 
 ### AutoSell
 [![IdleClient Video](https://img.youtube.com/vi/T_ZOQ2ypi_0/0.jpg)](https://www.youtube.com/watch?v=T_ZOQ2ypi_0) \
-https://www.youtube.com/watch?v=T_ZOQ2ypi_0 \
+https://www.youtube.com/watch?v=T_ZOQ2ypi_0
 > .load sell \
 > .sell start \
-> (Auto-sell can be enabled by editing AutoSell.ini. Items to sell are defined in AutoSell_items.txt) \
+> (Auto-sell can be enabled by editing AutoSell.ini. Items to sell are defined in AutoSell_items.txt)
 
 ### StateFix
 > Attempts to fix the 27 state crash (needed for playing with other players)
@@ -64,7 +64,7 @@ https://www.youtube.com/watch?v=T_ZOQ2ypi_0 \
 > Place dragon stones in inventory \
 > .dc types \
 > .dc start 4 \
-> .dc start 1 \
+> .dc start 1
 > todo
 
 ### Buff
@@ -87,15 +87,3 @@ https://www.youtube.com/watch?v=T_ZOQ2ypi_0 \
 
 ### AmmoGuard
 > todo (no longer needed?)
-
-
-# Other stuff:
-
-### IdleClient
-[![IdleClient Video](https://img.youtube.com/vi/6DNFS89NORY/0.jpg)](https://www.youtube.com/watch?v=6DNFS89NORY) \
-https://www.youtube.com/watch?v=6DNFS89NORY
-
-### Character Editor
-[![IdleClient Video](https://img.youtube.com/vi/qvlOwZcEKCw/0.jpg)](https://www.youtube.com/watch?v=qvlOwZcEKCw) \
-https://www.youtube.com/watch?v=qvlOwZcEKCw
-
