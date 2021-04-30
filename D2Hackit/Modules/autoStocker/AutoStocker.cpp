@@ -107,6 +107,8 @@ bool AutoStocker::Start(bool useChat, const std::unordered_set<std::string> &ign
 /// <returns>true if successful, false if failed.</returns>
 bool AutoStocker::BeginAutostocking()
 {
+	currentState = STATE_BEGIN;
+
 	std::vector<ITEM> itemsInInventory;
 
 	// Clear previous settings
