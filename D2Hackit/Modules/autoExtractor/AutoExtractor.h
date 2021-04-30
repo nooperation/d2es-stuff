@@ -10,6 +10,7 @@
 enum States
 {
 	STATE_UNINITIALIZED = 0,
+	STATE_START,
 	STATE_COMPLETE,
 	STATE_TRANSMUTE,
 	STATE_PICKUPEXTRACTEDITEM,
@@ -44,7 +45,7 @@ class AutoExtractor
 		bool IsGoodSuffix(int suffixId);
 		bool IsItemAnExtractor(const ITEM &item);
 		bool ReadAffixFile(const std::string &configPath, std::unordered_set<int> &readTo);
-		int GetNumberOfExpectredOutputs() const;
+		int GetNumberOfExpectedOutputs() const;
 		void PickupNextExtractedItem();
 
 		bool useChat;

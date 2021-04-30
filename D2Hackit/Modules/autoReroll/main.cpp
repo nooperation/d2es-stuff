@@ -71,7 +71,7 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 			}
 			else
 			{
-				return 0;
+				return aLen;
 			}
 		}
 		else if(strncmp(chatMessage, "ÿc:AutoExtractorÿc0:", 20) == 0)
@@ -89,7 +89,7 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 			}
 			else
 			{
-				return 0;
+				return aLen;
 			}
 		}
 	}

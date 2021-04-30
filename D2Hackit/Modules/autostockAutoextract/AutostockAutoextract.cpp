@@ -58,7 +58,7 @@ bool AutostockAutoextract::StartAsAe()
 		{
 			me->Say("ÿc5AutostockAutoextractÿc0: Cube not opened");
 		}
-		server->GameStringf("ÿc5EmptyCubeÿc0: Cube not opened");
+		server->GameStringf("ÿc5AutostockAutoextractÿc0: Cube not opened");
 
 		Abort();
 		return false;

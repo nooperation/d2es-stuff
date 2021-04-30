@@ -42,6 +42,8 @@ bool EmptyCube::Start(bool useChat)
 /// <returns>true if successful, false if failed.</returns>
 bool EmptyCube::StartCleaning()
 {
+	currentState = STATE_START;
+
 	if(!me->OpenCube())
 	{
 		if(useChat)

@@ -172,6 +172,24 @@ BOOL PRIVATE Rings(char **argv, int argc)
 	return TRUE;
 }
 
+BOOL PRIVATE StartRadiance(char **argv, int argc)
+{
+	server->GameCommandLine("gamble sell magic rare set");
+	server->GameCommandLine("gamble nosell 0cr");
+	server->GameCommandLine("gamble start crs");
+
+	return TRUE;
+}
+
+BOOL PRIVATE StartMagesDelight(char **argv, int argc)
+{
+	server->GameCommandLine("gamble sell magic rare set");
+	server->GameCommandLine("gamble nosell ytp");
+	server->GameCommandLine("gamble start ltp");
+
+	return TRUE;
+
+}
 BOOL PRIVATE StartWraithShroud(char **argv, int argc)
 {
 	server->GameCommandLine("gamble sell magic rare set");
@@ -217,30 +235,12 @@ BOOL PRIVATE StartHeavyMetal(char **argv, int argc)
 	return TRUE;
 }
 
-BOOL PRIVATE StartRadiance(char **argv, int argc)
-{
-	server->GameCommandLine("gamble sell magic rare set");
-	server->GameCommandLine("gamble nosell 0cr");
-	server->GameCommandLine("gamble start crs");
-
-	return TRUE;
-}
-
 BOOL PRIVATE StartFoc(char **argv, int argc)
 {
 
 	server->GameCommandLine("gamble sell magic rare set");
 	server->GameCommandLine("gamble nosell yul");
 	server->GameCommandLine("gamble start ful");
-
-	return TRUE;
-}
-
-BOOL PRIVATE StartID(char **argv, int argc)
-{
-	server->GameCommandLine("gamble sell magic rare set");
-	server->GameCommandLine("gamble nosell yul 0cr 0gi ci3 yft amf yrb");
-	server->GameCommandLine("gamble start ful gix crs ci0 fts am5 rob");
 
 	return TRUE;
 }
@@ -446,7 +446,7 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 			}
 			else
 			{
-				return 0;
+				return aLen;
 			}
 		}
 	}
@@ -620,11 +620,6 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"Starts gambling for FoC"
 	},
 	{
-		"StartRadiance",
-		StartRadiance,
-		"Starts gambling for Radiance"
-	},
-	{
 		"StartHeavyMetal",
 		StartHeavyMetal,
 		"Starts gambling for HeavyMetal"
@@ -648,11 +643,16 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"StartWraithShroud",
 		StartWraithShroud,
 		"Starts gambling for WraithShroud"
+	},	
+	{
+		"StartMagesDelight",
+		StartMagesDelight,
+		"Starts gambling for Mage's Delight"
 	},
 	//{
-	//	"Startiddqd",
-	//	StartID,
-	//	"Starts gambling for all IDDQD's uniques"
+	//	"StartRadiance",
+	//	StartRadiance,
+	//	"Starts gambling for Radiance (disabled?)"
 	//},
 	//{
 	//	"Block",
