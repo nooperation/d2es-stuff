@@ -88,6 +88,8 @@ bool AutoExtractor::Start(int itemCount, bool useChat)
 /// <returns>true if success.</returns>
 bool AutoExtractor::StartExtraction()
 {
+	currentState = STATE_START;
+
 	if(!me->OpenCube())
 	{
 		if(useChat)
@@ -95,12 +97,13 @@ bool AutoExtractor::StartExtraction()
 		else
 			server->GameStringf("ÿc:AutoExtractorÿc0: Cube not opened");
 
+		Abort();
 		return false;
 	}
 
 	if(numberOfRunsRemaining-- <= 0)
 	{
-		currentState = STATE_COMPLETE;
+		Abort();
 		return true;
 	}
 
@@ -110,8 +113,12 @@ bool AutoExtractor::StartExtraction()
 	me->EnumStorageItems(STORAGE_CUBE, enumFindExtractors, (LPARAM)&extractors);
 	if (extractors.empty())
 	{
+		if (useChat)
+			me->Say("ÿc:AutoExtractorÿc0: Nothing found to extract");
+		else 
+			server->GameStringf("ÿc:AutoExtractorÿc0: Nothing found to extract");
+
 		Abort();
-		server->GameStringf("ÿc:AutoExtractorÿc0: Nothing found to extract");
 		return true;
 	}
 
@@ -121,12 +128,59 @@ bool AutoExtractor::StartExtraction()
 	{
 		extractedItemIDs.pop();
 	}
-	itemsExpectedToCube = GetNumberOfExpectredOutputs();
+
+	auto expectedOutputSize = GetExpectedOutputSize();
+	if (expectedOutputSize.cx == 1 && expectedOutputSize.cy == 1)
+	{
+		itemsExpectedToCube = GetNumberOfExpectedOutputs();
+		if (itemsExpectedToCube > me->GetNumberOfFreeStorageSlots(STORAGE_INVENTORY))
+		{
+			if (useChat)
+				me->Say("ÿc:AutoExtractorÿc0: No more room");
+			else
+				server->GameStringf("ÿc:AutoExtractorÿc0: No more room");
+
+			Abort();
+			return true;
+		}
+	}
+	else
+	{
+		POINT buffer;
+
+		// Make sure our oddly shaped output will fit in our inventory
+		if (!me->FindFirstStorageSpace(STORAGE_INVENTORY, expectedOutputSize, &buffer))
+		{
+			if (useChat)
+				me->Say("ÿc:AutoExtractorÿc0: No more room");
+			else
+				server->GameStringf("ÿc:AutoExtractorÿc0: No more room");
+
+			Abort();
+			return true;
+		}
+
+		// Also make sure our extractors will too
+		itemsExpectedToCube = GetNumberOfExpectedOutputs() - 1; // exclude our oddly shaped item
+		if (itemsExpectedToCube > me->GetNumberOfFreeStorageSlots(STORAGE_INVENTORY))
+		{
+			if (useChat)
+				me->Say("ÿc:AutoExtractorÿc0: No more room");
+			else
+				server->GameStringf("ÿc:AutoExtractorÿc0: No more room");
+
+			Abort();
+			return true;
+		}
+	}
 
 	// Make sure we still have the cube open, slightly lessens the chance of being kicked if user closes
 	//  it during the extraction process
-	if(!CheckCubeUI())
+	if (!CheckCubeUI())
+	{
+		Abort();
 		return false;
+	}
 
 	// 3000ms timeout
 	ticksTillTransmuteTimeout = 3 * (1000 / server->GetTickRate());
@@ -146,8 +200,8 @@ bool AutoExtractor::CheckCubeUI()
 	{
 		if(useChat)
 			me->Say("ÿc:AutoExtractorÿc0: Cube UI closed, aborting");
-
-		server->GameStringf("ÿc:AutoExtractorÿc0: Cube UI closed, aborting");
+		else 
+			server->GameStringf("ÿc:AutoExtractorÿc0: Cube UI closed, aborting");
 
 		Abort();
 		return false;
@@ -323,40 +377,22 @@ void AutoExtractor::OnItemToInventory(const ITEM &item)
 		return;
 	}
 
-	// All of the extracted items are 1x1, so make sure we have room for it
-	SIZE itemSize = server->GetItemSize(item.szItemCode);;
-	POINT emptySpot = {0, 0};
+	//// TODO: this assumes all extracted items are 1x1
+	//auto freeSpotsRemaining = me->GetNumberOfFreeStorageSlots(STORAGE_INVENTORY);
+	//if (GetNumberOfExpectredOutputs() > freeSpotsRemaining)
+	//{
+	//	if (useChat)
+	//	{
+	//		me->Say("ÿc:AutoExtractorÿc0: No more room");
+	//	}
+	//	else
+	//	{
+	//		server->GameStringf("ÿc:AutoExtractorÿc0: No more room");
+	//	}
 
-	bool foundSpot = false;
-
-	// We check 3 times to make sure there's room for the output + extractors (e.g: rare ring, key, rerolling orb).
-	//  when calling FindFirstStorageSpaceEx, it checks starting right after the previously found spot
-	for(int i = 0; i < 3; i++)
-	{
-		if(!me->FindFirstStorageSpaceEx(STORAGE_INVENTORY, itemSize, &emptySpot, emptySpot))
-		{
-			if(useChat)
-			{
-				me->Say("ÿc:AutoExtractorÿc0: No more room");
-			}
-			else
-			{
-				server->GameStringf("ÿc:AutoExtractorÿc0: No more room");
-			}
-
-			Abort();
-			return;
-		}
-
-		// Increment the current inventory spot so next time we check for an empty spot it will be right
-		//   after the previous one.
-		emptySpot.x++;
-		if(emptySpot.x >= INV_COL)
-		{
-			emptySpot.x = 0;
-			emptySpot.y++;
-		}
-	}
+	//	Abort();
+	//	return;
+	//}
 
 	extractedItemIDs.pop();
 	if (!extractedItemIDs.empty())
@@ -398,7 +434,7 @@ void AutoExtractor::OnItemToCube(const ITEM &item)
 	{
 		// reset the expected item count back to the number of extractors we use plus 1 for the output
 		//   (e.g: key + rerollingOrb + rare ring = 3 items expected)
-		itemsExpectedToCube = GetNumberOfExpectredOutputs();
+		itemsExpectedToCube = GetNumberOfExpectedOutputs();
 		
 		if(!CheckCubeUI())
 		{
@@ -412,7 +448,16 @@ void AutoExtractor::OnItemToCube(const ITEM &item)
 void AutoExtractor::PickupNextExtractedItem()
 {
 	currentState = STATE_PICKUPEXTRACTEDITEM;
+
+	if (extractedItemIDs.empty())
+	{
+		// TODO: Figure out why this is happening... Possible feedback from other modules
+		StartExtraction();
+		return;
+	}
+
 	auto extractedItemId = extractedItemIDs.front();
+
 	if (!me->PickStorageItemToCursor(extractedItemId))
 	{
 		if (useChat)
@@ -425,7 +470,38 @@ void AutoExtractor::PickupNextExtractedItem()
 	}
 }
 
-int AutoExtractor::GetNumberOfExpectredOutputs() const
+SIZE AutoExtractor::GetExpectedOutputSize() const
+{
+	SIZE expectedSize = { 1,1 };
+
+	for (auto &item : this->extractors)
+	{
+		if (
+			item.itemCode == "t16" || // magic large charm -> magic large charm
+			item.itemCode == "t17" || // rare large charm -> magic large charm
+			item.itemCode == "t18"    // rare large charm -> rare large charm
+		)
+		{
+			expectedSize.cy = 2;
+			return expectedSize;
+		}
+		else if (
+			item.itemCode == "t19" || // magic grand charm -> magic grand charm
+			item.itemCode == "t20" || // magic grand charm -> rare grand charm
+			item.itemCode == "t21" || // rare grand charm -> rare grand charm
+			item.itemCode == "t24" || // rare->rare arrow
+			item.itemCode == "t25"    // rare->unique arrow
+		)
+		{
+			expectedSize.cy = 3;
+			return expectedSize;
+		}
+	}
+
+	return expectedSize;
+}
+
+int AutoExtractor::GetNumberOfExpectedOutputs() const
 {
 	// Ore has a special case for determining number of outputs. See 'enumFindExtractors'
 	if (this->extractors.size() == 1 && this->extractors[0].itemCode == "ore")

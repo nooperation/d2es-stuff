@@ -23,17 +23,25 @@ CLIENTINFO
 BOOL PRIVATE Start(char** argv, int argc)
 {
 	bool useChat = false;
+	std::unordered_set<std::string> ignoredItemCodes;
 
 	if(argc >= 3)
 	{
 		for(int i = 2; i < argc; i++)
 		{
-			if(_stricmp(argv[i], "chat") == 0)
+			if (_stricmp(argv[i], "chat") == 0)
+			{
 				useChat = true;
+			}
+			else if (argv[i][0] == '-' && strlen(argv[i]) == 4)
+			{
+				auto itemCode = &argv[i][1];
+				ignoredItemCodes.insert(itemCode);
+			}
 		}
 	}
 
-	autoStocker.Start(useChat);
+	autoStocker.Start(useChat, ignoredItemCodes);
 
 	return TRUE;
 }
@@ -45,6 +53,7 @@ BOOL PRIVATE StartRares(char** argv, int argc)
 	bool uniques = false;
 	bool rares = false;
 	bool sets = false;
+	std::unordered_set<std::string> ignoredItemCodes;
 
 	if(argc < 3)
 		return FALSE;
@@ -67,9 +76,14 @@ BOOL PRIVATE StartRares(char** argv, int argc)
 		{
 			useChat = true;
 		}
+		else if (argv[i][0] == '-' && strlen(argv[i]) == 4)
+		{
+			auto itemCode = &argv[i][1];
+			ignoredItemCodes.insert(itemCode);
+		}
 	}
 
-	autoStocker.StartRares(sets, rares, uniques, useChat);
+	autoStocker.StartRares(sets, rares, uniques, useChat, ignoredItemCodes);
 
 	return TRUE;
 }

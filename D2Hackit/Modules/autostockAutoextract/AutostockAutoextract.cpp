@@ -58,7 +58,7 @@ bool AutostockAutoextract::StartAsAe()
 		{
 			me->Say("ÿc5AutostockAutoextractÿc0: Cube not opened");
 		}
-		server->GameStringf("ÿc5EmptyCubeÿc0: Cube not opened");
+		server->GameStringf("ÿc5AutostockAutoextractÿc0: Cube not opened");
 
 		Abort();
 		return false;
@@ -107,7 +107,7 @@ bool AutostockAutoextract::StartAsAe()
 ///   will remain in the cube when it's complete
 /// </summary>
 /// <returns>true if this event was handled, false if ignored.</returns>
-bool AutostockAutoextract::OnAutoExtractorEnded()
+bool AutostockAutoextract::OnAutoExtractorMessage(const std::string_view &message)
 {
 	// We only care about this event when we just started the autoextractor
 	if(currentState != STATE_RUNAUTOEXTRACTOR)
@@ -115,13 +115,16 @@ bool AutostockAutoextract::OnAutoExtractorEnded()
 		return false;
 	}
 
-	// Find the extractor and restocker (e.g: key + rerolling orb) ids before we clean the cube so we can
-	//   put them back in later on
-	me->EnumStorageItems(STORAGE_CUBE, enumFindCubeItems, (LPARAM)&extractorStuff);
+	if (message == "AutoExtractor Ended")
+	{
+		// Find the extractor and restocker (e.g: key + rerolling orb) ids before we clean the cube so we can
+		//   put them back in later on
+		me->EnumStorageItems(STORAGE_CUBE, enumFindCubeItems, (LPARAM)&extractorStuff);
 
-	// Clear the cube so we can run the autostocker next
-	currentState = STATE_RUNEMPTYCUBE;
-	server->GameCommandf("emptycube start chat");
+		// Clear the cube so we can run the autostocker next
+		currentState = STATE_RUNEMPTYCUBE;
+		server->GameCommandf("emptycube start chat");
+	}
 
 	return true;
 }
@@ -130,7 +133,7 @@ bool AutostockAutoextract::OnAutoExtractorEnded()
 /// Called when emptyCube has finished cleaning out the cube. Starts the autostocker process.
 /// </summary>
 /// <returns>true if this event was handled, false if ignored.</returns>
-bool AutostockAutoextract::OnEmptyCubeEnded()
+bool AutostockAutoextract::OnEmptyCubeMessage(const std::string_view &message)
 {
 	// We only care about this event when we have called emptyCube
 	if(currentState != STATE_RUNEMPTYCUBE)
@@ -138,9 +141,12 @@ bool AutostockAutoextract::OnEmptyCubeEnded()
 		return false;
 	}
 
-	// Now that the cube is empty, we can start the autostocker
-	currentState = STATE_RUNAUTOSTOCKER;
-	server->GameCommandf("as start_rares chat%s%s%s",  transmuteSet?" Sets":"", transmuteRare?" Rares":"", transmuteUnique?" Uniques":"");
+	if (message == "EmptyCube Ended")
+	{
+		// Now that the cube is empty, we can start the autostocker
+		currentState = STATE_RUNAUTOSTOCKER;
+		server->GameCommandf("as start_rares -27a -30a chat%s%s%s", transmuteSet ? " Sets" : "", transmuteRare ? " Rares" : "", transmuteUnique ? " Uniques" : "");
+	}
 
 	return true;
 }
@@ -150,7 +156,7 @@ bool AutostockAutoextract::OnEmptyCubeEnded()
 ///   will remain in the cube when it's complete
 /// </summary>
 /// <returns>true if this event was handled, false if ignored.</returns>
-bool AutostockAutoextract::OnAutostockerEnded()
+bool AutostockAutoextract::OnAutostockerMessage(const std::string_view &message)
 {
 	// We only care about this event when we start the autostocker
 	if(currentState != STATE_RUNAUTOSTOCKER)
@@ -158,7 +164,10 @@ bool AutostockAutoextract::OnAutostockerEnded()
 		return false;
 	}
 
-	MoveExtractorAndStockerToCube();
+	if (message == "Autostocker Ended")
+	{
+		MoveExtractorAndStockerToCube();
+	}
 
 	return true;
 }

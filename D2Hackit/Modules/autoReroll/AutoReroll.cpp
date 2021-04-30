@@ -507,7 +507,7 @@ void AutoReroll::OnItemToCube(const ITEM &item)
 /// Called whenever AutoExtractor has finished
 /// </summary>
 /// <returns>true if we processed this event, false if we ignored it.</returns>
-bool AutoReroll::OnAutoExtractorEnded()
+bool AutoReroll::OnAutoExtractorMessage(const std::string_view &message)
 {
 	// Make sure we actually started the AutoExtractor
 	if(currentState != STATE_RUNNINGAUTOEXTRACTOR)
@@ -515,27 +515,30 @@ bool AutoReroll::OnAutoExtractorEnded()
 		return false;
 	}
 
-	// Our inventory should be full of gems now or our gem can is empty and a few gems are in
-	//  our inventory. Get Get a list of item IDs for the gems in the player's inventory just
-	//  to make sure we haven't run out of gems
-	std::vector<DWORD> tempGemsInInventory;
-	me->EnumStorageItems(STORAGE_INVENTORY, enumFindGems, (LPARAM)&tempGemsInInventory);
-	if((int)tempGemsInInventory.size() < numGemsToUse)
+	if (message == "AutoExtractor Ended")
 	{
-		if(useChat)
+		// Our inventory should be full of gems now or our gem can is empty and a few gems are in
+		//  our inventory. Get Get a list of item IDs for the gems in the player's inventory just
+		//  to make sure we haven't run out of gems
+		std::vector<DWORD> tempGemsInInventory;
+		me->EnumStorageItems(STORAGE_INVENTORY, enumFindGems, (LPARAM)&tempGemsInInventory);
+		if ((int)tempGemsInInventory.size() < numGemsToUse)
 		{
-			me->Say("ÿc:AutoRerollÿc0: No more gems");
+			if (useChat)
+			{
+				me->Say("ÿc:AutoRerollÿc0: No more gems");
+			}
+			server->GamePrintString("ÿc:AutoRerollÿc0: No more gems");
+
+			Abort();
+			return true;
 		}
-		server->GamePrintString("ÿc:AutoRerollÿc0: No more gems");
 
-		Abort();
-		return true;
+		// Gem can and can opener are still in the cube, we need to empty the cube now
+		rerollItemNeedsToGoBackToCube = true;
+		currentState = STATE_RUNNINGEMPTYCUBE;
+		server->GameCommandLine("emptycube start chat");
 	}
-
-	// Gem can and can opener are still in the cube, we need to empty the cube now
-	rerollItemNeedsToGoBackToCube = true;
-	currentState = STATE_RUNNINGEMPTYCUBE;
-	server->GameCommandLine("emptycube start chat");
 
 	return true;
 }
@@ -544,12 +547,17 @@ bool AutoReroll::OnAutoExtractorEnded()
 /// Called whenever EmptyCube has finished
 /// </summary>
 /// <returns>true if we processed this event, false if we ignored it.</returns>
-bool AutoReroll::OnEmptyCubeEnded()
+bool AutoReroll::OnEmptyCubeMessage(const std::string_view &message)
 {
 	// Make sure we actually started the EmptyCube process
 	if(currentState != STATE_RUNNINGEMPTYCUBE)
 	{
 		return false;
+	}
+
+	if (message != "EmptyCube Ended")
+	{
+		return true;
 	}
 
 	// Make sure the cube is actually empty

@@ -11,8 +11,25 @@ AutoOre::AutoOre()
 
 void AutoOre::SetState(State newState)
 {
+	if (false)
+	{
+		const char *const stateNames[] = {
+			"Uninitialized",
+			"PickupNextItemToDrop",
+			"DropNextItemToDrop",
+			"PickupNextOre",
+			"DropNextOreToCube",
+			"WaitingToRunAutoExtractor",
+			"RunAutoExtractor",
+			"RunEmptyCube",
+			"RunAutoStocker",
+		};
+		server->GameStringf("ÿc:ÿc5AutoOreÿc0: State %s -> %s", stateNames[(int)this->currentState], stateNames[(int)newState]);
+	}
+
 	this->currentState = newState;
 }
+
 void AutoOre::Start()
 {
 	this->itemsToDrop.clear();
@@ -40,10 +57,10 @@ void AutoOre::Start()
 		server->GameCommandLine("load emptycube");
 	}
 
-	StartAsAe();
+	StartAutoOre();
 }
 
-void AutoOre::StartAsAe()
+void AutoOre::StartAutoOre()
 {
 	if (!me->OpenCube())
 	{
@@ -84,7 +101,7 @@ void AutoOre::PickupNextItemToDrop()
 	if (this->itemsToDrop.empty())
 	{
 		server->GameStringf("ÿc:ÿc5AutoOreÿc0: No more items to drop");
-		this->StartAsAe();
+		this->StartAutoOre();
 		return;
 	}
 
@@ -157,7 +174,9 @@ void AutoOre::OnItemDroppedToCube(DWORD itemId)
 			return;
 		}
 
-		this->RunAutoExtractor();
+		// NOTE: We cannot run extractor yet. If we do then it will also see this item 'to cube' and
+		//       will think it was part of its extraction process
+		SetState(State::WaitingToRunAutoExtractor);
 	}
 }
 
@@ -185,10 +204,15 @@ void AutoOre::DropNextOreToCube()
 	me->DropCursorItemToStorage(STORAGE_CUBE);
 }
 
-void AutoOre::RunAutoExtractor()
+void AutoOre::OnTick()
 {
-	SetState(State::RunAutoExtractor);
-	server->GameCommandLine("ae start chat");
+	if (currentState == State::WaitingToRunAutoExtractor)
+	{
+		// HACK: AE must be delayed a full tick so the autoextract module does not process the item we
+		//       just put in the cube as a transmute result
+		SetState(State::RunAutoExtractor);
+		server->GameCommandLine("ae start chat");
+	}
 }
 
 bool AutoOre::OnAutoExtractorMessage(const std::string_view &message)
@@ -200,8 +224,30 @@ bool AutoOre::OnAutoExtractorMessage(const std::string_view &message)
 
 	if (message == "AutoExtractor Ended")
 	{
+		this->RunEmptyCube();
+	}
+
+	return true;
+}
+
+void AutoOre::RunEmptyCube()
+{
+	SetState(State::RunEmptyCube);
+	server->GameCommandLine("emptycube start chat");
+}
+
+bool AutoOre::OnEmptyCubeMessage(const std::string_view &message)
+{
+	if (currentState != State::RunEmptyCube)
+	{
+		return false;
+	}
+
+	if (message == "EmptyCube Ended")
+	{
 		this->RunAutoStocker();
 	}
+
 	return true;
 }
 
@@ -220,7 +266,7 @@ bool AutoOre::OnAutoStockerMessage(const std::string_view &message)
 
 	if (message == "Autostocker Ended")
 	{
-		StartAsAe();
+		StartAutoOre();
 	}
 	return true;
 }

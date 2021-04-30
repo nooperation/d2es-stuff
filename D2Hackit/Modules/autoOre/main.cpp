@@ -37,6 +37,18 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 				return 0;
 			}
 		}
+		else if (strncmp(chatMessage, "ÿc5EmptyCubeÿc0:", 16) == 0)
+		{
+			const auto message = std::string_view(chatMessage + 17);
+			if (!autoOre.OnEmptyCubeMessage(message))
+			{
+				return aLen;
+			}
+			else
+			{
+				return 0;
+			}
+		}
 		else if(strncmp(chatMessage, "ÿc:Autostockerÿc0:", 18) == 0)
 		{
 			const auto message = std::string_view(chatMessage + 19);
@@ -68,7 +80,7 @@ VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPAR
 	{
 		ITEM item = *(ITEM *)lParam;
 
-		if(wParam == ITEM_ACTION_TO_STORAGE && item.iStorageID == 0x04) // arewe sure about 4??? 
+		if(wParam == ITEM_ACTION_TO_STORAGE && item.iStorageID == 0x04)
 		{
 			autoOre.OnItemDroppedToCube(item.dwItemID); 
 		}
@@ -82,6 +94,14 @@ VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPAR
 		}
 	}
 }
+
+DWORD EXPORT OnGameTimerTick()
+{
+	// OnGameTimerTick happens after all the modules have processed OnGamePacketAfterReceived (which is when the OnUnitMessage above is called)
+	autoOre.OnTick();
+	return 0;
+}
+
 /*
 void EXPORT OnGamePacketAfterReceived(BYTE *aPacket, DWORD aLen)
 {

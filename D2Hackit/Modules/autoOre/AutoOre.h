@@ -12,7 +12,9 @@ enum class State
 	DropNextItemToDrop,
 	PickupNextOre,
 	DropNextOreToCube,
+	WaitingToRunAutoExtractor,
 	RunAutoExtractor,
+	RunEmptyCube,
 	RunAutoStocker,
 };
 
@@ -21,7 +23,7 @@ class AutoOre
 	public:
 		AutoOre();
 		void Start();
-		void StartAsAe();
+		void StartAutoOre();
 		void Abort();
 
 		void ProcessInventoryItem(const ITEM &item);
@@ -32,7 +34,10 @@ class AutoOre
 		void PickupNextOre();
 		void DropNextOreToCube();
 
-		void RunAutoExtractor();
+		void RunEmptyCube();
+		bool OnEmptyCubeMessage(const std::string_view &message);
+
+		void OnTick();
 		bool OnAutoExtractorMessage(const std::string_view &message);
 
 		void RunAutoStocker();

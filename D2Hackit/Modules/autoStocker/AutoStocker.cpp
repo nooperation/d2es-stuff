@@ -2,6 +2,7 @@
 #include "AutoStocker.h"
 #include <fstream>
 #include <string>
+#include <unordered_set>
 
 #define CONFIG_FILE ".\\plugin\\autostockerMisc.ini"
 
@@ -65,7 +66,7 @@ bool AutoStocker::Init(bool useChat)
 /// <param name="transmuteUnique">Determines if unique items should be cubed.</param>
 /// <param name="useChat">Determines if output messages should be sent as chat messages.</param>
 /// <returns>true if successful, false if failed.</returns>
-bool AutoStocker::StartRares(bool transmuteSet, bool transmuteRare, bool transmuteUnique, bool useChat)
+bool AutoStocker::StartRares(bool transmuteSet, bool transmuteRare, bool transmuteUnique, bool useChat, const std::unordered_set<std::string> &ignoredItemCodes)
 {
 	if(!Init(useChat))
 	{
@@ -75,6 +76,7 @@ bool AutoStocker::StartRares(bool transmuteSet, bool transmuteRare, bool transmu
 	this->transmuteSet = transmuteSet;
 	this->transmuteRare = transmuteRare;
 	this->transmuteUnique = transmuteUnique;
+	this->ignoredItemCodes = ignoredItemCodes;
 
 	return BeginAutostocking();
 }
@@ -84,7 +86,7 @@ bool AutoStocker::StartRares(bool transmuteSet, bool transmuteRare, bool transmu
 /// </summary>
 /// <param name="useChat">Determines if output messages should be sent as chat messages.</param>
 /// <returns>true if successful, false if failed.</returns>
-bool AutoStocker::Start(bool useChat)
+bool AutoStocker::Start(bool useChat, const std::unordered_set<std::string> &ignoredItemCodes)
 {
 	if(!Init(useChat))
 	{
@@ -94,6 +96,7 @@ bool AutoStocker::Start(bool useChat)
 	this->transmuteSet = false;
 	this->transmuteRare = false;
 	this->transmuteUnique = false;
+	this->ignoredItemCodes = ignoredItemCodes;
 
 	return BeginAutostocking();
 }
@@ -507,6 +510,11 @@ void AutoStocker::FindItemsToTransmute(const std::vector<ITEM> &itemsInInventory
 {
 	for(unsigned int i = 0; i < itemsInInventory.size(); ++i)
 	{
+		if (this->ignoredItemCodes.find(itemsInInventory[i].szItemCode) != this->ignoredItemCodes.end())
+		{
+			continue;
+		}
+
 		if(IsGemCanItem(itemsInInventory[i].szItemCode))
 		{
 			itemsToTransmute[TRANSMUTE_GEM].push_back(itemsInInventory[i].dwItemID);
