@@ -54,7 +54,7 @@ class Gambler
 		void OnNotEnoughMoney();
 		void OnItemSold();
 		void OnGoldPickup();
-		bool OnAutostockerEnded();
+		bool OnAutostockerMessage(const std::string_view &message);
 		void OnItemIdentifiedSounded();
 		void OnUIClosed();
 		

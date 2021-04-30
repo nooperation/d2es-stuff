@@ -46,6 +46,7 @@ class AutoExtractor
 		bool IsItemAnExtractor(const ITEM &item);
 		bool ReadAffixFile(const std::string &configPath, std::unordered_set<int> &readTo);
 		int GetNumberOfExpectedOutputs() const;
+		SIZE GetExpectedOutputSize() const;
 		void PickupNextExtractedItem();
 
 		bool useChat;

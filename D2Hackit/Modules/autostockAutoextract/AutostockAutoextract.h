@@ -51,9 +51,9 @@ class AutostockAutoextract
 		bool Start(bool transmuteSet, bool transmuteRare, bool transmuteUnique, bool useChat);
 		bool StartAsAe();
 
-		bool OnAutostockerEnded();
-		bool OnAutoExtractorEnded();
-		bool OnEmptyCubeEnded();
+		bool OnAutostockerMessage(const std::string_view &message);
+		bool OnAutoExtractorMessage(const std::string_view &message);
+		bool OnEmptyCubeMessage(const std::string_view &message);
 		void OnItemFromInventory(const ITEM &item);
 		void OnItemToCube(const ITEM &item);
 		void OnItemFromCube(const ITEM &item);

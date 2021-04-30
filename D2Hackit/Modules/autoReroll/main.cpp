@@ -58,38 +58,26 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 
 		if(strncmp(chatMessage, "ÿc5EmptyCubeÿc0:", 16) == 0)
 		{
-			if(strcmp(chatMessage, "ÿc5EmptyCubeÿc0: EmptyCube Ended") == 0)
+			const auto message = std::string_view(chatMessage + 17);
+			if (!autoReroll.OnEmptyCubeMessage(message))
 			{
-				if(!autoReroll.OnEmptyCubeEnded())
-				{
-					return aLen;
-				}
-				else
-				{
-					return 0;
-				}
+				return aLen;
 			}
 			else
 			{
-				return aLen;
+				return 0;
 			}
 		}
 		else if(strncmp(chatMessage, "ÿc:AutoExtractorÿc0:", 20) == 0)
 		{
-			if(strcmp(chatMessage, "ÿc:AutoExtractorÿc0: AutoExtractor Ended") == 0)
+			const auto message = std::string_view(chatMessage + 21);
+			if (!autoReroll.OnAutoExtractorMessage(message))
 			{
-				if(!autoReroll.OnAutoExtractorEnded())
-				{
-					return aLen;
-				}
-				else
-				{
-					return 0;
-				}
+				return aLen;
 			}
 			else
 			{
-				return aLen;
+				return 0;
 			}
 		}
 	}

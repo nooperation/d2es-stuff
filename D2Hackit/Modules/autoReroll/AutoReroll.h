@@ -42,8 +42,8 @@ class AutoReroll
 		void OnItemToCube(const ITEM &item);
 		void OnItemFromCube(DWORD itemID);
 		void OnItemFromInventory(DWORD itemID);
-		bool OnEmptyCubeEnded();
-		bool OnAutoExtractorEnded();
+		bool OnEmptyCubeMessage(const std::string_view &message);
+		bool OnAutoExtractorMessage(const std::string_view &message);
 		void OnTick();
 		void Abort();		
 

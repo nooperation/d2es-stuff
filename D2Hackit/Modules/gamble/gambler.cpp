@@ -654,13 +654,19 @@ void Gambler::OnGoldPickup()
 /// Autostocker has completed, we will continue gambling if we requested autostocker to run
 ///   previously
 /// </summary>
-bool Gambler::OnAutostockerEnded()
+bool Gambler::OnAutostockerMessage(const std::string_view &message)
 {
-	if(currentState != STATE_AUTOSTOCK_RUNNING)
+	if (currentState != STATE_AUTOSTOCK_RUNNING)
+	{
 		return false;
+	}
 
-	DEBUG_TRACE();
-	StartGambling();
+	if (message == "Autostocker Ended")
+	{
+		DEBUG_TRACE();
+		StartGambling();
+	}
+
 	return true;
 }
 

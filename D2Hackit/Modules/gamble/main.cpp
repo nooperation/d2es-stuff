@@ -433,20 +433,14 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 		// Sneaky message passing, doesn't send autostocker chat messages out
 		if(strncmp(chatMessage, "ÿc:Autostockerÿc0:", 18) == 0)
 		{
-			if(strcmp(chatMessage, "ÿc:Autostockerÿc0: Autostocker Ended") == 0)
+			const auto message = std::string_view(chatMessage + 19);
+			if (!gambler.OnAutostockerMessage(message))
 			{
-				if(!gambler.OnAutostockerEnded())
-				{
-					return aLen;
-				}
-				else
-				{
-					return 0;
-				}
+				return aLen;
 			}
 			else
 			{
-				return aLen;
+				return 0;
 			}
 		}
 	}

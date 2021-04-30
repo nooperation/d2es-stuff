@@ -66,56 +66,38 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 
 		if(strncmp(chatMessage, "ÿc5EmptyCubeÿc0:", 16) == 0)
 		{
-			if(strcmp(chatMessage, "ÿc5EmptyCubeÿc0: EmptyCube Ended") == 0)
+			const auto message = std::string_view(chatMessage + 17);
+			if (!autostockAutoextract.OnEmptyCubeMessage(message))
 			{
-				if(!autostockAutoextract.OnEmptyCubeEnded())
-				{
-					return aLen;
-				}
-				else
-				{
-					return 0;
-				}
+				return aLen;
 			}
 			else
 			{
-				return aLen;
+				return 0;
 			}
 		}
 		else if(strncmp(chatMessage, "ÿc:AutoExtractorÿc0:", 20) == 0)
 		{
-			if(strcmp(chatMessage, "ÿc:AutoExtractorÿc0: AutoExtractor Ended") == 0)
+			const auto message = std::string_view(chatMessage + 21);
+			if (!autostockAutoextract.OnAutoExtractorMessage(message))
 			{
-				if(!autostockAutoextract.OnAutoExtractorEnded())
-				{
-					return aLen;
-				}
-				else
-				{
-					return 0;
-				}
+				return aLen;
 			}
 			else
 			{
-				return aLen;
+				return 0;
 			}
 		}
 		else if(strncmp(chatMessage, "ÿc:Autostockerÿc0:", 18) == 0)
 		{
-			if(strcmp(chatMessage, "ÿc:Autostockerÿc0: Autostocker Ended") == 0)
+			const auto message = std::string_view(chatMessage + 19);
+			if (!autostockAutoextract.OnAutostockerMessage(message))
 			{
-				if(!autostockAutoextract.OnAutostockerEnded())
-				{
-					return aLen;
-				}
-				else
-				{
-					return 0;
-				}
+				return aLen;
 			}
 			else
 			{
-				return aLen;
+				return 0;
 			}
 		}
 	}
