@@ -351,7 +351,7 @@ void DoNpcProc()
 		}
 		else
 		{
-			g_npcState.Update(NPC_INTERACT, 250);
+			g_npcState.Update(NPC_INTERACT, psi->VendorInteractTimeout);
 		}
 		break;
 	}
@@ -363,7 +363,7 @@ void DoNpcProc()
 		}
 		else
 		{
-			g_npcState.Update(NPC_WAIT_INTERACT, 450);
+			g_npcState.Update(NPC_WAIT_INTERACT, psi->VendorMenuTimeout);
 		}
 		break;
 
@@ -717,7 +717,7 @@ void Player_OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 
 			if (g_npcState.GetState() == NPC_WAIT_STORE || g_npcState.GetState() == NPC_STORE_OK)
 			{
-				g_npcState.Update(NPC_STORE_OK, 1000);
+				g_npcState.Update(NPC_STORE_OK, psi->VendorItemTimeout);
 			}
 		}
 	}

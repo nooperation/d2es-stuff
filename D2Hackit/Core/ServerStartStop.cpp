@@ -164,9 +164,12 @@ BOOL PRIVATE ServerStart(HANDLE hModule)
 	else
 		psi->CommandCharacter = '.';
 
-	char iniFileName[MAX_PATH];
-	GetIniFileName( "D2HackIt", iniFileName, sizeof(iniFileName) );
-	psi->TickRate = GetPrivateProfileInt("Misc", "TickRate", 100, iniFileName);
+	psi->TickRate = GetPrivateProfileInt("Misc", "TickRate", 100, psi->IniFile);
+	psi->VendorItemTimeout = GetPrivateProfileInt("Vendor", "ItemTimeout", 150, psi->IniFile);
+	psi->VendorMenuTimeout = GetPrivateProfileInt("Vendor", "MenuTimeout", 300, psi->IniFile);
+	psi->VendorInteractTimeout = GetPrivateProfileInt("Vendor", "InteractTimeout", 100, psi->IniFile);
+
+
 	// -- B
 
 	//////////////////////////////////////////////////////////////////
