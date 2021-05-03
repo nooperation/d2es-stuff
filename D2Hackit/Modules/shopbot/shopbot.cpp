@@ -92,6 +92,12 @@ bool ShopBot::Start(const std::vector<MAPPOS> &customPath, const std::string &me
 	currentTeleportIndex = 1;
 	ticksSinceLastTeleport = 0;
 
+	if (customPath.size() <= 1)
+	{
+		server->GameStringf("ÿc:Shopbotÿc0: Min prefix: Invalid path, please mark a path using '.shopbot mark' leading out of town.", minPrefix, minSuffix);
+		return false;
+	}
+
 	if(!ReadConfig(".\\plugin\\goodPrefix_shopbot.txt", goodPrefix))
 		return false;
 

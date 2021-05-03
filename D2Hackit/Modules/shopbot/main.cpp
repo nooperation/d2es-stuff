@@ -7,7 +7,7 @@ std::vector<MAPPOS> customPath;
 
 BOOL PRIVATE Shop(char** argv, int argc)
 {
-	if(customPath.size() == 0)
+	if(customPath.size() <= 1)
 	{
 		switch(me->GetCurrentMapID())
 		{

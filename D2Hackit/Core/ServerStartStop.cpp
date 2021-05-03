@@ -168,6 +168,7 @@ BOOL PRIVATE ServerStart(HANDLE hModule)
 	psi->VendorItemTimeout = GetPrivateProfileInt("Vendor", "ItemTimeout", 150, psi->IniFile);
 	psi->VendorMenuTimeout = GetPrivateProfileInt("Vendor", "MenuTimeout", 300, psi->IniFile);
 	psi->VendorInteractTimeout = GetPrivateProfileInt("Vendor", "InteractTimeout", 100, psi->IniFile);
+	psi->VendorWalkToTimeout = GetPrivateProfileInt("Vendor", "WalkToTimeout", 100, psi->IniFile);
 
 
 	// -- B

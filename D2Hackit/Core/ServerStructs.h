@@ -52,6 +52,7 @@ typedef struct privateserverinfo_t
 	int				VendorItemTimeout;
 	int				VendorMenuTimeout;
 	int				VendorInteractTimeout;
+	int				VendorWalkToTimeout;
 	// -- B
 
 	// Tick thread

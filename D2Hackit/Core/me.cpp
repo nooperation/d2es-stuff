@@ -346,7 +346,7 @@ void DoNpcProc()
 			}
 			else
 			{
-				g_npcState.Update(NPC_INTERACT, 2000);
+				g_npcState.Update(NPC_INTERACT, psi->VendorWalkToTimeout);
 			}
 		}
 		else
