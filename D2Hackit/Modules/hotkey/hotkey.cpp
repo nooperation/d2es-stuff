@@ -97,13 +97,12 @@ BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 	{
 		if(iKeyCode == transmuteHotkey)
 		{
-			me->DropCursorItemToStorage(STORAGE_CUBE);
+			me->Transmute();
 		}
 		if(iKeyCode == dropToCubeHotkey)
 		{
-			if(me->DropCursorItemToGround())
-
-			me->Transmute();
+			if (me->DropCursorItemToGround())
+				me->DropCursorItemToStorage(STORAGE_CUBE);
 		}
 	}
 

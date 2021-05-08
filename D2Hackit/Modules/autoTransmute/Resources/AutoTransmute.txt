@@ -1,0 +1,6 @@
+; [Name] [Inputs=NumberOfInputItems] [Outputs=NumberOfOutputItems] [EmptyCube=ShouldEmptyCubeAfterTransmute] => [Item1Count] [Item1Code] ... [ItemNCount] [ItemNCode]
+; .at start hand  --> 3x Chipped Frozen Soul + 3x Chipped Shadow Quartz -> 1x Griswold's Hand
+hand Inputs=2 Outputs=1 EmptyCube=1 => 3 xr0 3 xr1
+
+; .as start maple --> 1x ÿc4Maple Leaf + 1x ÿc9Sa Rune -> targetItem + scroll 50
+maple Inputs=2 Outputs=2 EmptyCube=0 => 1 map 1 r15 
