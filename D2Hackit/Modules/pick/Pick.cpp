@@ -4,7 +4,6 @@
 #include "../../Includes/itemSuffix.h"
 #include "ItemWatcher.h"
 
-BOOL PRIVATE ShowEthSoc(char **argv, int argc);
 BOOL PRIVATE Radius(char** argv, int argc);
 BOOL PRIVATE MinGold(char** argv, int argc);
 BOOL PRIVATE ToggleShowItemLevel(char** argv, int argc);
@@ -51,30 +50,6 @@ BOOL PRIVATE SetTownPickup(char **argv, int argc)
 	return FALSE;
 }
 
-BOOL PRIVATE ShowEthSoc(char **argv, int argc)
-{
-	if(argc == 3)
-	{
-		itemWatcher.ShowEthSoc(atoi(argv[2]) == 1);
-		return TRUE;
-	}
-
-	server->GameErrorf("Invalid input, correct usage is .pick ethsoc n");
-	return FALSE;
-}
-
-BOOL PRIVATE ShowEthereal(char **argv, int argc)
-{
-	if(argc == 3)
-	{
-		itemWatcher.ShowEthereal(atoi(argv[2]) == 1);
-		return TRUE;
-	}
-
-	server->GameErrorf("Invalid input, correct usage is .pick eth n");
-	return FALSE;
-}
-
 BOOL PRIVATE Radius(char** argv, int argc)
 {
 	if(argc == 3)
@@ -85,6 +60,12 @@ BOOL PRIVATE Radius(char** argv, int argc)
 
 	server->GameErrorf("Invalid input, correct usage is .pick radius n");
 	return FALSE;
+}
+
+BOOL PRIVATE Mute(char** argv, int argc)
+{
+	itemWatcher.Mute();
+	return TRUE;
 }
 
 BOOL PRIVATE Items(char **argv, int argc)
@@ -195,6 +176,16 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"Toggle pick"
 	},
 	{
+		"mute",
+		Mute,
+		"Mute/unmute pick"
+	},
+	{
+		"unmute",
+		Mute,
+		"Mute/unmute pick"
+	},
+	{
 		"radius",
 		Radius,
 		"Set radius, default = 4"
@@ -223,16 +214,6 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"townpick",
 		SetTownPickup,
 		"Sets town pickit on or off. Args: 1|0"
-	},
-	{
-		"ethsoc",
-		ShowEthSoc,
-		"Sets ethereal socketed item display on and off. Args: 1|0"
-	},
-	{
-		"eth",
-		ShowEthereal,
-		"Sets ethereal item display on and off. Args: 1|0"
 	},
 	{
 		"items",

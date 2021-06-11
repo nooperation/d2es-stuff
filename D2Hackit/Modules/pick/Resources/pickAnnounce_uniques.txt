@@ -1,0 +1,33 @@
+0gi Slayer Axe
+yul Ceremonial Armor
+ci3 Diadem
+yft Ceremonial Shield
+0ts Whale Hunter
+yrb Archmage Robe
+0cr Jeweled Edge
+ytp Archmage Plate
+cx1 Small Charm
+cx2 Large Charm
+cx3 Grand Charm
+cm1 Small Charm
+cm2 Large Charm
+cm3 Grand Charm
+rin ring
+amu Amulet
+zrn Amazonian Loop
+srn Sorcerer's Band
+nrn Necromancer's Stone
+prn Paladic Halo
+brg Barbaric Hoop
+drn Druid's Seal
+arn Assassin's Spiral
+zam Amazonian Pin
+sam Sorcerer's Talisman
+nam Death's Locket
+pam Holy Pendant
+bam Totemic Pebble
+dam Druidic Necklace
+aam Assassin's Choker
+toa Right-click to reset Stat/Skill Points Token of Absolution
+sbk Right-Click To Add A ÿc1Skill Point ÿc4Not Radamant's Skill Book  
+zz0 ÿc1Radÿc8iaÿc9nt ÿc/Aura ÿc5Stone

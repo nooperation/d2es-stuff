@@ -1,0 +1,43 @@
+yar Cow King's Steel Hide
+ybt Cow King's Steel Hoofs
+ydw Cow King's Steel Horns
+ylv Tasselhoff's Jerkin
+ytb Tasselhoff's Breaches
+bmb Tasselhoff's Pouches
+amd Milea's Maim
+ci3 Milea's Crown
+yng Milea's Mail
+yhh Borik's Dark Binding
+0nn Borik's Nightblade
+yhh Borik's Dark Binding
+0gd Sarevok's Master
+bae Sarevok's Malicious Stare
+yld Sarevok's Savage Heart
+baf Crown of the Northern Tribes
+yul Harrogath's Heirloom
+brg Worldstone Shard
+1ls Branch of the Ents
+ytp Hide of the Tarrasque
+yig Claws of the Dragon
+yh9 Mask of the Angel of Death
+yth Flesh of the Angel of Chaos
+0sy Reaver of the Angel of Annihilation
+ahb Darien's Band
+ycl Darien's Faith
+yhl Darien's Wit
+obc Arion's Eye
+ylg Arion's Hand
+yrb Arion's Heart
+0b0 Barbarian's Point-H
+0bs Iron Wolf's Broad Sword-H
+0st Mercenary's Pike-H
+1sb Rogue's Bow-H
+bad Barbarian's Visage-H
+yea Rogue's Suit-H
+yhm Iron Wolf's Coif-H
+yhn Iron Wolf's Robes-H
+yit Iron Wolf's Guard-H
+ykp Rogue's Cap-H
+ylm Mercenary's Shiek-H
+ypl Barbarian's Shelter-H
+ytu Mercenary's Wraps-H

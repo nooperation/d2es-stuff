@@ -181,7 +181,7 @@ eee ÿc1Blackmoor
 hly ÿc/Holy Symbol
 hh2 ÿc7Forging Hammer
 ttt ÿc5Tyranium Ore
-ppp ÿc;Dragon Stone
+ppp Dragon Stone
 sdo ÿc8Socket Donut
 00g Griswold's Hand
 00t Treehead WoodFist's Arm

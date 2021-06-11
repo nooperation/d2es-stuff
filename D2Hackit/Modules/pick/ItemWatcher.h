@@ -28,9 +28,8 @@ class ItemWatcher
 		void SetRadius(int radius);
 		void SetMinGold(int amount);
 		void SetTownPickup(bool enabled);
-		void ShowEthSoc(bool show);
-		void ShowEthereal(bool show);
 		void TogglePickItems();
+		void Mute();
 		bool LoadItems();
 
 		void OnItemAction(const ITEM &item);
@@ -39,7 +38,6 @@ class ItemWatcher
 		void OnGameLeave();
 		void OnGameJoin();
 		void OnItemFind(const ITEM &item);
-
 
 	private:
 		void AnnounceItem(const ITEM &item);
@@ -55,16 +53,21 @@ class ItemWatcher
 		std::vector<DWORD> destroyedItemsSinceLastCheck;
 		std::list<WatchedItemData> watchedItems;
 
-		std::unordered_set<std::string> iddqdUniques;
+		std::unordered_map<std::string, std::string> uniquesToAnnounce;
+		std::unordered_map<std::string, std::string> setsToAnnounce;
 		std::unordered_map<std::string, std::string> itemsToAnnounce;
 		std::unordered_map<std::string, std::string> itemsToPick;
 
 		unsigned int radius;
 		unsigned int minGold;
 		bool townPickup;
-		bool showEtherealSocketed;
-		bool showEthereal;
 		bool isPickingItems;
 		bool isInGame;
+		bool isMute;
+		bool isAnnouncingAllSets;
+		bool isAnnouncingAllUniques;
+		bool isAnnouncingAllCrafted;
+		bool isOverridingUniqueItemNames;
+		bool isOverridingSetItemNames;
 };
 #endif

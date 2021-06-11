@@ -133,7 +133,13 @@ xcopy /Y $(TargetPath) $(SolutionDir)\Publish_$(Configuration)\</Command>
     <ClInclude Include="ItemWatcher.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\pick.ini" />
     <None Include="Resources\pickItems.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\pickAnnounce.txt" />
+    <Text Include="Resources\pickAnnounce_sets.txt" />
+    <Text Include="Resources\pickAnnounce_uniques.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

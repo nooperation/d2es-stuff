@@ -3,6 +3,8 @@
 #include "ItemWatcher.h"
 #include "../../Includes/D2Client.h"
 
+#define PICK_SETTINGS_PATH ".\\plugin\\pick.ini"
+
 bool operator==(const WatchedItemData &lhs, const WatchedItemData &rhs)
 {
 	return lhs.id == rhs.id &&
@@ -15,20 +17,9 @@ ItemWatcher::ItemWatcher()
 	radius = 4;
 	minGold = 50;
 	townPickup = true;
-	showEtherealSocketed = false;
-	showEthereal = false;
 	isPickingItems = true;
-
-	iddqdUniques.insert("0gi");
-	iddqdUniques.insert("yul");
-	iddqdUniques.insert("ci3");
-	iddqdUniques.insert("yft");
-	iddqdUniques.insert("0ts");
-	iddqdUniques.insert("yrb");
-	iddqdUniques.insert("0cr");
-	iddqdUniques.insert("ytp");
+	isMute = false;
 }
-
 
 void ItemWatcher::Cleanup()
 {
@@ -200,6 +191,20 @@ void ItemWatcher::SetTownPickup(bool enabled)
 	}
 }
 
+void ItemWatcher::Mute()
+{
+	isMute = !isMute;
+
+	if (!isMute)
+	{
+		server->GameInfof("Pick: Item announcements ÿc2enabledÿc0");
+	}
+	else
+	{
+		server->GameInfof("Pick: Item announcements ÿc1disabledÿc0");
+	}
+}
+
 void ItemWatcher::TogglePickItems()
 {
 	isPickingItems = !isPickingItems;
@@ -226,34 +231,6 @@ void ItemWatcher::SetMinGold(int amount)
 	minGold = amount;
 }
 
-void ItemWatcher::ShowEthereal(bool show)
-{
-	showEthereal = show;
-
-	if(showEthereal)
-	{
-		server->GamePrintInfo("Showing ethereal items");
-	}
-	else
-	{
-		server->GamePrintInfo("Ignoring ethereal items");
-	}
-}
-
-void ItemWatcher::ShowEthSoc(bool show)
-{
-	showEtherealSocketed = show;
-
-	if(showEtherealSocketed)
-	{
-		server->GamePrintInfo("Showing ethereal socketed items");
-	}
-	else
-	{
-		server->GamePrintInfo("Ignoring ethereal socketed items");
-	}
-}
-
 ////////////////////////////////////////////
 //
 //               HELPER FUNCTIONS
@@ -272,6 +249,27 @@ bool ItemWatcher::LoadItems()
 	{
 		return false;
 	}
+
+	if (!loadItemMap(".\\plugin\\pickAnnounce_uniques.txt", uniquesToAnnounce))
+	{
+		return false;
+	}
+
+	if (!loadItemMap(".\\plugin\\pickAnnounce_sets.txt", setsToAnnounce))
+	{
+		return false;
+	}
+
+	isAnnouncingAllCrafted = GetPrivateProfileInt("Pick.Announce", "AllCrafted", 1, PICK_SETTINGS_PATH) == TRUE;
+	isAnnouncingAllSets = GetPrivateProfileInt("Pick.Announce", "AllSets", 1, PICK_SETTINGS_PATH) == TRUE;
+	isAnnouncingAllUniques = GetPrivateProfileInt("Pick.Announce", "AllUniques", 1, PICK_SETTINGS_PATH) == TRUE;
+	isOverridingUniqueItemNames = GetPrivateProfileInt("Pick.Announce", "OverrideUniqueItemName", 0, PICK_SETTINGS_PATH) == TRUE;
+	isOverridingSetItemNames = GetPrivateProfileInt("Pick.Announce", "OverrideSetItemName", 0, PICK_SETTINGS_PATH) == TRUE;
+
+	radius = GetPrivateProfileInt("Pick", "Radius", 4, PICK_SETTINGS_PATH);
+	minGold = GetPrivateProfileInt("Pick", "MinGold", 50, PICK_SETTINGS_PATH);
+	townPickup = GetPrivateProfileInt("Pick", "Town", 1, PICK_SETTINGS_PATH) == TRUE;
+	isPickingItems = GetPrivateProfileInt("Pick", "Items", 1, PICK_SETTINGS_PATH) == TRUE;
 
 	return true;
 }
@@ -485,51 +483,85 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 
 void ItemWatcher::AnnounceItem(const ITEM &item)
 {
-	char outputMessage[512] = {0};
+	if (isMute)
+	{
+		return;
+	}
+
+	std::string outputMessage;
+	outputMessage.reserve(128);
+	
+
 	bool overrideAnnouncment = false;
 	const auto itemCode = std::string(item.szItemCode);
+	std::string itemName;
 
 	if(item.iEthereal)
 	{
-		strcat_s(outputMessage, "ÿc0[ÿc5Ethÿc0]");
+		outputMessage += "ÿc0[ÿc5Ethÿc0]";
 	}
 	if(item.iSocketed)
 	{
-		sprintf_s(outputMessage, "%sÿc0[ÿc;socÿc0]", outputMessage);
+		outputMessage += "ÿc0[ÿc;socÿc0]";
 	}
 
 	switch(item.iQuality)
 	{
-		case ITEM_LEVEL_CRAFT:	
-			overrideAnnouncment = true;
-			strcat_s(outputMessage, "ÿc1Craft ");
+		case ITEM_LEVEL_CRAFT:
+			overrideAnnouncment = isAnnouncingAllCrafted;
+			outputMessage += "ÿc1Craft ";
 			break;
 		case ITEM_LEVEL_UNIQUE:
-			overrideAnnouncment = true;
-			if(iddqdUniques.find(itemCode) != iddqdUniques.end())
+		{
+			overrideAnnouncment = isAnnouncingAllUniques;
+
+			auto uniqueOverride = uniquesToAnnounce.find(itemCode);
+			if (uniqueOverride != uniquesToAnnounce.end())
 			{
-				strcat_s(outputMessage, "ÿc1IDDQD Unique ");
+				overrideAnnouncment = true;
+				if (isOverridingUniqueItemNames)
+				{
+					itemName = uniqueOverride->second;
+				}
 			}
-			else
+
+			if (overrideAnnouncment)
 			{
-				strcat_s(outputMessage, "ÿc4Unique ");
+				outputMessage += "ÿc4Unique ";
 			}
 			break;
+		}
 		case ITEM_LEVEL_SET:
-			overrideAnnouncment = true;
-			strcat_s(outputMessage, "ÿc2Set ");
+		{
+			overrideAnnouncment = isAnnouncingAllSets;
+
+			auto setOverride = setsToAnnounce.find(itemCode);
+			if (setOverride != setsToAnnounce.end())
+			{
+				overrideAnnouncment = true;
+				if (isOverridingSetItemNames)
+				{
+					itemName = setOverride->second;
+				}
+			}
+
+			if (overrideAnnouncment)
+			{
+				outputMessage += "ÿc2Set ";
+			}
 			break;
+		}
 		case ITEM_LEVEL_RARE:
-			strcat_s(outputMessage, "ÿc9Rare ");
+			outputMessage += "ÿc9Rare ";
 			break;
 		case ITEM_LEVEL_MAGIC:
-			strcat_s(outputMessage, "ÿc3Magic ");
+			outputMessage += "ÿc3Magic ";
 			break;
 		case ITEM_LEVEL_INFERIOR:
-			strcat_s(outputMessage, "ÿc5Inferior ");
+			outputMessage += "ÿc5Inferior ";
 			break;
 		case ITEM_LEVEL_SUPERIOR:
-			strcat_s(outputMessage, "ÿc5Superior ");
+			outputMessage += "ÿc5Superior ";
 			break;
 	}
 
@@ -541,7 +573,17 @@ void ItemWatcher::AnnounceItem(const ITEM &item)
 	tagMapPos myPos = me->GetPosition();
 	const char *directionString =  GetDirectionFrom(myPos.x, myPos.y, item.wPositionX, item.wPositionY);
 
-	strcat_s(outputMessage, GetItemDesc(item));
-	sprintf_s(outputMessage, "%s ( ilvl = %d ) ÿc0- %s %d", outputMessage, item.iLevel, directionString, me->GetDistanceFrom(item.wPositionX, item.wPositionY));
-	server->GamePrintString(outputMessage);
+	if (itemName.empty())
+	{
+		outputMessage += GetItemDesc(item);
+	}
+	else
+	{
+		outputMessage += itemName;
+	}
+
+	const auto distance = me->GetDistanceFrom(item.wPositionX, item.wPositionY);
+
+	outputMessage += " ( ilvl = " + std::to_string(item.iLevel) + " ) ÿc0- " + directionString + " " + std::to_string(distance);
+	server->GamePrintString(outputMessage.c_str());
 }

@@ -31,5 +31,19 @@
     <None Include="Resources\pickItems.txt">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Resources\pick.ini">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\pickAnnounce.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\pickAnnounce_sets.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\pickAnnounce_uniques.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
