@@ -418,7 +418,6 @@ void AutoExtractor::OnItemToCube(const ITEM &item)
 		return;
 	}
 
-	bool itemIsNotExtractor = true;
 	itemsExpectedToCube--;
 
 	// Check this item against each of the items we're using to extract items (e.g: key + rerolling orb). If
@@ -509,20 +508,19 @@ int AutoExtractor::GetNumberOfExpectedOutputs() const
 		auto &ore = this->extractors[0];
 		if (ore.oreCounts.size() == 0)
 		{
-			// empty ore -> note + note + note
-			return 3;
+			// empty ore -> note + note
+			return 2;
 		}
 
-		auto numberOfExpectedOutputs = 1;
-
-		for (auto &item : this->extractors[0].oreCounts)
-		{
-			if (item.value > 1)
-			{
-				// ore -> ore + gem + gem
-				return 3;
-			}
-		}
+		//// No longer needed for modified eastern sun since ore -> ore + bigGem. No more small gems.
+		//for (auto &item : this->extractors[0].oreCounts)
+		//{
+		//	if (item.value > 1)
+		//	{
+		//		// ore -> ore + gem + gem
+		//		return 3;
+		//	}
+		//}
 
 		// ore -> ore + gem
 		return 2;
