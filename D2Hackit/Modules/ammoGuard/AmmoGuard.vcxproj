@@ -11,9 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup>
-    <Diablo2Path Condition="'$(Diablo2Path)' == '' ">
-      C:\Program Files (x86)\Diablo II
-    </Diablo2Path>
+    <Diablo2Path Condition="'$(Diablo2Path)' == '' ">C:\Program Files (x86)\Diablo II</Diablo2Path>
   </PropertyGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{00741E7E-B097-4054-B666-E9D9EECC4B75}</ProjectGuid>
@@ -26,12 +24,12 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
