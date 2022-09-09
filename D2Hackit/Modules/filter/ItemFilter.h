@@ -31,6 +31,7 @@ class ItemFilter
 		bool showRareRingAmulet;
 		bool showMagicCharms;
 		bool showRareCharms;
+		int minGoldAmount;
 
 		bool OnItemFind(ITEM &item);
 		bool IsFiltered(char *itemCode);

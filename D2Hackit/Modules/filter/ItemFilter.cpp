@@ -49,6 +49,8 @@ bool ItemFilter::LoadItems()
 
 	showMagicCharms		= GetPrivateProfileInt("Charms", "MagicCharms", 1, FILTER_SETTINGS_PATH) == TRUE;
     showRareCharms		= GetPrivateProfileInt("Charms", "RareCharms", 1, FILTER_SETTINGS_PATH) == TRUE;
+
+	minGoldAmount		= GetPrivateProfileInt("Misc", "MinGoldAmount", 0, FILTER_SETTINGS_PATH);
 	return true;
 }
 
@@ -72,6 +74,10 @@ bool ItemFilter::OnItemFind(ITEM &item)
 {
 	//if(!filterTown && me->IsInTown())
 	//	return true;
+
+	if (strcmp(item.szItemCode, "gld") == 0) {
+		return item.dwGoldAmount >= minGoldAmount;
+	}
 
 	if(IsAllowed(item.szItemCode))
 		return true;
