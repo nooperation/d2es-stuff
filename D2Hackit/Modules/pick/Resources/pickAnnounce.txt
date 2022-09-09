@@ -1,4 +1,4 @@
-ore ore
+ore ÿc8Ore
 jew jewel
 yyy ÿc9Cookbook
 r01 ÿc/I Rune
@@ -48,6 +48,7 @@ r44 ÿc;He Rune
 r45 ÿc;Nu Rune
 r46 ÿc;Wo Rune
 r50 ÿc;Null Rune
+ppp ÿc;Dragon Stone
 r47 Ka Rune
 r48 Hu Rune
 r51 El Rune
@@ -181,7 +182,6 @@ eee ÿc1Blackmoor
 hly ÿc/Holy Symbol
 hh2 ÿc7Forging Hammer
 ttt ÿc5Tyranium Ore
-ppp Dragon Stone
 sdo ÿc8Socket Donut
 00g Griswold's Hand
 00t Treehead WoodFist's Arm
@@ -190,3 +190,4 @@ sdo ÿc8Socket Donut
 toa Right-click to reset Stat/Skill Points Token of Absolution
 sbk Right-Click To Add A ÿc1Skill Point ÿc4Not Radamant's Skill Book  
 zz0 ÿc1Radÿc8iaÿc9nt ÿc/Aura ÿc5Stone
+srj ÿc4Stat Potion
