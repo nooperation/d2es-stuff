@@ -87,3 +87,10 @@ https://www.youtube.com/watch?v=T_ZOQ2ypi_0
 
 ### AmmoGuard
 > todo (no longer needed?)
+
+### AutoChit
+[![IdleClient Video](https://img.youtube.com/vi/n6ngNRyku88/0.jpg)](https://www.youtube.com/watch?v=n6ngNRyku88) \
+https://www.youtube.com/watch?v=n6ngNRyku88
+> edit AutoChit_chits.txt  (by default it drops everything that is not unique) \
+> .load chit \
+> .chit start
