@@ -1,0 +1,3 @@
+LIBRARY	"sleepy"
+EXPORTS
+	QueryInterface=QueryInterface

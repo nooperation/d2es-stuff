@@ -71,6 +71,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AutoTransmute", "D2Hackit\M
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AutoChit", "D2Hackit\Modules\autoChit\AutoChit.vcxproj", "{8E5407A8-194D-4968-8908-9E499D6380ED}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sleepy", "plugins\sleepy\sleepy.vcxproj", "{F52512D1-F611-4E9A-81E5-074B75B02094}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -201,6 +203,10 @@ Global
 		{8E5407A8-194D-4968-8908-9E499D6380ED}.Debug|Win32.Build.0 = Debug|Win32
 		{8E5407A8-194D-4968-8908-9E499D6380ED}.Release|Win32.ActiveCfg = Release|Win32
 		{8E5407A8-194D-4968-8908-9E499D6380ED}.Release|Win32.Build.0 = Release|Win32
+		{F52512D1-F611-4E9A-81E5-074B75B02094}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F52512D1-F611-4E9A-81E5-074B75B02094}.Debug|Win32.Build.0 = Debug|Win32
+		{F52512D1-F611-4E9A-81E5-074B75B02094}.Release|Win32.ActiveCfg = Release|Win32
+		{F52512D1-F611-4E9A-81E5-074B75B02094}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -237,6 +243,7 @@ Global
 		{B1DECE59-C0C9-40AC-9201-625A669CFF2B} = {9637B3AB-2054-440D-8836-84624BE534C5}
 		{EA69AB6D-FFC2-4CF7-83C8-5D43CDAFF0E6} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
 		{8E5407A8-194D-4968-8908-9E499D6380ED} = {B633F61A-62D5-4159-BA82-8C17FFE77E9C}
+		{F52512D1-F611-4E9A-81E5-074B75B02094} = {9637B3AB-2054-440D-8836-84624BE534C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7DAE5C20-C224-4A1A-8147-796AF2BFCA24}
