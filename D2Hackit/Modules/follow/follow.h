@@ -2,20 +2,22 @@
 
 #include <windows.h>
 #include <vector>
+#include <chrono>
 
 #include "../../Includes/D2Client.h"
 
 enum class State
 {
     Uninitialized,
-    PickupNextItemToDrop,
-    DropNextItemToDrop,
-    PickupNextOre,
-    DropNextOreToCube,
-    WaitingToRunAutoExtractor,
-    RunAutoExtractor,
-    RunEmptyCube,
-    RunAutoStocker,
+    WalkingToPortal_LeavingTown,
+    WalkingToPortal_EnteringTown,
+};
+
+struct PortalOwnershipData
+{
+    std::chrono::milliseconds lastUpdate;
+    uint32_t ownerId;
+    uint32_t portalId;
 };
 
 class Follow
@@ -24,27 +26,32 @@ public:
     Follow();
 
     void OnChatMessage(const std::string_view& from, const std::string_view& message);
-    void UpdatePlayerInfo(DWORD playerId, const std::string_view &playerName);
     void OnPortalOwnershipUpdate(uint32_t ownerId, std::string_view ownerName, uint32_t unitId);
+    void OnEnterTown();
+    void OnLeaveTown();
+    void OnMyDeath();
+    void OnPlayerDeath(uint32_t playerId);
+    void OnPlayerDisappear(uint32_t playerId);
 
     void OnTick();
     void Abort();
 
-    void OnItemDropped(DWORD itemId);
-
 private:
     void SetState(State newState);
-
+    void Reset();
     bool FindAndUsePortal();
-    void StartFollow();
 
     bool fleeLoaded;
+    bool followEnabled;
 
     State currentState;
     std::string master;
-    DWORD masterId;
+    GAMEUNIT masterUnit;
+    GAMEUNIT portalWeAreWalkingTo;
 
-    std::map<uint32_t, uint32_t> portalOwnershipMap;
+
+    std::chrono::milliseconds lastFollowAttemptTimeMs;
+    std::map<uint32_t, PortalOwnershipData> portalOwnershipMap;
 };
 
 BOOL CALLBACK enumFindCubeItems(LPCITEM item, LPARAM lParam);

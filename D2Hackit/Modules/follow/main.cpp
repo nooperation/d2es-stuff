@@ -86,12 +86,41 @@ VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
     {
         follow.Abort();
     }
+    else if (nMessage == PM_LEAVETOWN)
+    {
+        follow.OnLeaveTown();
+    }
+    else if (nMessage == PM_ENTERTOWN)
+    {
+        follow.OnEnterTown();
+    }
+    else if (nMessage == PM_DEATH)
+    {
+        follow.OnMyDeath();
+    }
 }
-
 VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPARAM lParam)
 {
+	if(nMessage == UM_DEATH)
+	{
+        if (lpUnit->dwUnitType != UNIT_TYPE_PLAYER)
+        {
+            return;
+        }
 
+        follow.OnPlayerDeath(lpUnit->dwUnitID);
+	}
+    else if(nMessage == UM_DESTROY)
+	{
+        if (lpUnit->dwUnitType != UNIT_TYPE_PLAYER)
+        {
+            return;
+        }
+
+        follow.OnPlayerDisappear(lpUnit->dwUnitID);
+	}
 }
+
 
 DWORD EXPORT OnGameTimerTick()
 {

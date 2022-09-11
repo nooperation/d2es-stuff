@@ -1,5 +1,9 @@
 #include "../../Includes/D2Client.h"
+#include "../../Core/definitions.h"
+
 #include "Follow.h"
+
+#include <chrono>
 
 BOOL CALLBACK enumObjectsForPortal(LPCGAMEUNIT lpUnit, LPARAM lParam);
 BOOL CALLBACK FindMaster(DWORD dwPlayerID, LPCSTR lpszPlayerName, DWORD dwPlayerClass, DWORD dwPvpFlags, BYTE iMapID, LPARAM lParam);
@@ -7,36 +11,98 @@ BOOL CALLBACK FindMaster(DWORD dwPlayerID, LPCSTR lpszPlayerName, DWORD dwPlayer
 
 Follow::Follow()
 {
+    Reset();
+}
+
+void Follow::Reset()
+{
     this->currentState = State::Uninitialized;
     this->fleeLoaded = false;
-    this->master = "";
     this->portalOwnershipMap.clear();
+    this->master = "";
+    this->masterUnit.dwUnitID = 0;
+    this->masterUnit.dwUnitType = UNIT_TYPE_PLAYER;
+    this->portalWeAreWalkingTo.dwUnitID = 0;
+    this->portalWeAreWalkingTo.dwUnitType = UNIT_TYPE_OBJECT;
+    this->followEnabled = false;
 }
 
 void Follow::SetState(State newState)
 {
-    if (false)
-    {
-        const char* const stateNames[] = {
-            "Uninitialized",
-            "PickupNextItemToDrop",
-            "DropNextItemToDrop",
-            "PickupNextOre",
-            "DropNextOreToCube",
-            "WaitingToRunAutoExtractor",
-            "RunAutoExtractor",
-            "RunEmptyCube",
-            "RunAutoStocker",
-        };
-        server->GameStringf("ÿc5Followÿc0: State %s -> %s", stateNames[(int)this->currentState], stateNames[(int)newState]);
-    }
-
     this->currentState = newState;
 }
 
 void Follow::Abort()
 {
     server->GameStringf("ÿc5Followÿc0: Aborted");
+}
+
+void Follow::OnEnterTown()
+{
+    this->followEnabled = false;
+    this->SetState(State::Uninitialized);
+}
+
+void Follow::OnLeaveTown()
+{
+    this->followEnabled = true;
+    this->SetState(State::Uninitialized);
+}
+
+void Follow::OnPlayerDeath(uint32_t playerId)
+{
+    OnPlayerDisappear(playerId);
+}
+
+void Follow::OnMyDeath()
+{
+    Reset();
+    me->Say("I have died and no longer have a master set");
+}
+
+void Follow::OnPlayerDisappear(uint32_t playerId)
+{
+    if (playerId != this->masterUnit.dwUnitID)
+    {
+        return;
+    }
+
+    if (me->IsInTown())
+    {
+        return;
+    }
+
+    bool isMasterPortalAvailable = false;
+    for (auto const& item : this->portalOwnershipMap)
+    {
+        if (item.second.ownerId != this->masterUnit.dwUnitID)
+        {
+            continue;
+        }
+
+        GAMEUNIT mastersPortal;
+        mastersPortal.dwUnitID = item.second.portalId;
+        mastersPortal.dwUnitType = UNIT_TYPE_OBJECT;
+
+        if (!server->VerifyUnit(&mastersPortal))
+        {
+            continue;
+        }
+
+        isMasterPortalAvailable = true;
+        break;
+    }
+
+    if (isMasterPortalAvailable)
+    {
+        server->GameStringf("Master disappeared, but left us a portal. We're following it");
+        this->FindAndUsePortal();
+    }
+    else
+    {
+        me->Say("Master disappeared and I couldn't find a portal so I'm going home");
+        server->GameCommandf("flee tp");
+    }
 }
 
 struct FindMasterPayload
@@ -54,6 +120,9 @@ void Follow::OnChatMessage(const std::string_view& from, const std::string_view&
         payload.masterId = 0;
         payload.masterName = from;
 
+        this->masterUnit.dwUnitID = 0;
+        this->masterUnit.dwUnitType = UNIT_TYPE_PLAYER;
+
         server->EnumPlayers(FindMaster, (LPARAM)&payload);
 
         if (!payload.isSuccess)
@@ -64,9 +133,9 @@ void Follow::OnChatMessage(const std::string_view& from, const std::string_view&
         }
 
         this->master = payload.masterName;
-        this->masterId = payload.masterId;
+        this->masterUnit.dwUnitID = payload.masterId;
 
-        server->GameStringf("ÿc5Followÿc0: Now following %s (id = %d)", this->master.c_str(), this->masterId);
+        server->GameStringf("ÿc5Followÿc0: Now following %s (id = %d)", this->master.c_str(), this->masterUnit.dwUnitID);
         char buff[128] = {};
         sprintf_s(buff, "Ok, now following %s", this->master.c_str());
         me->Say(&buff[0]);
@@ -87,6 +156,14 @@ void Follow::OnChatMessage(const std::string_view& from, const std::string_view&
                 server->GameCommandf("flee tp");
             }
         }
+    }
+    else if (message == "stop")
+    {
+        this->followEnabled = false;
+    }
+    else if (message == "start")
+    {
+        this->followEnabled = true;
     }
     else if (message == "flee!")
     {
@@ -114,7 +191,6 @@ struct Packet_CS_InteractWithEntity
     DWORD ID;
 };
 
-
 bool Follow::FindAndUsePortal()
 {
     std::vector<uint32_t> foundPortals;
@@ -126,9 +202,6 @@ bool Follow::FindAndUsePortal()
         return false;
     }
 
-
-    server->EnumPlayers(FindMaster, 0);
-
     for (auto const& portalId : foundPortals)
     {
         auto const& portalInfo = this->portalOwnershipMap.find(portalId);
@@ -138,20 +211,21 @@ bool Follow::FindAndUsePortal()
             continue;
         }
 
-        if (portalInfo->second == this->masterId)
+        if (portalInfo->second.ownerId == this->masterUnit.dwUnitID)
         {
             server->GameStringf("ÿc5Followÿc0: Found a portal owned by our master, entering it...");
 
-            Packet_CS_InteractWithEntity interact;
-            interact.EntityKind = 0x02;
-            interact.ID = portalInfo->first;
+            this->portalWeAreWalkingTo.dwUnitID = portalId;
+            this->portalWeAreWalkingTo.dwUnitType = UNIT_TYPE_OBJECT;
 
-            BYTE interactPacket[9];
-            interactPacket[0] = 0x13;
-            memcpy(&interactPacket[1], &interact, sizeof(Packet_CS_InteractWithEntity));
-            if (me->GetHPPercent() > 0)
+            me->MoveToUnit(&this->portalWeAreWalkingTo, false);
+            if (me->IsInTown)
             {
-                server->GameSendPacketToServer(&interactPacket[0], sizeof(interactPacket));
+                SetState(State::WalkingToPortal_LeavingTown);
+            }
+            else
+            {
+                SetState(State::WalkingToPortal_EnteringTown);
             }
 
             return true;
@@ -163,16 +237,47 @@ bool Follow::FindAndUsePortal()
 
 void Follow::OnPortalOwnershipUpdate(uint32_t ownerId, std::string_view ownerName, uint32_t unitId)
 {
-    this->portalOwnershipMap[unitId] = ownerId;
-}
+    auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
-void Follow::StartFollow()
-{
+    auto &portalInfo = this->portalOwnershipMap[unitId];
+    portalInfo.lastUpdate = now;
+    portalInfo.ownerId = ownerId;
+    portalInfo.portalId = unitId;
 }
 
 void Follow::OnTick()
 {
+    static const uint32_t kFollowAttemptFrequencyMs = 200;
+    static const uint32_t kMaxInteractionDistance = 8;
 
+    auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+    if ((now - this->lastFollowAttemptTimeMs).count() < kFollowAttemptFrequencyMs)
+    {
+        return;
+    }
+
+    if (currentState == State::WalkingToPortal_LeavingTown || currentState == State::WalkingToPortal_EnteringTown)
+    {
+        const auto portalLocation = server->GetUnitPosition(&this->portalWeAreWalkingTo);
+        
+        if (me->GetDistanceFrom(portalLocation.x, portalLocation.y) < kMaxInteractionDistance)
+        {
+            me->Interact(&this->portalWeAreWalkingTo);
+        }
+    }
+
+    if (!this->followEnabled)
+    {
+        return;
+    }
+
+    if (this->masterUnit.dwUnitID == 0)
+    {
+        return;
+    }
+    
+    me->MoveToUnit(&this->masterUnit, false);
+    this->lastFollowAttemptTimeMs = now;
 }
 
 BOOL CALLBACK FindMaster(DWORD dwPlayerID, LPCSTR lpszPlayerName, DWORD dwPlayerClass, DWORD dwPvpFlags, BYTE iMapID, LPARAM lParam)
