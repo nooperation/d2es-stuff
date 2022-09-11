@@ -94,3 +94,14 @@ https://www.youtube.com/watch?v=n6ngNRyku88
 > edit AutoChit_chits.txt  (by default it drops everything that is not unique) \
 > .load chit \
 > .chit start
+
+### Follow
+[![IdleClient Video](https://img.youtube.com/vi/LNsw_LUR_us/0.jpg)](https://www.youtube.com/watch?v=LNsw_LUR_us) \
+https://www.youtube.com/watch?v=LNsw_LUR_us
+> .load follow (on your followers)\
+> say "follow" on your main \
+> say "start" to start town following \
+> say "stop" to stop town following \
+> say "tp" to cause the followers to use your tp \
+> say "flee!" to force the bots back up to town \
+> create a portal and go back to town and the bots will follow (unless they get out of sync) 
