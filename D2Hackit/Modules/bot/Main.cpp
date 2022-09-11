@@ -167,8 +167,8 @@ BOOL PRIVATE Pos(char **argv, int argc)
 	MAPPOS myPos = me->GetPosition();
 	
 	
-	server->GameStringf("Room %d: %d, %d", room->pPresetType2info->roomNum, room->pRoom->pColl->nPosRoomX, room->pRoom->pColl->nPosRoomY);
-	server->GameStringf("Player position %d, %d  room %d offset x: %d y: %d", (int)myPos.x, (int)myPos.y, server->D2GetCurrentRoomNum(), (int)myPos.x - (int)room->pRoom->pColl->nPosGameX, (int)myPos.y - (int)room->pRoom->pColl->nPosGameY);
+	//server->GameStringf("Room %d: %d, %d", room->pPresetType2info->roomNum, room->pRoom->pColl->nPosRoomX, room->pRoom->pColl->nPosRoomY);
+	//server->GameStringf("Player position %d, %d  room %d offset x: %d y: %d", (int)myPos.x, (int)myPos.y, server->D2GetCurrentRoomNum(), (int)myPos.x - (int)room->pRoom->pColl->nPosGameX, (int)myPos.y - (int)room->pRoom->pColl->nPosGameY);
 
 
 
