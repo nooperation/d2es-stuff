@@ -442,7 +442,7 @@ void OnMapBlink() {
 			//server->GameStringf("pathIndex++ = %d", pathIndex);
 		}
 		else {
-			server->GameStringf("Trying previous path again. we're %d away from where we should be", distance);
+			//server->GameStringf("Trying previous path again. we're %d away from where we should be", distance);
 		}
 
 		if (currentState == STATE_TeleportingToStairsObject_WaitBlink)
