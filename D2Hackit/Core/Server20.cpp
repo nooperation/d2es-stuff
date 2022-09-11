@@ -1057,6 +1057,24 @@ BOOL EXPORT IsInteractedWithWP()
 	return !(*p_D2CLIENT_IsNotInteractedWithWP);
 }
 
+BOOL EXPORT EnumPlayers(fnEnumPlayerProc lpfn, LPARAM lParam)
+{
+	if (lpfn == NULL || p_D2CLIENT_FirstRosterUnit == NULL)
+		return FALSE;
+
+	for (Roster* p = *p_D2CLIENT_FirstRosterUnit; p; p = p->ptNext)
+	{
+		if (p->PlayerId == GetSafePlayerID())
+			continue;
+		
+		DWORD dwPvpFlags = 0;
+		BYTE iMapID =(BYTE)p->LevelId;
+		if (!lpfn(p->PlayerId, p->Name, p->ClassId, dwPvpFlags, iMapID, lParam))
+			return FALSE;
+	}
+
+	return TRUE;
+}
 // -- B
 
 DWORD EXPORT GetSpellName(WORD wSpell, LPSTR lpszBuffer, DWORD dwMaxChars)

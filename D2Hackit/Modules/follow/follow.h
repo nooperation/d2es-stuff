@@ -44,7 +44,6 @@ private:
     std::string master;
     DWORD masterId;
 
-    std::map<DWORD, std::string> playerIdToNameMap;
     std::map<uint32_t, uint32_t> portalOwnershipMap;
 };
 

@@ -48,9 +48,6 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 {
     if (aPacket[0] == 0x26)
     {
-        const auto unknownA = ((DWORD *)&aPacket[4]);
-        server->GameStringf("Unknown = %d", unknownA);
-
         const auto source = std::string_view((char*)(&aPacket[10]));
         const auto message = std::string_view((char*)(&aPacket[10] + source.length() + 1));
 
@@ -79,29 +76,6 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
         //server->GameStringf("Portal ownership: ownerId=%d ownerName=%s localId=%d", ownerId, ownerName.data(), localId);
         follow.OnPortalOwnershipUpdate(ownershipPacket->OwnerID, ownershipPacket->OwnerName, ownershipPacket->LocalID);
     }
-
-    // player joined
-    if(aPacket[0] == 0x5b)
-	{
-		// Player info packet
-		//5B 24 00 XX XX XX XX 01 (Char Name) 00 01 00 FF FF 00 00 00 00 00 00 00 00
-		//(WORD) Packet Lengh
-		//(DWORD) Player's ID
-		//(BYTE) Player's Class
-		//(BYTE[16]) Character's Name
-		//(WORD) Character's Level
-		//(WORD) Party Number (0xFFFF = none)
-		//(VOID) Null-Padding
-
-		const unsigned short length = *((unsigned short*)(aPacket+1));
-		const unsigned int playerId = *((unsigned int*)(aPacket+3));
-		const unsigned char playerClass = *((unsigned char*)(aPacket+7));
-		const char *playerName = (char *)(aPacket+8);
-		const unsigned short playerLevel = *((unsigned short*)(aPacket + 24));
-		const unsigned short playerPartyId = *((unsigned short*)(aPacket + 26));
-
-        follow.UpdatePlayerInfo(playerId, playerName);
-	}
 
     return aLen;
 }

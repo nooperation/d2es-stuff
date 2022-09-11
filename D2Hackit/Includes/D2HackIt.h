@@ -311,6 +311,8 @@ DWORD EXPORT GetInteractedNPCClassID();
 DWORD EXPORT GetInteractedWPUniqueID();
 BOOL EXPORT IsInteractedWithWP();
 DWORD EXPORT GetSpellChargesReal(WORD wSpellID);
+
+BOOL EXPORT EnumPlayers(fnEnumPlayerProc lpfn, LPARAM lParam);
 // -- B
 
 BOOL EXPORT LeftClick(long x, long y);

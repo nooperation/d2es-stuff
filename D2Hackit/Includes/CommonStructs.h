@@ -250,6 +250,9 @@ typedef const tagGameUnit* LPCGAMEUNIT;
 // Unit enumeration callback definition
 typedef BOOL (CALLBACK *fnEnumUnitProc)(LPCGAMEUNIT lpUnit, LPARAM lParam);
 
+// Player enumeration callback definition
+typedef BOOL (CALLBACK *fnEnumPlayerProc)(DWORD dwPlayerID, LPCSTR lpszPlayerName, DWORD dwPlayerClass, DWORD dwPvpFlags, BYTE iMapID, LPARAM lParam);
+
 //////////////////////////////////////////////////////////////////////
 // PresetUnit(Caves, Stairs, Dens, Towers, Entrances, Izual, Hephasto, Countess Chest, etc...)
 //////////////////////////////////////////////////////////////////////
@@ -458,6 +461,7 @@ typedef BOOL(__cdecl *fnIsInteractedWithNPC)();
 typedef DWORD(__cdecl *fnGetInteractedNPCClassID)();
 typedef DWORD(__cdecl *fnGetInteractedWPUniqueID)();
 typedef BOOL(__cdecl *fnIsInteractedWithWP)();
+typedef BOOL (__cdecl *fnEnumPlayers)(fnEnumPlayerProc lpfn, LPARAM lParam);
 // -- B
 typedef struct functionentrypoints_t
 {
@@ -572,6 +576,7 @@ typedef struct functionentrypoints_t
 	fnGetInteractedNPCClassID		GetInteractedNPCClassID;
 	fnGetInteractedWPUniqueID		GetInteractedWPUniqueID;
 	fnIsInteractedWithWP			IsInteractedWithWP;
+	fnEnumPlayers					EnumPlayers;			// 2.00 (Abin)
 	// -- B
 } FUNCTIONENTRYPOINTS, *PFUNCTIONENTRYPOINTS;
 

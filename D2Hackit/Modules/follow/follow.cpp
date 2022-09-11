@@ -2,6 +2,7 @@
 #include "Follow.h"
 
 BOOL CALLBACK enumObjectsForPortal(LPCGAMEUNIT lpUnit, LPARAM lParam);
+BOOL CALLBACK FindMaster(DWORD dwPlayerID, LPCSTR lpszPlayerName, DWORD dwPlayerClass, DWORD dwPvpFlags, BYTE iMapID, LPARAM lParam);
 
 
 Follow::Follow()
@@ -9,7 +10,6 @@ Follow::Follow()
     this->currentState = State::Uninitialized;
     this->fleeLoaded = false;
     this->master = "";
-    this->playerIdToNameMap.clear();
     this->portalOwnershipMap.clear();
 }
 
@@ -39,24 +39,34 @@ void Follow::Abort()
     server->GameStringf("ÿc5Followÿc0: Aborted");
 }
 
+struct FindMasterPayload
+{
+    std::string masterName;
+    uint32_t masterId;
+    bool isSuccess;
+};
 void Follow::OnChatMessage(const std::string_view& from, const std::string_view& message)
 {
     if (message == "follow")
     {
-        this->master = from;
-        this->masterId = 0;
+        FindMasterPayload payload;
+        payload.isSuccess = false;
+        payload.masterId = 0;
+        payload.masterName = from;
 
-        for (const auto& item : this->playerIdToNameMap)
+        server->EnumPlayers(FindMaster, (LPARAM)&payload);
+
+        if (!payload.isSuccess)
         {
-            if (item.second == this->master)
-            {
-                this->masterId = item.first;
-                break;
-            }
+            server->GameStringf("ÿc5Followÿc0: Failed to find master '%s'", from.data());
+            me->Say("I cannot find you. Please rejoin or something");
+            return;
         }
 
-        server->GameStringf("ÿc5Followÿc0: Now following %s (id = %d)", this->master.c_str(), this->masterId);
+        this->master = payload.masterName;
+        this->masterId = payload.masterId;
 
+        server->GameStringf("ÿc5Followÿc0: Now following %s (id = %d)", this->master.c_str(), this->masterId);
         char buff[128] = {};
         sprintf_s(buff, "Ok, now following %s", this->master.c_str());
         me->Say(&buff[0]);
@@ -104,6 +114,7 @@ struct Packet_CS_InteractWithEntity
     DWORD ID;
 };
 
+
 bool Follow::FindAndUsePortal()
 {
     std::vector<uint32_t> foundPortals;
@@ -114,6 +125,9 @@ bool Follow::FindAndUsePortal()
         server->GameStringf("ÿc5Followÿc0: We could not find any portals");
         return false;
     }
+
+
+    server->EnumPlayers(FindMaster, 0);
 
     for (auto const& portalId : foundPortals)
     {
@@ -161,16 +175,18 @@ void Follow::OnTick()
 
 }
 
-void Follow::UpdatePlayerInfo(DWORD playerId, const std::string_view& playerName)
+BOOL CALLBACK FindMaster(DWORD dwPlayerID, LPCSTR lpszPlayerName, DWORD dwPlayerClass, DWORD dwPvpFlags, BYTE iMapID, LPARAM lParam)
 {
-    if (playerName == this->master && playerId != this->masterId)
+    auto payload = (FindMasterPayload *)lParam;
+    if (lpszPlayerName == payload->masterName)
     {
-        this->masterId = playerId;
+        payload->masterId = dwPlayerID;
+        payload->isSuccess = true;
+        return FALSE;
     }
 
-    this->playerIdToNameMap[playerId] = playerName;
+    return TRUE;
 }
-
 
 BOOL CALLBACK enumObjectsForPortal(LPCGAMEUNIT lpUnit, LPARAM lParam)
 {

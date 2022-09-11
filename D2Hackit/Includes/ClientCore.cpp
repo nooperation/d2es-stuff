@@ -275,6 +275,7 @@ BOOL PRIVATE SetupClient(HMODULE hModule, LPCSTR szModule)
 	BIND_AND_CHECK(IsInteractedWithWP);
 	BIND_TO_PLAYER(GetSpellChargesReal);
 
+	BIND_AND_CHECK(EnumPlayers);				// Was missing, thanks to LordTerror and Tiamat for the bug report
 	// -- B
 
 	// Bind player functions
