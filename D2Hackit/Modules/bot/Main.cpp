@@ -69,6 +69,7 @@ struct BotTravelData
 bool CheckForOurStairs();
 void NextStep();
 BOOL CALLBACK enumUnitProc(LPCGAMEUNIT lpUnit, LPARAM lParam);
+void CalculatePathToStairsRoom();
 void NextRoomTransition();
 
 States currentState = STATE_Idle;
@@ -167,8 +168,8 @@ BOOL PRIVATE Pos(char **argv, int argc)
 	MAPPOS myPos = me->GetPosition();
 	
 	
-	//server->GameStringf("Room %d: %d, %d", room->pPresetType2info->roomNum, room->pRoom->pColl->nPosRoomX, room->pRoom->pColl->nPosRoomY);
-	//server->GameStringf("Player position %d, %d  room %d offset x: %d y: %d", (int)myPos.x, (int)myPos.y, server->D2GetCurrentRoomNum(), (int)myPos.x - (int)room->pRoom->pColl->nPosGameX, (int)myPos.y - (int)room->pRoom->pColl->nPosGameY);
+	server->GameStringf("Room %d: %d, %d", room->pPresetType2info->roomNum, room->pRoom->pColl->nPosRoomX, room->pRoom->pColl->nPosRoomY);
+	server->GameStringf("Player position %d, %d  room %d offset x: %d y: %d", (int)myPos.x, (int)myPos.y, server->D2GetCurrentRoomNum(), (int)myPos.x - (int)room->pRoom->pColl->nPosGameX, (int)myPos.y - (int)room->pRoom->pColl->nPosGameY);
 
 
 
@@ -415,7 +416,7 @@ void NextStep()
 	// path is possibly modified in CheckForOurStairs...
 	if (pathIndex < path.iNodeCount)
 	{
-		//server->GameStringf("Teleporting to = %d [%d, %d]", pathIndex, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y);
+	//	server->GameStringf("Teleporting to = %d [%d, %d]", pathIndex, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y);
 		attemptingPathIndex = pathIndex;
 		if (me->CastOnMap(D2S_TELEPORT, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y, isLeftHandCasting))
 		{
@@ -430,19 +431,27 @@ void NextStep()
 	}
 }
 
+int failureCount = 0;
 void OnMapBlink() {
 	if (currentState == STATE_TeleportingToStairsRoom_WaitBlink || currentState == STATE_TeleportingToStairsObject_WaitBlink) {
 		MAPPOS myPos = me->GetPosition();
 		auto distance = server->GetDistance(myPos.x, myPos.y, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y);
 
-		//server->GameStringf("Our position (%d, %d) vs target position (%d, %d) = %d m", myPos.x, myPos.y, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y, distance);
+	//	server->GameStringf("Our position (%d, %d) vs target position (%d, %d) = %d m", myPos.x, myPos.y, path.aPathNodes[pathIndex].x, path.aPathNodes[pathIndex].y, distance);
 		
-		if (distance < 15) {
+		if ((STATE_TeleportingToStairsRoom && distance < 20) || (STATE_TeleportingToStairsObject && distance <= 8)) {
 			++pathIndex;
+			failureCount = 0;
 			//server->GameStringf("pathIndex++ = %d", pathIndex);
 		}
 		else {
-			//server->GameStringf("Trying previous path again. we're %d away from where we should be", distance);
+			failureCount++;
+			if (failureCount > 2)
+			{
+				server->GameStringf("Recalculating path to stairs room...");
+				CalculatePathToStairsRoom();
+			}
+		//	server->GameStringf("Trying previous path again. we're %d away from where we should be", distance);
 		}
 
 		if (currentState == STATE_TeleportingToStairsObject_WaitBlink)
@@ -460,13 +469,8 @@ static const int kDefaultRetriesRemainingForNextRoomTransition = 50;
 int numRetriesRemainingForNextRoomTransition = kDefaultRetriesRemainingForNextRoomTransition;
 void NextRoomTransition()
 {
-	static int nextRoomTransitionPathAdjust = 0;
-
 	//server->GameStringf("NextRoomTransition()");
 
-	pathIndex = 0;
-	memset(&path, 0, sizeof(PATH));
-	memset(&stairsGameUnit, 0, sizeof(GAMEUNIT));
 	SetState(STATE_Idle);
 
 	if(currentTravelData->CurrentStep + 1 < currentTravelData->NumSteps)
@@ -478,10 +482,22 @@ void NextRoomTransition()
 		return;
 	}
 
+	CalculatePathToStairsRoom();
 	//server->GameStringf("Step: %d/%d", currentTravelData->CurrentStep, currentTravelData->NumSteps);
 
+	server->GameStringf("Teleporing to room %d", stairsRoomNum);
+	SetState(STATE_TeleportingToStairsRoom);
+	NextStep();
+}
 
+void CalculatePathToStairsRoom()
+{
 	static ROOMPOS allRoomCoords[2048];
+
+	pathIndex = 0;
+	memset(&path, 0, sizeof(PATH));
+	memset(&stairsGameUnit, 0, sizeof(GAMEUNIT));
+
 	DWORD numRooms = server->D2GetAllRoomCoords(allRoomCoords, ARRAYSIZE(allRoomCoords));
 	if(numRooms == 0)
 	{
@@ -522,50 +538,23 @@ void NextRoomTransition()
 
 	server->GameStringf("stairRoomCoord %d, %d",stairRoomCoord.x, stairRoomCoord.y);
 
-	static const auto kSweepDelta = 45.0 / 360.0;
-	static const auto kRadius = 5.0;
 
-	auto xMod = (kRadius * sin(kSweepDelta * nextRoomTransitionPathAdjust));
-	auto yMod = (kRadius * cos(kSweepDelta * nextRoomTransitionPathAdjust));
-	if (nextRoomTransitionPathAdjust == 0)
-	{
-		xMod = 0.0;
-		yMod = 0.0;
-	}
-
-	stairRoomCoord.x = stairRoomCoord.x*5 + foundStairs->second.XOffset + xMod;
-	stairRoomCoord.y = stairRoomCoord.y*5 + foundStairs->second.YOffset + yMod;
+	stairRoomCoord.x = stairRoomCoord.x*5 + foundStairs->second.XOffset;
+	stairRoomCoord.y = stairRoomCoord.y*5 + foundStairs->second.YOffset;
 	
 	//server->GameStringf("stairRoomCoord MOD %d, %d",stairRoomCoord.x, stairRoomCoord.y);
 
-
-	if(server->CalculatePath(stairRoomCoord.x, stairRoomCoord.y, &path, 5) == 0)
+	for (size_t adjust = 5; adjust < 20; adjust += 5)
 	{
-		nextRoomTransitionPathAdjust++;
-		if (nextRoomTransitionPathAdjust > 8)
+		if(server->CalculatePath(stairRoomCoord.x, stairRoomCoord.y, &path, adjust) != 0)
 		{
-			server->GameStringf("Failed to find spot :(. nextRoomTransitionPathAdjust = %d", nextRoomTransitionPathAdjust);
+			return;
 		}
-		else
-		{
-			server->GameStringf("Failed to find spot :(. nextRoomTransitionPathAdjust = %f,%f", xMod, yMod);
-
-			SetState(STATE_RetryNextRoomTransition);
-			currentTravelData->CurrentStep--;
-		}
-		return;
 	}
-	nextRoomTransitionPathAdjust = 0;
 
-	//server->GameStringf("Path found:");
-	//for(int i =0 ;i <= path.iNodeCount; ++i)
-	//{
-	//	server->GameStringf("%d, %d", path.aPathNodes[i].x, path.aPathNodes[i].y);
-	//}
-	
-	server->GameStringf("Teleporing to room %d", stairsRoomNum);
-	SetState(STATE_TeleportingToStairsRoom);
-	NextStep();
+	SetState(States::STATE_Idle);
+	server->GameStringf("Failed to find path to stairs. Returning to town");
+	server->GameCommandf(".flee tp");
 }
 
 void ShowUsage()
@@ -701,21 +690,6 @@ BOOL EXPORT OnClientStart()
 	}
 	allTravelData.push_back(&toAndarial);
 
-	toBloodRaven.Name = "Blood raven 1";
-	toBloodRaven.InitSteps(1);
-	toBloodRaven.WaypointDestination = WAYPOINTDEST_OuterCloister;
-	toBloodRaven.RoomTransitions[0][51] = StairsData(3, 15, 20); // Act 1 - Cave Entrance
-	allTravelData.push_back(&toBloodRaven);
-
-	toBloodRavenLair.Name = "Blood raven 2";
-	toBloodRavenLair.InitSteps(1);
-	toBloodRavenLair.WaypointDestination = WAYPOINTDEST_OuterCloister;
-	toBloodRavenLair.RoomTransitions[0][51] = StairsData(3, 15, 20); // Act 1 - Cave Entrance
-	toBloodRavenLair.RoomTransitions[0][91] = StairsData(5, 0, 0); // Act 1 - Cave Down W	
-	toBloodRavenLair.RoomTransitions[0][92] = StairsData(5, 0, 0); // Act 1 - Cave Down E	
-	toBloodRavenLair.RoomTransitions[0][93] = StairsData(5, 5, 34); // Act 1 - Cave Down S	
-	toBloodRavenLair.RoomTransitions[0][94] = StairsData(5, 16, 14); // Act 1 - Cave Down N	
-	allTravelData.push_back(&toBloodRavenLair);
 
 	toMephisto.Name = "Mephisto";
 	toMephisto.InitSteps(1);
@@ -737,6 +711,24 @@ BOOL EXPORT OnClientStart()
 		toBaal.RoomTransitions[i][1080] = StairsData(82, 18, 17); // Act 3 - Mephisto Next S
 		toBaal.RoomTransitions[i][1081] = StairsData(82, 19, 17); // Act 3 - Mephisto Next N
 	}
+
+
+
+	//toBloodRaven.Name = "Blood raven 1";
+	//toBloodRaven.InitSteps(1);
+	//toBloodRaven.WaypointDestination = WAYPOINTDEST_OuterCloister;
+	//toBloodRaven.RoomTransitions[0][51] = StairsData(3, 15, 20); // Act 1 - Cave Entrance
+	//allTravelData.push_back(&toBloodRaven);
+
+	//toBloodRavenLair.Name = "Blood raven 2";
+	//toBloodRavenLair.InitSteps(1);
+	//toBloodRavenLair.WaypointDestination = WAYPOINTDEST_OuterCloister;
+	//toBloodRavenLair.RoomTransitions[0][51] = StairsData(3, 15, 20); // Act 1 - Cave Entrance
+	//toBloodRavenLair.RoomTransitions[0][91] = StairsData(5, 0, 0); // Act 1 - Cave Down W	
+	//toBloodRavenLair.RoomTransitions[0][92] = StairsData(5, 0, 0); // Act 1 - Cave Down E	
+	//toBloodRavenLair.RoomTransitions[0][93] = StairsData(5, 5, 34); // Act 1 - Cave Down S	
+	//toBloodRavenLair.RoomTransitions[0][94] = StairsData(5, 16, 14); // Act 1 - Cave Down N	
+	//allTravelData.push_back(&toBloodRavenLair);
 
 	allTravelData.push_back(&toBaal);
 
