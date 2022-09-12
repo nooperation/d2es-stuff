@@ -25,6 +25,7 @@ BOOL CALLBACK enumItemFindTP(DWORD dwItemID, LPARAM lParam);
 DWORD portalId = 0;
 bool fleePortalRequested = false;
 bool portalRequested = false;
+bool hasSentInteractionPacket = false;
 bool saveAndExitEnabled = false;
 bool saveAndExitWhenNoTpEnabled = false;
 bool hotkeyInTown = false;
@@ -46,6 +47,7 @@ void ReadConfig()
 	fleeAmount = GetPrivateProfileInt("Flee", "HpPercentage", 25, CONFIG_FILE);
 	portalKey = GetPrivateProfileInt("Flee", "PortalKey", VK_BACK, CONFIG_FILE);
 	fleeKey = GetPrivateProfileInt("Flee", "FleeKey", 0, CONFIG_FILE);
+	hasSentInteractionPacket = false;
 
 	server->GameStringf("ÿc5Fleeÿc0: Config loaded, %s when hp drops below %d%%", saveAndExitEnabled?"ÿc1exitÿc0":"ÿc2TPÿc0", fleeAmount);
 }
@@ -73,6 +75,11 @@ void WriteConfig()
 
 void RequestTP()
 {
+	if (me->IsInTown())
+	{
+		return;
+	}
+
 	DWORD townPortalItem = 0;
 
 	if(me->GetSpellCharges(D2S_TOMEOFTOWNPORTAL) <= 0 && me->GetSpellCharges(D2S_SCROLLOFTOWNPORTAL) <= 0)
@@ -215,6 +222,7 @@ BOOL PRIVATE Save(char** argv, int argc)
 BOOL PRIVATE Load(char** argv, int argc)
 {
 	ReadConfig();
+	hasSentInteractionPacket = false;
 
 	return TRUE;
 }
@@ -224,10 +232,12 @@ VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
 	switch(nMessage)
 	{
 		case PM_DEATH:
+			hasSentInteractionPacket = false;
 			portalRequested = false;
 			fleePortalRequested = false;
 			break;
 		case PM_ENTERTOWN:
+			hasSentInteractionPacket = false;
 			portalRequested = false;
 			fleePortalRequested = false;
 			break;
@@ -259,7 +269,6 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 	return aLen;
 }
 
-
 DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 {   
 	if(aPacket[0] == 0x95)
@@ -283,9 +292,13 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 		interactPacket[0] = 0x13;
 		memcpy(interactPacket+1, &interact, sizeof(Packet_CS_InteractWithEntity));
 
-		if(me->GetHPPercent() > 0)
+		if(me->GetHPPercent() > 0 && (hotkeyInTown || !me->IsInTown()))
 		{
-			server->GameSendPacketToServer(interactPacket, 9);
+			if (!hasSentInteractionPacket)
+			{
+				hasSentInteractionPacket = true;
+				server->GameSendPacketToServer(interactPacket, 9);
+			}
 		}
 
 		portalRequested = false;
