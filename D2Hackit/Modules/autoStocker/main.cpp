@@ -10,6 +10,9 @@ AutoStocker autoStocker;
 
 bool settingHotkey = false;
 int hotkey = 0;
+bool hotkeyIncludesRares = false;
+bool hotkeyIncludesSets = false;
+bool hotkeyIncludesUniques = false;
 
 CLIENTINFO
 (
@@ -179,7 +182,8 @@ BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 	{
 		if(iKeyCode == hotkey)
 		{
-			Start(NULL, 0);
+			std::unordered_set<std::string> ignoredItemCodes;
+			autoStocker.StartRares(hotkeyIncludesSets, hotkeyIncludesRares, hotkeyIncludesUniques, false, ignoredItemCodes);
 		}
 	}
 
@@ -196,14 +200,26 @@ BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 void ReadConfig()
 {
 	hotkey = GetPrivateProfileInt("Autostocker", "Hotkey", 0, CONFIG_FILE);
+	hotkeyIncludesRares = GetPrivateProfileInt("Autostocker", "HotkeyIncludesRares", 0, CONFIG_FILE);
+	hotkeyIncludesSets = GetPrivateProfileInt("Autostocker", "HotkeyIncludesSets", 0, CONFIG_FILE);
+	hotkeyIncludesUniques = GetPrivateProfileInt("Autostocker", "HotkeyIncludesUniques", 0, CONFIG_FILE);
 }
 
 void WriteConfig()
 {
 	char configBuff[64];
 
-	sprintf_s(configBuff, sizeof(configBuff)/sizeof(configBuff[0]), "%d", hotkey);
-	WritePrivateProfileString("Autostocker", "Hotkey", configBuff, CONFIG_FILE);
+	sprintf_s(&configBuff[0], sizeof(configBuff) / sizeof(configBuff[0]), "%d", hotkey);
+	WritePrivateProfileString("Autostocker", "Hotkey", &configBuff[0], CONFIG_FILE);
+
+	sprintf_s(&configBuff[0], sizeof(configBuff)/sizeof(configBuff[0]), "%d", hotkeyIncludesRares ? 1 : 0);
+	WritePrivateProfileString("Autostocker", "HotkeyIncludesRares", &configBuff[0], CONFIG_FILE);
+
+	sprintf_s(&configBuff[0], sizeof(configBuff)/sizeof(configBuff[0]), "%d", hotkeyIncludesSets ? 1 : 0);
+	WritePrivateProfileString("Autostocker", "HotkeyIncludesSets", &configBuff[0], CONFIG_FILE);
+
+	sprintf_s(&configBuff[0], sizeof(configBuff)/sizeof(configBuff[0]), "%d", hotkeyIncludesUniques ? 1 : 0);
+	WritePrivateProfileString("Autostocker", "HotkeyIncludesUniques", &configBuff[0], CONFIG_FILE);
 }
 
 MODULECOMMANDSTRUCT ModuleCommands[]=
