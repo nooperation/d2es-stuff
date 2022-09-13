@@ -719,7 +719,13 @@ BOOL D2ParseItem(const BYTE *aPacket, DWORD aLen, ITEM& item)
 	if (!_stricmp(item.szItemCode, "gld"))
 	{
 		if(iPacket.GetField(1))
-			item.dwGoldAmount = iPacket.GetField(32);
+		{
+			item.dwGoldAmount = 
+				(iPacket.GetField(8) & 0xFF) << 0 |
+				(iPacket.GetField(8) & 0xFF) << 8 |
+				(iPacket.GetField(8) & 0xFF) << 16 |
+				(iPacket.GetField(8) & 0xFF) << 24;
+		}
 		else
 			item.dwGoldAmount = iPacket.GetField(12);
 		return TRUE;
