@@ -28,6 +28,7 @@ class ItemWatcher
 		void SetRadius(int radius);
 		void SetMinGold(int amount);
 		void SetTownPickup(bool enabled);
+		void SetGoldSpeed(int goldSpeed);
 		void TogglePickItems();
 		void Mute();
 		bool LoadItems();
@@ -62,6 +63,7 @@ class ItemWatcher
 		unsigned int minGold;
 		bool townPickup;
 		bool isPickingItems;
+		unsigned int goldSpeed;
 		bool isInGame;
 		bool isMute;
 		bool isAnnouncingAllSets;

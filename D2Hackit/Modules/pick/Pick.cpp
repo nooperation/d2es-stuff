@@ -5,6 +5,7 @@
 #include "ItemWatcher.h"
 
 BOOL PRIVATE Radius(char** argv, int argc);
+BOOL PRIVATE GoldSpeed(char** argv, int argc);
 BOOL PRIVATE MinGold(char** argv, int argc);
 BOOL PRIVATE ToggleShowItemLevel(char** argv, int argc);
 BOOL PRIVATE ReloadItemDefs(char** argv, int argc);
@@ -59,6 +60,18 @@ BOOL PRIVATE Radius(char** argv, int argc)
 	}
 
 	server->GameErrorf("Invalid input, correct usage is .pick radius n");
+	return FALSE;
+}
+
+BOOL PRIVATE GoldSpeed(char** argv, int argc)
+{
+	if (argc == 3)
+	{
+		itemWatcher.SetGoldSpeed(atoi(argv[2]));
+		return TRUE;
+	}
+
+	server->GameErrorf("Invalid input, correct usage is .pick goldspeed n");
 	return FALSE;
 }
 
@@ -189,6 +202,11 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"radius",
 		Radius,
 		"Set radius, default = 4"
+	},
+	{
+		"goldspeed",
+		GoldSpeed,
+		"Set gold pickup speed, default = 1. 3 risks disconnects, above will disconnect."
 	},
 	{
 		"min",

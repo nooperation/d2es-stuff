@@ -5,6 +5,8 @@
 
 #define PICK_SETTINGS_PATH ".\\plugin\\pick.ini"
 
+int goldPicksThisFrame = 0;
+
 bool operator==(const WatchedItemData &lhs, const WatchedItemData &rhs)
 {
 	return lhs.id == rhs.id &&
@@ -18,6 +20,7 @@ ItemWatcher::ItemWatcher()
 	minGold = 50;
 	townPickup = true;
 	isPickingItems = true;
+	goldSpeed = 1;
 	isMute = false;
 }
 
@@ -107,8 +110,15 @@ void ItemWatcher::CheckWatchedItems()
 		if(itemIter->isGold)
 		{
 			me->PickGroundItem(itemIter->id, TRUE);
-			return;
+			
+			goldPicksThisFrame++;
+			if (goldPicksThisFrame > goldSpeed) {
+				return;
+			}
+			++itemIter;
+			continue;
 		}
+
 
 		if (itemIter->isIdScroll)
 		{
@@ -225,6 +235,12 @@ void ItemWatcher::SetRadius(int radius)
 	this->radius = radius;
 }
 
+void ItemWatcher::SetGoldSpeed(int goldSpeed)
+{
+	server->GameInfof("Pick: Setting gold pickup speed to %d", goldSpeed);
+	this->goldSpeed = goldSpeed;
+}
+
 void ItemWatcher::SetMinGold(int amount)
 {
 	server->GameInfof("Pick: Setting minimum gold amount to %d", amount);
@@ -270,6 +286,7 @@ bool ItemWatcher::LoadItems()
 	minGold = GetPrivateProfileInt("Pick", "MinGold", 50, PICK_SETTINGS_PATH);
 	townPickup = GetPrivateProfileInt("Pick", "Town", 1, PICK_SETTINGS_PATH) == TRUE;
 	isPickingItems = GetPrivateProfileInt("Pick", "Items", 1, PICK_SETTINGS_PATH) == TRUE;
+	goldSpeed = GetPrivateProfileInt("Pick", "GoldSpeed", 1, PICK_SETTINGS_PATH);
 
 	return true;
 }
@@ -402,6 +419,7 @@ void ItemWatcher::OnTick()
 		return;
 	}
 
+	goldPicksThisFrame = 0;
 	CheckWatchedItems();
 }
 
