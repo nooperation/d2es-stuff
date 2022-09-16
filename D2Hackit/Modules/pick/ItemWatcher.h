@@ -19,6 +19,7 @@ public:
 	bool isIdScroll;
 	byte keyCount;
 	SIZE itemSize;
+	float distanceToItem;
 };
 
 class ItemWatcher
@@ -51,8 +52,8 @@ class ItemWatcher
 		bool IsOkToPick(const std::string &itemCode);
 		bool IsOkToAnnounce(const char *itemCode);
 
-		std::vector<DWORD> destroyedItemsSinceLastCheck;
-		std::list<WatchedItemData> watchedItems;
+		std::unordered_set<DWORD> destroyedItemsSinceLastCheck;
+		std::vector<WatchedItemData> watchedItems;
 
 		std::unordered_map<std::string, std::string> uniquesToAnnounce;
 		std::unordered_map<std::string, std::string> setsToAnnounce;
@@ -71,5 +72,7 @@ class ItemWatcher
 		bool isAnnouncingAllCrafted;
 		bool isOverridingUniqueItemNames;
 		bool isOverridingSetItemNames;
+		bool isWalkToGold;
+		bool isWalkToItems;
 };
 #endif

@@ -1,5 +1,6 @@
 #include <fstream>
 #include <functional>
+#include <algorithm>
 #include "ItemWatcher.h"
 #include "../../Includes/D2Client.h"
 
@@ -58,35 +59,47 @@ BOOL CALLBACK searchForTomesItemProc(LPCITEM item, LPARAM lParam)
 
 void ItemWatcher::CheckWatchedItems()
 {
-	if(destroyedItemsSinceLastCheck.size() > 0)
+	if(!destroyedItemsSinceLastCheck.empty())
 	{
-		std::list<WatchedItemData> itemsToStopWatching;
-
-		for(auto &watchedItem: watchedItems)
+		for (auto watchedItemIter = watchedItems.begin(); watchedItemIter != watchedItems.end();)
 		{
-			for(auto &destroyedItemId: destroyedItemsSinceLastCheck)
+			if (destroyedItemsSinceLastCheck.find(watchedItemIter->id) != destroyedItemsSinceLastCheck.end())
 			{
-				if(watchedItem.id == destroyedItemId)
-				{
-					itemsToStopWatching.push_back(watchedItem);
-				}
+				watchedItemIter = watchedItems.erase(watchedItemIter);
+			}
+			else 
+			{
+				++watchedItemIter;
 			}
 		}
-
-		for (auto &item: itemsToStopWatching)
-		{
-			watchedItems.remove(item);
-		}
 	}
+
+	// No items will be added to destroyedItemsSinceLastCheck because Tick() and OnPacket() functions are only fired from the
+	//  same thread (Proc_OnGameTimerTick() server20.cpp)
+	destroyedItemsSinceLastCheck.clear();
 
 	if(me->GetOpenedUI() != 0)
 	{
 		return;
 	}
 
-	// No items will be added to destroyedItemsSinceLastCheck because Tick() and OnPacket() functions are only fired from the
-	//  same thread (Proc_OnGameTimerTick() server20.cpp)
-	destroyedItemsSinceLastCheck.clear();
+	if (watchedItems.empty())
+	{
+		return;
+	}
+
+	const auto myPosition = me->GetPosition();
+	for(auto &item: watchedItems)
+	{
+		item.distanceToItem = sqrt(
+			(myPosition.x - item.x) *(myPosition.x - item.x) +
+			(myPosition.y - item.y) * (myPosition.y - item.y)
+		);
+	}
+
+	std::sort(watchedItems.begin(), watchedItems.end(), [](const WatchedItemData &left, const WatchedItemData &right) {
+		return left.distanceToItem < right.distanceToItem;
+	});
 
 	for(auto itemIter = watchedItems.begin(); itemIter != watchedItems.end(); )
 	{
@@ -109,7 +122,7 @@ void ItemWatcher::CheckWatchedItems()
 		//server->GameStringf("Picking %X... [%d]", i->id, watchedItems.size());
 		if(itemIter->isGold)
 		{
-			me->PickGroundItem(itemIter->id, TRUE);
+			me->PickGroundItem(itemIter->id, this->isWalkToGold);
 			
 			goldPicksThisFrame++;
 			if (goldPicksThisFrame > goldSpeed) {
@@ -134,7 +147,7 @@ void ItemWatcher::CheckWatchedItems()
 				continue;
 			}
 
-			me->PickGroundItem(itemIter->id, TRUE);
+			me->PickGroundItem(itemIter->id, this->isWalkToItems);
 			return;
 		}
 
@@ -152,7 +165,7 @@ void ItemWatcher::CheckWatchedItems()
 				continue;
 			}
 
-			me->PickGroundItem(itemIter->id, TRUE);
+			me->PickGroundItem(itemIter->id, this->isWalkToItems);
 			return;
 		}
 
@@ -166,13 +179,13 @@ void ItemWatcher::CheckWatchedItems()
 				continue;
 			}
 
-			me->PickGroundItem(itemIter->id, TRUE);
+			me->PickGroundItem(itemIter->id, this->isWalkToItems);
 			return;
 		}
 
 		if(me->FindFirstStorageSpace(STORAGE_INVENTORY, itemIter->itemSize, NULL))
 		{
-			me->PickGroundItem(itemIter->id, TRUE);
+			me->PickGroundItem(itemIter->id, this->isWalkToItems);
 			return;
 		}
 
@@ -287,6 +300,8 @@ bool ItemWatcher::LoadItems()
 	townPickup = GetPrivateProfileInt("Pick", "Town", 1, PICK_SETTINGS_PATH) == TRUE;
 	isPickingItems = GetPrivateProfileInt("Pick", "Items", 1, PICK_SETTINGS_PATH) == TRUE;
 	goldSpeed = GetPrivateProfileInt("Pick", "GoldSpeed", 1, PICK_SETTINGS_PATH);
+	isWalkToGold = GetPrivateProfileInt("Pick", "WalkToGold", 1, PICK_SETTINGS_PATH) == TRUE;
+	isWalkToItems = GetPrivateProfileInt("Pick", "WalkToItems", 1, PICK_SETTINGS_PATH) == TRUE;
 
 	return true;
 }
@@ -430,7 +445,7 @@ void ItemWatcher::OnItemDestroy(DWORD itemId)
 		return;
 	}
 
-	destroyedItemsSinceLastCheck.push_back(itemId);
+	destroyedItemsSinceLastCheck.insert(itemId);
 }
 
 void ItemWatcher::OnItemAction(const ITEM &item)
@@ -491,7 +506,7 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 				itemData.keyCount = itemCode == "key" ? item.iQuantity : 0;
 
 				itemData.itemSize = server->GetItemSize(itemCode.c_str());
-				watchedItems.push_front(itemData);
+				watchedItems.push_back(itemData);
 			}
 		}
 	}
