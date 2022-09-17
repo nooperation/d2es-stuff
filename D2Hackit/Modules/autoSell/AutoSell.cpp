@@ -241,6 +241,7 @@ void AutoSell::RestockScrolls()
 	}
 
 	this->numTPTomesToRefill = 0;
+	this->Stop();
 }
 
 
@@ -252,8 +253,13 @@ void AutoSell::OnNpcItemList(const ITEM& merchantItem)
 		return;
 	}
 
-	this->merchantTpScrollId = merchantItem.dwItemID;
+	// scroll of town portal is flagged as an npc item for some reason. we'll trigger here no matter what if it drops?
+	if (!me->IsUIOpened(UI_NPCSHOP))
+	{
+		return;
+	}
 
+	this->merchantTpScrollId = merchantItem.dwItemID;
 	if (this->currentState == State::Uninitialized)
 	{
 		Start(true);
