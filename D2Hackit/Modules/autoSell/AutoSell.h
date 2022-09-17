@@ -31,17 +31,22 @@ public:
 	void OnItemSold();
 	void OnNPCShopScreenOpened();
 	void ProcessInventoryItem(const ITEM *item);
+	void OnNpcItemList(const ITEM &merchantItem);
 
 private:
 	bool LoadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap);
 	void SellQueuedItems();
+	void RestockScrolls();
 	bool SellItem(DWORD dwItemID) const;
+	bool BuyItemInQuantity(DWORD dwItemID) const;
 
 	std::queue<ItemToSell> itemsToSell;
 
 	bool isFullyAutomatic;
 	bool isAnnouncingSoldItems;
 	long startingGold;
+	int numTPTomesToRefill;
+	int merchantTpScrollId;
 
 	State currentState;
 	std::unordered_map<std::string, std::string> targetItems;

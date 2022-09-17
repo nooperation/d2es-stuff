@@ -10,7 +10,7 @@ bool isShowingSelectedSkill = false;
 
 CLIENTINFO
 (
-	1,0,
+	1,1,
 	"",
 	"",
 	"buffMe",
@@ -20,8 +20,20 @@ CLIENTINFO
 
 BOOL PRIVATE Buff(char** argv, int argc)
 {
-	buff.Start();
+	bool useChat = false;
+
+	if(argc >= 3)
+	{
+		for(int i = 2; i < argc; i++)
+		{
+			if(_stricmp(argv[i], "chat") == 0)
+			{
+				useChat = true;
+			}
+		}
+	}
 	
+	buff.Start(useChat);
 	return TRUE;
 }
 
@@ -86,7 +98,7 @@ BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 	if(iKeyCode == VK_DELETE)
 	{
 		tickCount = 0;
-		buff.Start();
+		buff.Start(false);
 	}
 
 	return iKeyCode;

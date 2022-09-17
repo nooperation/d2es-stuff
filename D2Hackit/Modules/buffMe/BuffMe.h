@@ -30,7 +30,7 @@ class BuffMe
 {
 	public:
 		BuffMe();
-		void Start();
+		void Start(bool useChat);
 		void OnAffect(size_t affectID);
 		void OnDisAffect(size_t affectID);
 		void OnTick();
@@ -45,6 +45,7 @@ class BuffMe
 
 		BuffStates currentState;
 		bool needsRebuff;
+		bool useChat;
 		int startingSkill;
 };
 

@@ -846,6 +846,15 @@ BOOL D2ParseItem(const BYTE *aPacket, DWORD aLen, ITEM& item)
 		item.iSocketNumber = (BYTE)iPacket.GetField(4);
 	}
 
+	// Useless because d2hackit doesn't update quantity of inventory items on use. Keeping for a future note though.
+	//if(strcmp(item.szItemCode, "tbk") == 0)
+	//{
+	//	auto unknown = iPacket.GetField(5);
+	//	auto amount = iPacket.GetField(9);
+	//	item.iQuantity = amount;
+	//	return TRUE;
+	//}
+
 	if(D2IsStackable(item.szItemCode))
 	{
 		item.iQuantity = (WORD)iPacket.GetField(9);

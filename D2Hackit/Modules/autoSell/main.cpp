@@ -61,6 +61,26 @@ BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 	return iKeyCode;
 }
 
+DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
+{
+	if(aPacket[0] == 0x9c)
+	{
+		ITEM currentItem;
+
+		if(!server->ParseItem(aPacket, aLen, currentItem))
+		{
+			return aLen;
+		}
+
+		if(currentItem.iStore)
+		{
+			autoSell.OnNpcItemList(currentItem);
+		}
+	}
+
+	return aLen;
+}
+
 MODULECOMMANDSTRUCT ModuleCommands[]=
 {
 	{

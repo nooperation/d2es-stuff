@@ -16,7 +16,7 @@ struct Packet_CS_InteractWithEntity
 	DWORD ID;
 };
 
-void RequestTP();
+void RequestTP(bool enterPortal);
 void ReadConfig();
 void WriteConfig();
 void CheckPlayerHPMana(WORD wNewHP, WORD wNewMana);
@@ -29,6 +29,7 @@ bool hasSentInteractionPacket = false;
 bool saveAndExitEnabled = false;
 bool saveAndExitWhenNoTpEnabled = false;
 bool hotkeyInTown = false;
+bool createPortalWhenLeavingTown = false;
 int fleeAmount = 25;
 BYTE portalKey = VK_BACK;
 BYTE fleeKey = 0;
@@ -47,6 +48,7 @@ void ReadConfig()
 	fleeAmount = GetPrivateProfileInt("Flee", "HpPercentage", 25, CONFIG_FILE);
 	portalKey = GetPrivateProfileInt("Flee", "PortalKey", VK_BACK, CONFIG_FILE);
 	fleeKey = GetPrivateProfileInt("Flee", "FleeKey", 0, CONFIG_FILE);
+	createPortalWhenLeavingTown = GetPrivateProfileInt("Flee", "CreatePortalWhenLeavingTown", FALSE, CONFIG_FILE) == TRUE;
 	hasSentInteractionPacket = false;
 
 	server->GameStringf("ÿc5Fleeÿc0: Config loaded, %s when hp drops below %d%%", saveAndExitEnabled?"ÿc1exitÿc0":"ÿc2TPÿc0", fleeAmount);
@@ -60,6 +62,7 @@ void WriteConfig()
 	WritePrivateProfileString("Flee", "SaveAndExit", saveAndExitEnabled?"1":"0", CONFIG_FILE);
 	WritePrivateProfileString("Flee", "SaveAndExitWhenNoTp", saveAndExitWhenNoTpEnabled?"1":"0", CONFIG_FILE);
 	WritePrivateProfileString("Flee", "HotkeyInTown", hotkeyInTown?"1":"0", CONFIG_FILE);
+	WritePrivateProfileString("Flee", "CreatePortalWhenLeavingTown", createPortalWhenLeavingTown?"1":"0", CONFIG_FILE);
 
 	sprintf_s(configBuff, sizeof(configBuff)/sizeof(configBuff[0]), "%d", fleeAmount);
 	WritePrivateProfileString("Flee", "HpPercentage", configBuff, CONFIG_FILE);
@@ -73,7 +76,7 @@ void WriteConfig()
 	server->GameStringf("ÿc5Fleeÿc0: Config saved");
 }
 
-void RequestTP()
+void RequestTP(bool enterPortal)
 {
 	if (me->IsInTown())
 	{
@@ -105,7 +108,11 @@ void RequestTP()
 	}
 
 	portalId = townPortalItem;
-	fleePortalRequested = true;
+
+	if (enterPortal)
+	{
+		fleePortalRequested = true;
+	}
 	me->DrinkInventoryPotion(townPortalItem);
 
 	server->GameStringf("ÿc5Fleeÿc0: Opening portal... %d charges left", me->GetSpellCharges(D2S_TOMEOFTOWNPORTAL)-1);
@@ -125,7 +132,7 @@ void CheckPlayerHPMana(WORD wNewHP, WORD wNewMana)
 			}
 			else
 			{
-				RequestTP();
+				RequestTP(true);
 			}
 		}
 	}
@@ -184,10 +191,11 @@ BOOL PRIVATE SetPortalKey(char** argv, int argc)
 
 BOOL PRIVATE TP(char** argv, int argc)
 {
-	RequestTP();
+	RequestTP(true);
 
 	return TRUE;
 }
+
 
 BOOL PRIVATE HP(char** argv, int argc)
 {
@@ -240,6 +248,12 @@ VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
 			hasSentInteractionPacket = false;
 			portalRequested = false;
 			fleePortalRequested = false;
+			break;
+		case PM_LEAVETOWN:
+			if (createPortalWhenLeavingTown)
+			{
+				RequestTP(false);
+			}
 			break;
 	}
 }
@@ -349,7 +363,7 @@ BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 	}
 	else if(iKeyCode == portalKey && (hotkeyInTown || !me->IsInTown()))
 	{
-		RequestTP();
+		RequestTP(true);
 	}
 	else if(iKeyCode == fleeKey && (hotkeyInTown || !me->IsInTown()))
 	{

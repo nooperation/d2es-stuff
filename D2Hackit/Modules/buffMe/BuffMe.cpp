@@ -59,8 +59,9 @@ bool BuffMe::ReadBuffs(const std::string &fileName)
 /// <summary>
 /// Starts the buff process with the first buff
 /// </summary>
-void BuffMe::Start()
+void BuffMe::Start(bool useChat)
 {
+	this->useChat = useChat;
 	currentBuffIndex = 0;
 	currentState = STATE_SENDING;
 	startingSkill = me->GetSelectedSpell(FALSE);
@@ -75,6 +76,11 @@ void BuffMe::OnCompletion()
 {
 	me->SelectSpell(startingSkill, FALSE);
 	currentState = STATE_IDLE;
+
+	if(useChat)
+	{
+		me->Say("ÿc5BuffMeÿc0: Done");
+	}
 }
 
 /// <summary>
@@ -93,6 +99,11 @@ void BuffMe::OnDisAffect(size_t affectID)
 	{
 		if(item.affectId == affectID)
 		{
+			if(useChat)
+			{
+				me->Say("ÿc5BuffMeÿc0: Rebuff needed");
+			}
+
 			server->GameStringf("ÿc3Warningÿc0: ÿc2Rebuff needed");
 			needsRebuff = true;
 			return;
