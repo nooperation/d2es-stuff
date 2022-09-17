@@ -30,6 +30,8 @@ bool saveAndExitEnabled = false;
 bool saveAndExitWhenNoTpEnabled = false;
 bool hotkeyInTown = false;
 bool createPortalWhenLeavingTown = false;
+bool isSuppressingAutoTpWhenLeavingTown = false;
+
 int fleeAmount = 25;
 BYTE portalKey = VK_BACK;
 BYTE fleeKey = 0;
@@ -196,6 +198,19 @@ BOOL PRIVATE TP(char** argv, int argc)
 	return TRUE;
 }
 
+BOOL PRIVATE SuppressAutoTp(char** argv, int argc)
+{
+	if(argc != 3)
+	{
+		server->GameStringf("ÿc5Fleeÿc0: Usage: SuppressAutoTp 0/1");
+		return FALSE;
+	}
+
+	isSuppressingAutoTpWhenLeavingTown = atoi(argv[2]) != 0;
+
+	return TRUE;
+}
+
 
 BOOL PRIVATE HP(char** argv, int argc)
 {
@@ -250,7 +265,7 @@ VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
 			fleePortalRequested = false;
 			break;
 		case PM_LEAVETOWN:
-			if (createPortalWhenLeavingTown)
+			if (!isSuppressingAutoTpWhenLeavingTown && createPortalWhenLeavingTown)
 			{
 				RequestTP(false);
 			}
@@ -408,6 +423,11 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"tpkey",
 		SetPortalKey,
 		"Sets the key for fast portal",
+	},	
+	{
+		"SuppressAutoTp",
+		SuppressAutoTp,
+		"Disabled auto-tp when leaving town [0/1]",
 	},
 	{
 		"fleekey",

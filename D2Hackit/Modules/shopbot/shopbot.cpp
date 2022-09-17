@@ -111,6 +111,12 @@ bool ShopBot::Start(const std::vector<MAPPOS> &customPath, const std::string &me
 	minPrefix = GetPrivateProfileInt("ShopBot", "PrefixCount", 1, CONFIG_PATH);
 	minSuffix = GetPrivateProfileInt("ShopBot", "SuffixCount", 0, CONFIG_PATH);
 
+	auto fleeModule = GetModuleHandle("Flee.d2h");
+	if (fleeModule != NULL)
+	{
+		server->GameCommandf("flee SuppressAutoTp 1");
+	}
+
 	server->GameStringf("ÿc:Shopbotÿc0: Min prefix: %d Min suffix: %d", minPrefix, minSuffix);
 
 	currentState = STATE_NEXTTELEPORT;
@@ -341,6 +347,12 @@ void ShopBot::OnTick()
 		}
 		case STATE_COMPLETE:
 		{
+			auto fleeModule = GetModuleHandle("Flee.d2h");
+			if (fleeModule != NULL)
+			{
+				server->GameCommandf("flee SuppressAutoTp 0");
+			}
+
 			server->GameStringf("ÿc:Shopbotÿc0: complete");
 			currentState = STATE_UNINITIALIZED;
 			return;
