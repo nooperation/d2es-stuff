@@ -38,4 +38,12 @@
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\filterSetWhitelist.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\filterUniqueWhitelist.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

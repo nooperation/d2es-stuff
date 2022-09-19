@@ -127,6 +127,10 @@ xcopy /Y $(TargetPath) $(SolutionDir)\Publish_$(Configuration)\</Command>
     <None Include="Resources\filterAllow.txt" />
     <None Include="Resources\filterDeny.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\filterSetWhitelist.txt" />
+    <Text Include="Resources\filterUniqueWhitelist.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -29,7 +29,14 @@ bool ItemFilter::LoadItems()
 	{
 		return false;
 	}
-
+	if(!LoadItemMap(".\\plugin\\filterUniqueWhitelist.txt", allowedItemsUnique))
+	{
+		return false;
+	}
+	if(!LoadItemMap(".\\plugin\\filterSetWhitelist.txt", allowedItemsSet))
+	{
+		return false;
+	}
 	//filterTown		= GetPrivateProfileInt("Filter", "FilterTown", 1, FILTER_SETTINGS_PATH); 
 
 	showUnique			= GetPrivateProfileInt("WeaponArmor", "Unique", 1, FILTER_SETTINGS_PATH) == TRUE;
@@ -49,6 +56,9 @@ bool ItemFilter::LoadItems()
 
 	showMagicCharms		= GetPrivateProfileInt("Charms", "MagicCharms", 1, FILTER_SETTINGS_PATH) == TRUE;
     showRareCharms		= GetPrivateProfileInt("Charms", "RareCharms", 1, FILTER_SETTINGS_PATH) == TRUE;
+
+	showMagicJewels     = GetPrivateProfileInt("Jewels", "MagicJewels", 1, FILTER_SETTINGS_PATH) == TRUE;
+	showRareJewels      = GetPrivateProfileInt("Jewels", "RareJewels", 1, FILTER_SETTINGS_PATH) == TRUE;
 
 	minGoldAmount		= GetPrivateProfileInt("Misc", "MinGoldAmount", 0, FILTER_SETTINGS_PATH);
 	return true;
@@ -80,6 +90,12 @@ bool ItemFilter::OnItemFind(ITEM &item)
 	}
 
 	if(IsAllowed(item.szItemCode))
+		return true;
+
+	if(item.iQuality == ITEM_LEVEL_UNIQUE && allowedItemsUnique.find(item.szItemCode) != allowedItemsUnique.end())  
+		return true;
+	
+	if(item.iQuality == ITEM_LEVEL_SET && allowedItemsSet.find(item.szItemCode) != allowedItemsSet.end())  
 		return true;
 
 	if(IsFiltered(item.szItemCode))
@@ -115,6 +131,16 @@ bool ItemFilter::OnItemFind(ITEM &item)
 
         return true;
     }
+
+	if (IsJewel(item.szItemCode))
+	{
+		if (!showMagicJewels && item.iQuality == ITEM_LEVEL_MAGIC)
+			return false;
+		if (!showRareJewels && item.iQuality == ITEM_LEVEL_RARE)
+			return false;
+
+		return true;
+	}
     
 	if(server->IsWeapon(item.szItemCode) || server->IsArmor(item.szItemCode))
 	{
@@ -127,7 +153,7 @@ bool ItemFilter::OnItemFind(ITEM &item)
 		if(showEthSoc && item.iEthereal && item.iSocketed)
 			return true;
 
-		if(!showUnique && item.iQuality == ITEM_LEVEL_UNIQUE) 
+		if(!showUnique && item.iQuality == ITEM_LEVEL_UNIQUE)  
 			return false;
 
 		if(!showRare && item.iQuality == ITEM_LEVEL_RARE)
@@ -217,8 +243,7 @@ bool ItemFilter::IsGoodItemCode(char *itemCode)
 		return true;
 	}
 
-	if(strcmp(itemCode, "jew") == 0 || 
-		strcmp(itemCode, "xu0") == 0 || 
+	if(strcmp(itemCode, "xu0") == 0 || 
 		strcmp(itemCode, "s51") == 0 || 
 		strcmp(itemCode, "s01") == 0 || 
 		strcmp(itemCode, "t51") == 0 ||
@@ -246,6 +271,16 @@ bool ItemFilter::IsCharm(char *itemCode)
 	if((itemCode[0] == 'm' || itemCode[0] == 'n') && itemCode[1] == 'c' && isdigit(itemCode[2]))
 	{
 		// Charms and such
+		return true;
+	}
+
+	return false;
+}
+
+bool ItemFilter::IsJewel(char* itemCode)
+{
+	if (strcmp(itemCode, "jew") == 0)
+	{
 		return true;
 	}
 
@@ -287,6 +322,15 @@ bool ItemFilter::IsRareSpecial(char *itemCode)
 
 	// Aura Stones, unique stones
 	if(itemCode[0] == 'a' && itemCode[1] == 'n' && (itemCode[2] >= '0' && itemCode[2] <= '9'))
+	{
+		return true;
+	}
+
+	if(strcmp(itemCode, "sbs") == 0 ||
+		strcmp(itemCode, "srj") == 0 ||
+		strcmp(itemCode, "sbk") == 0 ||
+		strcmp(itemCode, "toa") == 0 ||
+		strcmp(itemCode, "zz0") == 0)
 	{
 		return true;
 	}

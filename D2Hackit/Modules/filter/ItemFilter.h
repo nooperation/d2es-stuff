@@ -14,6 +14,8 @@ class ItemFilter
 	private:
 		std::unordered_map<std::string, std::string> filteredItems;
 		std::unordered_map<std::string, std::string> allowedItems;
+		std::unordered_map<std::string, std::string> allowedItemsUnique;
+		std::unordered_map<std::string, std::string> allowedItemsSet;
 		std::unordered_map<std::string, std::string> weaponArmorItems;
 		//bool filterTown;
 		bool showEthSoc;
@@ -31,6 +33,8 @@ class ItemFilter
 		bool showRareRingAmulet;
 		bool showMagicCharms;
 		bool showRareCharms;
+		bool showMagicJewels;
+		bool showRareJewels;
 		int minGoldAmount;
 
 		bool OnItemFind(ITEM &item);
@@ -41,6 +45,7 @@ class ItemFilter
 		bool IsGoodItemOther(ITEM &item);
 		bool IsGoodItemCode(char *itemCode);
 		bool IsCharm(char *itemCode);
+		bool IsJewel(char *itemCode);
 		bool IsRareSpecial(char *itemCode);
 		bool IsRuneDecalScroll(char *itemCode);
 		bool IsRingAmulet(char *itemCode);

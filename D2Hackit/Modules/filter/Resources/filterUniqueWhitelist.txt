@@ -1,0 +1,27 @@
+ytp Archmage Plate
+yrb Archmage Robe
+0gi Slayer Axe
+0ts Whale Hunter
+yft Ceremonial Shield
+yul Ceremonial Armor
+ci3 Diadem
+zam Amazonian Pin
+sam Sorcerer's Talisman
+nam Death's Locket
+pam Holy Pendant
+bam Totemic Pebble
+dam Druidic Necklace
+aam Assassin's Choker
+3lb Sash
+amu Amulet
+au9 Amulet
+rin Ring
+rn9 Ring
+jwl Jewel
+ore Ore
+cx1 Small Charm
+cx2 Large Charm
+cx3 Grand Charm
+cm1 Small Charm
+cm2 Large Charm
+cm3 Grand Charm
