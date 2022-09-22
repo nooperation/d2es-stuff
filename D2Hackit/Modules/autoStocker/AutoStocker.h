@@ -77,6 +77,7 @@ class AutoStocker
 		bool IsCrystalItem(LPCSTR itemCode);
 		bool IsGemCanItem(LPCSTR itemCode);
 		bool IsRerollItem(const ITEM &item);
+		bool AutoStocker::IsRingAmulet(LPCSTR itemCode);
 
 		std::vector<std::vector<DWORD>> itemsToTransmute;
 		std::vector<DWORD> restockers;
@@ -93,9 +94,12 @@ class AutoStocker
 		bool IsTransmutingUnidentifiedSmallCharms;
 		bool IsTransmutingUnidentifiedLargeCharms;
 		bool IsTransmutingUnidentifiedGrandCharms;
+		bool IgnoreIdentifiedSetRingsAndAmulets;
 		int MaxUnidentifiedSCharmLevel;
 		int MaxUnidentifiedLCharmLevel;
 		int MaxUnidentifiedGCharmLevel;
+		int MinPrefixCount;
+		int MinSuffixCount;
 
 		unsigned int currentItem;
 		unsigned int currentStocker;

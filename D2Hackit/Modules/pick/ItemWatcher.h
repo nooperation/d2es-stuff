@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
+#include <chrono>
 #include "../../Includes/D2Client.h"
 //#include "_item.h"
 
@@ -46,6 +47,8 @@ class ItemWatcher
 		void CheckWatchedItems();
 		void Cleanup();
 		bool loadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap);
+		void SortWatchedItems();
+		float Distance(float x1, float x2, float y1, float y2) const;
 
 		const char *GetItemDesc(const ITEM &item);
 		const char *GetDirectionFrom(WORD sourceX, WORD sourceY, WORD targetX, WORD targetY);
@@ -60,6 +63,9 @@ class ItemWatcher
 		std::unordered_map<std::string, std::string> itemsToAnnounce;
 		std::unordered_map<std::string, std::string> itemsToPick;
 
+		std::chrono::system_clock::time_point nextPickAttemptTime;
+
+		int itemWatcherTicksToSkip;
 		unsigned int radius;
 		unsigned int minGold;
 		bool townPickup;

@@ -59,6 +59,8 @@ BOOL CALLBACK searchForTomesItemProc(LPCITEM item, LPARAM lParam)
 
 void ItemWatcher::CheckWatchedItems()
 {
+	bool needToResortWatchedItems = false;
+
 	if(!destroyedItemsSinceLastCheck.empty())
 	{
 		for (auto watchedItemIter = watchedItems.begin(); watchedItemIter != watchedItems.end();)
@@ -66,8 +68,9 @@ void ItemWatcher::CheckWatchedItems()
 			if (destroyedItemsSinceLastCheck.find(watchedItemIter->id) != destroyedItemsSinceLastCheck.end())
 			{
 				watchedItemIter = watchedItems.erase(watchedItemIter);
+				needToResortWatchedItems = true;
 			}
-			else 
+			else
 			{
 				++watchedItemIter;
 			}
@@ -78,30 +81,25 @@ void ItemWatcher::CheckWatchedItems()
 	//  same thread (Proc_OnGameTimerTick() server20.cpp)
 	destroyedItemsSinceLastCheck.clear();
 
+	if(std::chrono::system_clock::now() < nextPickAttemptTime)
+	{
+		return;
+	}
+
 	if(me->GetOpenedUI() != 0)
 	{
 		return;
 	}
 
-	if (watchedItems.empty())
+	if(watchedItems.empty())
 	{
 		return;
 	}
 
-	const auto myPosition = me->GetPosition();
-	for(auto &item: watchedItems)
-	{
-		item.distanceToItem = sqrt(
-			(myPosition.x - item.x) *(myPosition.x - item.x) +
-			(myPosition.y - item.y) * (myPosition.y - item.y)
-		);
-	}
+	SortWatchedItems();
 
-	std::sort(watchedItems.begin(), watchedItems.end(), [](const WatchedItemData &left, const WatchedItemData &right) {
-		return left.distanceToItem < right.distanceToItem;
-	});
-
-	for(auto itemIter = watchedItems.begin(); itemIter != watchedItems.end(); )
+	int numPickAttemptsThisFrame = 0;
+	for (auto itemIter = watchedItems.begin(); itemIter != watchedItems.end(); )
 	{
 		GAMEUNIT itemUnit;
 		itemUnit.dwUnitType = UNIT_TYPE_ITEM;
@@ -112,28 +110,17 @@ void ItemWatcher::CheckWatchedItems()
 			continue;
 		}
 
-		const auto myPos = me->GetPosition();
-		if (server->GetDistance(myPos.x, myPos.y, itemIter->x, itemIter->y) > radius || me->GetMode() == MODE_CAST)
+		if(itemIter->distanceToItem > radius || numPickAttemptsThisFrame > 5)
 		{
-			++itemIter;
-			continue;
+			break;
 		}
 
-		//server->GameStringf("Picking %X... [%d]", i->id, watchedItems.size());
 		if(itemIter->isGold)
 		{
+			numPickAttemptsThisFrame++;
 			me->PickGroundItem(itemIter->id, this->isWalkToGold);
-			
-			goldPicksThisFrame++;
-			if (goldPicksThisFrame > goldSpeed) {
-				return;
-			}
-			++itemIter;
-			continue;
 		}
-
-
-		if (itemIter->isIdScroll)
+		else if(itemIter->isIdScroll)
 		{
 			TomeInfo info{ 0, 0, 0 };
 			me->EnumStorageItems(STORAGE_INVENTORY, searchForTomesItemProc, (LPARAM)&info);
@@ -141,17 +128,16 @@ void ItemWatcher::CheckWatchedItems()
 			const auto numCharges = me->GetSpellCharges(D2S_TOMEOFIDENTIFY);
 			const auto maxCharges = info.totalTomesOfIdentify * 40;
 
-			if (maxCharges - numCharges < 2)
+			if(maxCharges - numCharges < 2)
 			{
 				itemIter = watchedItems.erase(itemIter);
 				continue;
 			}
 
+			numPickAttemptsThisFrame++;
 			me->PickGroundItem(itemIter->id, this->isWalkToItems);
-			return;
 		}
-
-		if (itemIter->isTpScroll)
+		else if(itemIter->isTpScroll)
 		{
 			TomeInfo info{ 0, 0, 0 };
 			me->EnumStorageItems(STORAGE_INVENTORY, searchForTomesItemProc, (LPARAM)&info);
@@ -159,40 +145,51 @@ void ItemWatcher::CheckWatchedItems()
 			const auto numCharges = me->GetSpellCharges(D2S_TOMEOFTOWNPORTAL);
 			const auto maxCharges = info.totalTomesOfTownPortal * 40;
 
-			if (maxCharges - numCharges < 2)
+			if(maxCharges - numCharges < 2)
 			{
 				itemIter = watchedItems.erase(itemIter);
 				continue;
 			}
 
+			numPickAttemptsThisFrame++;
 			me->PickGroundItem(itemIter->id, this->isWalkToItems);
-			return;
 		}
-
-		if (itemIter->keyCount > 0)
+		else if(itemIter->keyCount > 0)
 		{
-			TomeInfo info{ 0, 0, 0};
+			TomeInfo info{ 0, 0, 0 };
 			me->EnumStorageItems(STORAGE_INVENTORY, searchForTomesItemProc, (LPARAM)&info);
-			if ((info.totalKeys + itemIter->keyCount) > 20)
+			if((info.totalKeys + itemIter->keyCount) > 20)
 			{
 				itemIter = watchedItems.erase(itemIter);
 				continue;
 			}
 
+			numPickAttemptsThisFrame++;
 			me->PickGroundItem(itemIter->id, this->isWalkToItems);
-			return;
 		}
-
-		if(me->FindFirstStorageSpace(STORAGE_INVENTORY, itemIter->itemSize, NULL))
+		else if(me->FindFirstStorageSpace(STORAGE_INVENTORY, itemIter->itemSize, NULL))
 		{
+			numPickAttemptsThisFrame++;
 			me->PickGroundItem(itemIter->id, this->isWalkToItems);
+		}
+		else
+		{
+			server->GameStringf("ÿc1Pickÿc0: ÿc:Not enough room for item, skipping");
+			itemIter = watchedItems.erase(itemIter);
+			continue;
+		}
+
+		if(radius > 5 && itemIter->distanceToItem > 5)
+		{
+			// We're likely walking somewhere, give it 200ms unless something new drops
+		   // nextPickAttemptTime = std::chrono::system_clock::now() + std::chrono::milliseconds(200);
 			return;
 		}
 
-		server->GameStringf("ÿc1Pickÿc0: ÿc:Not enough room for item, skipping");
-		itemIter = watchedItems.erase(itemIter);
-		return;
+		++itemIter;
 	}
+
+	nextPickAttemptTime = std::chrono::system_clock::now() + std::chrono::milliseconds(10);
 }
 
 ////////////////////////////////////////////
@@ -316,7 +313,7 @@ bool ItemWatcher::loadItemMap(const std::string &fileName, std::unordered_map<st
 	}
 
 	itemMap.clear();
-	
+
 	while(inFile.good())
 	{
 		std::string readBuff;
@@ -473,7 +470,7 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 	{
 		return;
 	}
-	
+
 	WatchedItemData itemData;
 	itemData.id = item.dwItemID;
 	itemData.x = item.wPositionX;
@@ -495,6 +492,8 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 		{
 			itemData.isGold = true;
 			watchedItems.push_back(itemData);
+			SortWatchedItems();
+
 			return;
 		}
 		else if(isPickingItems)
@@ -506,24 +505,44 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 				itemData.keyCount = itemCode == "key" ? item.iQuantity : 0;
 
 				itemData.itemSize = server->GetItemSize(itemCode.c_str());
-				watchedItems.push_back(itemData);
+				SortWatchedItems();
 			}
 		}
 	}
 
+	watchedItems.push_back(itemData);
 	AnnounceItem(item);
 }
 
-void ItemWatcher::AnnounceItem(const ITEM &item)
+float ItemWatcher::Distance(float x1, float x2, float y1, float y2) const
 {
-	if (isMute)
+	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+}
+
+void ItemWatcher::SortWatchedItems()
+{
+	auto myPosition = me->GetPosition();
+
+	for (auto& item : watchedItems)
+	{
+		item.distanceToItem = Distance(myPosition.x, item.x, myPosition.y, item.y);
+	}
+
+	std::sort(watchedItems.begin(), watchedItems.end(), [](const WatchedItemData& left, const WatchedItemData& right) {
+		return left.distanceToItem < right.distanceToItem;
+		});
+}
+
+void ItemWatcher::AnnounceItem(const ITEM& item)
+{
+	if(isMute)
 	{
 		return;
 	}
 
 	std::string outputMessage;
 	outputMessage.reserve(128);
-	
+
 
 	bool overrideAnnouncment = false;
 	const auto itemCode = std::string(item.szItemCode);

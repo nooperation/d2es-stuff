@@ -78,8 +78,7 @@ BOOL EXPORT OnClientStart()
 {
 	if(!ItemFilter.LoadItems())
 	{
-		server->GameErrorf("Failed to load item tables. Do you have filterTable.txt");
-		server->GameErrorf(" in the plugin directory?");
+		server->GameErrorf("Failed to load all item tables.");
 		return FALSE;
 	}
 

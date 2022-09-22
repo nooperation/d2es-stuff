@@ -97,6 +97,24 @@ bool isLeftHandCasting = false;
 
 #include "../../Core/definitions.h"
 
+void Abort()
+{
+	if (currentState == STATE_Idle)
+	{
+		return;
+	}
+
+	
+	server->GameStringf("ÿc5Gotoÿc0: Complete");
+	currentState = STATE_Idle;
+
+	auto fleeModule = GetModuleHandle("Flee.d2h");
+	if (fleeModule != NULL)
+	{
+		server->GameCommandf("flee SuppressAutoTp 0");
+	}
+}
+
 void SetState(States newState)
 {
 	/*
@@ -471,14 +489,12 @@ void NextRoomTransition()
 {
 	//server->GameStringf("NextRoomTransition()");
 
-	SetState(STATE_Idle);
-
 	if(currentTravelData->CurrentStep + 1 < currentTravelData->NumSteps)
 	{
 		currentTravelData->CurrentStep++;
 	}
 	else {
-		server->GameStringf("Done");
+		Abort();
 		return;
 	}
 
@@ -552,7 +568,7 @@ void CalculatePathToStairsRoom()
 		}
 	}
 
-	SetState(States::STATE_Idle);
+	Abort();
 	server->GameStringf("Failed to find path to stairs. Returning to town");
 	server->GameCommandf(".flee tp");
 }
@@ -612,6 +628,12 @@ BOOL PRIVATE Start(char** argv, int argc)
 		return TRUE;
 	}
 	
+	auto fleeModule = GetModuleHandle("Flee.d2h");
+	if (fleeModule != NULL)
+	{
+		server->GameCommandf("flee SuppressAutoTp 1");
+	}
+
 	currentState = STATE_UsingWaypoint;
 	server->GameCommandf("load wp");
 	server->GameCommandf("wp start %d", currentTravelData->WaypointDestination);
@@ -628,17 +650,17 @@ BOOL PRIVATE Start(char** argv, int argc)
 
 VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
 {
-	SetState(STATE_Idle);
+	Abort();
 }
 
 VOID EXPORT OnClientStop(THISGAMESTRUCT *thisgame)
 {
 	server->GameStringf("OnClientStop");
-	SetState(STATE_Idle);
+	Abort();
 }
 VOID EXPORT OnGameLeave(THISGAMESTRUCT* thisgame)
 {
-	SetState(STATE_Idle);
+	Abort();
 }
 
 BOOL EXPORT OnClientStart()
@@ -763,7 +785,8 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 		{
 			if(strcmp(chatMessage, "ÿc5Waypointÿc0: Complete") != 0)
 			{
-				SetState(STATE_Idle);
+				Abort();
+				return 0;
 			}
 
 			return 0;
@@ -828,7 +851,7 @@ VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
 			if (me->IsInTown())
 			{
 				server->GameStringf("Unexpected map change. Aborting.");
-				SetState(STATE_Idle);
+				Abort();
 				return;
 			}
 
@@ -848,16 +871,17 @@ VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
 			{
 				GoBackToTown();
 			}
-			SetState(STATE_Idle);
+			Abort();
 		}
 	}
 }
+
 
 BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 {
 	if(iKeyCode == VK_SPACE)
 	{
-		currentState = STATE_Idle;
+		Abort();
 	}
 	return iKeyCode;
 }

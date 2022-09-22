@@ -54,6 +54,9 @@ bool AutoStocker::Init(bool useChat)
 	IsTransmutingUnidentifiedSmallCharms = (GetPrivateProfileInt("Autostocker", "NonIDSmallCharms", 0, CONFIG_FILE) == 1);
 	IsTransmutingUnidentifiedLargeCharms = (GetPrivateProfileInt("Autostocker", "NonIDLargeCharms", 0, CONFIG_FILE) == 1);
 	IsTransmutingUnidentifiedGrandCharms = (GetPrivateProfileInt("Autostocker", "NonIDGrandCharms", 0, CONFIG_FILE) == 1);
+	IgnoreIdentifiedSetRingsAndAmulets = (GetPrivateProfileInt("Autostocker", "IgnoreIdentifiedSetRingsAndAmulets", 0, CONFIG_FILE) == 1);
+	MinPrefixCount = GetPrivateProfileInt("Autostocker", "PrefixCount", 0, CONFIG_FILE);
+	MinSuffixCount = GetPrivateProfileInt("Autostocker", "SuffixCount", 0, CONFIG_FILE);
 
 	return true;
 }
@@ -800,6 +803,9 @@ bool AutoStocker::ReadAffixConfig(const std::string &configPath, std::unordered_
 	return true;
 }
 
+#include "../../Includes/itemPrefix.h"
+#include "../../Includes/ItemSuffix.h"
+
 /// <summary>
 /// Determines if this item has a good affix and should be kept
 /// </summary>
@@ -817,17 +823,58 @@ bool AutoStocker::CheckItemAffix(const ITEM &item)
 			if(goodPrefix.count(item.wPrefix[i]) > 0)
 			{
 				goodPrefixCount++;
-				//server->GameStringf("ÿc;Prefixÿc0 %s: %s", Prefix[item.wPrefix[i]], PrefixDetails[item.wPrefix[i]]);
+				//server->GameStringf("ÿc;AS Prefixÿc0 %s: %s", Prefix[item.wPrefix[i]], PrefixDetails[item.wPrefix[i]]);
 			}
 			if(goodSuffix.count(item.wSuffix[i]) > 0)
 			{
 				goodSuffixCount++;
-				//server->GameStringf("ÿc:Suffixÿc0 %s: %s", Suffix[item.wSuffix[i]], SuffixDetails[item.wSuffix[i]]);
+				//server->GameStringf("ÿc:AS Suffixÿc0 %s: %s", Suffix[item.wSuffix[i]], SuffixDetails[item.wSuffix[i]]);
 			}
 		}
 	}
 
+	if (IsRingAmulet(item.szItemCode))
+	{
+		if (item.iSocketed)
+		{
+			return true;
+		}
+		if (item.iPersonalized)
+		{
+			return true;
+		}
+
+		//server->GameStringf("Suffix=%d Prefix=%d  Result=(%d)", goodPrefixCount, goodSuffixCount, (goodPrefixCount + goodSuffixCount) >= 2);
+		return (goodPrefixCount + goodSuffixCount) >= 2;
+	}
+
 	return goodPrefixCount >= 1 || goodSuffixCount >= 1;
+}
+
+bool AutoStocker::IsRingAmulet(LPCSTR itemCode)
+{
+	if(strcmp(itemCode, "amu") == 0 ||
+		strcmp(itemCode, "rin") == 0 ||
+		strcmp(itemCode, "zrn") == 0 ||
+		strcmp(itemCode, "srn") == 0 ||
+		strcmp(itemCode, "nrn") == 0 ||
+		strcmp(itemCode, "prn") == 0 ||
+		strcmp(itemCode, "brg") == 0 ||
+		strcmp(itemCode, "drn") == 0 ||
+		strcmp(itemCode, "arn") == 0 ||
+		strcmp(itemCode, "zam") == 0 ||
+		strcmp(itemCode, "sam") == 0 ||
+		strcmp(itemCode, "nam") == 0 ||
+		strcmp(itemCode, "pam") == 0 ||
+		strcmp(itemCode, "bam") == 0 ||
+		strcmp(itemCode, "dam") == 0 ||
+		strcmp(itemCode, "aam") == 0)
+
+	{
+		return true;
+	}
+
+	return false;
 }
 
 /// <summary>
@@ -915,7 +962,7 @@ bool AutoStocker::IsCrystalItem(LPCSTR itemCode)
 /// Determines if specified item should be stored in the rerolling orb
 /// </summary>
 /// <param name="item">Item being checked.</param>
-/// <returns>true if item should be cubed a stocker.</returns>
+/// <returns>true if item should be destroyed</returns>
 bool AutoStocker::IsRerollItem(const ITEM &item)
 {
 	if(!item.iIdentified)
@@ -948,6 +995,14 @@ bool AutoStocker::IsRerollItem(const ITEM &item)
 			strcmp(item.szItemCode, "cx2") == 0 ||
 			strcmp(item.szItemCode, "cx3") == 0 ||
 			strcmp(item.szItemCode, "jew") == 0)
+		{
+			return false;
+		}
+	}
+
+	if (item.iIdentified)
+	{
+		if (item.iQuality == ITEM_LEVEL_SET && IgnoreIdentifiedSetRingsAndAmulets && IsRingAmulet(item.szItemCode))
 		{
 			return false;
 		}

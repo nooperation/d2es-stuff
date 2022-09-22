@@ -191,6 +191,7 @@ bool ItemFilter::LoadItemMap(const std::string &fileName, std::unordered_map<std
 
 	if(!inFile)
 	{
+		server->GameErrorf("ÿc:Filterÿc0: ÿc1failed to read the follow item table:ÿc0 %s", fileName.c_str());
 		return false;
 	}
 
