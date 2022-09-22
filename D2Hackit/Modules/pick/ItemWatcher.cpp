@@ -154,19 +154,19 @@ void ItemWatcher::CheckWatchedItems()
 			numPickAttemptsThisFrame++;
 			me->PickGroundItem(itemIter->id, this->isWalkToItems);
 		}
-		else if(itemIter->keyCount > 0)
-		{
-			TomeInfo info{ 0, 0, 0 };
-			me->EnumStorageItems(STORAGE_INVENTORY, searchForTomesItemProc, (LPARAM)&info);
-			if((info.totalKeys + itemIter->keyCount) > 20)
-			{
-				itemIter = watchedItems.erase(itemIter);
-				continue;
-			}
-
-			numPickAttemptsThisFrame++;
-			me->PickGroundItem(itemIter->id, this->isWalkToItems);
-		}
+		//else if(itemIter->keyCount > 0)
+		//{
+		//	TomeInfo info{ 0, 0, 0 };
+		//	me->EnumStorageItems(STORAGE_INVENTORY, searchForTomesItemProc, (LPARAM)&info);
+		//	if((info.totalKeys + itemIter->keyCount) > 20)
+		//	{
+		//		itemIter = watchedItems.erase(itemIter);
+		//		continue;
+		//	}
+		//
+		//	numPickAttemptsThisFrame++;
+		//	me->PickGroundItem(itemIter->id, this->isWalkToItems);
+		//}
 		else if(me->FindFirstStorageSpace(STORAGE_INVENTORY, itemIter->itemSize, NULL))
 		{
 			numPickAttemptsThisFrame++;
@@ -505,12 +505,14 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 				itemData.keyCount = itemCode == "key" ? item.iQuantity : 0;
 
 				itemData.itemSize = server->GetItemSize(itemCode.c_str());
+
+				watchedItems.push_back(itemData);
 				SortWatchedItems();
+
 			}
 		}
 	}
 
-	watchedItems.push_back(itemData);
 	AnnounceItem(item);
 }
 
