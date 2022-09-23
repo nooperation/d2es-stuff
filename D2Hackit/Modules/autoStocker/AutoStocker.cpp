@@ -1034,6 +1034,38 @@ bool AutoStocker::IsCrystalItem(LPCSTR itemCode)
 /// <returns>true if item should be destroyed</returns>
 bool AutoStocker::IsRerollItem(const ITEM &item)
 {
+	GAMEUNIT unit;
+	unit.dwUnitID = item.dwItemID;
+	unit.dwUnitType = UNIT_TYPE_ITEM;
+
+	// Ignore any melded item
+	const auto item_meldflag = server->GetUnitStat(&unit, 251);
+	if (item_meldflag > 0)
+	{
+		return false;
+	}
+
+	// Ignore any *** Forged (Jewel) *** item
+	const auto item_craftflag2 = server->GetUnitStat(&unit, 463);
+	if (item_craftflag2 > 0)
+	{
+		return false;
+	}
+
+	// Ignore any *** Forged (Equipment) *** item
+	const auto item_craftflag = server->GetUnitStat(&unit, 202);
+	if (item_craftflag > 0)
+	{
+		return false;
+	}
+
+	// Ignore any item that has +level requirements
+	const auto item_levelreq = server->GetUnitStat(&unit, 92);
+	if (item_levelreq > 0)
+	{
+		return false;
+	}
+
 	if(!item.iIdentified)
 	{
 		// Transmute unidentified magic charms based on settings from autostockerMisc.ini

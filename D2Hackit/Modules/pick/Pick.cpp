@@ -287,10 +287,28 @@ VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPAR
 	}
 }
 
+#include "ItemStatNames.cpp"
 void DumpItemInfo(const ITEM& item)
 {
 	char chatBuff[128];
 	char itemColor[4];
+
+	if (false)
+	{
+		server->GameStringf("STATS:");
+		GAMEUNIT unit;
+		unit.dwUnitID = item.dwItemID;
+		unit.dwUnitType = UNIT_TYPE_ITEM;
+
+		for (size_t i = 0; i < sizeof(StatNames)/sizeof(StatNames[0]); i++)
+		{
+			auto statValue = server->GetUnitStat(&unit, i);
+			if (statValue != 0)
+			{
+				server->GameStringf(" [%d] %s = %d", i, StatNames[i], statValue);
+			}
+		}
+	}
 
 	switch(item.iQuality)
 	{
@@ -339,6 +357,8 @@ void DumpItemInfo(const ITEM& item)
 			}
 		}
 	}
+
+
 }
 DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 {
