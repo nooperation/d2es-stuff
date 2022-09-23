@@ -5,17 +5,29 @@ AutoOre autoOre;
 
 CLIENTINFO
 (
-	1,0,
-	"AutoOre v1.0",
+	2,0,
+	"AutoOre v2.0",
 	"",
-	"AutoOre v1.0",
+	"AutoOre v2.0",
 	""
 )
 
 BOOL PRIVATE Start(char** argv, int argc)
 {
-	autoOre.Start();
+	bool useChat = false;
 
+	if(argc >= 3)
+	{
+		for (int i = 2; i < argc; i++)
+		{
+			if (_stricmp(argv[i], "chat") == 0)
+			{
+				useChat = true;
+			}
+		}
+	}
+
+	autoOre.Start(useChat);
 	return TRUE;
 }
 
@@ -25,19 +37,7 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 	{
 		char *chatMessage = (char *)(aPacket+3);
 
-		if(strncmp(chatMessage, "ÿc:AutoExtractorÿc0:", 20) == 0)
-		{
-			const auto message = std::string_view(chatMessage + 21);
-			if(!autoOre.OnAutoExtractorMessage(message))
-			{
-				return aLen;
-			}
-			else
-			{
-				return 0;
-			}
-		}
-		else if (strncmp(chatMessage, "ÿc5EmptyCubeÿc0:", 16) == 0)
+		if (strncmp(chatMessage, "ÿc5EmptyCubeÿc0:", 16) == 0)
 		{
 			const auto message = std::string_view(chatMessage + 17);
 			if (!autoOre.OnEmptyCubeMessage(message))
@@ -80,13 +80,23 @@ VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPAR
 	{
 		ITEM item = *(ITEM *)lParam;
 
+		//server->GameStringf("%s: wParam = %d | iStorageId = %d", item.szItemCode, wParam, item.iStorageID);
+
 		if(wParam == ITEM_ACTION_TO_STORAGE && item.iStorageID == 0x04)
 		{
-			autoOre.OnItemDroppedToCube(item.dwItemID); 
+			autoOre.OnItemDroppedToCube(item); 
 		}
-		else if(wParam == ITEM_ACTION_FROM_STORAGE && item.iStorageID == STORAGE_INVENTORY)
+		else if(wParam == ITEM_ACTION_FROM_STORAGE && item.iStorageID == 0x01)
 		{
 			autoOre.OnItemPickedUpFromInventory(item.dwItemID);
+		}
+		else if(wParam == ITEM_ACTION_TO_STORAGE && item.iStorageID == 0x01)
+		{
+			autoOre.OnItemDroppedToInventory(item);
+		}
+		else if(wParam == ITEM_ACTION_FROM_STORAGE && item.iStorageID == 0x04)
+		{
+			autoOre.OnItemPickedUpFromCube(item.dwItemID);
 		}
 		else if (wParam == ITEM_ACTION_DROP)
 		{

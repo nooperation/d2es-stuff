@@ -7,6 +7,7 @@
 enum class State
 {
 	Uninitialized = 0,
+	Initializing,
 	PickupMultistocker,
 	DropMultistockerToCube,
 	RunTransmute,
@@ -28,7 +29,7 @@ class AutoAncientScroll
 {
 public:
 	AutoAncientScroll();
-	bool Start();
+	bool Start(bool useChat);
 
 	// Sequence:
 	//   Pickup multistocker
@@ -95,6 +96,7 @@ private:
 	bool transmuteLoaded;
 	bool emptyCubeLoaded;
 	State currentState;
+	bool useChat;
 
 	std::vector<DWORD> ancientDeciphererIds;
 	std::vector<DWORD> ancientScrollIds;

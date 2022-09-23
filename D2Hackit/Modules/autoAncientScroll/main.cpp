@@ -17,7 +17,20 @@ CLIENTINFO
 
 BOOL PRIVATE Start(char** argv, int argc)
 {
-	autoAncientScroll.Start();
+	bool useChat = false;
+
+	if(argc >= 3)
+	{
+		for (int i = 2; i < argc; i++)
+		{
+			if (_stricmp(argv[i], "chat") == 0)
+			{
+				useChat = true;
+			}
+		}
+	}
+
+	autoAncientScroll.Start(useChat);
 
 	return TRUE;
 }

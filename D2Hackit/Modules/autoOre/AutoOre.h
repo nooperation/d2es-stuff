@@ -8,12 +8,19 @@
 enum class State
 {
 	Uninitialized,
+	Initializing,
 	PickupNextItemToDrop,
 	DropNextItemToDrop,
 	PickupNextOre,
 	DropNextOreToCube,
-	WaitingToRunAutoExtractor,
-	RunAutoExtractor,
+	FirstTransmute,
+	WaitForFirstTransmuteResults,
+	PickupGemFromFirstTransmute,
+	DropGemFromFirstTransmute,
+
+	SecondTransmute,
+	WaitForSecondTransmuteResults,
+
 	RunEmptyCube,
 	RunAutoStocker,
 };
@@ -22,7 +29,7 @@ class AutoOre
 {
 	public:
 		AutoOre();
-		void Start();
+		void Start(bool useChat);
 		void StartAutoOre();
 		void Abort();
 
@@ -34,7 +41,6 @@ class AutoOre
 		void PickupNextOre();
 		void DropNextOreToCube();
 
-		void RunEmptyCube();
 		bool OnEmptyCubeMessage(const std::string_view &message);
 
 		void OnTick();
@@ -44,15 +50,26 @@ class AutoOre
 		bool OnAutoStockerMessage(const std::string_view &message);
 
 		void OnItemPickedUpFromInventory(DWORD itemId);
+		void OnItemDroppedToInventory(const ITEM &itemId);
+		void OnItemPickedUpFromCube(DWORD itemId);
 		void OnItemDropped(DWORD itemId);
-		void OnItemDroppedToCube(DWORD itemId);
+		void OnItemDroppedToCube(const ITEM &itemId);
 
 	private:
 		void SetState(State newState);
+		void HandleFirstStageTransmuteResults();
+		void HandleSecondStageTransmuteResults();
 
+		bool useChat;
 		bool autoExtractorLoaded;
 		bool autoStockerLoaded;
 		bool emptyCubeLoaded;
+
+		bool dropFakeNotes;
+
+		int numTransmuteResults;
+		int numExpectedTransmuteResults;
+		DWORD expectedItemToHand;
 
 		State currentState;
 		std::vector<DWORD> oreIds;

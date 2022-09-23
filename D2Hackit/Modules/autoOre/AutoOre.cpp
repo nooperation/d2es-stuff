@@ -1,12 +1,19 @@
 #include "../../Includes/D2Client.h"
 #include "AutoOre.h"
 
+BOOL CALLBACK enumGetAllCubeItems(LPCITEM item, LPARAM lParam);
+
 AutoOre::AutoOre()
 {
 	currentState = State::Uninitialized;
 	this->autoExtractorLoaded = false;
 	this->autoStockerLoaded = false;
 	this->emptyCubeLoaded = false;
+	this->expectedItemToHand = 0;
+	this->numExpectedTransmuteResults = 0;
+	this->numTransmuteResults = 0;
+	this->currentItemToDrop = 0;
+	this->currentOreId = 0;
 }
 
 void AutoOre::SetState(State newState)
@@ -15,12 +22,17 @@ void AutoOre::SetState(State newState)
 	{
 		const char *const stateNames[] = {
 			"Uninitialized",
+			"Initializing",
 			"PickupNextItemToDrop",
 			"DropNextItemToDrop",
 			"PickupNextOre",
 			"DropNextOreToCube",
-			"WaitingToRunAutoExtractor",
-			"RunAutoExtractor",
+			"FirstTransmute",
+			"WaitForFirstTransmuteResults",
+			"PickupGemFromFirstTransmute",
+			"DropGemFromFirstTransmute",
+			"SecondTransmute",
+			"WaitForSecondTransmuteResults",
 			"RunEmptyCube",
 			"RunAutoStocker",
 		};
@@ -30,15 +42,15 @@ void AutoOre::SetState(State newState)
 	this->currentState = newState;
 }
 
-void AutoOre::Start()
+void AutoOre::Start(bool useChat)
 {
-	this->itemsToDrop.clear();
-	this->oreIds.clear();
-	this->currentItemToDrop = 0;
-	this->currentOreId = 0;
-	SetState(State::Uninitialized);
+	this->useChat = useChat;
+	SetState(State::Initializing);
 
-	server->GameStringf("ÿc:ÿc5AutoOreÿc0: Starting");
+	if (this->useChat)
+		me->Say("ÿc:ÿc5AutoOreÿc0: Starting");
+	else
+		server->GameStringf("ÿc:ÿc5AutoOreÿc0: Starting");
 
 	// Load required modules
 	if (!autoExtractorLoaded)
@@ -62,6 +74,15 @@ void AutoOre::Start()
 
 void AutoOre::StartAutoOre()
 {
+	this->itemsToDrop.clear();
+	this->oreIds.clear();
+	this->currentItemToDrop = 0;
+	this->currentOreId = 0;
+	this->expectedItemToHand = 0;
+	this->numExpectedTransmuteResults = 0;
+	this->numTransmuteResults = 0;
+	this->dropFakeNotes = false;
+
 	if (!me->OpenCube())
 	{
 		server->GameStringf("ÿc5AutoOreÿc0: Cube not opened");
@@ -82,34 +103,11 @@ void AutoOre::StartAutoOre()
 	me->EnumStorageItems(STORAGE_INVENTORY, enumFindOre, (LPARAM)this);
 	if (this->oreIds.empty())
 	{
-		server->GameStringf("ÿc5AutoOreÿc0: No ores found");
 		Abort();
 		return;
 	}
 
-	if (!this->itemsToDrop.empty())
-	{
-		this->PickupNextItemToDrop();
-		return;
-	}
-
 	this->PickupNextOre();
-}
-
-void AutoOre::PickupNextItemToDrop()
-{
-	if (this->itemsToDrop.empty())
-	{
-		server->GameStringf("ÿc:ÿc5AutoOreÿc0: No more items to drop");
-		this->StartAutoOre();
-		return;
-	}
-
-	this->currentItemToDrop = this->itemsToDrop.back();
-	this->itemsToDrop.pop_back();
-
-	SetState(State::PickupNextItemToDrop);
-	me->PickStorageItemToCursor(this->currentItemToDrop);
 }
 
 void AutoOre::PickupNextOre()
@@ -128,26 +126,33 @@ void AutoOre::PickupNextOre()
 	me->PickStorageItemToCursor(this->currentOreId);
 }
 
-void AutoOre::OnItemPickedUpFromInventory(DWORD itemId)
+
+void AutoOre::PickupNextItemToDrop()
 {
-	if (this->currentState == State::PickupNextItemToDrop)
+	if (this->itemsToDrop.empty())
 	{
-		if (itemId != this->currentItemToDrop)
-		{
-			return;
-		}
-
-		this->DropNextItemToDrop();
+		server->GameStringf("ÿc:ÿc5AutoOreÿc0: No more items to drop");
+		this->RunAutoStocker();
+		return;
 	}
-	else if (this->currentState == State::PickupNextOre)
+
+	this->currentItemToDrop = this->itemsToDrop.back();
+	this->itemsToDrop.pop_back();
+
+	SetState(State::PickupNextItemToDrop);
+	me->PickStorageItemToCursor(this->currentItemToDrop);
+}
+
+void AutoOre::DropNextItemToDrop()
+{
+	if (this->currentItemToDrop == 0)
 	{
-		if (itemId != this->currentOreId)
-		{
-			return;
-		}
-
-		this->DropNextOreToCube();
+		server->GameStringf("ÿc:ÿc5AutoOreÿc0: Bad state. Dropping an invalid item ID");
+		return;
 	}
+
+	SetState(State::DropNextItemToDrop);
+	me->DropCursorItemToGround();
 }
 
 void AutoOre::OnItemDropped(DWORD itemId)
@@ -165,31 +170,160 @@ void AutoOre::OnItemDropped(DWORD itemId)
 	this->PickupNextItemToDrop();
 }
 
-void AutoOre::OnItemDroppedToCube(DWORD itemId)
+void AutoOre::OnItemPickedUpFromInventory(DWORD itemId)
 {
-	if (this->currentState == State::DropNextOreToCube)
+	if (this->currentState == State::PickupNextOre)
 	{
 		if (itemId != this->currentOreId)
 		{
 			return;
 		}
 
-		// NOTE: We cannot run extractor yet. If we do then it will also see this item 'to cube' and
-		//       will think it was part of its extraction process
-		SetState(State::WaitingToRunAutoExtractor);
+		this->DropNextOreToCube();
 	}
 }
 
-void AutoOre::DropNextItemToDrop()
+void AutoOre::OnItemPickedUpFromCube(DWORD itemId)
 {
-	if (this->currentItemToDrop == 0)
+	if (this->currentState == State::PickupGemFromFirstTransmute)
 	{
-		server->GameStringf("ÿc:ÿc5AutoOreÿc0: Bad state. Dropping an invalid item ID");
+		if (itemId != this->expectedItemToHand)
+		{
+			server->GameStringf("ÿc:ÿc5AutoOreÿc0: Expected item id %d to hand, but got item id %d (State = PickupGemFromFirstTransmute)", expectedItemToHand, itemId);
+			Abort();
+			return;
+		}
+
+		SetState(State::DropGemFromFirstTransmute);
+		me->DropCursorItemToStorage(STORAGE_INVENTORY);
+	}
+	else if (this->currentState == State::PickupNextItemToDrop)
+	{
+		if (itemId != this->currentItemToDrop)
+		{
+			server->GameStringf("ÿc:ÿc5AutoOreÿc0: Expected item id %d to hand, but got item id %d (State = PickupNextItemToDrop)", expectedItemToHand, itemId);
+			Abort();
+			return;
+		}
+
+		this->DropNextItemToDrop();
+	}
+}
+
+void AutoOre::OnItemDroppedToInventory(const ITEM &item)
+{
+	if (this->currentState == State::DropGemFromFirstTransmute)
+	{
+		if (item.dwItemID != expectedItemToHand)
+		{
+			server->GameStringf("ÿc:ÿc5AutoOreÿc0: Expected item id %d to inventory, but got item id %d (State = DropGemFromFirstTransmute)", expectedItemToHand, item.dwItemID);
+			Abort();
+			return;
+		}
+
+		SetState(State::SecondTransmute);
+	}
+}
+
+void AutoOre::OnItemDroppedToCube(const ITEM &itemDroppedToCube)
+{
+	if (this->currentState == State::DropNextOreToCube)
+	{
+		if (itemDroppedToCube.dwItemID != this->currentOreId)
+		{
+			return;
+		}
+
+		// NOTE: We cannot run extractor yet. If we do then it will also see this item 'to cube' and
+		//       will think it was part of its extraction process
+		SetState(State::FirstTransmute);
+	}
+	else if (this->currentState == State::WaitForFirstTransmuteResults)
+	{
+		numTransmuteResults++;
+		if (numTransmuteResults != numExpectedTransmuteResults)
+		{
+			return;
+		}
+
+		HandleFirstStageTransmuteResults();
+	}
+	else if (this->currentState == State::WaitForSecondTransmuteResults)
+	{
+		numTransmuteResults++;
+		if (numTransmuteResults != numExpectedTransmuteResults)
+		{
+			return;
+		}
+
+		HandleSecondStageTransmuteResults();
+	}
+}
+
+void AutoOre::HandleFirstStageTransmuteResults()
+{
+	// We should now have the ore and gem in our inventory. Move the gem to our inventory and transmute again
+	std::vector<ITEM> itemsInTheCube;
+	me->EnumStorageItems(STORAGE_CUBE, enumGetAllCubeItems, (LPARAM)&itemsInTheCube);
+	if (itemsInTheCube.size() != 2)
+	{
+		server->GameStringf("ÿc:ÿc5AutoOreÿc0: Expected %d items in the cube after the transmute, but we got %d (State = WaitForFirstTransmuteResults)", itemsInTheCube.size());
+		Abort();
 		return;
 	}
 
-	SetState(State::DropNextItemToDrop);
-	me->DropCursorItemToGround();
+	if (strstr(itemsInTheCube[0].szItemCode, "fkn") != 0 && strstr(itemsInTheCube[1].szItemCode, "fkn") != 0)
+	{
+		// Whoops, this was actually an already extracted ore and we're actually on the second transmute step
+		HandleSecondStageTransmuteResults();
+		return;
+	}
+
+	for (const auto& item : itemsInTheCube)
+	{
+		// Don't care about the ore. We'll transmute that again during the next stage
+		if (strstr(item.szItemCode, "ore") != 0)
+		{
+			continue;
+		}
+
+		SetState(State::PickupGemFromFirstTransmute);
+		expectedItemToHand = item.dwItemID;
+		me->PickStorageItemToCursor(item.dwItemID);
+		return;
+	}
+
+	server->GameStringf("ÿc:ÿc5AutoOreÿc0: We got %d items as a transmute result, but I didn't see any ore", itemsInTheCube.size());
+	Abort();
+	return;
+}
+
+void AutoOre::HandleSecondStageTransmuteResults()
+{
+	// We should now have two fake notes in the cube
+	std::vector<ITEM> itemsInTheCube;
+	me->EnumStorageItems(STORAGE_CUBE, enumGetAllCubeItems, (LPARAM)&itemsInTheCube);
+	if (itemsInTheCube.size() != 2)
+	{
+		server->GameStringf("ÿc:ÿc5AutoOreÿc0: Expected %d items in the cube after the transmute, but we got %d", itemsInTheCube.size());
+		Abort();
+		return;
+	}
+
+	auto numFreeSpaces = me->GetNumberOfFreeStorageSlots(STORAGE_INVENTORY);
+	if (numFreeSpaces < 2 || dropFakeNotes)
+	{
+		itemsToDrop.clear();
+		for (const auto& item : itemsInTheCube)
+		{
+			itemsToDrop.push_back(item.dwItemID);
+		}
+		PickupNextItemToDrop();
+		return;
+	}
+
+	SetState(State::RunEmptyCube);
+	server->GameCommandLine("emptycube start chat");
 }
 
 void AutoOre::DropNextOreToCube()
@@ -206,34 +340,24 @@ void AutoOre::DropNextOreToCube()
 
 void AutoOre::OnTick()
 {
-	if (currentState == State::WaitingToRunAutoExtractor)
+	if (currentState == State::FirstTransmute)
 	{
 		// HACK: AE must be delayed a full tick so the autoextract module does not process the item we
 		//       just put in the cube as a transmute result
-		SetState(State::RunAutoExtractor);
-		server->GameCommandLine("ae start chat");
+		SetState(State::WaitForFirstTransmuteResults);
+		numTransmuteResults = 0;
+		numExpectedTransmuteResults = 2;
+		me->Transmute();
 	}
-}
-
-bool AutoOre::OnAutoExtractorMessage(const std::string_view &message)
-{
-	if (currentState != State::RunAutoExtractor)
+	else if (currentState == State::SecondTransmute)
 	{
-		return false;
+		// HACK: AE must be delayed a full tick so the autoextract module does not process the item we
+		//       just put in the cube as a transmute result
+		SetState(State::WaitForSecondTransmuteResults);
+		numTransmuteResults = 0;
+		numExpectedTransmuteResults = 2;
+		me->Transmute();
 	}
-
-	if (message == "AutoExtractor Ended")
-	{
-		this->RunEmptyCube();
-	}
-
-	return true;
-}
-
-void AutoOre::RunEmptyCube()
-{
-	SetState(State::RunEmptyCube);
-	server->GameCommandLine("emptycube start chat");
 }
 
 bool AutoOre::OnEmptyCubeMessage(const std::string_view &message)
@@ -284,8 +408,23 @@ void AutoOre::Abort()
 	if (currentState != State::Uninitialized)
 	{
 		SetState(State::Uninitialized);
-		server->GameStringf("ÿc5AutoOreÿc0: Ended");
+		if (this->useChat)
+			me->Say("ÿc5AutoOreÿc0: Ended");
+		else
+			server->GameStringf("ÿc5AutoOreÿc0: Ended");
 	}
+}
+
+BOOL CALLBACK enumGetAllCubeItems(LPCITEM item, LPARAM lParam)
+{
+	auto cubeItemList = (std::vector<ITEM> *)lParam;
+	if (cubeItemList == nullptr)
+	{
+		return FALSE;
+	}
+
+	cubeItemList->push_back(*item);
+	return TRUE;
 }
 
 BOOL CALLBACK enumFindCubeItems(LPCITEM item, LPARAM lParam)

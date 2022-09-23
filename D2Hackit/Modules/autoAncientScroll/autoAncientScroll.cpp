@@ -17,6 +17,7 @@ void AutoAncientScroll::SetState(State newState)
 	{
 		const char * const stateNames[] = {
 			"Uninitialized",
+			"Initializing",
 			"PickupMultistocker",
 			"DropMultistockerToCube",
 			"RunTransmute",
@@ -39,8 +40,9 @@ void AutoAncientScroll::SetState(State newState)
 	this->currentState = newState;
 }
 
-bool AutoAncientScroll::Start()
+bool AutoAncientScroll::Start(bool useChat)
 {
+	SetState(State::Initializing);
 	// Clear previous settings
 	ancientDeciphererIds.clear();
 	ancientScrollIds.clear();
@@ -49,9 +51,13 @@ bool AutoAncientScroll::Start()
 	keyId = 0;
 	multistockerId = 0;
 	itemWaitingOn = 0;
+	this->useChat = useChat;
 
 	// Notify the user about the current settings
-	server->GameStringf("ÿc:AutoAncientScrollÿc0: Starting");
+	if (useChat)
+		me->Say("ÿc:AutoAncientScrollÿc0: Starting");
+	else
+		server->GameStringf("ÿc:AutoAncientScrollÿc0: Starting");
 
 	// Load required modules
 	if (!autoExtractorLoaded)
@@ -95,6 +101,12 @@ bool AutoAncientScroll::Start()
 	this->ancientDeciphererIds.clear();
 	this->ancientScrollIds.clear();
 	me->EnumStorageItems(STORAGE_INVENTORY, enumItemProc, (LPARAM)this);
+
+	if (ancientScrollIds.empty())
+	{
+		Abort();
+		return true;
+	}
 
 	const auto numberOfFreeSlots = me->GetNumberOfFreeStorageSlots(STORAGE_INVENTORY);
 	if (numberOfFreeSlots == 0)
@@ -639,7 +651,15 @@ void AutoAncientScroll::Abort()
 {
 	if (currentState != State::Uninitialized)
 	{
-		server->GameStringf("ÿc:AutoAncientScrollÿc0: Done");
+		if (useChat)
+		{
+			me->Say("ÿc:AutoAncientScrollÿc0: Ended");
+		}
+		else
+		{
+			server->GameStringf("ÿc:AutoAncientScrollÿc0: Ended");
+		}
+
 		SetState(State::Uninitialized);
 	}
 }

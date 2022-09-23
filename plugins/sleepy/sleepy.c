@@ -39,6 +39,13 @@ DWORD __stdcall PluginEntry(DWORD dwReason, LPVOID lpData)
             return FALSE;
         }
 
+        auto commandLine = GetCommandLine();
+        if (strstr(commandLine, "-sleepy") == NULL)
+        {
+            OutputDebugStringA("Skipping sleepy plugin");
+            return FALSE;
+        }
+
         // Sleep(0) -> Sleep(1) as stated in d2loader readme
         data[0] = 1;
         WriteAddr(client + 0xB4CA2, data, 1);
@@ -48,7 +55,7 @@ DWORD __stdcall PluginEntry(DWORD dwReason, LPVOID lpData)
         data[0] = 0xEB;
         WriteAddr(win + 0xD071, data, 1); // 0x6f8ad071
 
-
+        OutputDebugStringA("Sleepy applied");
         return FALSE;
     }
 
