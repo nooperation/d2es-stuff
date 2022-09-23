@@ -105,8 +105,10 @@ class AutoStocker
 		int MaxUnidentifiedSCharmLevel;
 		int MaxUnidentifiedLCharmLevel;
 		int MaxUnidentifiedGCharmLevel;
-		int MinPrefixCount;
-		int MinSuffixCount;
+		int GoodPrefixCountRingsAmulets;
+		int GoodSuffixCountRingsAmulets;
+		int GoodAffixCountRingsAmulets;
+		int GoodAffixCountNonRingsAmulets;
 		bool RunAutoOre;
 		bool RunAutoScroll;
 		bool ignoreNextAutoOre;

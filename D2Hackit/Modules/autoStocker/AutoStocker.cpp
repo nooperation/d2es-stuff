@@ -55,10 +55,18 @@ bool AutoStocker::Init(bool useChat)
 	IsTransmutingUnidentifiedLargeCharms = (GetPrivateProfileInt("Autostocker", "NonIDLargeCharms", 0, CONFIG_FILE) == 1);
 	IsTransmutingUnidentifiedGrandCharms = (GetPrivateProfileInt("Autostocker", "NonIDGrandCharms", 0, CONFIG_FILE) == 1);
 	IgnoreIdentifiedSetRingsAndAmulets = (GetPrivateProfileInt("Autostocker", "IgnoreIdentifiedSetRingsAndAmulets", 0, CONFIG_FILE) == 1);
-	MinPrefixCount = GetPrivateProfileInt("Autostocker", "PrefixCount", 0, CONFIG_FILE);
-	MinSuffixCount = GetPrivateProfileInt("Autostocker", "SuffixCount", 0, CONFIG_FILE);
+	GoodPrefixCountRingsAmulets = GetPrivateProfileInt("RingsAmulets", "GoodPrefixCount", -1, CONFIG_FILE);
+	GoodSuffixCountRingsAmulets = GetPrivateProfileInt("RingsAmulets", "GoodSuffixCount", -1, CONFIG_FILE);
+	GoodAffixCountRingsAmulets = GetPrivateProfileInt("RingsAmulets",  "GoodAffixCount", 1, CONFIG_FILE);
+	GoodAffixCountNonRingsAmulets = GetPrivateProfileInt("Autostocker","GoodAffixCount", 1, CONFIG_FILE);
 	RunAutoOre = GetPrivateProfileInt("Autostocker", "RunAutoOre", 1, CONFIG_FILE);
 	RunAutoScroll = GetPrivateProfileInt("Autostocker", "RunAutoScroll", 1, CONFIG_FILE);
+
+	if (GoodAffixCountRingsAmulets <= 0 && GoodPrefixCountRingsAmulets <= 0 && GoodSuffixCountRingsAmulets <= 0)
+	{
+		server->GameStringf("ÿc:Autostockerÿc0: Check your %s file. You have it setup to mark all rings/amulets as bad", CONFIG_FILE);
+		return false;
+	}
 
 	// Load required modules
 	if (RunAutoScroll && !autoAncientScrollLoaded)
@@ -908,16 +916,32 @@ bool AutoStocker::CheckItemAffix(const ITEM &item)
 		{
 			return true;
 		}
-		if (item.iPersonalized)
+
+		// Something's off here. Destroy all rings/amulets shouldn't really be an in general usecase...?
+		if (GoodAffixCountRingsAmulets <= 0 && GoodPrefixCountRingsAmulets <= 0 && GoodSuffixCountRingsAmulets <= 0)
 		{
 			return true;
 		}
 
-		//server->GameStringf("Suffix=%d Prefix=%d  Result=(%d)", goodPrefixCount, goodSuffixCount, (goodPrefixCount + goodSuffixCount) >= 2);
-		return (goodPrefixCount + goodSuffixCount) >= 2;
+		if (GoodAffixCountRingsAmulets > 0 && goodPrefixCount + goodSuffixCount >= GoodAffixCountRingsAmulets)
+		{
+			return true;
+		}
+
+		if (GoodPrefixCountRingsAmulets > 0 && goodPrefixCount >= GoodPrefixCountRingsAmulets)
+		{
+			return true;
+		}
+
+		if (GoodSuffixCountRingsAmulets > 0 && goodSuffixCount >= GoodSuffixCountRingsAmulets)
+		{
+			return true;
+		}
+
+		return false;
 	}
 
-	return goodPrefixCount >= 1 || goodSuffixCount >= 1;
+	return goodPrefixCount + goodSuffixCount >= GoodAffixCountNonRingsAmulets;
 }
 
 bool AutoStocker::IsRingAmulet(LPCSTR itemCode)
@@ -1062,6 +1086,12 @@ bool AutoStocker::IsRerollItem(const ITEM &item)
 	// Ignore any item that has +level requirements
 	const auto item_levelreq = server->GetUnitStat(&unit, 92);
 	if (item_levelreq > 0)
+	{
+		return false;
+	}
+
+	// Keep those fedoras
+	if (item.iPersonalized)
 	{
 		return false;
 	}
