@@ -98,6 +98,9 @@ bool AutoStocker::StartRares(bool transmuteSet, bool transmuteRare, bool transmu
 	ignoreNextAutoOre = false;
 	ignoreNextAutoScroll = false;
 
+	// Notify the user about the current settings
+	server->GameStringf("ÿc:Autostockerÿc0: Transmuting: ÿc3Magic%s%s%s", transmuteSet?" ÿc2Sets":"", transmuteRare?" ÿc9Rares":"", transmuteUnique?" ÿc4Uniques":"");
+
 	return BeginAutostocking();
 }
 
@@ -120,6 +123,9 @@ bool AutoStocker::Start(bool useChat, const std::unordered_set<std::string> &ign
 
 	ignoreNextAutoOre = false;
 	ignoreNextAutoScroll = false;
+
+	// Notify the user about the current settings
+	server->GameStringf("ÿc:Autostockerÿc0: Transmuting: ÿc3Magic%s%s%s", transmuteSet?" ÿc2Sets":"", transmuteRare?" ÿc9Rares":"", transmuteUnique?" ÿc4Uniques":"");
 
 	return BeginAutostocking();
 }
@@ -144,9 +150,6 @@ bool AutoStocker::BeginAutostocking()
 	restockerPositions.resize(TRANSMUTE_END);
 	currentItem = -1;
 	currentStocker = -1;
-
-	// Notify the user about the current settings
-	server->GameStringf("ÿc:Autostockerÿc0: Transmuting: ÿc3Magic%s%s%s", transmuteSet?" ÿc2Sets":"", transmuteRare?" ÿc9Rares":"", transmuteUnique?" ÿc4Uniques":"");
 
 	// Open the player's cube
 	if(!OpenCube())
