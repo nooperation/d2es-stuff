@@ -117,6 +117,9 @@ xcopy /Y $(TargetPath) $(SolutionDir)\Publish_$(Configuration)\</Command>
   <ItemGroup>
     <ClInclude Include="AutoOre.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ore.ini" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

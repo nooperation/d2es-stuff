@@ -57,6 +57,20 @@ bool AutoStocker::Init(bool useChat)
 	IgnoreIdentifiedSetRingsAndAmulets = (GetPrivateProfileInt("Autostocker", "IgnoreIdentifiedSetRingsAndAmulets", 0, CONFIG_FILE) == 1);
 	MinPrefixCount = GetPrivateProfileInt("Autostocker", "PrefixCount", 0, CONFIG_FILE);
 	MinSuffixCount = GetPrivateProfileInt("Autostocker", "SuffixCount", 0, CONFIG_FILE);
+	RunAutoOre = GetPrivateProfileInt("Autostocker", "RunAutoOre", 1, CONFIG_FILE);
+	RunAutoScroll = GetPrivateProfileInt("Autostocker", "RunAutoScroll", 1, CONFIG_FILE);
+
+	// Load required modules
+	if (RunAutoScroll && !autoAncientScrollLoaded)
+	{
+		autoAncientScrollLoaded = true;
+		server->GameCommandLine("load scroll");
+	}
+	if (RunAutoOre && !autoOreLoaded)
+	{
+		autoOreLoaded = true;
+		server->GameCommandLine("load ore");
+	}	
 
 	return true;
 }
@@ -80,6 +94,9 @@ bool AutoStocker::StartRares(bool transmuteSet, bool transmuteRare, bool transmu
 	this->transmuteRare = transmuteRare;
 	this->transmuteUnique = transmuteUnique;
 	this->ignoredItemCodes = ignoredItemCodes;
+	
+	ignoreNextAutoOre = false;
+	ignoreNextAutoScroll = false;
 
 	return BeginAutostocking();
 }
@@ -100,6 +117,9 @@ bool AutoStocker::Start(bool useChat, const std::unordered_set<std::string> &ign
 	this->transmuteRare = false;
 	this->transmuteUnique = false;
 	this->ignoredItemCodes = ignoredItemCodes;
+
+	ignoreNextAutoOre = false;
+	ignoreNextAutoScroll = false;
 
 	return BeginAutostocking();
 }
@@ -187,6 +207,38 @@ void AutoStocker::OnTick()
 			break;
 		}
 	}
+}
+
+bool AutoStocker::OnAutoAncientScrollMessage(const std::string_view& message)
+{
+	if (currentState != STATE_RUN_AUTOSCROLL)
+	{
+		return false;
+	}
+
+	if (message == "Ended")
+	{
+		ignoreNextAutoScroll = true;
+		BeginAutostocking();
+	}
+
+	return true;
+}
+
+bool AutoStocker::OnAutoOreMessage(const std::string_view& message)
+{
+	if (currentState != STATE_RUN_AUTOORE)
+	{
+		return false;
+	}
+
+	if (message == "Ended")
+	{
+		ignoreNextAutoOre = true;
+		BeginAutostocking();
+	}
+
+	return true;
 }
 
 /// <summary>
@@ -366,7 +418,21 @@ void AutoStocker::ProcessNextStocker()
 	// All stockers have been processed, autostocker complete
 	if(currentStocker >= restockers.size())
 	{
-		Abort();
+		if (RunAutoScroll && !ignoreNextAutoScroll)
+		{
+			currentState = STATE_RUN_AUTOSCROLL;
+			server->GameCommandf("scroll start chat");
+		}
+		else if (RunAutoOre && !ignoreNextAutoOre)
+		{
+			currentState = STATE_RUN_AUTOORE;
+			server->GameCommandf("ore start chat");
+		}
+		else
+		{
+			Abort();
+		}
+
 		return;
 	}
 

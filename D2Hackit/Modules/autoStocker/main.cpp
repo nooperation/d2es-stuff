@@ -16,10 +16,10 @@ bool hotkeyIncludesUniques = false;
 
 CLIENTINFO
 (
-	1,6,
-	"Auto Stocker v1.6",
+	1,7,
+	"Auto Stocker v1.7",
 	"",
-	"Auto Stocker v1.6",
+	"Auto Stocker v1.7",
 	""
 )
 
@@ -147,6 +147,41 @@ VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPAR
 			autoStocker.OnItemFromCube(item);
 		}
 	}
+}
+
+DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
+{
+	if(aPacket[0] == 0x15 && aPacket[1] == 0x01)
+	{
+		char *chatMessage = (char *)(aPacket+3);
+
+		if(strncmp(chatMessage, "ÿc:AutoAncientScrollÿc0:", 24) == 0)
+		{
+			const auto message = std::string_view(chatMessage + 25);
+			if (!autoStocker.OnAutoAncientScrollMessage(message))
+			{
+				return aLen;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else if(strncmp(chatMessage, "ÿc5AutoOreÿc0:", 14) == 0)
+		{
+			const auto message = std::string_view(chatMessage + 15);
+			if (!autoStocker.OnAutoOreMessage(message))
+			{
+				return aLen;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+	}
+
+	return aLen;
 }
 
 BOOL PRIVATE SetHotkey(char** argv, int argc)

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <unordered_set>
+#include <stack>
 #include <windows.h>
 #include "../../Includes/D2Client.h"
 
@@ -33,6 +34,8 @@ enum States
 	STATE_STOCKERFROMCUBE,
 	STATE_STOCKERTOINVENTORY,
 	STATE_WAITINGFORNEXTSTATE,
+	STATE_RUN_AUTOSCROLL,
+	STATE_RUN_AUTOORE,
 };
 
 class AutoStocker
@@ -47,6 +50,8 @@ class AutoStocker
 		void OnItemToCube(const ITEM &item);
 		void OnItemToInventory(const ITEM &item);
 		void OnItemFromCube(const ITEM &item);
+		bool OnAutoAncientScrollMessage(const std::string_view &message);
+		bool OnAutoOreMessage(const std::string_view &message);
 		void OnTick();
 		void Abort();
 		
@@ -90,6 +95,8 @@ class AutoStocker
 		bool transmuteRare;
 		bool transmuteSet;
 		bool transmuteUnique;
+		bool autoAncientScrollLoaded;
+		bool autoOreLoaded;
 
 		bool IsTransmutingUnidentifiedSmallCharms;
 		bool IsTransmutingUnidentifiedLargeCharms;
@@ -100,6 +107,10 @@ class AutoStocker
 		int MaxUnidentifiedGCharmLevel;
 		int MinPrefixCount;
 		int MinSuffixCount;
+		bool RunAutoOre;
+		bool RunAutoScroll;
+		bool ignoreNextAutoOre;
+		bool ignoreNextAutoScroll;
 
 		unsigned int currentItem;
 		unsigned int currentStocker;
