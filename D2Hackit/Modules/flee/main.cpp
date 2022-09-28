@@ -302,8 +302,8 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 {   
 	if(aPacket[0] == 0x95)
 	{
-		int life = ((aPacket[2]&63)<<8)|aPacket[1];
-		int mana = ((aPacket[4]&63)<<9)|((aPacket[3]<<1)+1);
+		const auto life = ((aPacket[1] & 0b11111111) >> 0) | ((aPacket[2] & 0b01111111) << 8);
+		const auto mana = ((aPacket[2] & 0b10000000) >> 7) | ((aPacket[3] & 0b11111111) << 1) | ((aPacket[4] & 0b00111111) << 9);
 
 		CheckPlayerHPMana(life, mana);
 	}
