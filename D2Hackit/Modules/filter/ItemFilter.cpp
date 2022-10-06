@@ -85,10 +85,6 @@ bool ItemFilter::OnItemFind(ITEM &item)
 	//if(!filterTown && me->IsInTown())
 	//	return true;
 
-	if (strcmp(item.szItemCode, "gld") == 0) {
-		return item.dwGoldAmount >= minGoldAmount;
-	}
-
 	if(IsAllowed(item.szItemCode))
 		return true;
 
@@ -100,6 +96,10 @@ bool ItemFilter::OnItemFind(ITEM &item)
 
 	if(IsFiltered(item.szItemCode))
 		return false;
+
+	if (strcmp(item.szItemCode, "gld") == 0) {
+		return item.dwGoldAmount >= minGoldAmount;
+	}
 
 	if(IsGoodItemCode(item.szItemCode))
 		return true;
