@@ -40,7 +40,6 @@ class AutoReroll
 		bool Init(bool useChat);
 
 		void OnItemToCube(const ITEM &item);
-		void OnItemFromCube(DWORD itemID);
 		void OnItemFromInventory(DWORD itemID);
 		bool OnEmptyCubeMessage(const std::string_view &message);
 		bool OnAutoExtractorMessage(const std::string_view &message);
@@ -48,15 +47,13 @@ class AutoReroll
 		void Abort();		
 
 	private:
-		void StartStocking();
 		bool CheckRerolledItem(const ITEM &item);
-
 		void ExtractMoreGems();
-		void MoveGemCanAndOpenerToCube();
+		void ProcessGemCanToCube();
 		void MoveNextGemToCube();
-		void FinishedEmptyCube();
 
 		bool ReadAffixConfig(const std::string &configPath, std::unordered_set<int> &readTo);
+		bool ReadStatConfig(const std::string& configPath, std::map<int, int>& readTo);
 
 		bool loadedEmptyCube;
 		bool rerollItemNeedsToGoBackToCube;
@@ -66,9 +63,14 @@ class AutoReroll
 		int numGemsToUse;
 		DWORD itemToRerollID;
 		int currentGemIndex;
+		int numFails;
+		int uniqueStatCount;
+		bool incGemCan;
+		bool increment;
 		std::vector<DWORD> gemsInInventory;
 		std::unordered_set<int> goodPrefix;
 		std::unordered_set<int> goodSuffix;
+		std::map<int, int> goodStats;
 
 		States currentState;
 		GemCanStuff gemCanAndOpener;
