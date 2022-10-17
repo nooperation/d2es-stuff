@@ -92,7 +92,7 @@ bool AutoReroll::Init(bool useChat)
 {
 	this->useChat = useChat;
 
-	if (!ReadAffixConfig(".\\plugin\\goodPrefix_ar.txt", goodPrefix))
+	if(!ReadAffixConfig(".\\plugin\\goodPrefix_ar.txt", goodPrefix))
 	{
 		return false;
 	}
@@ -109,13 +109,11 @@ bool AutoReroll::Init(bool useChat)
 
 	minPrefix = GetPrivateProfileInt("AutoReroll", "PrefixCount", 2, CONFIG_PATH);
 	minSuffix = GetPrivateProfileInt("AutoReroll", "SuffixCount", 0, CONFIG_PATH);
-	
 	numGemsToUse = GetPrivateProfileInt("AutoReroll", "GemCount", 2, CONFIG_PATH);
 	uniqueStatCount = GetPrivateProfileInt("AutoReroll", "UniqueStatCount", 1, CONFIG_PATH);
 	increment = GetPrivateProfileInt("AutoReroll", "GemCanIncrement", 0, CONFIG_PATH);
 
-	//server->GameStringf("Min prefix: %d Min suffix: %d", minPrefix, minSuffix);
-	server->GameStringf("Attempting to reroll...");
+	server->GameStringf("Min prefix: %d Min suffix: %d", minPrefix, minSuffix);
 
 	itemToRerollID = 0;
 	rerollItemNeedsToGoBackToCube = false;
@@ -142,18 +140,18 @@ bool AutoReroll::ReadAffixConfig(const std::string &configPath, std::unordered_s
 	readTo.clear();
 
 	std::ifstream inFile(configPath.c_str());
-	if (!inFile)
+	if(!inFile)
 	{
 		server->GameStringf("ÿc:AutoRerollÿc0: Failed to open file %s\n", configPath.c_str());
 		return false;
 	}
 
-	while (inFile.good())
+	while(inFile.good())
 	{
 		std::getline(inFile, readLineBuff);
 
 		readNum = atoi(readLineBuff.c_str());
-		if (readNum > 0)
+		if(readNum > 0)
 		{
 			readTo.insert(readNum);
 		}
