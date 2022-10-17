@@ -1,0 +1,4 @@
+333	passive_fire_pierce	15
+334	passive_ltng_pierce	15
+335	passive_cold_pierce	15
+336	passive_pois_pierce	15
