@@ -27,19 +27,29 @@ bool ShopBot::LoadItemMap(const std::string &fileName, std::unordered_map<std::s
 	}
 
 	itemMap.clear();
-
 	
-	while(inFile.good())
-	{
-		std::getline(inFile, readBuff);
-
+	while (std::getline(inFile, readBuff)) {
 		if(readBuff.length() <= 0)
 		{
 			continue;
 		}
-
-		itemName = readBuff.substr(0, 3);
-		itemDesc = readBuff.substr(4);
+		
+		if(readBuff.length() >= 3)
+		{
+			itemName = readBuff.substr(0, 3);
+		} 
+		else {
+			continue;
+		}
+		
+		if(readBuff.length() >= 4)
+		{
+			itemDesc = readBuff.substr(4);
+		} 
+		else {
+			itemDesc = "";
+		}
+		
 
 		if(itemName.length() < 3)
 		{
@@ -64,7 +74,7 @@ bool ShopBot::ReadConfig(const std::string &configPath, std::unordered_set<int> 
 	std::ifstream inFile(configPath.c_str());
 	if(!inFile)
 	{
-		server->GameStringf("ˇc:Shopbotˇc0: Failed to open file %s\n", configPath.c_str());
+		server->GameStringf("√øc:Shopbot√øc0: Failed to open file %s\n", configPath.c_str());
 		return false;
 	}
 
@@ -94,7 +104,7 @@ bool ShopBot::Start(const std::vector<MAPPOS> &customPath, const std::string &me
 
 	if (customPath.size() <= 1)
 	{
-		server->GameStringf("ˇc:Shopbotˇc0: Min prefix: Invalid path, please mark a path using '.shopbot mark' leading out of town.", minPrefix, minSuffix);
+		server->GameStringf("√øc:Shopbot√øc0: Min prefix: Invalid path, please mark a path using '.shopbot mark' leading out of town.", minPrefix, minSuffix);
 		return false;
 	}
 
@@ -117,7 +127,7 @@ bool ShopBot::Start(const std::vector<MAPPOS> &customPath, const std::string &me
 		server->GameCommandf("flee SuppressAutoTp 1");
 	}
 
-	server->GameStringf("ˇc:Shopbotˇc0: Min prefix: %d Min suffix: %d", minPrefix, minSuffix);
+	server->GameStringf("√øc:Shopbot√øc0: Min prefix: %d Min suffix: %d", minPrefix, minSuffix);
 
 	currentState = STATE_NEXTTELEPORT;
 	return true;
@@ -225,14 +235,14 @@ void ShopBot::PurchaseQueuedItems()
 
 	if(!WillItemFit(currentItemId))
 	{
-		server->GameStringf("ˇc:Shopbotˇc0: skipping item");
+		server->GameStringf("√øc:Shopbot√øc0: skipping item");
 		currentState = STATE_COMPLETE;
 		return;
 	}
 
 	if(!server->VerifyUnit(&merchantNpc))
 	{
-		server->GamePrintInfo("ˇc:Shopbotˇc0: Could not verify npc unit");
+		server->GamePrintInfo("√øc:Shopbot√øc0: Could not verify npc unit");
 		currentState = STATE_PURCHASE_DONE;
 		return;
 	}
@@ -240,7 +250,7 @@ void ShopBot::PurchaseQueuedItems()
 	currentState = STATE_PURCHASE_WAITFORITEM;
 	if(!me->BuyItem(currentItemId))
 	{
-		server->GamePrintInfo("ˇc:Shopbotˇc0: Unable to buy item");
+		server->GamePrintInfo("√øc:Shopbot√øc0: Unable to buy item");
 		return;
 	}
 }
@@ -309,7 +319,7 @@ void ShopBot::OnTick()
 
 				if(merchantNpc.dwUnitID == 0)
 				{
-					server->GamePrintString("ˇc:Shopbotˇc0: Failed to find merchant");
+					server->GamePrintString("√øc:Shopbot√øc0: Failed to find merchant");
 					currentState = STATE_COMPLETE;
 					return;
 				}
@@ -317,7 +327,7 @@ void ShopBot::OnTick()
 				currentState = STATE_NPC_LISTINGITEMS;
 				if(!me->StartNpcSession(&merchantNpc, NPC_TRADE))
 				{
-					server->GamePrintString("ˇc:Shopbotˇc0: Failed to start npc session");
+					server->GamePrintString("√øc:Shopbot√øc0: Failed to start npc session");
 					currentState = STATE_PURCHASE_DONE;
 					return;
 				}
@@ -353,7 +363,7 @@ void ShopBot::OnTick()
 				server->GameCommandf("flee SuppressAutoTp 0");
 			}
 
-			server->GameStringf("ˇc:Shopbotˇc0: complete");
+			server->GameStringf("√øc:Shopbot√øc0: complete");
 			currentState = STATE_UNINITIALIZED;
 			return;
 		}
@@ -365,7 +375,7 @@ void ShopBot::OnNotEnoughMoney()
 	if(currentState != STATE_PURCHASE_WAITFORITEM)
 		return;
 
-	server->GameStringf("ˇc:Shopbotˇc0: Not enough money");
+	server->GameStringf("√øc:Shopbot√øc0: Not enough money");
 
 	currentState = STATE_COMPLETE;
 }
@@ -381,12 +391,12 @@ bool ShopBot::IsItemGood(const ITEM &item)
 		if(goodPrefix.count(item.wPrefix[i]) > 0)
 		{
 			goodPrefixCount++;
-			//server->GameStringf("ˇc;Prefixˇc0 %s: %s", Prefix[item.wPrefix[i]], PrefixDetails[item.wPrefix[i]]);
+			//server->GameStringf("√øc;Prefix√øc0 %s: %s", Prefix[item.wPrefix[i]], PrefixDetails[item.wPrefix[i]]);
 		}
 		if(goodSuffix.count(item.wSuffix[i]) > 0)
 		{
 			goodSuffixCount++;
-			//server->GameStringf("ˇc:Suffixˇc0 %s: %s", Suffix[item.wSuffix[i]], SuffixDetails[item.wSuffix[i]]);
+			//server->GameStringf("√øc:Suffix√øc0 %s: %s", Suffix[item.wSuffix[i]], SuffixDetails[item.wSuffix[i]]);
 		}
 	}
 
@@ -405,11 +415,11 @@ void ShopBot::OnNpcItemList(ITEM &merchantItem)
 		{
 			if(targetItems.empty())
 			{
-				server->GameStringf("ˇc:Shopbotˇc0: Good item found");
+				server->GameStringf("√øc:Shopbot√øc0: Good item found");
 			}
 			else
 			{
-				server->GameStringf("ˇc:Shopbotˇc0: %s found", targetItems[merchantItem.szItemCode].c_str());
+				server->GameStringf("√øc:Shopbot√øc0: %s found", targetItems[merchantItem.szItemCode].c_str());
 			}
 
 			gambleQueue.push(merchantItem.dwItemID);
@@ -435,7 +445,7 @@ void ShopBot::OnNpcSession(int success)
 	{
 		me->RedrawClient(FALSE);
 		me->MoveToUnit(&merchantNpc, TRUE);
-		server->GamePrintInfo("ˇc:Shopbotˇc0: NPC request failed");
+		server->GamePrintInfo("√øc:Shopbot√øc0: NPC request failed");
 		currentState = STATE_PURCHASE_DONE; // try again
 		return;
 	}
