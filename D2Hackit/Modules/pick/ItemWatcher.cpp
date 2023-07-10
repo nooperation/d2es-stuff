@@ -481,11 +481,6 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 
 	const auto itemCode = std::string(item.szItemCode);
 
-	if(item.iIdentified && itemCode == "ore")
-	{
-		return;
-	}
-
 	if((townPickup || !me->IsInTown()) && item.iAction!= ITEM_ACTION_DROP)
 	{
 		if(itemCode == "gld" && item.dwGoldAmount >= minGold)
