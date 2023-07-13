@@ -92,10 +92,36 @@ bool ShopBot::Start(const std::vector<MAPPOS> &customPath, const std::string &me
 	currentTeleportIndex = 1;
 	ticksSinceLastTeleport = 0;
 
-	if (customPath.size() <= 1)
+	while (!gambleQueue.empty()) {
+		gambleQueue.pop();
+	}
+
+	if (teleportPath.size() <= 1)
 	{
-		server->GameStringf("ÿc:Shopbotÿc0: Min prefix: Invalid path, please mark a path using '.shopbot mark' leading out of town.", minPrefix, minSuffix);
-		return false;
+		const auto currentMap = me->GetCurrentMapID();
+		
+		if (currentMap == MAP_A5_HARROGATH) {
+			const auto distanceToAnya = me->GetDistanceFrom(5102, 5114);
+			const auto distanceToLarzuk = me->GetDistanceFrom(5142, 5046);
+
+			if (distanceToLarzuk > distanceToAnya) {
+				teleportPath.push_back({ 5103, 5117 });
+				teleportPath.push_back({ 5065, 5097 });
+				teleportPath.push_back({ 5029, 5095 });
+				teleportPath.push_back({ 4992, 5093 });
+			}
+			else {
+				teleportPath.push_back({ 5142, 5040 });
+				teleportPath.push_back({ 5113, 5073 });
+				teleportPath.push_back({ 5070, 5075 });
+				teleportPath.push_back({ 5036, 5098 });
+				teleportPath.push_back({ 4992, 5091 });
+			}
+		}
+		else {
+			server->GameStringf("ÿc:Shopbotÿc0: Min prefix: Missing path, please mark a path using '.shopbot mark' leading out of town, starting with next to the npc.", minPrefix, minSuffix);
+			return false;
+		}
 	}
 
 	if(!ReadConfig(".\\plugin\\goodPrefix_shopbot.txt", goodPrefix))

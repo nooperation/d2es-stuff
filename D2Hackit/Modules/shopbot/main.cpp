@@ -7,44 +7,15 @@ std::vector<MAPPOS> customPath;
 
 BOOL PRIVATE Shop(char** argv, int argc)
 {
-	if(customPath.size() <= 1)
+	if(argc >= 3)
 	{
-		switch(me->GetCurrentMapID())
-		{
-			case MAP_A4_THE_PANDEMONIUM_FORTRESS:
-			{
-				std::vector<MAPPOS> a4Path;
-				MAPPOS pos;
-
-				pos.x = 5087;
-				pos.y = 5034;
-				a4Path.push_back(pos);
-
-				pos.x = 5134;
-				pos.y = 5070;
-				a4Path.push_back(pos);
-
-				pos.x = 5179;
-				pos.y = 5096;
-				a4Path.push_back(pos);
-
-				break;
-			}
-			default:
-				server->GameStringf("ÿc:Shopbotÿc0: No path defined");
-		}
+		shopbot.Start(customPath, argv[2]);
 	}
 	else
 	{
-		if(argc >= 3)
-		{
-			shopbot.Start(customPath, argv[2]);
-		}
-		else
-		{
-			shopbot.Start(customPath, "");
-		}
+		shopbot.Start(customPath, "");
 	}
+
 	return TRUE;
 }
 
