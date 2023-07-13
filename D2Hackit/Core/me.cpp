@@ -2351,6 +2351,15 @@ BOOL EXPORT DumpStorage(LPCSTR path)
 	return g_inventory.Dump(path);
 }
 
+BOOL EXPORT UpdateItemExternal(uint32_t item_guid, uint32_t tx, uint32_t ty, uint8_t target_page)
+{
+	g_inventory.RemoveFromStorage(STORAGE_INVENTORY, item_guid);
+	g_inventory.RemoveFromStorage(STORAGE_STASH, item_guid);
+	g_inventory.RemoveFromStorage(STORAGE_CUBE, item_guid);
+
+	return g_inventory.AddItemFromExternalSource(item_guid, tx, ty, target_page);
+}
+
 int EXPORT GetNumberOfFreeStorageSlots(int storageType)
 {
 	return g_inventory.GetNumberOfFreeStorageSlots(storageType);

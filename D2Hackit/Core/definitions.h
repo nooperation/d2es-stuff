@@ -11,6 +11,8 @@
 #define D2NET_MAX_MSG_SIZE 512
 #define MAX_MSG_SIZE 516
 
+#include <cstdint>
+
 enum eUIModes { UI_ON = 0, UI_OFF = 1, UI_TOGGLE = 2 };
 
 struct UnitAny;
@@ -62,6 +64,7 @@ struct LevelTxt {
 	BYTE _1b[0x79];
 };
 
+/*
 struct ItemTxt {
 	wchar_t szName2[0x40]; //+00
 	union {
@@ -75,7 +78,7 @@ struct ItemTxt {
 	BYTE _3[0x0d];
 	BYTE fQuest; // +12a
 };
-
+*/
 struct MonsterTxt {
 	BYTE _1[0x6];
 	WORD nLocaleTxtNo; // +06
@@ -296,6 +299,134 @@ struct ObjectBinData {
    BYTE PopulateFn;				// 0x1B2
    BYTE OperateFn;				// 0x1B3				
    // Leaving the rest undefined for now, until I get some more bin dumps.
+};
+
+// https://github.com/ThePhrozenKeep/D2MOO/blob/master/source/D2Common/include/DataTbls/ItemsTbls.h#L286
+
+enum D2C_ItemInvPage
+{
+	INVPAGE_INVENTORY = 0,
+	INVPAGE_EQUIP = 1,
+	INVPAGE_TRADE = 2,
+	INVPAGE_CUBE = 3,
+	INVPAGE_STASH = 4,
+	INVPAGE_BELT = 5,
+	INVPAGE_NULL = 255
+};
+struct D2ItemsTxt
+{
+	char szFlippyFile[32];					//0x00
+	char szInvFile[32];						//0x20
+	char szUniqueInvFile[32];				//0x40
+	char szSetInvFile[32];					//0x60
+	union
+	{
+		uint32_t dwCode;					//0x80
+		char szCode[4];						//0x80
+	};
+	uint32_t dwNormCode;					//0x84
+	uint32_t dwUberCode;					//0x88
+	uint32_t dwUltraCode;					//0x8C
+	uint32_t dwAlternateGfx;				//0x90
+	uint32_t dwPspell;						//0x94
+	uint16_t wState;						//0x98
+	uint16_t wCurseState[2];				//0x9A
+	uint16_t wStat[3];						//0x9E
+	uint32_t dwCalc[3];						//0xA4
+	uint32_t dwLen;							//0xB0
+	uint8_t nSpellDesc;						//0xB4
+	uint8_t pad0xB5;						//0xB5
+	uint16_t wSpellDescStr;					//0xB6
+	uint32_t dwSpellDescCalc;				//0xB8
+	uint32_t dwBetterGem;					//0xBC
+	uint32_t dwWeapClass;					//0xC0
+	uint32_t dwWeapClass2Hand;				//0xC4
+	uint32_t dwTransmogrifyType;			//0xC8
+	int32_t dwMinAc;						//0xCC
+	int32_t dwMaxAc;						//0xD0
+	uint32_t dwGambleCost;					//0xD4
+	int32_t dwSpeed;						//0xD8
+	uint32_t dwBitField1;					//0xDC
+	uint32_t dwCost;						//0xE0
+	uint32_t dwMinStack;					//0xE4
+	uint32_t dwMaxStack;					//0xE8
+	uint32_t dwSpawnStack;					//0xEC
+	uint32_t dwGemOffset;					//0xF0
+	uint16_t wNameStr;						//0xF4
+	uint16_t wVersion;						//0xF6
+	uint16_t wAutoPrefix;					//0xF8
+	uint16_t wMissileType;					//0xFA
+	uint8_t nRarity;						//0xFC
+	uint8_t nLevel;							//0xFD
+	uint8_t nMinDam;						//0xFE
+	uint8_t nMaxDam;						//0xFF
+	uint8_t nMinMisDam;						//0x100
+	uint8_t nMaxMisDam;						//0x101
+	uint8_t n2HandMinDam;					//0x102
+	uint8_t n2HandMaxDam;					//0x103
+	uint8_t nRangeAdder;					//0x104
+	uint8_t unk0x105;						//0x105
+	int16_t nStrBonus;						//0x106
+	int16_t nDexBonus;						//0x108
+	uint16_t wReqStr;						//0x10A
+	uint16_t wReqDex;						//0x10C
+	uint8_t nAbsorb;						//0x10E
+	uint8_t nInvWidth;						//0x10F
+	uint8_t nInvHeight;						//0x110
+	uint8_t nBlock;							//0x111
+	uint8_t nDurability;					//0x112
+	uint8_t nNoDurability;					//0x113
+	uint8_t nMissile;						//0x114
+	uint8_t nComponent;						//0x115
+	uint8_t nArmorComp[6];					//0x116
+	uint8_t n2Handed;						//0x11C
+	uint8_t nUseable;						//0x11D
+	int16_t wType[2];						//0x11E
+	uint8_t nSubType;						//0x122
+	uint8_t unk0x123;						//0x123
+	uint16_t wDropSound;					//0x124
+	uint16_t wUseSound;						//0x126
+	uint8_t nDropSfxFrame;					//0x128
+	uint8_t nUnique;						//0x129
+	uint8_t nQuest;							//0x12A
+	uint8_t nQuestDiffCheck;				//0x12B
+	uint8_t nTransparent;					//0x12C
+	uint8_t nTransTbl;						//0x12D
+	uint8_t pad0x12E;						//0x12E
+	uint8_t nLightRadius;					//0x12F
+	uint8_t nBelt;							//0x130
+	uint8_t nAutoBelt;						//0x131
+	uint8_t nStackable;						//0x132
+	uint8_t nSpawnable;						//0x133
+	uint8_t nSpellIcon;						//0x134
+	uint8_t nDurWarning;					//0x135
+	uint8_t nQuantityWarning;				//0x136
+	uint8_t nHasInv;						//0x137
+	uint8_t nGemSockets;					//0x138
+	uint8_t nTransmogrify;					//0x139
+	uint8_t nTmogMin;						//0x13A
+	uint8_t nTmogMax;						//0x13B
+	uint8_t nHitClass;						//0x13C
+	uint8_t n1or2Handed;					//0x13D
+	uint8_t nGemApplyType;					//0x13E
+	uint8_t nLevelReq;						//0x13F
+	uint8_t nMagicLevel;					//0x140
+	int8_t nTransform;						//0x141
+	int8_t nInvTrans;						//0x142
+	uint8_t nCompactSave;					//0x143
+	uint8_t nSkipName;						//0x144
+	uint8_t nNameable;						//0x145
+	uint8_t nVendorMin[17];					//0x146
+	uint8_t nVendorMax[17];					//0x157
+	uint8_t nVendorMagicMin[17];			//0x168
+	uint8_t nVendorMagicMax[17];			//0x179
+	uint8_t nVendorMagicLvl[17];			//0x18A
+	uint8_t pad0x19B;						//0x19B
+	uint32_t dwNightmareUpgrade;			//0x19C
+	uint32_t dwHellUpgrade;					//0x1A0
+	uint8_t nPermStoreItem;					//0x1A4
+	uint8_t nMultibuy;						//0x1A5
+	uint16_t pad0x1A6;						//0x1A6
 };
 
 struct MonsterBinData {

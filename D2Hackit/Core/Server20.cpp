@@ -1301,11 +1301,11 @@ BOOL EXPORT GetItemCode(DWORD dwItemID, LPSTR lpszBuffer, DWORD dwMaxChars)
 	if (pUnit == NULL)
 		return FALSE;
 
-	ItemTxt* ptxt = D2COMMON_GetItemTxt(pUnit->dwClassId);
-	if (ptxt == NULL)
+	const auto* itemTxt = D2COMMON_GetItemTxt(pUnit->dwClassId);
+	if (itemTxt == NULL)
 		return FALSE;
 
-	::strncpy(lpszBuffer, ptxt->szCode, min(dwMaxChars, 3));
+	::strncpy(lpszBuffer, itemTxt->szCode, min(dwMaxChars, 3));
 	return strlen(lpszBuffer);
 }
 

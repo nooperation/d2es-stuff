@@ -61,6 +61,8 @@ public:
 	BOOL Dump(LPCSTR lpszFile) const;
 	BOOL GetNumberOfFreeStorageSlots(int storageType) const;
 
+	BOOL AddItemFromExternalSource(DWORD dwItemID, int x, int y, int page);
+
 private:
 	BOOL IsOnSecondary(DWORD dwItemID) const;
 	int FindFromEquip(DWORD dwItemID) const;

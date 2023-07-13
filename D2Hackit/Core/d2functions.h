@@ -167,7 +167,13 @@ D2EXPFUNC(D2COMMON, GetStatValue3, int __stdcall, (UnitAny * ptUnit, int StatId,
 D2EXPFUNC(D2COMMON, GetMaxHealth, int __stdcall, (UnitAny * ptUnit)); 												// #10564
 D2EXPFUNC(D2COMMON, GetMaxMana, int __stdcall, (UnitAny * ptUnit)); 												// #10565
 D2EXPFUNC(D2COMMON, GetMaxStamina, int __stdcall, (UnitAny * ptUnit)); 											// #10566
-D2EXPFUNC(D2COMMON, GetItemCode, char * __stdcall, (int itemid)); 												// #10600
+D2EXPFUNC(D2COMMON, GetItemTxt, D2ItemsTxt * __stdcall, (DWORD itemsTxtIndex)); 									// #10600
+D2EXPFUNC(D2COMMON, GetItemTxtFromItemCode, D2ItemsTxt * __stdcall, (DWORD itemCode, DWORD* outItemsTxtIndex)); 		// #10601
+
+D2EXPFUNC(D2COMMON, GetObjectTxt, ObjectTxt* __stdcall, (DWORD objno))
+D2EXPFUNC(D2COMMON, GetLevelTxt, LevelTxt* __stdcall, (DWORD levelno))
+D2EXPFUNC(D2COMMON, GetSuperuniqueTxt, SuperuniqueTxt* __stdcall, (DWORD monno))
+
 D2EXPFUNC(D2COMMON, GetExperienceForLevel, int __stdcall, (int PlayerClass, int TargetLevel));
 D2EXPFUNC(D2COMMON, GetItemQuality, int __stdcall, (UnitAny * ptUnit)); 							// #10628
 D2EXPFUNC(D2COMMON, GetItemPage, int __stdcall, (UnitItem * ptItem));												// #10719
@@ -180,10 +186,6 @@ D2EXPFUNC(D2COMMON, GetUnitSkill, Skill * __fastcall, (UnitPlayer * ptPlayer, WO
 D2EXPFUNC(D2COMMON, GetSkillFlags, DWORD * __stdcall, (Skill * hSkill));											// #10957
 D2EXPFUNC(D2COMMON, GetSkillType, short __stdcall, (Skill * ptSkill));												// #10963
 
-D2EXPFUNC(D2COMMON, GetItemTxt, ItemTxt * __stdcall, (DWORD itemno))
-D2EXPFUNC(D2COMMON, GetObjectTxt, ObjectTxt * __stdcall, (DWORD objno))
-D2EXPFUNC(D2COMMON, GetLevelTxt, LevelTxt * __stdcall, (DWORD levelno))
-D2EXPFUNC(D2COMMON, GetSuperuniqueTxt, SuperuniqueTxt * __stdcall, (DWORD monno))
 
 /* D2Lang.dll */
 D2EXPFUNC(D2LANG, GetLocaleText, wchar_t *__fastcall, (WORD nLocaleTxtNo))

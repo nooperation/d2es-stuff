@@ -360,6 +360,36 @@ BOOL CInventory::AddToCube(DWORD dwItemID, int x, int y, int itemWidth, int item
 	return AddToStorage(STORAGE_CUBE, dwItemID, x, y, itemWidth, itemHeight);
 }
 
+BOOL CInventory::AddItemFromExternalSource(DWORD dwItemID, int x, int y, int page)
+{
+	GAMEUNIT gameUnit;
+	gameUnit.dwUnitID = dwItemID;
+	gameUnit.dwUnitType = UNIT_TYPE_ITEM;
+	const auto* unit = (UnitAny*)VerifyUnit(&gameUnit);
+	if (unit == nullptr) {
+
+		GameErrorf("Failed to verify unit (AddItemFromExternalSource / ctrl-click item mover)");
+		return false;
+	}
+
+	const auto itemTxt = D2COMMON_GetItemTxt(unit->dwClassId);
+
+	switch (page) 
+	{
+		case INVPAGE_CUBE:
+			AddToCube(dwItemID, x, y, itemTxt->nInvWidth, itemTxt->nInvHeight);
+			break;
+		case INVPAGE_INVENTORY:
+			AddToInventory(dwItemID, x, y, itemTxt->nInvWidth, itemTxt->nInvHeight);
+			break;
+		case INVPAGE_STASH:
+			AddToStash(dwItemID, x, y, itemTxt->nInvWidth, itemTxt->nInvHeight);
+			break;
+	}
+	
+	return TRUE;
+}
+
 BOOL CInventory::RemoveFromStorage(int storageType, DWORD dwItemID)
 {
 	int storageWidth = 0;

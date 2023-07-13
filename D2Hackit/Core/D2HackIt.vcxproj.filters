@@ -235,9 +235,4 @@
       <Filter>Resources</Filter>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="Resources\ItemSizes.txt">
-      <Filter>Resources</Filter>
-    </Text>
-  </ItemGroup>
 </Project>

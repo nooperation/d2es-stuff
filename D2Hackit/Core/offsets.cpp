@@ -221,9 +221,9 @@ void DefineOffsets()
 	D2FUNCPTR(D2COMMON, GetMaxHealth, int __stdcall, (UnitAny * ptUnit), -0x2944); 							// #10564
 	D2FUNCPTR(D2COMMON, GetMaxMana, int __stdcall, (UnitAny * ptUnit), -0x2945); 							// #10565
 	D2FUNCPTR(D2COMMON, GetMaxStamina, int __stdcall, (UnitAny * ptUnit), -0x2946); 						// #10566
-	D2FUNCPTR(D2COMMON, GetItemCode, char * __stdcall, (int itemid), -0x2968); 								// #10600
+	D2FUNCPTR(D2COMMON, GetItemTxt, D2ItemsTxt * __stdcall, (DWORD itemsTxtIndex), -0x2968); 								// #10600
+	D2FUNCPTR(D2COMMON, GetItemTxtFromItemCode, D2ItemsTxt* __stdcall, (DWORD itemCode, DWORD* outItemsTxtIndex), -0x2969);  // #10601
 
-	D2FUNCPTR(D2COMMON, GetItemTxt, ItemTxt * __stdcall, (DWORD itemno), -0x2968)
 	D2FUNCPTR(D2COMMON, GetObjectTxt, ObjectTxt * __stdcall, (DWORD objno), -0x2982)
 	D2FUNCPTR(D2COMMON, GetLevelTxt, LevelTxt * __stdcall, (DWORD levelno), -0x2987)
 	D2FUNCPTR(D2CLIENT, GetMonsterTxt, MonsterTxt * __fastcall, (DWORD monno), 0xE570)

@@ -313,6 +313,7 @@ BOOL EXPORT IsInteractedWithWP();
 DWORD EXPORT GetSpellChargesReal(WORD wSpellID);
 
 BOOL EXPORT EnumPlayers(fnEnumPlayerProc lpfn, LPARAM lParam);
+BOOL EXPORT UpdateItemExternal(uint32_t item_guid, uint32_t tx, uint32_t ty, uint8_t target_page);
 // -- B
 
 BOOL EXPORT LeftClick(long x, long y);

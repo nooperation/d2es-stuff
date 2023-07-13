@@ -15,7 +15,6 @@ std::unordered_map<std::string, std::string> itemMapSets;
 std::unordered_map<std::string, std::string> itemMapWeapons;
 std::unordered_map<std::string, std::string> itemMapArmor;
 std::unordered_map<std::string, std::string> itemMapStackable;
-std::unordered_map<std::string, SIZE> itemSizes;
 
 std::unordered_set<std::string> itemIddqdUniques;
 std::unordered_set<std::string> itemRingsAmulets;
@@ -26,19 +25,24 @@ std::unordered_set<std::string> itemSpecialItems;
 
 CRITICAL_SECTION csLoadingItems;
 
-SIZE D2GetItemSize(LPCTSTR itemCode)
-{
-	if (!itemsLoaded)
-		LoadItems();
 
-	auto itemSizeIter = itemSizes.find(itemCode);
-	if (itemSizeIter == itemSizes.end())
-	{
-		SIZE val = { 0 };
-		return val;
+DWORD ItemCodeStringToNum(LPCTSTR szItemCode) {
+	return  ' ' << 24 | szItemCode[2] << 16 | szItemCode[1] << 8 | szItemCode[0];
+}
+
+SIZE D2GetItemSize(LPCTSTR szItemCode)
+{
+	const auto dwItemCode = ItemCodeStringToNum(szItemCode);
+	DWORD itemsTxtIndex = 0;
+
+	const auto itemTxt = D2COMMON_GetItemTxtFromItemCode(dwItemCode, &itemsTxtIndex);
+	if (itemTxt == nullptr) {
+		GameErrorf("Failed to get item record from item code '%s' while attempting to get item size");
+		return SIZE({ 1, 1 });
 	}
-	
-	return itemSizeIter->second;
+
+	const auto itemSize = SIZE({ itemTxt->nInvWidth, itemTxt->nInvHeight });
+	return itemSize;
 }
 
 BOOL D2IsWeapon(LPCSTR itemCode)
@@ -124,13 +128,13 @@ void DumpAllItems(char *path)
 
 	for (int i = 0; i < 1000000; i++)
 	{
-		auto itemTxt = D2COMMON_GetItemTxt(i);
+		const auto itemTxt = D2COMMON_GetItemTxt(i);
 		if (itemTxt == nullptr)
 		{
 			break;
 		}
 
-		auto rawLocalTxt = D2LANG_GetLocaleText(itemTxt->nLocaleTxtNo);
+		auto rawLocalTxt = D2LANG_GetLocaleText(itemTxt->wNameStr);
 		auto displayTxt = FixDisplayText(rawLocalTxt);
 
 		if (itemTxt->szCode[0] == ' ')
@@ -171,8 +175,6 @@ bool LoadItems()
 		LeaveCriticalSection(&csLoadingItems);
 		return true;
 	}
-
-	LoadItemSizeMap(".\\plugin\\ItemSizes.txt", itemSizes);
 
 	if (!std::filesystem::exists(".\\plugin\\AllItems.txt"))
 	{
