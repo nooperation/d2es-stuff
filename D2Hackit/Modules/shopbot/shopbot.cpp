@@ -13,67 +13,49 @@ ShopBot::ShopBot()
 	merchantName = "";
 }
 
-bool ShopBot::LoadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap)
+bool ShopBot::LoadItemMap(const std::string& fileName, std::unordered_map<std::string, std::string>& itemMap)
 {
-	std::ifstream inFile(fileName.c_str());
-
-	std::string itemName;
-	std::string itemDesc;
-	std::string readBuff;
-
-	if(!inFile)
+	std::ifstream inFile(fileName);
+	if (!inFile)
 	{
 		return false;
 	}
 
 	itemMap.clear();
 
-	
-	while(inFile.good())
+	std::string readBuff;
+	while (std::getline(inFile, readBuff))
 	{
-		std::getline(inFile, readBuff);
-
-		if(readBuff.length() <= 0)
+		if (readBuff.length() <= 4 || readBuff.at(3) != ' ')
 		{
 			continue;
 		}
 
-		itemName = readBuff.substr(0, 3);
-		itemDesc = readBuff.substr(4);
+		const auto itemName = readBuff.substr(0, 3);
+		const auto itemDesc = readBuff.substr(4);
 
-		if(itemName.length() < 3)
-		{
-			continue;
-		}
-
-		if(itemMap.count(itemName) == 0)
-			itemMap[itemName] = itemDesc;
+		itemMap.insert({ itemName, itemDesc });
 	}
 
-	inFile.close();
 	return true;
 }
 
 bool ShopBot::ReadConfig(const std::string &configPath, std::unordered_set<int> &readTo)
 {
-	std::string readLineBuff;
-	int readNum = 0;
-
-	readTo.clear();
-
-	std::ifstream inFile(configPath.c_str());
-	if(!inFile)
+	std::ifstream inFile(configPath);
+	if(!inFile.is_open())
 	{
 		server->GameStringf("ÿc:Shopbotÿc0: Failed to open file %s\n", configPath.c_str());
 		return false;
 	}
 
-	while(inFile.good())
-	{
-		std::getline(inFile, readLineBuff);
+	readTo.clear();
 
-		readNum = atoi(readLineBuff.c_str());
-		if(readNum > 0)
+	std::string readLineBuff;
+	while(std::getline(inFile, readLineBuff))
+	{
+		auto readNum = std::stoi(readLineBuff);
+		if (readNum > 0)
 		{
 			readTo.insert(readNum);
 		}

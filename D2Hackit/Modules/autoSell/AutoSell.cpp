@@ -15,11 +15,14 @@ AutoSell::AutoSell()
 
 	this->isFullyAutomatic = GetPrivateProfileInt("AutoSell", "IsAutomatic", false, CONFIG_PATH);
 	this->isAnnouncingSoldItems = GetPrivateProfileInt("AutoSell", "IsAnnouncingSoldItems", true, CONFIG_PATH);
+	this->merchantTpScrollId = 0;
+	this->numTPTomesToRefill = 0;
+	this->startingGold = 0;
 }
 
-bool AutoSell::LoadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap)
+bool AutoSell::LoadItemMap(const std::string& fileName, std::unordered_map<std::string, std::string>& itemMap)
 {
-	std::ifstream inFile(fileName.c_str());
+	std::ifstream inFile(fileName);
 	if (!inFile)
 	{
 		return false;
@@ -27,12 +30,10 @@ bool AutoSell::LoadItemMap(const std::string &fileName, std::unordered_map<std::
 
 	itemMap.clear();
 
-	while (inFile.good())
+	std::string readBuff;
+	while (std::getline(inFile, readBuff))
 	{
-		std::string readBuff;
-		std::getline(inFile, readBuff);
-
-		if (readBuff.length() <= 0)
+		if (readBuff.length() <= 4 || readBuff.at(3) != ' ')
 		{
 			continue;
 		}
@@ -40,18 +41,9 @@ bool AutoSell::LoadItemMap(const std::string &fileName, std::unordered_map<std::
 		const auto itemName = readBuff.substr(0, 3);
 		const auto itemDesc = readBuff.substr(4);
 
-		if (itemName.length() < 3)
-		{
-			continue;
-		}
-
-		if (itemMap.count(itemName) == 0)
-		{
-			itemMap[itemName] = itemDesc;
-		}
+		itemMap.insert({ itemName, itemDesc });
 	}
 
-	inFile.close();
 	return true;
 }
 

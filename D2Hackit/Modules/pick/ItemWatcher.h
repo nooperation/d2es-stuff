@@ -46,7 +46,7 @@ class ItemWatcher
 		void AnnounceItem(const ITEM &item);
 		void CheckWatchedItems();
 		void Cleanup();
-		bool loadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap);
+		bool LoadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap);
 		void SortWatchedItems();
 		float Distance(float x1, float x2, float y1, float y2) const;
 
@@ -65,20 +65,19 @@ class ItemWatcher
 
 		std::chrono::system_clock::time_point nextPickAttemptTime;
 
-		int itemWatcherTicksToSkip;
-		unsigned int radius;
-		unsigned int minGold;
-		bool townPickup;
-		bool isPickingItems;
-		unsigned int goldSpeed;
-		bool isInGame;
-		bool isMute;
-		bool isAnnouncingAllSets;
-		bool isAnnouncingAllUniques;
-		bool isAnnouncingAllCrafted;
-		bool isOverridingUniqueItemNames;
-		bool isOverridingSetItemNames;
-		bool isWalkToGold;
-		bool isWalkToItems;
+		unsigned int radius = 4;
+		unsigned int minGold = 50;
+		bool townPickup = true;
+		bool isPickingItems = true;
+		unsigned int goldSpeed = 1;
+		bool isInGame = false;
+		bool isMute = false;
+		bool isAnnouncingAllSets = true;
+		bool isAnnouncingAllUniques = true;
+		bool isAnnouncingAllCrafted = true;
+		bool isOverridingUniqueItemNames = false;
+		bool isOverridingSetItemNames = false;
+		bool isWalkToGold = true;
+		bool isWalkToItems = true;
 };
 #endif

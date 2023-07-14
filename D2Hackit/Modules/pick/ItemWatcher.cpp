@@ -266,22 +266,22 @@ void ItemWatcher::SetMinGold(int amount)
 
 bool ItemWatcher::LoadItems()
 {
-	if(!loadItemMap(".\\plugin\\pickItems.txt", itemsToPick))
+	if(!LoadItemMap(".\\plugin\\pickItems.txt", itemsToPick))
 	{
 		return false;
 	}
 
-	if(!loadItemMap(".\\plugin\\pickAnnounce.txt", itemsToAnnounce))
+	if(!LoadItemMap(".\\plugin\\pickAnnounce.txt", itemsToAnnounce))
 	{
 		return false;
 	}
 
-	if (!loadItemMap(".\\plugin\\pickAnnounce_uniques.txt", uniquesToAnnounce))
+	if (!LoadItemMap(".\\plugin\\pickAnnounce_uniques.txt", uniquesToAnnounce))
 	{
 		return false;
 	}
 
-	if (!loadItemMap(".\\plugin\\pickAnnounce_sets.txt", setsToAnnounce))
+	if (!LoadItemMap(".\\plugin\\pickAnnounce_sets.txt", setsToAnnounce))
 	{
 		return false;
 	}
@@ -303,42 +303,30 @@ bool ItemWatcher::LoadItems()
 	return true;
 }
 
-bool ItemWatcher::loadItemMap(const std::string &fileName, std::unordered_map<std::string, std::string> &itemMap)
+bool ItemWatcher::LoadItemMap(const std::string& fileName, std::unordered_map<std::string, std::string>& itemMap)
 {
-	std::ifstream inFile(fileName.c_str());
-
-	if(!inFile)
+	std::ifstream inFile(fileName);
+	if (!inFile)
 	{
 		return false;
 	}
 
 	itemMap.clear();
 
-	while(inFile.good())
+	std::string readBuff;
+	while (std::getline(inFile, readBuff))
 	{
-		std::string readBuff;
-		std::getline(inFile, readBuff);
-
-		if(readBuff.length() <= 0)
+		if (readBuff.length() <= 4 || readBuff.at(3) != ' ')
 		{
 			continue;
 		}
 
-		auto itemName = readBuff.substr(0, 3);
-		auto itemDesc = readBuff.substr(4);
+		const auto itemName = readBuff.substr(0, 3);
+		const auto itemDesc = readBuff.substr(4);
 
-		if(itemName.length() < 3)
-		{
-			continue;
-		}
-
-		if (itemMap.count(itemName) == 0)
-		{
-			itemMap[itemName] = itemDesc;
-		}
+		itemMap.insert({ itemName, itemDesc });
 	}
 
-	inFile.close();
 	return true;
 }
 
