@@ -360,7 +360,7 @@ BOOL CInventory::AddToCube(DWORD dwItemID, int x, int y, int itemWidth, int item
 	return AddToStorage(STORAGE_CUBE, dwItemID, x, y, itemWidth, itemHeight);
 }
 
-BOOL CInventory::AddItemFromExternalSource(DWORD dwItemID, int x, int y, int page)
+BOOL CInventory::UpdateItemLocationExternal(DWORD dwItemID, int x, int y, int page)
 {
 	GAMEUNIT gameUnit;
 	gameUnit.dwUnitID = dwItemID;
@@ -368,22 +368,75 @@ BOOL CInventory::AddItemFromExternalSource(DWORD dwItemID, int x, int y, int pag
 	const auto* unit = (UnitAny*)VerifyUnit(&gameUnit);
 	if (unit == nullptr) {
 
-		GameErrorf("Failed to verify unit (AddItemFromExternalSource / ctrl-click item mover)");
+		GameErrorf("Failed to verify unit (UpdateItemLocationExternal / ctrl-click item mover)");
 		return false;
 	}
 
 	const auto itemTxt = D2COMMON_GetItemTxt(unit->dwClassId);
 
+	bool foundItemToMove = false;
+	ITEM itemToMove;
+
+	for (int i = 0; i < m_aCubeItems.GetSize(); ++i)
+	{
+		if (m_aCubeItems[i].dwItemID == dwItemID)
+		{
+			itemToMove = m_aCubeItems[i];
+			foundItemToMove = true;
+			break;
+		}
+	}
+	if (!foundItemToMove)
+	{
+		for (int i = 0; i < m_aInventoryItems.GetSize(); ++i)
+		{
+			if (m_aInventoryItems[i].dwItemID == dwItemID)
+			{
+				itemToMove = m_aInventoryItems[i];
+				foundItemToMove = true;
+				break;
+			}
+		}
+	}
+	if (!foundItemToMove)
+	{
+		for (int i = 0; i < m_aStashItems.GetSize(); ++i)
+		{
+			if (m_aStashItems[i].dwItemID == dwItemID)
+			{
+				itemToMove = m_aStashItems[i];
+				foundItemToMove = true;
+				break;
+			}
+		}
+	}
+
+	if (!foundItemToMove)
+	{
+		GameErrorf("Failed to find the item we're moving");
+		return false;
+	}
+
+	RemoveFromStorage(STORAGE_INVENTORY, dwItemID);
+	RemoveFromStorage(STORAGE_STASH, dwItemID);
+	RemoveFromStorage(STORAGE_CUBE, dwItemID);
+
 	switch (page) 
 	{
 		case INVPAGE_CUBE:
+			m_aCubeItems.Add(itemToMove);
 			AddToCube(dwItemID, x, y, itemTxt->nInvWidth, itemTxt->nInvHeight);
 			break;
 		case INVPAGE_INVENTORY:
+			m_aInventoryItems.Add(itemToMove);
 			AddToInventory(dwItemID, x, y, itemTxt->nInvWidth, itemTxt->nInvHeight);
 			break;
 		case INVPAGE_STASH:
+			m_aStashItems.Add(itemToMove);
 			AddToStash(dwItemID, x, y, itemTxt->nInvWidth, itemTxt->nInvHeight);
+			break;
+		default:
+			GameErrorf("Moved item to an unknown page %d", page);
 			break;
 	}
 	
