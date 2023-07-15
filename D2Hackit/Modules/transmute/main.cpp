@@ -379,11 +379,11 @@ VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
 	decals.push_back("Cham");
 	decals.push_back("Zod");
 
-	rerollingOrb.push_back("ring_mm");
+	rerollingOrb.push_back("mring");
 	rerollingOrb.push_back("ring_mr");
 	rerollingOrb.push_back("ring_rr");
 	rerollingOrb.push_back("ring_ru");
-	rerollingOrb.push_back("amulet_mm");
+	rerollingOrb.push_back("mamulet");
 	rerollingOrb.push_back("amulet_mr");
 	rerollingOrb.push_back("amulet_rr");
 	rerollingOrb.push_back("amulet_ru");
