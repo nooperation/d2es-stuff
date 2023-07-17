@@ -14,7 +14,6 @@ CLIENTINFO
 
 BOOL PRIVATE Start(char** argv, int argc)
 {
-
     if (argc != 3)
     {
         server->GameStringf("Usage: Follow <masterName>");
@@ -28,9 +27,27 @@ BOOL PRIVATE Start(char** argv, int argc)
 }
 
 
-DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
+DWORD EXPORT OnGamePacketBeforeSent(BYTE *aPacket, DWORD aLen)
 {
-    return aLen;
+	if (aPacket[0] == 0x15 && aPacket[1] == 0x01)
+	{
+		char *chatMessage = (char *)(aPacket + 3);
+
+		if (strncmp(chatMessage, "ÿc5BuffMeÿc0:", 13) == 0)
+		{
+			const auto message = std::string_view(chatMessage + 14);
+			if (!follow.OnBuffMeMessage(message))
+			{
+				return aLen;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+	}
+
+	return aLen;
 }
 
 struct Packet_SC_PortalOwnership
@@ -40,9 +57,6 @@ struct Packet_SC_PortalOwnership
 	DWORD LocalID;
 	DWORD RemoteID;
 };
-
-
-
 
 DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 {

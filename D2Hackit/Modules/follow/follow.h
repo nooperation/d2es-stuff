@@ -9,8 +9,12 @@
 enum class State
 {
     Uninitialized,
+    Waiting,
+    FollowingMaster,
     WalkingToPortal_LeavingTown,
     WalkingToPortal_EnteringTown,
+    WalkingToStairs,
+    WaitingForBuffToFinish,
 };
 
 struct PortalOwnershipData
@@ -26,6 +30,7 @@ public:
     Follow();
 
     void OnChatMessage(const std::string_view& from, const std::string_view& message);
+    bool OnBuffMeMessage(const std::string_view& message);
     void OnPortalOwnershipUpdate(uint32_t ownerId, std::string_view ownerName, uint32_t unitId);
     void OnEnterTown();
     void OnLeaveTown();
@@ -40,6 +45,7 @@ private:
     void SetState(State newState);
     void Reset();
     bool FindAndUsePortal();
+    void BuffMe();
 
     bool fleeLoaded;
     bool followEnabled;
@@ -48,6 +54,9 @@ private:
     std::string master;
     GAMEUNIT masterUnit;
     GAMEUNIT portalWeAreWalkingTo;
+
+    bool isBuffNeeded;
+    State statePriorToBuffing;
 
 
     std::chrono::milliseconds lastFollowAttemptTimeMs;

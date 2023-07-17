@@ -134,7 +134,6 @@ void AutoOre::PickupNextItemToDrop()
 {
 	if (this->itemsToDrop.empty())
 	{
-		server->GameStringf("ÿc5AutoOreÿc0: No more items to drop");
 		this->RunAutoStocker();
 		return;
 	}

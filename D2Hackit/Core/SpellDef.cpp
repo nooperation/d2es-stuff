@@ -738,6 +738,13 @@ BOOL D2GetSpellInfo(WORD wSpell, LPD2SPELLINFO lpBuffer)
 			_tcsncpy(lpBuffer->szSpellName, _T("Battle Orders"), SPELL_MAX_NAME);
 			break;
 
+		case D2S_ANCIENTSCALL:
+			lpBuffer->nClass = CLASS_BAR;
+			lpBuffer->dwSpellInfoFlag |= DSI_AFFECTGROUP;
+			
+			_tcsncpy(lpBuffer->szSpellName, _T("Ancients Call"), SPELL_MAX_NAME);
+			break;
+
 		case D2S_BATTLECOMMAND:
 			lpBuffer->nClass = CLASS_BAR;
 			lpBuffer->dwSpellInfoFlag |= DSI_RIGHTONLY;
@@ -1959,7 +1966,6 @@ BOOL D2GetSpellInfo(WORD wSpell, LPD2SPELLINFO lpBuffer)
 
 		case D2S_TELEPORT:
 			lpBuffer->nClass = CLASS_SOR;
-			lpBuffer->dwSpellInfoFlag |= DSI_RIGHTONLY;
 			lpBuffer->dwSpellInfoFlag |= DSI_TARGETABLE;
 			
 			_tcsncpy(lpBuffer->szSpellName, _T("Teleport"), SPELL_MAX_NAME);

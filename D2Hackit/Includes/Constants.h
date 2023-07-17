@@ -805,6 +805,7 @@ enum
 #define D2S_FINDPOTION			0x0083
 #define D2S_FINDITEM			0x008e
 #define D2S_GRIMWARD			0x0096
+#define D2S_ANCIENTSCALL		0x017E
 
 // Combat Masteries
 #define D2S_SWORDMASTERY		0x007f

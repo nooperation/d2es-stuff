@@ -24,7 +24,8 @@ void Follow::Reset()
     this->masterUnit.dwUnitType = UNIT_TYPE_PLAYER;
     this->portalWeAreWalkingTo.dwUnitID = 0;
     this->portalWeAreWalkingTo.dwUnitType = UNIT_TYPE_OBJECT;
-    this->followEnabled = false;
+    this->isBuffNeeded = false;
+    this->statePriorToBuffing = State::Uninitialized;
 }
 
 void Follow::SetState(State newState)
@@ -39,14 +40,12 @@ void Follow::Abort()
 
 void Follow::OnEnterTown()
 {
-    this->followEnabled = false;
-    this->SetState(State::Uninitialized);
+    this->SetState(State::Waiting);
 }
 
 void Follow::OnLeaveTown()
 {
-    this->followEnabled = true;
-    this->SetState(State::Uninitialized);
+    this->SetState(State::FollowingMaster);
 }
 
 void Follow::OnPlayerDeath(uint32_t playerId)
@@ -100,6 +99,8 @@ void Follow::OnPlayerDisappear(uint32_t playerId)
     }
     else
     {
+        // TODO: Find and use nearby stairs if master is not dead
+        SetState(State::Uninitialized);
         me->Say("Master disappeared and I couldn't find a portal so I'm going home");
         server->GameCommandf("flee tp");
     }
@@ -139,6 +140,8 @@ void Follow::OnChatMessage(const std::string_view& from, const std::string_view&
         char buff[128] = {};
         sprintf_s(buff, "Ok, now following %s", this->master.c_str());
         me->Say(&buff[0]);
+
+        SetState(State::FollowingMaster);
     }
 
 
@@ -147,7 +150,7 @@ void Follow::OnChatMessage(const std::string_view& from, const std::string_view&
         return;
     }
 
-    if (message == "flee" || message == "return to town")
+    if (message == "flee")
     {
         if (!me->IsInTown())
         {
@@ -159,23 +162,53 @@ void Follow::OnChatMessage(const std::string_view& from, const std::string_view&
     }
     else if (message == "stop")
     {
-        this->followEnabled = false;
-    }
-    else if (message == "start")
-    {
-        this->followEnabled = true;
+        this->SetState(State::Waiting);
     }
     else if (message == "flee!")
     {
         server->GameCommandf("flee tp");
     }
-    else if (message == "tp" || message == "take my portal")
+    else if (message == "tp")
     {
         if (me->IsInTown)
         {
             this->FindAndUsePortal();
         }
     }
+    else if (message == "buff")
+    {
+        BuffMe();
+    }
+}
+
+void Follow::BuffMe()
+{
+    statePriorToBuffing = currentState;
+    SetState(State::WaitingForBuffToFinish);
+    server->GameCommandf("buff buff 1");
+}
+
+bool Follow::OnBuffMeMessage(const std::string_view& message)
+{
+    if (message == "Rebuff needed")
+    {
+        isBuffNeeded = true;
+        return false;
+    }
+
+    if (message == "Done")
+    {
+        isBuffNeeded = false;
+        this->SetState(statePriorToBuffing);
+        return false;
+    }
+
+    if (currentState != State::WaitingForBuffToFinish)
+	{
+		return false;
+	}
+
+    return true;
 }
 
 struct FindPortalResult
@@ -250,11 +283,17 @@ void Follow::OnTick()
     static const uint32_t kFollowAttemptFrequencyMs = 200;
     static const uint32_t kMaxInteractionDistance = 8;
 
+    if (currentState == State::WaitingForBuffToFinish || currentState == State::Waiting)
+    {
+        return;
+    }
+
     auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
     if ((now - this->lastFollowAttemptTimeMs).count() < kFollowAttemptFrequencyMs)
     {
         return;
     }
+    this->lastFollowAttemptTimeMs = now;
 
     if (currentState == State::WalkingToPortal_LeavingTown || currentState == State::WalkingToPortal_EnteringTown)
     {
@@ -266,18 +305,20 @@ void Follow::OnTick()
         }
     }
 
-    if (!this->followEnabled)
+    if (currentState == State::FollowingMaster)
     {
-        return;
+        if (this->masterUnit.dwUnitID == 0)
+        {
+            return;
+        }
+    
+        me->MoveToUnit(&this->masterUnit, false);
     }
 
-    if (this->masterUnit.dwUnitID == 0)
+    if (isBuffNeeded)
     {
-        return;
+        BuffMe();
     }
-    
-    me->MoveToUnit(&this->masterUnit, false);
-    this->lastFollowAttemptTimeMs = now;
 }
 
 BOOL CALLBACK FindMaster(DWORD dwPlayerID, LPCSTR lpszPlayerName, DWORD dwPlayerClass, DWORD dwPvpFlags, BYTE iMapID, LPARAM lParam)

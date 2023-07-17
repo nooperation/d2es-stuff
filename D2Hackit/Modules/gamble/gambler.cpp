@@ -626,10 +626,14 @@ void Gambler::OnNpcSession(int success)
 		return;
 
 	DEBUG_TRACE();
-	if(!success)
+	if (!success)
 	{
+		auto myPos = me->GetPosition();
+
+		me->MoveTo(myPos.x + (3 - rand() % 5), myPos.y + (3 - rand() % 5), false);
+		FindGamblingNpc();
 		me->RedrawClient(FALSE);
-		me->MoveToUnit(&gamblingNpc, TRUE);
+		me->MoveToUnit(&gamblingNpc, FALSE);
 		server->GamePrintInfo("ÿc3Gambleÿc0: NPC request failed");
 		StartGambling();
 		return;

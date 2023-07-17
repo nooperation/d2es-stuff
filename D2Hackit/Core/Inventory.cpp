@@ -182,9 +182,9 @@ int CInventory::GetNumberOfFreeStorageSlots(int storageType) const
 	}
 	else if (storageType == STORAGE_STASH)
 	{
-		for (auto j = 0; j < INV_ROW; j++)
+		for (auto j = 0; j < STASH_ROW; j++)
 		{
-			for (auto i = 0; i < INV_COL; i++)
+			for (auto i = 0; i < STASH_COL; i++)
 			{
 				if (m_aStash[j][i] == 0)
 				{
@@ -195,9 +195,9 @@ int CInventory::GetNumberOfFreeStorageSlots(int storageType) const
 	}
 	else if (storageType == STORAGE_CUBE)
 	{
-		for (auto j = 0; j < INV_ROW; j++)
+		for (auto j = 0; j < CUBE_ROW; j++)
 		{
-			for (auto i = 0; i < INV_COL; i++)
+			for (auto i = 0; i < CUBE_COL; i++)
 			{
 				if (m_aCube[j][i] == 0)
 				{

@@ -1,4 +1,5 @@
 #include "../../Includes/ClientCore.cpp"
+#include <vector>
 
 #define CONFIG_FILE ".\\plugin\\flee.ini"
 
@@ -31,6 +32,7 @@ bool saveAndExitWhenNoTpEnabled = false;
 bool hotkeyInTown = false;
 bool createPortalWhenLeavingTown = false;
 bool isSuppressingAutoTpWhenLeavingTown = false;
+std::vector<int> waypointObjectIds;
 
 int fleeAmount = 25;
 BYTE portalKey = VK_BACK;
@@ -54,6 +56,25 @@ void ReadConfig()
 	hasSentInteractionPacket = false;
 
 	server->GameStringf("ÿc5Fleeÿc0: Config loaded, %s when hp drops below %d%%", saveAndExitEnabled?"ÿc1exitÿc0":"ÿc2TPÿc0", fleeAmount);
+
+
+	waypointObjectIds.clear();
+	waypointObjectIds.push_back(119); // waypoint portal
+	waypointObjectIds.push_back(145); // waypointi inner hell
+	waypointObjectIds.push_back(156); // waypoint act 2
+	waypointObjectIds.push_back(157); // waypoint act 1 wilderness
+	waypointObjectIds.push_back(237); // act3waypoint town
+	waypointObjectIds.push_back(238); // waypointh
+	waypointObjectIds.push_back(288); // waypoint, celler
+	waypointObjectIds.push_back(323); // waypoint act2 sewer
+	waypointObjectIds.push_back(324); // waypoint act3 travincal
+	waypointObjectIds.push_back(398); // waypoint pandamonia fortress
+	waypointObjectIds.push_back(402); // waypoint valleywaypoint
+	waypointObjectIds.push_back(429); // expansion no snow
+	waypointObjectIds.push_back(494); // baals_waypoint
+	waypointObjectIds.push_back(496); // wilderness_waypoint
+	waypointObjectIds.push_back(511); // icecave 
+	waypointObjectIds.push_back(539); // temple
 }
 
 void WriteConfig()
@@ -155,6 +176,30 @@ BOOL CALLBACK enumItemFindTP(DWORD dwItemID, LPARAM lParam)
 	return TRUE;
 }
 ///
+
+
+/// <summary>
+/// Checks to see if there is a waypoint object nearby.
+/// </summary>
+/// <param name="lpPresetUnit">Preset game unit, see /data/global/excel/Objects.txt for list of all objects.</param>
+/// <param name="lParam">Pointer to a PRESETUNIT to be filled out if waypoint object is found.</param>
+/// <returns>TRUE if waypoint was not found. FALSE if waypoint was found.</returns>
+BOOL CALLBACK enumPresetsForWaypoints(LPCPRESETUNIT lpPresetUnit, LPARAM lParam)
+{
+	if(lpPresetUnit->dwType != UNIT_TYPE_OBJECT)
+	{
+		return TRUE;
+	}
+
+	if(std::find(waypointObjectIds.begin(), waypointObjectIds.end(), lpPresetUnit->dwID) == waypointObjectIds.end())
+	{
+		return TRUE;
+	}
+
+	memcpy((void *)lParam, lpPresetUnit, sizeof(PRESETUNIT));
+
+	return FALSE;
+}
 
 
 BOOL PRIVATE ToggleHotkeyInTown(char** argv, int argc)
@@ -267,7 +312,21 @@ VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
 		case PM_LEAVETOWN:
 			if (!isSuppressingAutoTpWhenLeavingTown && createPortalWhenLeavingTown)
 			{
-				RequestTP(false);
+				// Only create the portal if the waypoint is far enough away (we didn't just use a wp to leave town)
+				PRESETUNIT unit = {0};
+				if(server->EnumPresetUnits(enumPresetsForWaypoints, (LPARAM)&unit))
+				{
+					RequestTP(false);
+					break;
+				}
+
+				auto myPosition = me->GetPosition();
+				auto distanceToWaypoint = server->GetDistance(myPosition.x, myPosition.y, unit.x, unit.y);
+				if (distanceToWaypoint > 10)
+				{
+					RequestTP(false);
+					return;
+				}
 			}
 			break;
 	}
