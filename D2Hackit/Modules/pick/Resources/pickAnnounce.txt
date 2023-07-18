@@ -1,3 +1,8 @@
+sbs Not Radamant's Skill Book
+srj Slurp Juice
+sbk Not Radamant's Skill Book
+toa Token of Absolution	Token of Absolution
+zz0 Radiant Aura Stone
 ore ÿc8Ore
 jew jewel
 yyy ÿc9Cookbook
