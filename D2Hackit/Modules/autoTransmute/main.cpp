@@ -17,7 +17,7 @@ CLIENTINFO
 
 BOOL PRIVATE Start(char **argv, int argc)
 {
-	if (argc < 2)
+	if (argc < 3)
 	{
 		return FALSE;
 	}
@@ -99,7 +99,7 @@ MODULECOMMANDSTRUCT ModuleCommands[] =
 	{
 		"Start",
 		Start,
-		"Usage: Start [chat]",
+		"Usage: Start nameFromAutoTransmute.txt [chat]",
 	},
 	{NULL}
 };

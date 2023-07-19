@@ -164,7 +164,11 @@ bool AutoTransmute::Start(const std::string &recipeName)
 {
 	server->GameStringf("ÿc:AutoTransmuteÿc0: '%s'", recipeName.c_str());
 
-	ReadRecipes(".//plugin//AutoTransmute.txt", this->recipes);
+	if (!ReadRecipes(".//plugin//AutoTransmute.txt", this->recipes)) 
+	{
+		server->GameStringf("ÿc:AutoTransmuteÿc0: Missing AutoTransmute.txt", recipeName.c_str());
+		return false;
+	}
 
 	auto recipeIter = this->recipes.find(recipeName);
 	if (recipeIter == this->recipes.end())
