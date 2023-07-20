@@ -379,6 +379,7 @@ BYTE CPathFinder::CalculatePathTo(WORD x, WORD y, LPPATH lpBuffer, int nAdjust)
 	lpBuffer->iNodeCount = 0;
 
 	BOOL bOK = FALSE;
+	int tries = 0;
 	int nRes = GetBestMove(pos, nAdjust);
 	while (nRes != PATH_FAIL && lpBuffer->iNodeCount < 255)
 	{
@@ -410,6 +411,12 @@ BYTE CPathFinder::CalculatePathTo(WORD x, WORD y, LPPATH lpBuffer, int nAdjust)
 		}	
 
 		nRes = GetBestMove(pos, nAdjust);
+
+		++tries;
+		if (tries > 300) {
+			// This tends to get stuck in an infinite loop : (
+			break;
+		}
 	}	
 
 	if (!bOK)
