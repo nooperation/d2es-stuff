@@ -17,7 +17,8 @@ enum States
 	STATE_UsingWaypoint,
 	STATE_BackToTown,
 	STATE_SearchingForStairs,
-	STATE_RetryNextRoomTransition
+	STATE_RetryNextRoomTransition,
+	STATE_WaitingForBuffs,
 };
 
 struct StairsData
@@ -69,7 +70,7 @@ struct BotTravelData
 bool CheckForOurStairs();
 void NextStep();
 BOOL CALLBACK enumUnitProc(LPCGAMEUNIT lpUnit, LPARAM lParam);
-void CalculatePathToStairsRoom();
+bool CalculatePathToStairsRoom();
 void NextRoomTransition();
 
 States currentState = STATE_Idle;
@@ -103,7 +104,6 @@ void Abort()
 	{
 		return;
 	}
-
 	
 	server->GameStringf("ÿc5Gotoÿc0: Complete");
 	currentState = STATE_Idle;
@@ -410,6 +410,11 @@ DWORD EXPORT OnGameTimerTick()
 int waitingForBlinkSince = 0;
 void NextStep()
 {
+	if (path.iNodeCount == 0) {
+		server->GameStringf("Bad state, path.iNodeCount = 0");
+		Abort();
+		return;
+	}
 	if(pathIndex >= path.iNodeCount)
 	{
 		if(currentState == STATE_TeleportingToStairsObject)
@@ -467,7 +472,9 @@ void OnMapBlink() {
 			if (failureCount > 2)
 			{
 				server->GameStringf("Recalculating path to stairs room...");
-				CalculatePathToStairsRoom();
+				if (!CalculatePathToStairsRoom()) {
+					return;
+				}
 			}
 		//	server->GameStringf("Trying previous path again. we're %d away from where we should be", distance);
 		}
@@ -498,7 +505,10 @@ void NextRoomTransition()
 		return;
 	}
 
-	CalculatePathToStairsRoom();
+	if (!CalculatePathToStairsRoom()) {
+		return;
+	}
+
 	//server->GameStringf("Step: %d/%d", currentTravelData->CurrentStep, currentTravelData->NumSteps);
 
 	server->GameStringf("Teleporing to room %d", stairsRoomNum);
@@ -506,7 +516,7 @@ void NextRoomTransition()
 	NextStep();
 }
 
-void CalculatePathToStairsRoom()
+bool CalculatePathToStairsRoom()
 {
 	static ROOMPOS allRoomCoords[2048];
 
@@ -518,7 +528,7 @@ void CalculatePathToStairsRoom()
 	if(numRooms == 0)
 	{
 		server->GameStringf("Failed to find all rooms");
-		return;
+		return false;
 	}
 
 	//server->GameStringf("Found %d rooms", numRooms);
@@ -547,8 +557,10 @@ void CalculatePathToStairsRoom()
 			SetState(STATE_RetryNextRoomTransition);
 			currentTravelData->CurrentStep--;
 		}
+
 		server->GameStringf("No stairs found");
-		return;
+		Abort();
+		return false;
 	}
 	numRetriesRemainingForNextRoomTransition = kDefaultRetriesRemainingForNextRoomTransition;
 
@@ -564,13 +576,16 @@ void CalculatePathToStairsRoom()
 	{
 		if(server->CalculatePath(stairRoomCoord.x, stairRoomCoord.y, &path, adjust) != 0)
 		{
-			return;
+			return true;
 		}
 	}
 
 	Abort();
-	server->GameStringf("Failed to find path to stairs. Returning to town");
-	server->GameCommandf(".flee tp");
+
+	server->GameStringf("Failed to find path to stairs");
+	//server->GameCommandf("flee tp");
+
+	return false;
 }
 
 void ShowUsage()
@@ -634,9 +649,8 @@ BOOL PRIVATE Start(char** argv, int argc)
 		server->GameCommandf("flee SuppressAutoTp 1");
 	}
 
-	currentState = STATE_UsingWaypoint;
-	server->GameCommandf("load wp");
-	server->GameCommandf("wp start %d", currentTravelData->WaypointDestination);
+	currentState = STATE_WaitingForBuffs;
+	server->GameCommandf("buff buff chat");
 
 	return TRUE;
 }
@@ -669,12 +683,8 @@ BOOL EXPORT OnClientStart()
 
 	toDeadEnd.Name = "Dead End";
 	toDeadEnd.InitSteps(4);
-	toDeadEnd.WaypointDestination = WAYPOINTDEST_TheAncientsWay;
-	toDeadEnd.RoomTransitions[0][1026] = StairsData(75, 13, 29); //	Act 5 - Ice Down W
-	toDeadEnd.RoomTransitions[0][1027] = StairsData(75, 21, 24); //	Act 5 - Ice Down E
-	toDeadEnd.RoomTransitions[0][1028] = StairsData(75, 36, 24); //	Act 5 - Ice Down S
-	toDeadEnd.RoomTransitions[0][1029] = StairsData(75, 10, 39); //	Act 5 - Ice Down N
-	for(int i = 1; i <= 3; ++i)
+	toDeadEnd.WaypointDestination = WAYPOINTDEST_GlacialTrail;
+	for(int i = 0; i < 3; ++i)
 	{
 		toDeadEnd.RoomTransitions[i][1018] = StairsData(73, 14, 7); //	Act 5 - Ice Prev W
 		toDeadEnd.RoomTransitions[i][1019] = StairsData(73, 12, 19); //	Act 5 - Ice Prev E
@@ -781,11 +791,25 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 	{
 		char *chatMessage = (char *)(aPacket+3);
 
-		if(strncmp(chatMessage, "ÿc5Waypointÿc0:", 15) == 0)
+		if(currentState == STATE_UsingWaypoint && strncmp(chatMessage, "ÿc5Waypointÿc0:", 15) == 0)
 		{
 			if(strcmp(chatMessage, "ÿc5Waypointÿc0: Complete") != 0)
 			{
 				Abort();
+				return 0;
+			}
+
+			return 0;
+		}
+		else if (currentState == STATE_WaitingForBuffs && strncmp(chatMessage, "ÿc5BuffMeÿc0:", 13) == 0)
+		{
+			const auto message = std::string_view(chatMessage + 14);
+			if (message == "Done") 
+			{
+				currentState = STATE_UsingWaypoint;
+				server->GameCommandf("load wp");
+				server->GameCommandf("wp start %d", currentTravelData->WaypointDestination);
+
 				return 0;
 			}
 

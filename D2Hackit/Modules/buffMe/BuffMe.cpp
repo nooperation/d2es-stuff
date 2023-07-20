@@ -72,16 +72,28 @@ void BuffMe::Start(bool useChat)
 /// <summary>
 /// All buffs have been cast and are applied
 /// </summary>
+void BuffMe::RestoreOriginalSkill()
+{
+	currentState = STATE_WAITINGFORRESTORESKILL;
+
+	buffCastTime = std::chrono::system_clock::now();
+	me->SelectSpell(startingSkill, FALSE);
+}
+
 void BuffMe::OnCompletion()
 {
+	currentState = STATE_WAITINGFORRESTORESKILL;
+
+	buffCastTime = std::chrono::system_clock::now();
 	me->SelectSpell(startingSkill, FALSE);
 	currentState = STATE_IDLE;
 
-	if(useChat)
+	if (useChat)
 	{
 		me->Say("ÿc5BuffMeÿc0: Done");
 	}
 }
+
 
 /// <summary>
 /// The player has lost an affect. If one of the affects is part of one
@@ -144,23 +156,51 @@ void BuffMe::OnAffect(size_t affectID)
 /// </summary>
 void BuffMe::OnTick()
 {
-	if(currentState != STATE_WAITINGFORAFFECT)
+	if(currentState == STATE_WAITINGFORAFFECT)
 	{
-		return;
+		// Check to see if this is the affect we're waiting on
+		if (currentBuffIndex >= desiredBuffs.size())
+		{
+			return;
+		}
+
+		const auto& desiredBuff = desiredBuffs[currentBuffIndex];
+
+		if (desiredBuff.affectId < 0)
+		{
+			// Negative affect ID's are just the number of milliseconds to wait after casting before considering it as complete
+
+			const auto targetTime = buffCastTime + std::chrono::milliseconds(-desiredBuff.affectId);
+			const auto now = std::chrono::system_clock::now();
+
+			if (now < targetTime)
+			{
+				return;
+			}
+		}
+		else
+		{
+			if (!me->GetAffection(desiredBuff.affectId))
+			{
+				return;
+			}
+		}
+
+		NextBuff();
+	}
+	else if (currentState == STATE_WAITINGFORRESTORESKILL)
+	{
+		const auto targetTime = buffCastTime + std::chrono::milliseconds(50);
+		const auto now = std::chrono::system_clock::now();
+
+		if (now >= targetTime) 
+		{
+			OnCompletion();
+			return;
+		}
 	}
 
-	// Check to see if this is the affect we're waiting on
-	if (currentBuffIndex >= desiredBuffs.size())
-	{
-		return;
-	}
 
-	if(!me->GetAffection(desiredBuffs[currentBuffIndex].affectId))
-	{
-		return;
-	}
-
-	NextBuff();
 }
 
 /// <summary>
@@ -171,7 +211,7 @@ void BuffMe::NextBuff()
 	currentBuffIndex++;
 	if(currentBuffIndex >= desiredBuffs.size())
 	{
-		OnCompletion();
+		RestoreOriginalSkill();
 		return;
 	}
 	else
@@ -212,10 +252,12 @@ void BuffMe::CastCurrentBuff()
 
 	if(currentBuffIndex >= desiredBuffs.size())
 	{
-		OnCompletion();
+		RestoreOriginalSkill();
 		return;
 	}
 
 	currentState = STATE_WAITINGFORAFFECT;
+
+	buffCastTime = std::chrono::system_clock::now();
 	me->CastNoTarget(desiredBuffs[currentBuffIndex].buffId, FALSE);
 }
