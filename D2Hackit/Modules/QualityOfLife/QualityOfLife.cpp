@@ -87,7 +87,7 @@ BOOL EXPORT OnGameJoin()
 
 BOOL EXPORT OnClientStart()
 {
-	if (!GetModuleHandle("d2maphack.dll"))
+	if (!GetModuleHandle("d2maphack.dll") && !GetModuleHandle("d2hackmap.dll"))
 	{
 		server->HookD2WndProc(g_hModule, ClientWndProc);
 	}

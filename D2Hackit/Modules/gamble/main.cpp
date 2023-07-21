@@ -202,8 +202,8 @@ BOOL PRIVATE StartWraithShroud(char **argv, int argc)
 BOOL PRIVATE StartExNihilo(char **argv, int argc)
 {
 	server->GameCommandLine("gamble sell magic rare set");
-	server->GameCommandLine("gamble nosell amf");
-	server->GameCommandLine("gamble start am5");
+	server->GameCommandLine("gamble nosell 0ts");
+	server->GameCommandLine("gamble start tsp");
 
 	return TRUE;
 }

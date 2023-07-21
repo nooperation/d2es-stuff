@@ -37,7 +37,7 @@ SIZE D2GetItemSize(LPCTSTR szItemCode)
 
 	const auto itemTxt = D2COMMON_GetItemTxtFromItemCode(dwItemCode, &itemsTxtIndex);
 	if (itemTxt == nullptr) {
-		GameErrorf("Failed to get item record from item code '%s' while attempting to get item size");
+		GameErrorf("Failed to get item record from item code '%s' while attempting to get item size", szItemCode);
 		return SIZE({ 1, 1 });
 	}
 
