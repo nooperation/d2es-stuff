@@ -375,7 +375,8 @@ BOOL EXPORT FindUnitByClassID(DWORD dwUnitClassID, DWORD dwUnitType, LPGAMEUNIT 
 
 	::memset(lpBuffer, 0, sizeof(GAMEUNIT));
 
-	Room* pRoom = D2COMMON_GetRoomFromUnit(D2CLIENT_GetPlayerUnit());
+	const auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
+	Room* pRoom = D2COMMON_GetRoomFromUnit(currentPlayerUnit);
 	if (!pRoom)
 		return FALSE; // not in a game?
 
@@ -406,7 +407,8 @@ BOOL EXPORT FindUnitByName(LPCSTR lpszUnitName, DWORD dwUnitType, LPGAMEUNIT lpB
 	wchar_t wszName[256] = {0};
 	ConvertToUnicode(lpszUnitName, wszName, 255);
 
-	Room* pRoom = D2COMMON_GetRoomFromUnit(D2CLIENT_GetPlayerUnit());
+	const auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
+	Room* pRoom = D2COMMON_GetRoomFromUnit(currentPlayerUnit);
 	if (!pRoom)
 		return FALSE; // not in a game?
 
@@ -702,7 +704,8 @@ BOOL EXPORT GetMyMercUnit(LPGAMEUNIT lpBuffer) // Get player's mercenary
 	if (PID == 0)
 		return FALSE;
 
-	Room* pRoom = D2COMMON_GetRoomFromUnit(D2CLIENT_GetPlayerUnit());
+	const auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
+	Room* pRoom = D2COMMON_GetRoomFromUnit(currentPlayerUnit);
 	if (!pRoom)
 		return FALSE; // not in a game?
 
@@ -751,7 +754,8 @@ BOOL EXPORT EnumUnits(DWORD dwUnitType, fnEnumUnitProc lpfnEnumUnitProc, LPARAM 
 	if (lpfnEnumUnitProc == NULL)
 		return FALSE;
 
-	Room* pRoom = D2COMMON_GetRoomFromUnit(D2CLIENT_GetPlayerUnit());
+	const auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
+	Room* pRoom = D2COMMON_GetRoomFromUnit(currentPlayerUnit);
 	if (!pRoom)
 		return FALSE; // not in a game?
 
@@ -894,7 +898,8 @@ int EXPORT GetMyCorpseCount()
 	wchar_t wszName[256] = {0};
 	ConvertToUnicode(GetSafePlayerName(), wszName, 255);
 
-	Room* pRoom = D2COMMON_GetRoomFromUnit(D2CLIENT_GetPlayerUnit());
+	const auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
+	Room* pRoom = D2COMMON_GetRoomFromUnit(currentPlayerUnit);
 	if (!pRoom)
 		return 0; // not in a game?
 
@@ -927,7 +932,8 @@ BOOL EXPORT PickMyCorpse()
 	wchar_t wszName[256] = {0};
 	ConvertToUnicode(GetSafePlayerName(), wszName, 255);
 
-	Room* pRoom = D2COMMON_GetRoomFromUnit(D2CLIENT_GetPlayerUnit());
+	const auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
+	Room* pRoom = D2COMMON_GetRoomFromUnit(currentPlayerUnit);
 	if (!pRoom)
 		return 0; // not in a game?
 
@@ -1355,7 +1361,8 @@ void GetRoomsRecursive(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, std::vec
 	if(!ro->pRoom)
 	{
 		add_room=TRUE;
-		D2COMMON_AddRoomData(D2CLIENT_GetPlayerUnit()->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, D2CLIENT_GetPlayerUnit());
+		auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
+		D2COMMON_AddRoomData(currentPlayerUnit->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, currentPlayerUnit);
 	}
 
 	aChecked.Add((DWORD)ro);
@@ -1373,7 +1380,8 @@ void GetRoomsRecursive(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, std::vec
 	}
 	if(add_room)
 	{
-		D2COMMON_RemoveRoomData(D2CLIENT_GetPlayerUnit()->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, D2CLIENT_GetPlayerUnit());
+		auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
+		D2COMMON_RemoveRoomData(currentPlayerUnit->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, currentPlayerUnit);
 	}
 }
 
@@ -1425,7 +1433,8 @@ void FindPresetUnitsFromRoom2(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, C
 	if(!ro->pRoom)
 	{
 		add_room=TRUE;
-		D2COMMON_AddRoomData(D2CLIENT_GetPlayerUnit()->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, D2CLIENT_GetPlayerUnit());
+		auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
+		D2COMMON_AddRoomData(currentPlayerUnit->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, currentPlayerUnit);
 	}
 
 	aChecked.Add((DWORD)ro);
@@ -1453,7 +1462,8 @@ void FindPresetUnitsFromRoom2(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, C
 	}
 	if(add_room)
 	{
-		D2COMMON_RemoveRoomData(D2CLIENT_GetPlayerUnit()->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, D2CLIENT_GetPlayerUnit());
+		auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
+		D2COMMON_RemoveRoomData(currentPlayerUnit->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, currentPlayerUnit);
 	}
 }
 

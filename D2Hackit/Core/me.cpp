@@ -1136,7 +1136,14 @@ BYTE EXPORT GetCurrentMapID()
 	if (!pRoom)
 		return MAP_UNKNOWN;
 	
-	return D2COMMON_GetLevelIdFromRoom(pRoom);
+	if (!pRoom->ptRoomOther) {
+		return MAP_UNKNOWN;
+	}
+	if (!pRoom->ptRoomOther->ptDrlgLevel) {
+		return MAP_UNKNOWN;
+	}
+
+	return pRoom->ptRoomOther->ptDrlgLevel->LevelNo;
 }
 
 BYTE EXPORT GetBeltRows() // Row number of the player's belt(1-4)
@@ -2064,7 +2071,8 @@ void EXPORT CloseAllUIs()
 
 DWORD EXPORT GetStashGoldLimit() // stash gold limit
 {
-	return D2COMMON_GetStashGoldLimit(D2CLIENT_GetPlayerUnit());
+	const auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
+	return D2COMMON_GetStashGoldLimit(currentPlayerUnit);
 }
 
 DWORD EXPORT GetInventoryGoldLimit() // inventory gold limit
@@ -2097,7 +2105,8 @@ BOOL EXPORT GetAlwaysRun() // is "always run" on?
 
 DWORD EXPORT GetCursorItem() // returns ID of the item on cursor, if any
 {
-	UnitAny* p = D2COMMON_GetCursorItem(D2CLIENT_GetPlayerUnit()->ptInventory);
+	const auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
+	UnitAny* p = D2COMMON_GetCursorItem(currentPlayerUnit->ptInventory);
 	return p ? p ->dwId : 0;
 }
 
