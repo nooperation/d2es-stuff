@@ -382,15 +382,15 @@ VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
 	rerollingOrb.push_back("mring");
 	rerollingOrb.push_back("ring_mr");
 	rerollingOrb.push_back("ring_rr");
-	rerollingOrb.push_back("ring_ru");
+	rerollingOrb.push_back("ring_u");
 	rerollingOrb.push_back("mamulet");
 	rerollingOrb.push_back("amulet_mr");
 	rerollingOrb.push_back("amulet_rr");
-	rerollingOrb.push_back("amulet_ru");
+	rerollingOrb.push_back("amulet_u");
 	rerollingOrb.push_back("jewel_mm");
 	rerollingOrb.push_back("jewel_mr");
 	rerollingOrb.push_back("jewel_rr");
-	rerollingOrb.push_back("jewel_ru");
+	rerollingOrb.push_back("jewel_u");
 	rerollingOrb.push_back("sc_mm");
 	rerollingOrb.push_back("sc_mr");
 	rerollingOrb.push_back("sc_rr");

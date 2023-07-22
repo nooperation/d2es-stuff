@@ -15,8 +15,6 @@ AutoSell::AutoSell()
 
 	this->isFullyAutomatic = GetPrivateProfileInt("AutoSell", "IsAutomatic", false, CONFIG_PATH);
 	this->isAnnouncingSoldItems = GetPrivateProfileInt("AutoSell", "IsAnnouncingSoldItems", true, CONFIG_PATH);
-	this->merchantTpScrollId = 0;
-	this->numTPTomesToRefill = 0;
 	this->startingGold = 0;
 }
 
@@ -95,59 +93,6 @@ bool AutoSell::SellItem(DWORD dwItemID) const
 	return server->GameSendPacketToServer(aPacket, 17);
 }
 
-
-#pragma pack(push, 1)
-struct D2GS_NPC_BUY
-{
-	uint8_t PacketId;
-	uint32_t UnitId;
-	uint32_t ItemId;
-	uint32_t BuyType;
-	uint32_t Cost;
-};
-#pragma pack(pop)
-
-bool AutoSell::BuyItemInQuantity(DWORD dwItemID) const
-{
-	if (!me->IsUIOpened(UI_NPCSHOP))
-	{
-		server->GameErrorf("ÿc:AutoSellÿc0: You must first open the trade interface with a merchant");
-		return false;
-	}
-
-	const auto vendorId = server->GetInteractedNPCUniqueID();
-	if (vendorId == 0)
-	{
-		server->GameErrorf("ÿc:AutoSellÿc0: No merchant found");
-		return false;
-	}
-
-	const auto vendorClassId = server->GetInteractedNPCClassID();
-	if (GetNpcTradeMenuID(vendorClassId) == -1)
-	{
-		server->GameErrorf("ÿc:AutoSellÿc0: Currently selected npc is not a merchant");
-		return false;
-	}
-
-	GAMEUNIT unit;
-	unit.dwUnitID = vendorId;
-	unit.dwUnitType = UNIT_TYPE_MONSTER;
-	if (!server->VerifyUnit(&unit))
-	{
-		server->GameErrorf("ÿc:AutoSellÿc0: could not verify merchant");
-		return FALSE;
-	}
-
-	D2GS_NPC_BUY packet;
-	packet.PacketId = 0x32;
-	packet.UnitId = vendorId;
-	packet.ItemId = dwItemID;
-	packet.BuyType = 0x80000000;
-	packet.Cost = 0;
-
-	return server->GameSendPacketToServer((uint8_t*)&packet, sizeof(packet));
-}
-
 bool AutoSell::Start(bool silentStart)
 {
 	if (currentState != State::Uninitialized)
@@ -155,7 +100,6 @@ bool AutoSell::Start(bool silentStart)
 		this->Stop();
 	}
 
-	numTPTomesToRefill = 0;
 	while (!itemsToSell.empty())
 	{
 		itemsToSell.pop();
@@ -179,9 +123,8 @@ bool AutoSell::Start(bool silentStart)
 		return false;
 	}
 
-	this->numTPTomesToRefill = 0;
 	me->EnumStorageItems(STORAGE_INVENTORY, FindStuffToSellCallback, (LPARAM)this);
-	if (this->itemsToSell.empty() && this->numTPTomesToRefill == 0)
+	if (this->itemsToSell.empty())
 	{
 		if (!silentStart)
 		{
@@ -214,55 +157,10 @@ void AutoSell::Stop()
 	}
 }
 
-void AutoSell::RestockScrolls()
-{
-	if (numTPTomesToRefill == 0)
-	{
-		this->Stop();
-		return;
-	}
-
-	if (this->merchantTpScrollId == 0)
-	{
-		return;
-	}
-
-	for (auto i = 0; i < this->numTPTomesToRefill; i++)
-	{
-		BuyItemInQuantity(this->merchantTpScrollId);
-	}
-
-	this->numTPTomesToRefill = 0;
-	this->Stop();
-}
-
-
-// Called when NPC is listing items up for gamble, before NPC_SESSION message
-void AutoSell::OnNpcItemList(const ITEM& merchantItem)
-{
-	if (strcmp(merchantItem.szItemCode, "tsc") != 0)
-	{
-		return;
-	}
-
-	// scroll of town portal is flagged as an npc item for some reason. we'll trigger here no matter what if it drops?
-	if (!me->IsUIOpened(UI_NPCSHOP))
-	{
-		return;
-	}
-
-	this->merchantTpScrollId = merchantItem.dwItemID;
-	if (this->currentState == State::Uninitialized)
-	{
-		Start(true);
-	}
-}
-
 void AutoSell::SellQueuedItems()
 {
 	if (itemsToSell.empty())
 	{
-		RestockScrolls();
 		return;
 	}
 
@@ -297,7 +195,6 @@ void AutoSell::OnItemSold()
 
 void AutoSell::OnNPCShopScreenOpened()
 {
-	this->merchantTpScrollId = 0;
 	if (!this->isFullyAutomatic)
 	{
 		return;
@@ -315,20 +212,6 @@ void AutoSell::ProcessInventoryItem(const ITEM* item)
 
 	if (this->targetItems.find(item->szItemCode) == this->targetItems.end())
 	{
-		if (strcmp(item->szItemCode, "tbk") == 0)
-		{
-			// TODO: d2hackit doesn't update item->iQuantity, never trust it...
-			GAMEUNIT unit;
-			unit.dwUnitID = item->dwItemID;
-			unit.dwUnitType = UNIT_TYPE_ITEM;
-
-			auto charges = server->GetUnitStat(&unit, STAT_AMMOQUANTITY);
-			if (charges < 40) 
-			{
-				this->numTPTomesToRefill++;
-			}
-		}
-
 		return;
 	}
 
