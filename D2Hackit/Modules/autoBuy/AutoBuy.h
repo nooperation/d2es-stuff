@@ -22,11 +22,13 @@ public:
 	void OnNpcItemList(const ITEM &merchantItem);
 
 private:
+	void BuyOurStuff();
 	void RestockScrolls();
 	bool BuyItemInQuantity(DWORD dwItemID) const;
 
 	bool isAutomaticallyRefillTP = 0;
 	int numTPTomesToRefill = 0;
+	bool hasAlreadyRestockedTps = false;
 
 	int itemQuantityToBuy = 0;
 	std::string itemCodeToBuy = "";
@@ -35,5 +37,3 @@ private:
 	std::unordered_map<std::string, std::string> targetItems;
 	std::unordered_map<std::string, DWORD> merchantItems;
 };
-
-BOOL CALLBACK FindStuffToSellCallback(LPCPRESETUNIT presetUnit, LPARAM lParam);

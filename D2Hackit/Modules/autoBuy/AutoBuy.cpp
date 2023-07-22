@@ -7,11 +7,11 @@
 
 #define CONFIG_PATH ".\\plugin\\AutoBuy.ini"
 
-BOOL CALLBACK FindStuffToSellCallback(LPCITEM item, LPARAM lParam);
+BOOL CALLBACK FindStuffToRefillCallback(LPCITEM item, LPARAM lParam);
 
 AutoBuy::AutoBuy()
 {
-	this->isAutomaticallyRefillTP = GetPrivateProfileInt("AutoBuy", "AutomaticallyRefillTP", false, CONFIG_PATH);
+	this->isAutomaticallyRefillTP = GetPrivateProfileInt("AutoBuy", "AutomaticallyRefillTP", 1, CONFIG_PATH);
 }
 
 #pragma pack(push, 1)
@@ -78,8 +78,9 @@ bool AutoBuy::Start(int quantity, const std::string& itemCode)
 	this->numTPTomesToRefill = 0;
 	this->itemQuantityToBuy = max(0, quantity);
 	this->itemCodeToBuy = itemCode;
+	this->hasAlreadyRestockedTps = false;
 
-	RestockScrolls();
+	BuyOurStuff();
 
 	return true;
 }
@@ -91,6 +92,7 @@ void AutoBuy::Stop()
 		this->itemQuantityToBuy = 0;
 		this->itemCodeToBuy = "";
 		this->numTPTomesToRefill = 0;
+		this->hasAlreadyRestockedTps = false;
 		merchantItems.clear();
 
 		me->CleanJobs();
@@ -99,20 +101,8 @@ void AutoBuy::Stop()
 	}
 }
 
-void AutoBuy::RestockScrolls()
+void AutoBuy::BuyOurStuff()
 {
-	if (isAutomaticallyRefillTP)
-	{
-		auto tpScrollIdIter = merchantItems.find("tsc");
-		if (tpScrollIdIter != merchantItems.end())
-		{
-			for (auto i = 0; i < this->numTPTomesToRefill; i++)
-			{
-				BuyItemInQuantity(tpScrollIdIter->second);
-			}
-		}
-	}
-
 	if (itemQuantityToBuy > 0)
 	{
 		auto customItemIdIter = merchantItems.find(itemCodeToBuy);
@@ -128,15 +118,41 @@ void AutoBuy::RestockScrolls()
 	this->Stop();
 }
 
+void AutoBuy::RestockScrolls()
+{
+	if (isAutomaticallyRefillTP)
+	{
+		me->EnumStorageItems(STORAGE_INVENTORY, FindStuffToRefillCallback, (LPARAM)this);
+
+		auto tpScrollIdIter = merchantItems.find("tsc");
+		if (tpScrollIdIter != merchantItems.end())
+		{
+			for (auto i = 0; i < this->numTPTomesToRefill; i++)
+			{
+				BuyItemInQuantity(tpScrollIdIter->second);
+			}
+		}
+
+		hasAlreadyRestockedTps = true;
+	}
+}
+
 // Called when NPC is listing items up for gamble, before NPC_SESSION message
 void AutoBuy::OnNpcItemList(const ITEM& merchantItem)
 {
-	merchantItems[merchantItem.szItemCode] = merchantItem.dwItemID;
+	const auto itemCode = std::string(merchantItem.szItemCode);
+
+	merchantItems[itemCode] = merchantItem.dwItemID;
+	if (itemCode == "tsc" && !hasAlreadyRestockedTps)
+	{
+		RestockScrolls();
+	}
 }
 
 void AutoBuy::OnNPCShopScreenOpened()
 {
 	merchantItems.clear();
+	this->hasAlreadyRestockedTps = false;
 }
 
 void AutoBuy::ProcessInventoryItem(const ITEM* item)
@@ -163,7 +179,7 @@ void AutoBuy::ProcessInventoryItem(const ITEM* item)
 	return;
 }
 
-BOOL CALLBACK FindStuffToSellCallback(LPCITEM item, LPARAM lParam)
+BOOL CALLBACK FindStuffToRefillCallback(LPCITEM item, LPARAM lParam)
 {
 	auto instance = (AutoBuy *)lParam;
 	instance->ProcessInventoryItem(item);
