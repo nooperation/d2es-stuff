@@ -1139,7 +1139,7 @@ bool AutoStocker::IsRerollItem(const ITEM &item)
 		}
 	}
 
-	if(item.iQuality == ITEM_LEVEL_MAGIC ||
+	if(item.iQuality == ITEM_LEVEL_NORMAL || item.iQuality == ITEM_LEVEL_MAGIC ||
 		(item.iQuality == ITEM_LEVEL_SET && transmuteSet) ||
 		(item.iQuality == ITEM_LEVEL_RARE && transmuteRare) ||
 		(item.iQuality == ITEM_LEVEL_UNIQUE && transmuteUnique))

@@ -1361,8 +1361,12 @@ void GetRoomsRecursive(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, std::vec
 	if(!ro->pRoom)
 	{
 		add_room=TRUE;
-		auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
-		D2COMMON_AddRoomData(currentPlayerUnit->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, currentPlayerUnit);
+
+		BYTE cmdbuf[6];
+		*(WORD*)(cmdbuf + 1) = (WORD)ro->xPos;
+		*(WORD*)(cmdbuf + 3) = (WORD)ro->yPos;
+		cmdbuf[5] = (BYTE)ro->ptDrlgLevel->LevelNo;
+		D2CLIENT_RecvCommand07(cmdbuf);
 	}
 
 	aChecked.Add((DWORD)ro);
@@ -1380,8 +1384,11 @@ void GetRoomsRecursive(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, std::vec
 	}
 	if(add_room)
 	{
-		auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
-		D2COMMON_RemoveRoomData(currentPlayerUnit->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, currentPlayerUnit);
+		BYTE cmdbuf[6];
+		*(WORD*)(cmdbuf + 1) = (WORD)ro->xPos;
+		*(WORD*)(cmdbuf + 3) = (WORD)ro->yPos;
+		cmdbuf[5] = (BYTE)ro->ptDrlgLevel->LevelNo;
+		D2CLIENT_RecvCommand08(cmdbuf);
 	}
 }
 
@@ -1435,9 +1442,12 @@ void FindPresetUnitsFromRoom2(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, C
 	if(!ro->pRoom)
 	{
 		add_room=TRUE;
-		const auto currentPlayerUnit = D2CLIENT_GetPlayerUnit(); 
 
-		D2COMMON_AddRoomData(currentPlayerUnit->ptAct, currentMapId, ro->xPos, ro->yPos, currentPlayerUnit);
+		BYTE cmdbuf[6];
+		*(WORD*)(cmdbuf + 1) = (WORD)ro->xPos;
+		*(WORD*)(cmdbuf + 3) = (WORD)ro->yPos;
+		cmdbuf[5] = (BYTE)ro->ptDrlgLevel->LevelNo;
+		D2CLIENT_RecvCommand07(cmdbuf);
 	}
 
 	aChecked.Add((DWORD)ro);
@@ -1465,8 +1475,11 @@ void FindPresetUnitsFromRoom2(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, C
 	}
 	if(add_room)
 	{
-		auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
-		D2COMMON_RemoveRoomData(currentPlayerUnit->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, currentPlayerUnit);
+		BYTE cmdbuf[6];
+		*(WORD*)(cmdbuf + 1) = (WORD)ro->xPos;
+		*(WORD*)(cmdbuf + 3) = (WORD)ro->yPos;
+		cmdbuf[5] = (BYTE)ro->ptDrlgLevel->LevelNo;
+		D2CLIENT_RecvCommand08(cmdbuf);
 	}
 }
 

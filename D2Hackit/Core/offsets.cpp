@@ -115,9 +115,25 @@ void DefineOffsets()
 	D2FUNCPTR(D2CLIENT, DrawRectangle, void __fastcall, (DWORD Xpos, DWORD YPos, DWORD Width, DWORD Height, DWORD Color, DWORD TransparencyLevel), 0xBB0F0);
 	D2FUNCPTR(D2CLIENT, ExitGame, void __stdcall, (DWORD flags), 0xC06B3);  //exits diablo2
 
-	//D2FUNCPTR(D2CLIENT, RecvCommand07, void __fastcall, (BYTE *cmdbuf), 0x6FAB1C80)
-	//D2FUNCPTR(D2CLIENT, RecvCommand08, void __fastcall, (BYTE *cmdbuf), 0x6FAB1CF0)
-	//D2FUNCPTR(D2CLIENT, RevealAutomapRoom, void __fastcall, (Room *room, DWORD clipflag, AutomapLayer *layer), 0x6FAC6E70)
+	// ++MAPHACK stuff
+	#include "MaphackStructs.h"
+	D2FUNCPTR(D2CLIENT, RecvCommand07, void __fastcall, (BYTE * cmdbuf), 0x122A0);
+	D2FUNCPTR(D2CLIENT, RecvCommand08, void __fastcall, (BYTE * cmdbuf), 0x12310);
+	D2FUNCPTR(D2COMMON, InitDrlgLevel, void __stdcall, (MH_DrlgLevel * drlglevel), -0x2716);
+	D2FUNCPTR(D2COMMON, GetDrlgLevel, MH_DrlgLevel * __stdcall, (MH_DrlgMisc * drlgmisc, DWORD levelno), -0x2715);
+	D2FUNCPTR(D2CLIENT, RevealAutomapRoom, void __fastcall, (MH_DrlgRoom1 * room1, DWORD clipflag, MH_AutomapLayer * layer), 0x2D180);
+	D2VARPTR(D2CLIENT, pAutomapCellsHeader, MH_AutomapCellNode*, 0x1119A0);
+	D2VARPTR(D2CLIENT, pAutomapLayer, MH_AutomapLayer*, 0x1119A4);
+	D2VARPTR(D2CLIENT, fAutomapOn, DWORD, 0x0011A6D0);
+	D2VARPTR(D2CLIENT, ptAutomap, POINT, 0x001119C8);
+	D2VARPTR(D2CLIENT, ptOffset, POINT, 0x001119D8); // need to confirm
+	D2VARPTR(D2CLIENT, nPtDivisor, int, 0x000D7BC0);
+	D2FUNCPTR(D2CLIENT, GetAutomapSize, DWORD __stdcall, (), 0x2F820);
+	D2FUNCPTR(D2CLIENT, NewAutomapCell, MH_AutomapCell * __fastcall, (), 0x0002BA40);
+	D2FUNCPTR(D2CLIENT, AddAutomapCell, void __fastcall, (MH_AutomapCell * cell, MH_AutomapCell * *node), 0x0002CD50);
+	D2FUNCPTR(D2CLIENT, SetAutomapParty, void __fastcall, (DWORD flag), 0x0002B9F0);
+	D2FUNCPTR(D2CLIENT, SetAutomapNames, void __fastcall, (DWORD flag), 0x0002BA20);
+	// --MAPHACK stuff
 
 	// variables
 	//D2VARPTR(D2CLIENT, nArea, int, 0x115EF0);

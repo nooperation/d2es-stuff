@@ -93,7 +93,12 @@ void CPathFinder::Search(RoomOther *ro, POINT ptPlayer)
 	if(!ro->pRoom)
 	{
 		add_room=TRUE;
-		D2COMMON_AddRoomData(pPlayer->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, pPlayer);
+
+		BYTE cmdbuf[6];
+		*(WORD*)(cmdbuf + 1) = (WORD)ro->xPos;
+		*(WORD*)(cmdbuf + 3) = (WORD)ro->yPos;
+		cmdbuf[5] = (BYTE)ro->ptDrlgLevel->LevelNo;
+		D2CLIENT_RecvCommand07(cmdbuf);
 	}
 
 	m_aSearched.Add(ro);
@@ -112,7 +117,11 @@ void CPathFinder::Search(RoomOther *ro, POINT ptPlayer)
 	
 	if(add_room)
 	{
-		D2COMMON_RemoveRoomData(pPlayer->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, pPlayer);
+		BYTE cmdbuf[6];
+		*(WORD*)(cmdbuf + 1) = (WORD)ro->xPos;
+		*(WORD*)(cmdbuf + 3) = (WORD)ro->yPos;
+		cmdbuf[5] = (BYTE)ro->ptDrlgLevel->LevelNo;
+		D2CLIENT_RecvCommand08(cmdbuf);
 	}
 }
 

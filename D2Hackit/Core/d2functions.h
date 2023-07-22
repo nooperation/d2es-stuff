@@ -60,6 +60,25 @@ D2EXPFUNC(D2CLIENT, ClearSelectedUnit, void __fastcall, (void));
 D2EXPFUNC(D2CLIENT, UnitTestSelect, bool __fastcall, (UnitAny * ptUnit, DWORD _1, DWORD _2, bool _3));
 D2EXPFUNC(D2CLIENT, GetNextPlayer, UnitAny * __fastcall, (UnitAny* pla));
 
+// ++MAPHACK stuff
+#include "MaphackStructs.h"
+D2EXPFUNC(D2CLIENT, RecvCommand07, void __fastcall, (BYTE* cmdbuf));
+D2EXPFUNC(D2CLIENT, RecvCommand08, void __fastcall, (BYTE* cmdbuf));
+D2EXPFUNC(D2COMMON, InitDrlgLevel, void __stdcall, (MH_DrlgLevel* drlglevel));
+D2EXPFUNC(D2COMMON, GetDrlgLevel, MH_DrlgLevel* __stdcall, (MH_DrlgMisc* drlgmisc, DWORD levelno));
+D2EXPFUNC(D2CLIENT, RevealAutomapRoom, void __fastcall, (MH_DrlgRoom1* room1, DWORD clipflag, MH_AutomapLayer* layer));
+D2EXPVAR(D2CLIENT, pAutomapCellsHeader, MH_AutomapCellNode*);
+D2EXPVAR(D2CLIENT, pAutomapLayer, MH_AutomapLayer*);
+D2EXPVAR(D2CLIENT, fAutomapOn, DWORD);
+D2EXPVAR(D2CLIENT, ptAutomap, POINT);
+D2EXPVAR(D2CLIENT, ptOffset, POINT); // need to confirm
+D2EXPVAR(D2CLIENT, nPtDivisor, int);
+D2EXPFUNC(D2CLIENT, GetAutomapSize, DWORD __stdcall, ());
+D2EXPFUNC(D2CLIENT, NewAutomapCell, MH_AutomapCell* __fastcall, ());
+D2EXPFUNC(D2CLIENT, AddAutomapCell, void __fastcall, (MH_AutomapCell* cell, MH_AutomapCell** node));
+D2EXPFUNC(D2CLIENT, SetAutomapParty, void __fastcall, (DWORD flag));
+D2EXPFUNC(D2CLIENT, SetAutomapNames, void __fastcall, (DWORD flag));
+// --MAPHACK stuff
 
 // variables:
 //D2EXPVAR(D2CLIENT, nArea, int, 0x115EF0);

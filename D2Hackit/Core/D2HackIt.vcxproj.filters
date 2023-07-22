@@ -214,6 +214,9 @@
     <ClInclude Include="SpellDef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MaphackStructs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Armor.txt">

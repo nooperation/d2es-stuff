@@ -385,6 +385,7 @@ xcopy /Y $(TargetDir)$(TargetName).pdb "$(Diablo2Path)\plugin\"</Command>
     <ClInclude Include="..\Includes\ItemPrefix.h" />
     <ClInclude Include="..\Includes\ItemSuffix.h" />
     <ClInclude Include="..\Includes\LinkedList\LinkedList.h" />
+    <ClInclude Include="MaphackStructs.h" />
     <ClInclude Include="ServerStructs.h" />
     <ClInclude Include="AffectionDef.h" />
     <ClInclude Include="BitFields.h" />
