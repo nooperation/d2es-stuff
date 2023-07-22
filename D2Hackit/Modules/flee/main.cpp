@@ -310,24 +310,7 @@ VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
 			fleePortalRequested = false;
 			break;
 		case PM_LEAVETOWN:
-			if (!isSuppressingAutoTpWhenLeavingTown && createPortalWhenLeavingTown)
-			{
-				// Only create the portal if the waypoint is far enough away (we didn't just use a wp to leave town)
-				PRESETUNIT unit = {0};
-				if(server->EnumPresetUnits(enumPresetsForWaypoints, (LPARAM)&unit))
-				{
-					RequestTP(false);
-					break;
-				}
-
-				auto myPosition = me->GetPosition();
-				auto distanceToWaypoint = server->GetDistance(myPosition.x, myPosition.y, unit.x, unit.y);
-				if (distanceToWaypoint > 10)
-				{
-					RequestTP(false);
-					return;
-				}
-			}
+			// EnumPresetUnits can cause a crash so, enjoy your portals every time you leave town!
 			break;
 	}
 }

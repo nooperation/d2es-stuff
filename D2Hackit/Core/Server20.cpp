@@ -1423,7 +1423,9 @@ BOOL RevealPresetUnits(CArrayEx<PRESETUNIT, const PRESETUNIT&>& aUnits)
 
 void FindPresetUnitsFromRoom2(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, CArrayEx<PRESETUNIT, const PRESETUNIT&>& aUnits)
 {
-	if(ro->ptDrlgLevel->LevelNo!=GetCurrentMapID())
+	const auto currentMapId = GetCurrentMapID();
+
+	if(ro->ptDrlgLevel->LevelNo != currentMapId)
 		return;
 
 	if (aChecked.Find((DWORD)ro) != -1)
@@ -1433,8 +1435,9 @@ void FindPresetUnitsFromRoom2(RoomOther *ro, CArrayEx<DWORD, DWORD>& aChecked, C
 	if(!ro->pRoom)
 	{
 		add_room=TRUE;
-		auto currentPlayerUnit = D2CLIENT_GetPlayerUnit();
-		D2COMMON_AddRoomData(currentPlayerUnit->ptAct, GetCurrentMapID(), ro->xPos, ro->yPos, currentPlayerUnit);
+		const auto currentPlayerUnit = D2CLIENT_GetPlayerUnit(); 
+
+		D2COMMON_AddRoomData(currentPlayerUnit->ptAct, currentMapId, ro->xPos, ro->yPos, currentPlayerUnit);
 	}
 
 	aChecked.Add((DWORD)ro);
