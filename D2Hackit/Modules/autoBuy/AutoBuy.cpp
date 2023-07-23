@@ -127,13 +127,11 @@ void AutoBuy::RestockScrolls()
 		auto tpScrollIdIter = merchantItems.find("tsc");
 		if (tpScrollIdIter != merchantItems.end())
 		{
-			for (auto i = 0; i < this->numTPTomesToRefill; i++)
+			if(this->numTPTomesToRefill > 0)
 			{
 				BuyItemInQuantity(tpScrollIdIter->second);
 			}
 		}
-
-		hasAlreadyRestockedTps = true;
 	}
 }
 
@@ -145,6 +143,7 @@ void AutoBuy::OnNpcItemList(const ITEM& merchantItem)
 	merchantItems[itemCode] = merchantItem.dwItemID;
 	if (itemCode == "tsc" && !hasAlreadyRestockedTps)
 	{
+		hasAlreadyRestockedTps = true;
 		RestockScrolls();
 	}
 }

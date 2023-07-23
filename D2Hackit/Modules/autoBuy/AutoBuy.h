@@ -34,6 +34,5 @@ private:
 	std::string itemCodeToBuy = "";
 
 	State currentState = State::Uninitialized;
-	std::unordered_map<std::string, std::string> targetItems;
 	std::unordered_map<std::string, DWORD> merchantItems;
 };
