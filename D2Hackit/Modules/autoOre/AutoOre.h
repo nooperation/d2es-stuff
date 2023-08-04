@@ -13,14 +13,8 @@ enum class State
 	DropNextItemToDrop,
 	PickupNextOre,
 	DropNextOreToCube,
-	FirstTransmute,
-	WaitForFirstTransmuteResults,
-	PickupGemFromFirstTransmute,
-	DropGemFromFirstTransmute,
-
-	SecondTransmute,
-	WaitForSecondTransmuteResults,
-
+	Transmute,
+	WaitForTransmuteResults,
 	RunEmptyCube,
 	RunAutoStocker,
 };
