@@ -293,7 +293,20 @@ void AutoOre::ProcessInventoryItem(const ITEM &item)
 {
 	if (strcmp(item.szItemCode, "ore") == 0)
 	{
-		this->oreIds.push_back(item.dwItemID);
+		GAMEUNIT unit;
+		unit.dwUnitID = item.dwItemID;
+		unit.dwUnitType = UNIT_TYPE_ITEM;
+
+		// We only care about ores that have at least one gem to extract (xtal_00-xtal_11)
+		for (size_t i = 470; i <= 481; i++)
+		{
+			auto statValue = server->GetUnitStat(&unit, i);
+			if (statValue != 0)
+			{
+				this->oreIds.push_back(item.dwItemID);
+				return;
+			}
+		}
 	}
 }
 

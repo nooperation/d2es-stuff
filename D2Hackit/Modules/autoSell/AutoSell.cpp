@@ -215,6 +215,23 @@ void AutoSell::ProcessInventoryItem(const ITEM* item)
 		return;
 	}
 
+	// We only want to sell empty ores, ores that have 0 for xtal_10-xtal_11
+	if (strcmp(item->szItemCode, "ore") == 0)
+	{
+		GAMEUNIT unit;
+		unit.dwUnitID = item->dwItemID;
+		unit.dwUnitType = UNIT_TYPE_ITEM;
+
+		for (size_t i = 470; i <= 481; i++)
+		{
+			auto statValue = server->GetUnitStat(&unit, i);
+			if (statValue != 0)
+			{
+				return;
+			}
+		}
+	}
+
 	this->itemsToSell.push(ItemToSell(item->dwItemID, item->szItemCode));
 }
 
