@@ -84,15 +84,11 @@ VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPAR
 
 		if(wParam == ITEM_ACTION_TO_STORAGE && item.iStorageID == 0x04)
 		{
-			autoOre.OnItemDroppedToCube(item); 
+			autoOre.OnItemDroppedToCube(item);
 		}
 		else if(wParam == ITEM_ACTION_FROM_STORAGE && item.iStorageID == 0x01)
 		{
 			autoOre.OnItemPickedUpFromInventory(item.dwItemID);
-		}
-		else if(wParam == ITEM_ACTION_TO_STORAGE && item.iStorageID == 0x01)
-		{
-			autoOre.OnItemDroppedToInventory(item);
 		}
 		else if(wParam == ITEM_ACTION_FROM_STORAGE && item.iStorageID == 0x04)
 		{

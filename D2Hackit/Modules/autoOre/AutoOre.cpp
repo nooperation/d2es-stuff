@@ -29,12 +29,8 @@ void AutoOre::SetState(State newState)
 			"DropNextItemToDrop",
 			"PickupNextOre",
 			"DropNextOreToCube",
-			"FirstTransmute",
-			"WaitForFirstTransmuteResults",
-			"PickupGemFromFirstTransmute",
-			"DropGemFromFirstTransmute",
-			"SecondTransmute",
-			"WaitForSecondTransmuteResults",
+			"Transmute",
+			"WaitForTransmuteResults",
 			"RunEmptyCube",
 			"RunAutoStocker",
 		};
@@ -71,7 +67,13 @@ void AutoOre::Start(bool useChat)
 		server->GameCommandLine("load emptycube");
 	}
 
-	dropFakeNotes = GetPrivateProfileInt("AutoOre", "DropFakeNotes", 0, CONFIG_FILE);
+	this->oreIds.clear();
+	me->EnumStorageItems(STORAGE_INVENTORY, enumFindOre, (LPARAM)this);
+	if (this->oreIds.empty())
+	{
+		Abort();
+		return;
+	}
 
 	StartAutoOre();
 }
@@ -79,7 +81,6 @@ void AutoOre::Start(bool useChat)
 void AutoOre::StartAutoOre()
 {
 	this->itemsToDrop.clear();
-	this->oreIds.clear();
 	this->currentItemToDrop = 0;
 	this->currentOreId = 0;
 	this->expectedItemToHand = 0;
@@ -99,13 +100,6 @@ void AutoOre::StartAutoOre()
 	if (cubeItemCount != 0)
 	{
 		server->GameStringf("ÿc5AutoOreÿc0: Please empty your cube");
-		Abort();
-		return;
-	}
-
-	me->EnumStorageItems(STORAGE_INVENTORY, enumFindOre, (LPARAM)this);
-	if (this->oreIds.empty())
-	{
 		Abort();
 		return;
 	}
@@ -187,19 +181,7 @@ void AutoOre::OnItemPickedUpFromInventory(DWORD itemId)
 
 void AutoOre::OnItemPickedUpFromCube(DWORD itemId)
 {
-	if (this->currentState == State::PickupGemFromFirstTransmute)
-	{
-		if (itemId != this->expectedItemToHand)
-		{
-			server->GameStringf("ÿc5AutoOreÿc0: Expected item id %d to hand, but got item id %d (State = PickupGemFromFirstTransmute)", expectedItemToHand, itemId);
-			Abort();
-			return;
-		}
-
-		SetState(State::DropGemFromFirstTransmute);
-		me->DropCursorItemToStorage(STORAGE_INVENTORY);
-	}
-	else if (this->currentState == State::PickupNextItemToDrop)
+	if (this->currentState == State::PickupNextItemToDrop)
 	{
 		if (itemId != this->currentItemToDrop)
 		{
@@ -209,21 +191,6 @@ void AutoOre::OnItemPickedUpFromCube(DWORD itemId)
 		}
 
 		this->DropNextItemToDrop();
-	}
-}
-
-void AutoOre::OnItemDroppedToInventory(const ITEM &item)
-{
-	if (this->currentState == State::DropGemFromFirstTransmute)
-	{
-		if (item.dwItemID != expectedItemToHand)
-		{
-			server->GameStringf("ÿc5AutoOreÿc0: Expected item id %d to inventory, but got item id %d (State = DropGemFromFirstTransmute)", expectedItemToHand, item.dwItemID);
-			Abort();
-			return;
-		}
-
-		SetState(State::SecondTransmute);
 	}
 }
 
@@ -238,9 +205,9 @@ void AutoOre::OnItemDroppedToCube(const ITEM &itemDroppedToCube)
 
 		// NOTE: We cannot run extractor yet. If we do then it will also see this item 'to cube' and
 		//       will think it was part of its extraction process
-		SetState(State::FirstTransmute);
+		SetState(State::Transmute);
 	}
-	else if (this->currentState == State::WaitForFirstTransmuteResults)
+	else if (this->currentState == State::WaitForTransmuteResults)
 	{
 		numTransmuteResults++;
 		if (numTransmuteResults != numExpectedTransmuteResults)
@@ -248,84 +215,10 @@ void AutoOre::OnItemDroppedToCube(const ITEM &itemDroppedToCube)
 			return;
 		}
 
-		HandleFirstStageTransmuteResults();
-	}
-	else if (this->currentState == State::WaitForSecondTransmuteResults)
-	{
-		numTransmuteResults++;
-		if (numTransmuteResults != numExpectedTransmuteResults)
-		{
-			return;
-		}
-
-		HandleSecondStageTransmuteResults();
-	}
-}
-
-void AutoOre::HandleFirstStageTransmuteResults()
-{
-	// We should now have the ore and gem in our inventory. Move the gem to our inventory and transmute again
-	std::vector<ITEM> itemsInTheCube;
-	me->EnumStorageItems(STORAGE_CUBE, enumGetAllCubeItems, (LPARAM)&itemsInTheCube);
-	if (itemsInTheCube.size() != 2)
-	{
-		server->GameStringf("ÿc5AutoOreÿc0: Expected %d items in the cube after the transmute, but we got %d (State = WaitForFirstTransmuteResults)", itemsInTheCube.size());
-		Abort();
-		return;
+		SetState(State::RunEmptyCube);
+		server->GameCommandLine("emptycube start chat");
 	}
 
-	if (strstr(itemsInTheCube[0].szItemCode, "fkn") != 0 && strstr(itemsInTheCube[1].szItemCode, "fkn") != 0)
-	{
-		// Whoops, this was actually an already extracted ore and we're actually on the second transmute step
-		HandleSecondStageTransmuteResults();
-		return;
-	}
-
-	for (const auto& item : itemsInTheCube)
-	{
-		// Don't care about the ore. We'll transmute that again during the next stage
-		if (strstr(item.szItemCode, "ore") != 0)
-		{
-			continue;
-		}
-
-		SetState(State::PickupGemFromFirstTransmute);
-		expectedItemToHand = item.dwItemID;
-		me->PickStorageItemToCursor(item.dwItemID);
-		return;
-	}
-
-	server->GameStringf("ÿc5AutoOreÿc0: We got %d items as a transmute result, but I didn't see any ore", itemsInTheCube.size());
-	Abort();
-	return;
-}
-
-void AutoOre::HandleSecondStageTransmuteResults()
-{
-	// We should now have two fake notes in the cube
-	std::vector<ITEM> itemsInTheCube;
-	me->EnumStorageItems(STORAGE_CUBE, enumGetAllCubeItems, (LPARAM)&itemsInTheCube);
-	if (itemsInTheCube.size() != 2)
-	{
-		server->GameStringf("ÿc5AutoOreÿc0: Expected %d items in the cube after the transmute, but we got %d", itemsInTheCube.size());
-		Abort();
-		return;
-	}
-
-	auto numFreeSpaces = me->GetNumberOfFreeStorageSlots(STORAGE_INVENTORY);
-	if (numFreeSpaces < 2 || dropFakeNotes)
-	{
-		itemsToDrop.clear();
-		for (const auto& item : itemsInTheCube)
-		{
-			itemsToDrop.push_back(item.dwItemID);
-		}
-		PickupNextItemToDrop();
-		return;
-	}
-
-	SetState(State::RunEmptyCube);
-	server->GameCommandLine("emptycube start chat");
 }
 
 void AutoOre::DropNextOreToCube()
@@ -342,20 +235,11 @@ void AutoOre::DropNextOreToCube()
 
 void AutoOre::OnTick()
 {
-	if (currentState == State::FirstTransmute)
+	if (currentState == State::Transmute)
 	{
 		// HACK: AE must be delayed a full tick so the autoextract module does not process the item we
 		//       just put in the cube as a transmute result
-		SetState(State::WaitForFirstTransmuteResults);
-		numTransmuteResults = 0;
-		numExpectedTransmuteResults = 2;
-		me->Transmute();
-	}
-	else if (currentState == State::SecondTransmute)
-	{
-		// HACK: AE must be delayed a full tick so the autoextract module does not process the item we
-		//       just put in the cube as a transmute result
-		SetState(State::WaitForSecondTransmuteResults);
+		SetState(State::WaitForTransmuteResults);
 		numTransmuteResults = 0;
 		numExpectedTransmuteResults = 2;
 		me->Transmute();
@@ -444,7 +328,7 @@ BOOL CALLBACK enumFindCubeItems(LPCITEM item, LPARAM lParam)
 	{
 		(*cubeItemCount)++;
 	}
-	
+
 	return TRUE;
 }
 
