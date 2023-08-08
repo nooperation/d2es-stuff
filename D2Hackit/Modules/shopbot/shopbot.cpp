@@ -54,10 +54,17 @@ bool ShopBot::ReadConfig(const std::string &configPath, std::unordered_set<int> 
 	std::string readLineBuff;
 	while(std::getline(inFile, readLineBuff))
 	{
-		auto readNum = std::stoi(readLineBuff);
-		if (readNum > 0)
+		try
 		{
-			readTo.insert(readNum);
+			const auto readNum = std::stoi(readLineBuff);
+			if (readNum > 0)
+			{
+				readTo.insert(readNum);
+			}
+		}
+		catch (...)
+		{
+			continue;
 		}
 	}
 
