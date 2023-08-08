@@ -962,23 +962,26 @@ void AnalyzeItem(const ITEM &item)
 	//////////////////////////////////////////////////////////////////////
 	// Player Belt Equipped/Unequipped
 	//////////////////////////////////////////////////////////////////////
-
-	if (item.iAction == ITEM_ACTION_TO_EQUIP || item.iAction == ITEM_ACTION_SWITCH_EQUIP)
+        //Make sure we don't update this on merc belt updates
+	if (item.iOwnerAction == 0)
 	{
-		// is belt?
-		BYTE iBeltRows = ::D2GetBeltRows(item.szItemCode);
-		if (iBeltRows)
-			g_iBeltRows = iBeltRows;
-	}
+		if (item.iAction == ITEM_ACTION_TO_EQUIP || item.iAction == ITEM_ACTION_SWITCH_EQUIP)
+		{
+			// is belt?
+			BYTE iBeltRows = ::D2GetBeltRows(item.szItemCode);
+			if (iBeltRows)
+				g_iBeltRows = iBeltRows;
+		}
 
-	if (item.iAction == ITEM_ACTION_FROM_EQUIP)
-	{
-		// is belt?
-		if (::D2GetBeltRows(item.szItemCode))
-			g_iBeltRows = 1;
-	}
+		if (item.iAction == ITEM_ACTION_FROM_EQUIP)
+		{
+			// is belt?
+			if (::D2GetBeltRows(item.szItemCode))
+				g_iBeltRows = 1;
+		}
 
-	g_inventory.CheckEquip(item);
+		g_inventory.CheckEquip(item);
+	}
 }
 
 int EXPORT GetMode()	// Get player's current mode(walking/running/attacking etc)
