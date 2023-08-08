@@ -36,6 +36,7 @@ class ItemFilter
 		bool showMagicJewels;
 		bool showRareJewels;
 		int minGoldAmount;
+		bool hideRejuvsWhenBeltFull;
 
 		bool OnItemFind(ITEM &item);
 		bool IsFiltered(char *itemCode);
