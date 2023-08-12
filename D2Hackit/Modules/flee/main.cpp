@@ -20,7 +20,7 @@ struct Packet_CS_InteractWithEntity
 void RequestTP(bool enterPortal);
 void ReadConfig();
 void WriteConfig();
-void CheckPlayerHPMana(WORD wNewHP, WORD wNewMana);
+void CheckPlayerHPMana(int32_t wNewHP, int32_t wNewMana);
 BOOL CALLBACK enumItemFindTP(DWORD dwItemID, LPARAM lParam);
 
 DWORD portalId = 0;
@@ -141,7 +141,7 @@ void RequestTP(bool enterPortal)
 	server->GameStringf("ÿc5Fleeÿc0: Opening portal... %d charges left", me->GetSpellCharges(D2S_TOMEOFTOWNPORTAL)-1);
 }
 
-void CheckPlayerHPMana(WORD wNewHP, WORD wNewMana)
+void CheckPlayerHPMana(int32_t wNewHP, int32_t wNewMana)
 {
 	if(wNewHP < me->GetStat(STAT_HP))
 	{
@@ -361,8 +361,8 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 {   
 	if(aPacket[0] == 0x95)
 	{
-		const auto life = ((aPacket[1] & 0b11111111) >> 0) | ((aPacket[2] & 0b01111111) << 8);
-		const auto mana = ((aPacket[2] & 0b10000000) >> 7) | ((aPacket[3] & 0b11111111) << 1) | ((aPacket[4] & 0b00111111) << 9);
+		const auto life = *((int32_t *)&aPacket[1]);
+		const auto mana = *((int32_t *)&aPacket[5]);
 
 		CheckPlayerHPMana(life, mana);
 	}
