@@ -37,17 +37,17 @@ bool ItemFilter::LoadItems()
 	{
 		return false;
 	}
-	//filterTown		= GetPrivateProfileInt("Filter", "FilterTown", 1, FILTER_SETTINGS_PATH); 
+	//filterTown		= GetPrivateProfileInt("Filter", "FilterTown", 1, FILTER_SETTINGS_PATH);
 
 	showUnique			= GetPrivateProfileInt("WeaponArmor", "Unique", 1, FILTER_SETTINGS_PATH) == TRUE;
 	showRare			= GetPrivateProfileInt("WeaponArmor", "Rare", 1, FILTER_SETTINGS_PATH) == TRUE;
 	showCraft			= GetPrivateProfileInt("WeaponArmor", "Craft", 1, FILTER_SETTINGS_PATH) == TRUE;
 	showSet				= GetPrivateProfileInt("WeaponArmor", "Set", 1, FILTER_SETTINGS_PATH) == TRUE;
 	showMagic			= GetPrivateProfileInt("WeaponArmor", "Magic", 0, FILTER_SETTINGS_PATH) == TRUE;
-	showEthSoc			= GetPrivateProfileInt("WeaponArmor", "EthSock", 0, FILTER_SETTINGS_PATH) == TRUE; 
-	showEthereal		= GetPrivateProfileInt("WeaponArmor", "Ethereal", 0, FILTER_SETTINGS_PATH) == TRUE; 
-	showSocketed		= GetPrivateProfileInt("WeaponArmor", "Socketed", 0, FILTER_SETTINGS_PATH) == TRUE; 
-	showSuperior		= GetPrivateProfileInt("WeaponArmor", "Superior", 0, FILTER_SETTINGS_PATH) == TRUE; 
+	showEthSoc			= GetPrivateProfileInt("WeaponArmor", "EthSock", 0, FILTER_SETTINGS_PATH) == TRUE;
+	showEthereal		= GetPrivateProfileInt("WeaponArmor", "Ethereal", 0, FILTER_SETTINGS_PATH) == TRUE;
+	showSocketed		= GetPrivateProfileInt("WeaponArmor", "Socketed", 0, FILTER_SETTINGS_PATH) == TRUE;
+	showSuperior		= GetPrivateProfileInt("WeaponArmor", "Superior", 0, FILTER_SETTINGS_PATH) == TRUE;
 	showNormal			= GetPrivateProfileInt("WeaponArmor", "Normal", 0, FILTER_SETTINGS_PATH) == TRUE;
 	showInferior		= GetPrivateProfileInt("WeaponArmor", "Inferior", 0, FILTER_SETTINGS_PATH) == TRUE;
 
@@ -61,6 +61,8 @@ bool ItemFilter::LoadItems()
 	showRareJewels      = GetPrivateProfileInt("Jewels", "RareJewels", 1, FILTER_SETTINGS_PATH) == TRUE;
 
 	minGoldAmount		= GetPrivateProfileInt("Misc", "MinGoldAmount", 0, FILTER_SETTINGS_PATH);
+	hideRejuvsWhenBeltFull = GetPrivateProfileInt("Misc", "HideRejuvsWenBeltFull", 1, FILTER_SETTINGS_PATH) == TRUE;
+
 	return true;
 }
 
@@ -88,14 +90,51 @@ bool ItemFilter::OnItemFind(ITEM &item)
 	if(IsAllowed(item.szItemCode))
 		return true;
 
-	if(item.iQuality == ITEM_LEVEL_UNIQUE && allowedItemsUnique.find(item.szItemCode) != allowedItemsUnique.end())  
+	if(item.iQuality == ITEM_LEVEL_UNIQUE && allowedItemsUnique.find(item.szItemCode) != allowedItemsUnique.end())
 		return true;
-	
-	if(item.iQuality == ITEM_LEVEL_SET && allowedItemsSet.find(item.szItemCode) != allowedItemsSet.end())  
+
+	if(item.iQuality == ITEM_LEVEL_SET && allowedItemsSet.find(item.szItemCode) != allowedItemsSet.end())
 		return true;
 
 	if(IsFiltered(item.szItemCode))
 		return false;
+
+	if (hideRejuvsWhenBeltFull && (strcmp(item.szItemCode, "rvs") == 0 || strcmp(item.szItemCode, "rvl") == 0))
+	{
+		//If any column is fully empty, show it
+		for (int col = 0; col < 4; col++)
+		{
+			for (int row = 0; row < me->GetBeltRows(); row++)
+			{
+				if (me->GetBeltItem(row, col)->dwItemID != 0)
+				{
+					break;
+				}
+
+				if (row == me->GetBeltRows() - 1)
+				{
+					return true;
+				}
+			}
+		}
+
+		//If any columns start with a rejuv, and have empty slots, show it
+		for (int col = 0; col < 4; col++)
+		{
+			if (strcmp(me->GetBeltItem(0, col)->szItemCode, "rvs") == 0 || strcmp(me->GetBeltItem(0, col)->szItemCode, "rvl") == 0)
+			{
+				for (int row = 0; row < me->GetBeltRows(); row++)
+				{
+					if (me->GetBeltItem(row, col)->dwItemID == 0)
+					{
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
 
 	if (strcmp(item.szItemCode, "gld") == 0) {
 		return item.dwGoldAmount >= minGoldAmount;
@@ -111,13 +150,13 @@ bool ItemFilter::OnItemFind(ITEM &item)
 
 		if(!showMagicRingAmulet && item.iQuality == ITEM_LEVEL_MAGIC)
     		return false;
-        
+
         if(!showRareRingAmulet &&  item.iQuality == ITEM_LEVEL_RARE)
     		return false;
-        
+
         return true;
     }
-    
+
     if(IsCharm(item.szItemCode))
     {
 		if(item.iSocketed)
@@ -125,7 +164,7 @@ bool ItemFilter::OnItemFind(ITEM &item)
 
     	if(!showMagicCharms && item.iQuality == ITEM_LEVEL_MAGIC)
     		return false;
-        
+
         if(!showRareCharms && item.iQuality == ITEM_LEVEL_RARE)
     		return false;
 
@@ -141,7 +180,7 @@ bool ItemFilter::OnItemFind(ITEM &item)
 
 		return true;
 	}
-    
+
 	if(server->IsWeapon(item.szItemCode) || server->IsArmor(item.szItemCode))
 	{
 		if(showEthereal && item.iEthereal)
@@ -153,7 +192,7 @@ bool ItemFilter::OnItemFind(ITEM &item)
 		if(showEthSoc && item.iEthereal && item.iSocketed)
 			return true;
 
-		if(!showUnique && item.iQuality == ITEM_LEVEL_UNIQUE)  
+		if(!showUnique && item.iQuality == ITEM_LEVEL_UNIQUE)
 			return false;
 
 		if(!showRare && item.iQuality == ITEM_LEVEL_RARE)
@@ -230,15 +269,15 @@ bool ItemFilter::IsGoodItemCode(char *itemCode)
 		return true;
 	}
 
-	if(strcmp(itemCode, "xu0") == 0 || 
-		strcmp(itemCode, "s51") == 0 || 
-		strcmp(itemCode, "s01") == 0 || 
+	if(strcmp(itemCode, "xu0") == 0 ||
+		strcmp(itemCode, "s51") == 0 ||
+		strcmp(itemCode, "s01") == 0 ||
 		strcmp(itemCode, "t51") == 0 ||
 		strcmp(itemCode, "s22") == 0 ||
-		strcmp(itemCode, "w56") == 0 || 
-		strcmp(itemCode, "w31") == 0 || 
+		strcmp(itemCode, "w56") == 0 ||
+		strcmp(itemCode, "w31") == 0 ||
 		strcmp(itemCode, "t01") == 0 ||
-		strcmp(itemCode, "kv0") == 0 || 
+		strcmp(itemCode, "kv0") == 0 ||
 		strcmp(itemCode, "ko0") == 0 ||
 		strcmp(itemCode, "leg") == 0)
 	{
