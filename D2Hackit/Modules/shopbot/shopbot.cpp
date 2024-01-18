@@ -125,6 +125,7 @@ bool ShopBot::Start(const std::vector<MAPPOS> &customPath, const std::string &me
 
 	minPrefix = GetPrivateProfileInt("ShopBot", "PrefixCount", 1, CONFIG_PATH);
 	minSuffix = GetPrivateProfileInt("ShopBot", "SuffixCount", 0, CONFIG_PATH);
+	leftClickTeleport = GetPrivateProfileInt("ShopBot", "LeftClickTeleport", 1, CONFIG_PATH);
 
 	auto fleeModule = GetModuleHandle("Flee.d2h");
 	if (fleeModule != NULL)
@@ -296,7 +297,7 @@ void ShopBot::OnTick()
 			MAPPOS dest = teleportPath[currentTeleportIndex];
 
 			ticksSinceLastTeleport = 0;
-			if (me->CastOnMap(D2S_TELEPORT, dest.x, dest.y, TRUE))
+			if (me->CastOnMap(D2S_TELEPORT, dest.x, dest.y, leftClickTeleport))
 			{
 				currentState = STATE_TELEPORTING;
 			}

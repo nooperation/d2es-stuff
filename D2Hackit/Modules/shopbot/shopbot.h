@@ -52,6 +52,7 @@ class ShopBot
 		int minSuffix;
 		int ticksSinceLastTeleport;
 		bool backToTown;
+		bool leftClickTeleport;
 		States currentState;
 		std::string merchantName;
 		std::unordered_set<int> goodPrefix;
