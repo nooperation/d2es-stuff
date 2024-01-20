@@ -5,10 +5,7 @@
 AutoAncientScroll::AutoAncientScroll()
 {
 	currentState = State::Uninitialized;
-	this->autoExtractorLoaded = false;
 	this->autoStockerLoaded = false;
-	this->transmuteLoaded = false;
-	this->emptyCubeLoaded = false;
 }
 
 void AutoAncientScroll::SetState(State newState)
@@ -16,23 +13,18 @@ void AutoAncientScroll::SetState(State newState)
 	if (false)
 	{
 		const char * const stateNames[] = {
-			"Uninitialized",
+			"Uninitialized ",
 			"Initializing",
 			"PickupMultistocker",
 			"DropMultistockerToCube",
-			"RunTransmute",
-			"PickupKey",
-			"DropKey",
-			"RunAutoExtractor",
-			"RunEmptyCube",
-			"PickupNextAncientDecipherer",
-			"DropNextAncientDecipherer",
 			"PickupNextAncientScroll",
 			"DropNextAncientScroll",
-			"TransmuteScrollAndDecipherer",
+			"TransmuteScrollAndStocker",
 			"PickupIdentifiedScroll",
-			"DropIdentifiedScroll",
-			"RunAutoStocker"
+			"DropIdentifiedScrollToInventory",
+			"PickupMultistockerFromCube",
+			"DropMultistockerToInventory",
+			"RunAutoStocker",
 		};
 		server->GameStringf("ÿc:AutoAncientScrollÿc0: State %s -> %s", stateNames[(int)this->currentState], stateNames[(int)newState]);
 	}
@@ -44,13 +36,14 @@ bool AutoAncientScroll::Start(bool useChat)
 {
 	SetState(State::Initializing);
 	// Clear previous settings
-	ancientDeciphererIds.clear();
 	ancientScrollIds.clear();
 	lastScrollPosition.x = 0;
 	lastScrollPosition.y = 0;
-	keyId = 0;
+	lastMultistockerPosition.x = 0;
+	lastMultistockerPosition.y = 0;
 	multistockerId = 0;
 	itemWaitingOn = 0;
+	numItemsRemainingToAppearInCube = 0;
 	this->useChat = useChat;
 
 	// Notify the user about the current settings
@@ -60,26 +53,11 @@ bool AutoAncientScroll::Start(bool useChat)
 		server->GameStringf("ÿc:AutoAncientScrollÿc0: Starting");
 
 	// Load required modules
-	if (!autoExtractorLoaded)
-	{
-		autoExtractorLoaded = true;
-		server->GameCommandLine("load ae");
-	}
 	if (!autoStockerLoaded)
 	{
 		autoStockerLoaded = true;
 		server->GameCommandLine("load as");
 	}	
-	if (!transmuteLoaded)
-	{
-		transmuteLoaded = true;
-		server->GameCommandLine("load t");
-	}	
-	if (!emptyCubeLoaded)
-	{
-		emptyCubeLoaded = true;
-		server->GameCommandLine("load emptycube");
-	}
 
 	// Open the player's cube
 	if (!OpenCube())
@@ -98,7 +76,6 @@ bool AutoAncientScroll::Start(bool useChat)
 	}
 
 	// Populate ancientDeciphererIds and ancientScrollIds with items from the players inventory
-	this->ancientDeciphererIds.clear();
 	this->ancientScrollIds.clear();
 	me->EnumStorageItems(STORAGE_INVENTORY, enumItemProc, (LPARAM)this);
 
@@ -112,13 +89,6 @@ bool AutoAncientScroll::Start(bool useChat)
 	if (numberOfFreeSlots == 0)
 	{
 		server->GameStringf("ÿc:AutoAncientScrollÿc0: Your inventory is full");
-		Abort();
-		return false;
-	}
-
-	if (this->keyId == 0)
-	{
-		server->GameStringf("ÿc:AutoAncientScrollÿc0: You must have a key");
 		Abort();
 		return false;
 	}
@@ -143,8 +113,14 @@ void AutoAncientScroll::PickupMultistocker()
 		return;
 	}
 
-	this->SetState(State::PickupMultistocker);
 	this->itemWaitingOn = this->multistockerId;
+
+	if (!me->FindItemPosition(STORAGE_INVENTORY, itemWaitingOn, &lastMultistockerPosition))
+	{
+		server->GameStringf("ÿc:AutoAncientScrollÿc0: Failed to find position of next ancient scroll");
+	}
+
+	this->SetState(State::PickupMultistocker);
 	if(!me->PickStorageItemToCursor(this->multistockerId))
 	{
 		server->GameStringf("ÿc:AutoAncientScrollÿc0: Failed to pick up the multistocker");
@@ -166,156 +142,6 @@ void AutoAncientScroll::DropMultistockerToCube()
 	if(!me->DropCursorItemToStorage(STORAGE_CUBE))
 	{
 		server->GameStringf("ÿc:AutoAncientScrollÿc0: Failed to drop the multistocker");
-
-		Abort();
-		return;
-	}
-}
-
-void AutoAncientScroll::RunTransmute()
-{
-	SetState(State::RunTransmute);
-	server->GameCommandLine("t start dec chat");
-}
-
-bool AutoAncientScroll::OnTransmuteMessage(const std::string_view &message)
-{
-	if (this->currentState != State::RunTransmute)
-	{
-		return false;
-	}
-
-	if (message == "Transmute Ended")
-	{
-		PickupKey();
-	}
-
-	return true;
-}
-
-void AutoAncientScroll::PickupKey()
-{
-	SetState(State::PickupKey);
-	this->itemWaitingOn = this->keyId;
-	if(!me->PickStorageItemToCursor(keyId))
-	{
-		server->GameStringf("ÿc:AutoAncientScrollÿc0: Failed to pick up key");
-
-		Abort();
-		return;
-	}
-}
-
-void AutoAncientScroll::DropKey()
-{
-	if (me->GetCursorItem() != this->itemWaitingOn)
-	{
-		server->GameStringf("ÿc:AutoAncientScrollÿc0: DropKey - Unknown cursor item. Expected the key");
-		return;
-	}
-
-	SetState(State::DropKey);
-	if(!me->DropCursorItemToStorage(STORAGE_CUBE))
-	{
-		server->GameStringf("ÿc:AutoAncientScrollÿc0: Failed to drop the key");
-
-		Abort();
-		return;
-	}
-}
-
-void AutoAncientScroll::RunAutoExtractor()
-{
-	auto numDeciphersToExtract = this->ancientScrollIds.size() - this->ancientDeciphererIds.size();
-	if (numDeciphersToExtract < 0)
-	{
-		numDeciphersToExtract = 0;
-	}
-
-	const auto numberOfFreeSlots = me->GetNumberOfFreeStorageSlots(STORAGE_INVENTORY);
-	if (numDeciphersToExtract > numberOfFreeSlots)
-	{
-		numDeciphersToExtract = numberOfFreeSlots;
-	}
-
-	SetState(State::RunAutoExtractor);
-	std::string command = "ae start " + std::to_string(numDeciphersToExtract) + " chat";
-	server->GameCommandLine((char *)command.c_str());
-}
-
-bool AutoAncientScroll::OnAutoExtractorMessage(const std::string_view &message)
-{
-	if (this->currentState != State::RunAutoExtractor)
-	{
-		return false;
-	}
-
-	if (message == "AutoExtractor Ended")
-	{
-		this->SetState(State::RunEmptyCube);
-		server->GameCommandLine("emptycube start chat");
-	}
-
-	return true;
-}
-
-bool AutoAncientScroll::OnEmptyCubeMessage(const std::string_view &message)
-{
-	if (this->currentState != State::RunEmptyCube)
-	{
-		return false;
-	}
-
-	if (message == "EmptyCube Ended")
-	{
-		// Find the ancient decipherers now that we've extraced some
-		this->ancientDeciphererIds.clear();
-		this->ancientScrollIds.clear();
-		me->EnumStorageItems(STORAGE_INVENTORY, enumItemProc, (LPARAM)this);
-		this->PickupNextAncientDecipherer();
-	}
-	else if (message == "Failed drop item to inventory")
-	{
-		this->Abort();
-	}
-
-	return true;
-}
-
-void AutoAncientScroll::PickupNextAncientDecipherer()
-{
-	if (this->ancientDeciphererIds.empty())
-	{
-		server->GameStringf("ÿc:AutoAncientScrollÿc0: No more ancient decipherers");
-		Abort();
-		return;
-	}
-
-	itemWaitingOn = ancientDeciphererIds.back();
-	ancientDeciphererIds.pop_back();
-
-	SetState(State::PickupNextAncientDecipherer);
-	if (!me->PickStorageItemToCursor(itemWaitingOn))
-	{
-		server->GameStringf("ÿc:AutoAncientScrollÿc0: Failed to pick up ancient decipherer");
-
-		Abort();
-		return;
-	}
-}
-
-void AutoAncientScroll::DropNextAncientDecipherer()
-{
-	if (me->GetCursorItem() != this->itemWaitingOn)
-	{
-		server->GameStringf("ÿc:AutoAncientScrollÿc0: DropKey - Unknown cursor item. Expected the ancient decipherer");
-		return;
-	}
-
-	SetState(State::DropNextAncientDecipherer);
-	if(!me->DropCursorItemToStorage(STORAGE_CUBE))
-	{
-		server->GameStringf("ÿc:AutoAncientScrollÿc0: Failed to drop the ancient decipherer");
 
 		Abort();
 		return;
@@ -367,10 +193,10 @@ void AutoAncientScroll::DropNextAncientScroll()
 	}
 }
 
-void AutoAncientScroll::TransmuteScrollAndDecipherer()
+void AutoAncientScroll::TransmuteScrollAndStocker()
 {
-	// TODO: Check cube items for scroll+decipherer
-	SetState(State::TransmuteScrollAndDecipherer);
+	numItemsRemainingToAppearInCube = 2;
+	SetState(State::TransmuteScrollAndStocker);
 	if(!me->Transmute())
 	{
 		server->GameStringf("ÿc:AutoAncientScrollÿc0: Failed to transmute");
@@ -380,11 +206,11 @@ void AutoAncientScroll::TransmuteScrollAndDecipherer()
 	}
 }
 
-void AutoAncientScroll::PickupIdentifiedScroll(DWORD identifiedScrollId)
+void AutoAncientScroll::PickupIdentifiedScroll(DWORD itemId)
 {
 	SetState(State::PickupIdentifiedScroll);
-	this->itemWaitingOn = identifiedScrollId;
-	if(!me->PickStorageItemToCursor(identifiedScrollId))
+	this->itemWaitingOn = itemId;
+	if(!me->PickStorageItemToCursor(itemId))
 	{
 		server->GameStringf("ÿc:AutoAncientScrollÿc0: Failed to drop the identified scroll");
 
@@ -393,18 +219,49 @@ void AutoAncientScroll::PickupIdentifiedScroll(DWORD identifiedScrollId)
 	}
 }
 
-void AutoAncientScroll::DropIdentifiedScroll()
+void AutoAncientScroll::DropIdentifiedScrollToInventory()
 {
 	if (me->GetCursorItem() != this->itemWaitingOn)
 	{
-		server->GameStringf("ÿc:AutoAncientScrollÿc0: DropKey - Unknown cursor item. Expected the identified ancient scroll");
+		server->GameStringf("ÿc:AutoAncientScrollÿc0: DropIdentifiedScrollToInventory - Unknown cursor item. Expected the identified ancient scroll");
 		return;
 	}
 
-	SetState(State::DropIdentifiedScroll);
+	SetState(State::DropIdentifiedScrollToInventory);
 	if(!me->DropCursorItemToStorageEx(STORAGE_INVENTORY, this->lastScrollPosition))
 	{
 		server->GameStringf("ÿc:AutoAncientScrollÿc0: Failed to drop the identified scroll");
+
+		Abort();
+		return;
+	}
+}
+
+void AutoAncientScroll::PickupMultistockerFromCube(DWORD itemId)
+{
+	SetState(State::PickupMultistockerFromCube);
+	this->itemWaitingOn = itemId;
+	if (!me->PickStorageItemToCursor(itemId))
+	{
+		server->GameStringf("ÿc:AutoAncientScrollÿc0: Failed to drop the identified scroll");
+
+		Abort();
+		return;
+	}
+}
+
+void AutoAncientScroll::DropMultistockerToInventory()
+{
+	if (me->GetCursorItem() != this->itemWaitingOn)
+	{
+		server->GameStringf("ÿc:AutoAncientScrollÿc0: DropMultistockerToInventory - Unknown cursor item. Expected the multistocker");
+		return;
+	}
+
+	SetState(State::DropMultistockerToInventory);
+	if (!me->DropCursorItemToStorageEx(STORAGE_INVENTORY, lastMultistockerPosition))
+	{
+		server->GameStringf("ÿc:AutoAncientScrollÿc0: Failed to drop the multistocker");
 
 		Abort();
 		return;
@@ -457,28 +314,6 @@ void AutoAncientScroll::OnItemFromInventory(const ITEM &item)
 		this->DropMultistockerToCube();
 		return;
 	}	
-	else if (this->currentState == State::PickupKey)
-	{
-		if (itemCode != "key")
-		{
-			server->GameStringf("ÿc:AutoAncientScrollÿc0: I was expecting to pickup a key, but got a %s instead", itemCode.data());
-			return;
-		}
-
-		this->DropKey();
-		return;
-	}
-	else if (this->currentState == State::PickupNextAncientDecipherer)
-	{
-		if (itemCode != "ddd")
-		{
-			server->GameStringf("ÿc:AutoAncientScrollÿc0: I was expecting to pickup an ancient decipherer, but got a %s instead", itemCode.data());
-			return;
-		}
-
-		this->DropNextAncientDecipherer();
-		return;
-	}
 	else if (this->currentState == State::PickupNextAncientScroll)
 	{
 		if (!this->IsAncientScroll(itemCode))
@@ -513,7 +348,18 @@ void AutoAncientScroll::OnItemFromCube(const ITEM &item)
 			return;
 		}
 
-		this->DropIdentifiedScroll();
+		this->DropIdentifiedScrollToInventory();
+		return;
+	}
+	if (this->currentState == State::PickupMultistockerFromCube)
+	{
+		if (!this->IsMultistocker(itemCode))
+		{
+			server->GameStringf("ÿc:AutoAncientScrollÿc0: I was expecting to pickup multistocker from cube, but got a %s instead", itemCode.data());
+			return;
+		}
+
+		this->DropMultistockerToInventory();
 		return;
 	}
 }
@@ -532,7 +378,7 @@ void AutoAncientScroll::OnItemToInventory(const ITEM &item)
 	const auto itemCode = std::string_view(item.szItemCode);
 
 	// We only care about this event when we're moving our stocker back to the player's inventory
-	if (currentState == State::DropIdentifiedScroll)
+	if (currentState == State::DropIdentifiedScrollToInventory)
 	{
 		if(!this->IsIdentifiedAncientScroll(itemCode))
 		{
@@ -540,15 +386,26 @@ void AutoAncientScroll::OnItemToInventory(const ITEM &item)
 			return;
 		}
 
-		if (this->ancientDeciphererIds.empty() || this->ancientScrollIds.empty())
+		if (this->ancientScrollIds.empty())
 		{
-			this->RunAutoStocker();
+			this->PickupMultistockerFromCube(multistockerId);
 		}
-		else
+		else 
 		{
-			this->PickupNextAncientDecipherer();
+			PickupNextAncientScroll();
 		}
 
+		return;
+	}
+	if (currentState == State::DropMultistockerToInventory)
+	{
+		if (item.dwItemID != this->itemWaitingOn)
+		{
+			server->GameStringf("ÿc:AutoAncientScrollÿc0: I was expecting to drop our multistocker, but got a %s instead", itemCode.data());
+			return;
+		}
+
+		this->RunAutoStocker();
 		return;
 	}
 }
@@ -574,28 +431,6 @@ void AutoAncientScroll::OnItemToCube(const ITEM &item)
 			return;
 		}
 
-		this->RunTransmute();
-		return;
-	}
-	else if (currentState == State::DropKey)
-	{
-		if (itemCode != "key")
-		{
-			server->GameStringf("ÿc:AutoAncientScrollÿc0: I was expecting to drop a key, but got a %s instead", itemCode.data());
-			return;
-		}
-
-		this->RunAutoExtractor();
-		return;
-	}
-	else if (currentState == State::DropNextAncientDecipherer)
-	{
-		if (itemCode != "ddd")
-		{
-			server->GameStringf("ÿc:AutoAncientScrollÿc0: I was expecting to drop an ancient decipherer, but got a %s instead", itemCode.data());
-			return;
-		}
-
 		this->PickupNextAncientScroll();
 		return;
 	}
@@ -607,18 +442,32 @@ void AutoAncientScroll::OnItemToCube(const ITEM &item)
 			return;
 		}
 
-		this->TransmuteScrollAndDecipherer();
+		this->TransmuteScrollAndStocker();
 		return;
 	}
-	else if (currentState == State::TransmuteScrollAndDecipherer)
+	else if (currentState == State::TransmuteScrollAndStocker)
 	{
-		if (!this->IsIdentifiedAncientScroll(itemCode))
+		if (this->IsMultistocker(itemCode))
 		{
-			server->GameStringf("ÿc:AutoAncientScrollÿc0: I was expecting an identified ancient scroll, but got a %s instead", itemCode.data());
+			multistockerId = item.dwItemID;
+			--numItemsRemainingToAppearInCube;
+		}
+		else if (this->IsIdentifiedAncientScroll(itemCode))
+		{
+			identifiedScrollId = item.dwItemID;
+			--numItemsRemainingToAppearInCube;
+		}
+		else 
+		{
+			server->GameStringf("ÿc:AutoAncientScrollÿc0: I was expecting an identified ancient scroll or stocker, but got a %s instead", itemCode.data());
 			return;
 		}
 
-		this->PickupIdentifiedScroll(item.dwItemID);
+		if (numItemsRemainingToAppearInCube == 0) 
+		{
+			this->PickupIdentifiedScroll(identifiedScrollId);
+		}
+
 		return;
 	}
 }
@@ -728,21 +577,13 @@ void AutoAncientScroll::ProcessInventoryItem(const ITEM *item)
 {
 	const auto itemCode = std::string_view(item->szItemCode);
 
-	if (itemCode == "ddd")
-	{
-		this->ancientDeciphererIds.push_back(item->dwItemID);
-	}
-	else if (IsAncientScroll(itemCode))
+	if (IsAncientScroll(itemCode))
 	{
 		this->ancientScrollIds.push_back(item->dwItemID);
 	}
 	else if (IsMultistocker(itemCode))
 	{
 		this->multistockerId = item->dwItemID;
-	}
-	else if (itemCode == "key")
-	{
-		this->keyId = item->dwItemID;
 	}
 }
 

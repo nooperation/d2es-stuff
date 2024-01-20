@@ -14,6 +14,7 @@ char *stockerSetNames[] =
 	"runeb",
 	"decal",
 	"multistocker",
+	"multistocker2",
 	"tomea",
 	"tomeb",
 	"crystal",
@@ -613,6 +614,10 @@ void AutoStocker::FindItemsToTransmute(const std::vector<ITEM> &itemsInInventory
 		{
 			itemsToTransmute[TRANSMUTE_MULTISTOCKER].push_back(itemsInInventory[i].dwItemID);
 		}
+		else if(IsMultiStocker2Item(itemsInInventory[i].szItemCode))
+		{
+			itemsToTransmute[TRANSMUTE_MULTISTOCKER2].push_back(itemsInInventory[i].dwItemID);
+		}
 		else if(IsDecalStockerItem(itemsInInventory[i].szItemCode))
 		{
 			itemsToTransmute[TRANSMUTE_DECAL].push_back(itemsInInventory[i].dwItemID);
@@ -753,7 +758,17 @@ bool AutoStocker::GetStockerTypeByCode(const char *itemCode, int *stockerType)
 			return true;
 		}
 	}
+	else if (itemCode[0] == 'x' && isdigit(itemCode[1]))
+	{
+		itemCodeNum = atoi(itemCode + 1);
 
+		if (itemCodeNum >= 1 && itemCodeNum <= 10) 
+		{
+			if (stockerType)
+				*stockerType = TRANSMUTE_MULTISTOCKER2;
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -988,6 +1003,16 @@ bool AutoStocker::IsGemCanItem(LPCSTR itemCode)
 bool AutoStocker::IsMultiStockerItem(LPCSTR itemCode)
 {
 	return stockerItems[TRANSMUTE_MULTISTOCKER].count(itemCode) > 0;
+}
+
+/// <summary>
+/// Determines if specified item should be stored in the multi stocker II
+/// </summary>
+/// <param name="item">Item being checked.</param>
+/// <returns>true if item should be cubed with a stocker.</returns>
+bool AutoStocker::IsMultiStocker2Item(LPCSTR itemCode)
+{
+	return stockerItems[TRANSMUTE_MULTISTOCKER2].count(itemCode) > 0;
 }
 
 /// <summary>

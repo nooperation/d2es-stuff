@@ -14,6 +14,7 @@ enum TransmuteStages
 	TRANSMUTE_RUNEB,
 	TRANSMUTE_DECAL,
 	TRANSMUTE_MULTISTOCKER,
+	TRANSMUTE_MULTISTOCKER2,
 	TRANSMUTE_TOMEA,
 	TRANSMUTE_TOMEB,
 	TRANSMUTE_CRYSTAL,
@@ -79,6 +80,7 @@ class AutoStocker
 		bool IsRuneStockerBItem(LPCSTR itemCode);
 		bool IsRuneStockerAItem(LPCSTR itemCode);
 		bool IsMultiStockerItem(LPCSTR itemCode);
+		bool IsMultiStocker2Item(LPCSTR itemCode);
 		bool IsCrystalItem(LPCSTR itemCode);
 		bool IsGemCanItem(LPCSTR itemCode);
 		bool IsRerollItem(const ITEM &item);

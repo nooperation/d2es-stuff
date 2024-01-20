@@ -10,18 +10,13 @@ enum class State
 	Initializing,
 	PickupMultistocker,
 	DropMultistockerToCube,
-	RunTransmute,
-	PickupKey,
-	DropKey,
-	RunAutoExtractor,
-	RunEmptyCube,
-	PickupNextAncientDecipherer,
-	DropNextAncientDecipherer,
 	PickupNextAncientScroll,
 	DropNextAncientScroll,
-	TransmuteScrollAndDecipherer,
+	TransmuteScrollAndStocker,
 	PickupIdentifiedScroll,
-	DropIdentifiedScroll,
+	DropIdentifiedScrollToInventory,
+	PickupMultistockerFromCube,
+	DropMultistockerToInventory,
 	RunAutoStocker
 };
 
@@ -34,41 +29,28 @@ public:
 	// Sequence:
 	//   Pickup multistocker
 	//   Drop multistocker to cube
-	//   Transmute multistocker to ancient decipherer ".t start dec"
-	//   Pickup key
-	//   Drop key in cube
-	//   Extract N ancient decipherers ".ae start N"
-	//   Empty cube ".emptycube start"
 	//   / Pickup Ancient Scroll
 	//   | Drop Ancient scroll to cube
-	//   | Move identified scroll to inventory (".ae start" maybe ?)
+	//   | Transmute
+	//   | Move identified scroll to inventory, ideally not the multistocker position
 	//   \ Repeat until no more scrolls
+	//   Pickup multistocker from cube
+	//   Drop multistocker to inventory (ideally the original position)
 	
 
 	void PickupMultistocker();
 	void DropMultistockerToCube();
 
-	void RunTransmute();
-	bool OnTransmuteMessage(const std::string_view &message);
-
-	void PickupKey();
-	void DropKey();
-
-	void RunAutoExtractor();
-	bool OnAutoExtractorMessage(const std::string_view &message);
-
-	bool OnEmptyCubeMessage(const std::string_view &message);
-
-	void PickupNextAncientDecipherer();
-	void DropNextAncientDecipherer();
-
 	void PickupNextAncientScroll();
 	void DropNextAncientScroll();
 
-	void TransmuteScrollAndDecipherer();
+	void TransmuteScrollAndStocker();
 
-	void PickupIdentifiedScroll(DWORD identifiedScrollId);
-	void DropIdentifiedScroll();
+	void PickupIdentifiedScroll(DWORD itemId);
+	void DropIdentifiedScrollToInventory();
+
+	void DropMultistockerToInventory();
+	void PickupMultistockerFromCube(DWORD itemId);
 
 	void RunAutoStocker();
 	bool OnAutoStockerMessage(const std::string_view &message);
@@ -91,20 +73,20 @@ private:
 	bool OpenCube();
 	bool CheckCubeUI();
 
-	bool autoExtractorLoaded;
 	bool autoStockerLoaded;
-	bool transmuteLoaded;
-	bool emptyCubeLoaded;
 	State currentState;
 	bool useChat;
 
-	std::vector<DWORD> ancientDeciphererIds;
 	std::vector<DWORD> ancientScrollIds;
+
 	DWORD multistockerId;
-	DWORD keyId;
 
 	DWORD itemWaitingOn;
 	POINT lastScrollPosition;
+	POINT lastMultistockerPosition;
+
+	int numItemsRemainingToAppearInCube;
+	DWORD identifiedScrollId;
 };
 
 BOOL CALLBACK enumItemProc(LPCITEM item, LPARAM lParam);
