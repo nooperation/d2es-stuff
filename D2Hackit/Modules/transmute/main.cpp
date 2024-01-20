@@ -19,10 +19,11 @@ enum StockerType
 	STOCKER_DECALS = 300,
 	STOCKER_REROLLINGORB = 400,
 	STOCKER_MULTISTOCKER = 500,
-	STOCKER_ANCIENTA = 600,
-	STOCKER_ANCIENTB = 700,
-	STOCKER_CRYSTAL = 800,
-	STOCKER_CANOPENER = 900,
+	STOCKER_MULTISTOCKER2 = 600,
+	STOCKER_ANCIENTA = 700,
+	STOCKER_ANCIENTB = 800,
+	STOCKER_CRYSTAL = 900,
+	STOCKER_CANOPENER = 1000,
 };
 
 std::unordered_map<std::string, int> stockers;
@@ -33,6 +34,7 @@ std::vector<std::string> runesB;
 std::vector<std::string> decals;
 std::vector<std::string> rerollingOrb;
 std::vector<std::string> multistocker;
+std::vector<std::string> multistocker2;
 std::vector<std::string> ancientA;
 std::vector<std::string> ancientB;
 std::vector<std::string> crystal;
@@ -46,6 +48,7 @@ VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
 	decals.clear();
 	rerollingOrb.clear();
 	multistocker.clear();
+	multistocker2.clear();
 	ancientA.clear();
 	ancientB.clear();
 	crystal.clear();
@@ -209,6 +212,18 @@ VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
 	stockers["t72"] = i++;
 	stockers["t73"] = i++;
 	stockers["t74"] = i++;
+
+	i = STOCKER_MULTISTOCKER2;
+	stockers["x01"] = i++;
+	stockers["x02"] = i++;
+	stockers["x03"] = i++;
+	stockers["x04"] = i++;
+	stockers["x05"] = i++;
+	stockers["x06"] = i++;
+	stockers["x07"] = i++;
+	stockers["x08"] = i++;
+	stockers["x09"] = i++;
+	stockers["x10"] = i++;
 
 	i = STOCKER_ANCIENTA;
 	stockers["w31"] = i++;
@@ -428,6 +443,17 @@ VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
 	multistocker.push_back("wild card");
 	multistocker.push_back("full rejuv pot");
 
+	multistocker2.push_back("stat potion");
+	multistocker2.push_back("skill");
+	multistocker2.push_back("nirvana grass");
+	multistocker2.push_back("mountain dew");
+	multistocker2.push_back("diabolic diaboleite");
+	multistocker2.push_back("mephitic malachite");
+	multistocker2.push_back("baleful bastnasite");
+	multistocker2.push_back("pained petalite");
+	multistocker2.push_back("anguishing andalusite");
+	multistocker2.push_back("convoking covellite");
+
 	ancientA.push_back("#1");
 	ancientA.push_back("#2");
 	ancientA.push_back("#3");
@@ -567,6 +593,11 @@ BOOL PRIVATE TransmuteTo(char** argv, int argc)
 		stockerTarget = &ancientA;
 		stockerOffset = stockerIndex - STOCKER_ANCIENTA;
 	}
+	else if(stockerIndex >= STOCKER_MULTISTOCKER2)
+	{
+		stockerTarget = &multistocker2;
+		stockerOffset = stockerIndex - STOCKER_MULTISTOCKER2;
+	}		
 	else if(stockerIndex >= STOCKER_MULTISTOCKER)
 	{
 		stockerTarget = &multistocker;
