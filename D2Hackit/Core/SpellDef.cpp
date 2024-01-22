@@ -305,6 +305,14 @@ BOOL D2GetSpellInfo(WORD wSpell, LPD2SPELLINFO lpBuffer)
 			_tcsncpy(lpBuffer->szSpellName, _T("Pierce"), SPELL_MAX_NAME);
 			break;
 
+		case D2S_EAGLEEYE:
+			lpBuffer->nClass = CLASS_AMA;
+			lpBuffer->dwSpellInfoFlag |= DSI_RIGHTONLY;
+			lpBuffer->dwSpellInfoFlag |= DSI_ENABLEINTOWN;
+
+			_tcsncpy(lpBuffer->szSpellName, _T("Eagle Eye"), SPELL_MAX_NAME);
+			break;
+
 // Bow and Crossbow Skills
 		case D2S_COLDARROW:			
 			lpBuffer->nClass = CLASS_AMA;

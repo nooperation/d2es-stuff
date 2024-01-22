@@ -735,6 +735,7 @@ enum
 #define D2S_CRITICALSTRIKE		0x0009
 #define D2S_PENETRATE			0x0017
 #define D2S_PIERCE				0x0021
+#define D2S_EAGLEEYE            0x016a
 
 // Bow and Crossbow spells
 #define D2S_COLDARROW			0x000b
