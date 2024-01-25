@@ -141,22 +141,26 @@ void RequestTP(bool enterPortal)
 	server->GameStringf("ÿc5Fleeÿc0: Opening portal... %d charges left", me->GetSpellCharges(D2S_TOMEOFTOWNPORTAL)-1);
 }
 
-void CheckPlayerHPMana(int32_t wNewHP, int32_t wNewMana)
+void CheckPlayerHPMana()
 {
-	if(wNewHP < me->GetStat(STAT_HP))
-	{
-		int hpPercentage = (int)(((float)wNewHP/(float)me->GetStat(STAT_MAXHP))*100.0f);
+	const float currentHealth = me->GetStat(STAT_HP);
+	const float maxHealth = me->GetStat(STAT_MAXHP);
 
-		if(hpPercentage <= fleeAmount && !portalRequested)
+	int hpPercentage = 0;
+	if (maxHealth != 0)
+	{
+		hpPercentage = (int)((currentHealth / maxHealth) * 100.0f);
+	}
+
+	if(hpPercentage <= fleeAmount && !portalRequested)
+	{
+		if(saveAndExitEnabled)
 		{
-			if(saveAndExitEnabled)
-			{
-				server->GameSaveAndExit();
-			}
-			else
-			{
-				RequestTP(true);
-			}
+			server->GameSaveAndExit();
+		}
+		else
+		{
+			RequestTP(true);
 		}
 	}
 }
@@ -357,14 +361,11 @@ DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 	return aLen;
 }
 
-DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
+VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 {   
 	if(aPacket[0] == 0x95)
 	{
-		const auto life = *((int32_t *)&aPacket[1]);
-		const auto mana = *((int32_t *)&aPacket[5]);
-
-		CheckPlayerHPMana(life, mana);
+		CheckPlayerHPMana();
 	}
 	else if(portalRequested && aPacket[0] == 0x82)
 	{
@@ -391,10 +392,14 @@ DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
 
 		portalRequested = false;
 	}
-	else if(aPacket[0] == 0xa7)
+}
+
+DWORD EXPORT OnGamePacketBeforeReceived(BYTE* aPacket, DWORD aLen)
+{
+	if (aPacket[0] == 0xa7)
 	{
 		// No more tp delay :)
-		if(aPacket[6] == 102)
+		if (aPacket[6] == 102)
 		{
 			return 0;
 		}
