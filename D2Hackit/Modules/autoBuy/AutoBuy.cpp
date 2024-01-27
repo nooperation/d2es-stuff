@@ -12,6 +12,7 @@ BOOL CALLBACK FindStuffToRefillCallback(LPCITEM item, LPARAM lParam);
 AutoBuy::AutoBuy()
 {
 	this->isAutomaticallyRefillTP = GetPrivateProfileInt("AutoBuy", "AutomaticallyRefillTP", 1, CONFIG_PATH);
+	this->refillTpAtCharge = GetPrivateProfileInt("AutoBuy", "RefillTpAtCharge", 35, CONFIG_PATH);
 }
 
 #pragma pack(push, 1)
@@ -169,7 +170,7 @@ void AutoBuy::ProcessInventoryItem(const ITEM* item)
 		unit.dwUnitType = UNIT_TYPE_ITEM;
 
 		auto charges = server->GetUnitStat(&unit, STAT_AMMOQUANTITY);
-		if (charges < 40) 
+		if (charges < refillTpAtCharge)
 		{
 			this->numTPTomesToRefill++;
 		}

@@ -27,6 +27,8 @@ private:
 	bool BuyItemInQuantity(DWORD dwItemID) const;
 
 	bool isAutomaticallyRefillTP = 0;
+	int refillTpAtCharge = 0;
+
 	int numTPTomesToRefill = 0;
 	bool hasAlreadyRestockedTps = false;
 
