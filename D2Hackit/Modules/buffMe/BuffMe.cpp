@@ -17,6 +17,7 @@ BuffMe::BuffMe()
 
 bool BuffMe::ReadBuffs(const std::string &fileName)
 {
+	currentBuffIndex = 0;
 	desiredBuffs.clear();
 
 	std::ifstream inFile(fileName.c_str());
@@ -61,6 +62,8 @@ bool BuffMe::ReadBuffs(const std::string &fileName)
 /// </summary>
 void BuffMe::Start(bool useChat)
 {
+	ReadBuffs(".\\plugin\\buffMe_buffs.txt");
+
 	this->useChat = useChat;
 	currentBuffIndex = 0;
 	currentState = STATE_SENDING;
