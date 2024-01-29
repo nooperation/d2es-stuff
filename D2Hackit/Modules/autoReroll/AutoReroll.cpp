@@ -6,6 +6,9 @@
 #include "../../Includes/itemPrefix.h"
 #include "../../Includes/itemSuffix.h"
 
+#undef min
+#undef max
+
 std::unordered_set<std::string> gemItemCodes;
 std::unordered_set<std::string> gemCanItemCodes;
 std::unordered_set<std::string> canOpenerItemCodes;
@@ -319,6 +322,186 @@ void AutoReroll::MoveGemCanAndOpenerToCube()
 	}
 }
 
+bool AutoReroll::IsPerfectProperty(GAMEUNIT& itemUnit, UnitAny* unit, const D2PropertyStrc& property, D2DataTablesStrc* dataTables)
+{
+	auto propertyTxt = &dataTables->pPropertiesTxt[property.nProperty];
+	if (propertyTxt == nullptr)
+	{
+		server->GameStringf("Invalid property %d", property.nProperty);
+		return true;
+	}
+
+	auto statTxt = server->GetItemStatCostTxtRecord(propertyTxt->wStat[0]);
+	if (statTxt == nullptr)
+	{
+		server->GameStringf("Invalid propertyTxt stat %d", propertyTxt->wStat[0]);
+		return true;
+	}
+
+	auto minimumValue = std::min(property.nMin, property.nMax);
+	auto maximumValue = std::max(property.nMin, property.nMax);
+
+	std::string propertyName = server->GetPropertyName(property.nProperty);
+	switch (propertyTxt->nFunc[0])
+	{
+		case 8:
+		case 1:
+		{
+			auto actualValue = (int32_t)server->GetUnitStat(&itemUnit, propertyTxt->wStat[0]);
+			actualValue >>= statTxt->nValShift;
+
+			if (actualValue < maximumValue && actualValue >= minimumValue) {
+				return false;
+			}
+
+			return true;
+		}
+		case 21: // +class skills
+		{
+			auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[0], propertyTxt->wVal[0]);
+			actualValue >>= statTxt->nValShift;
+
+			if (actualValue < maximumValue && actualValue >= minimumValue) {
+				return false;
+			}
+
+			return true;
+		}
+		case 22: // oskills
+		{
+			auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[0], property.nLayer);
+
+			if (actualValue < maximumValue && actualValue >= minimumValue) {
+				return false;
+			}
+
+			return true;
+		}
+	}
+
+	return true;
+}
+
+bool AutoReroll::CheckRerolledUnique(const ITEM& item) 
+{
+	auto dataTables = (D2DataTablesStrc*)server->GetDataTables();
+
+	if (item.wSetUniqueID >= dataTables->nUniqueItemsTxtRecordCount)
+	{
+		server->GameStringf("Invalid wSetUniqueID of wSetUniqueID", item.wSetUniqueID);
+		return true;
+	}
+	auto uniqueTxt = &dataTables->pUniqueItemsTxt[item.wSetUniqueID];
+
+	GAMEUNIT itemUnit;
+	itemUnit.dwUnitID = item.dwItemID;
+	itemUnit.dwUnitType = UNIT_TYPE_ITEM;
+
+	auto unit = (UnitAny*)server->VerifyUnit(&itemUnit);
+	if (unit == nullptr)
+	{
+		server->GameStringf("Failed to verify unit");
+		return "";
+	}
+
+	for (auto i = 0; i < sizeof(uniqueTxt->pProperties) / sizeof(uniqueTxt->pProperties[0]); ++i)
+	{
+		const auto& currentProperty = uniqueTxt->pProperties[i];
+		if (currentProperty.nProperty < 0)
+		{
+			break;
+		}
+
+		auto result = IsPerfectProperty(itemUnit, unit, currentProperty, dataTables);
+		if (!result) 
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool AutoReroll::CheckRerolledMagicAffix(GAMEUNIT& itemUnit, LPD2MagicAffixTxt affix)
+{
+	auto dataTables = (D2DataTablesStrc*)server->GetDataTables();
+
+	auto unit = (UnitAny*)server->VerifyUnit(&itemUnit);
+	if (unit == nullptr)
+	{
+		server->GameStringf("Failed to verify unit");
+		return true;
+	}
+
+	for (auto i = 0; i < 3; ++i)
+	{
+		auto& currentProperty = affix->pProperties[i];
+		if (currentProperty.nProperty < 0)
+		{
+			break;
+		}
+
+		auto isPerfect = IsPerfectProperty(itemUnit, unit, currentProperty, dataTables);
+		if (!isPerfect) 
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool AutoReroll::CheckRerolledRare(const ITEM& item)
+{
+	auto dataTables = (D2DataTablesStrc*)server->GetDataTables();
+
+	auto numPrefixes = dataTables->pMagicAffixDataTables.pAutoMagic - dataTables->pMagicAffixDataTables.pMagicPrefix;
+	auto numSuffixes = dataTables->pMagicAffixDataTables.pMagicPrefix - dataTables->pMagicAffixDataTables.pMagicSuffix;
+
+	GAMEUNIT unit;
+	unit.dwUnitID = item.dwItemID;
+	unit.dwUnitType = UNIT_TYPE_ITEM;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (item.wPrefix[i] != 0)
+		{
+			if (item.wPrefix[i] >= numPrefixes)
+			{
+				server->GameStringf("Unknown prefix %d", item.wPrefix[i]);
+				return true;
+			}
+
+			auto prefixTxt = &dataTables->pMagicAffixDataTables.pMagicPrefix[item.wPrefix[i] - 1];
+			auto isPerfect = CheckRerolledMagicAffix(unit, prefixTxt);
+			if (!isPerfect)
+			{
+				return false;
+			}
+		}
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		if (item.wSuffix[i] != 0)
+		{
+			if (item.wSuffix[i] >= numSuffixes)
+			{
+				server->GameStringf("Unknown suffix %d", item.wSuffix[i]);
+				return true;
+			}
+
+			auto suffixTxt = &dataTables->pMagicAffixDataTables.pMagicSuffix[item.wSuffix[i] - 1];
+			auto isPerfect = CheckRerolledMagicAffix(unit, suffixTxt);
+			if (!isPerfect) 
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 /// <summary>
 /// Checks specified item to see if it can be considered good based on its affixes. If the item
 ///   is good, then the AutoReroll process must stop.
@@ -350,9 +533,14 @@ bool AutoReroll::CheckRerolledItem(const ITEM &item)
 	}
 	else if (item.iQuality == ITEM_QUALITY_UNIQUE) 
 	{
+		if (!CheckRerolledUnique(item)) 
+		{
+			return false;
+		}
 
+		server->GameStringf("Perfect unique");
+		return true;
 	}
-
 }
 
 /// <summary>

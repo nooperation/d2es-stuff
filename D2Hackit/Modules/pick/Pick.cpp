@@ -17,7 +17,6 @@ BOOL PRIVATE ReloadItemDefs(char** argv, int argc);
 ItemWatcher itemWatcher;
 bool enabled = true;
 bool waitingForItemPickup = false;
-bool waitingForItemPickupStats = false;
 bool waitingForItemPickupDebug = false;
 
 BOOL PRIVATE Enable(char** argv, int argc)
@@ -110,21 +109,6 @@ BOOL PRIVATE ToggleShowItemLevel(char** argv, int argc)
 	waitingForItemPickup = !waitingForItemPickup;
 
 	if(waitingForItemPickup)
-	{
-		server->GameInfof("Waiting for item pickup to cursor...");
-	}
-	else
-	{
-		server->GameInfof("No longer waiting for item pick to cursor");
-	}
-
-	return TRUE;
-}
-BOOL PRIVATE ToggleShowItemStats(char** argv, int argc)
-{
-	waitingForItemPickupStats = !waitingForItemPickupStats;
-
-	if(waitingForItemPickupStats)
 	{
 		server->GameInfof("Waiting for item pickup to cursor...");
 	}
@@ -255,11 +239,7 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		ToggleShowItemLevel,
 		"Shows the item level"
 	},
-    {
-		"stats",
-		ToggleShowItemStats,
-		"Shows the item stats (only simple stats)"
-	}, 
+
 	{
 		"debug",
 		ToggleShowItemDebug,
@@ -538,7 +518,7 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 	return ss.str();
 }
 
-bool IsPerfectUnique(const ITEM& item)
+bool DumpUniqueProperties(const ITEM& item)
 {
 	auto dataTables = (D2DataTablesStrc*)server->GetDataTables();
 
@@ -574,20 +554,6 @@ bool IsPerfectUnique(const ITEM& item)
 		// fix the odd negative cases of "min = -27 max = -80" -> "min = -80 max = -27"
 		//auto minimumValue = std::min(currentProperty->nMin, currentProperty->nMax);
 		//auto maximumValue = std::max(currentProperty->nMin, currentProperty->nMax);
-	}
-
-	return false;
-}
-
-bool CheckItemStats(const ITEM& item) 
-{
-	if (item.iQuality == ITEM_QUALITY_UNIQUE) 
-	{
-		return IsPerfectUnique(item);
-	}
-	if (item.iQuality == ITEM_QUALITY_UNIQUE) 
-	{
-		return IsPerfectRare(item);
 	}
 
 	return false;
@@ -668,7 +634,7 @@ void DumpItemInfo(const ITEM& item)
 	{
 		server->GameStringf("%s%sÿc0 properties:", itemColor, server->GetItemName(item.szItemCode));
 
-		IsPerfectUnique(item);
+		DumpUniqueProperties(item);
 	}
 	else 
 	{
@@ -747,10 +713,6 @@ VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 			if(waitingForItemPickupDebug)
 			{
 				DumpItemDebug(item);
-			}
-			if(waitingForItemPickupStats)
-			{
-				CheckItemStats(item);
 			}
 		}
 		else
