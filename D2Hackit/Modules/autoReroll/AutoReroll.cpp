@@ -15,54 +15,54 @@ AutoReroll::AutoReroll()
 	currentState = STATE_UNINITIALIZED;
 
 	gemItemCodes.clear();
-	gemItemCodes.insert("gcv"); // ÿc;Chipped Amethyst
-	gemItemCodes.insert("gfv"); // ÿc;Flawed Amethyst
-	gemItemCodes.insert("gsv"); // ÿc;Amethyst
-	gemItemCodes.insert("gzv"); // ÿc;Flawless Amethyst
-	gemItemCodes.insert("gpv"); // ÿc;Blemished Amethyst
-	gemItemCodes.insert("gcy"); // ÿc9Chipped Topaz
-	gemItemCodes.insert("gfy"); // ÿc9Flawed Topaz
-	gemItemCodes.insert("gsy"); // ÿc9Topaz
-	gemItemCodes.insert("gly"); // ÿc9Flawless Topaz
-	gemItemCodes.insert("gpy"); // ÿc9Blemished Topaz
-	gemItemCodes.insert("gcb"); // ÿc3Chipped Sapphire
-	gemItemCodes.insert("gfb"); // ÿc3Flawed Sapphire
-	gemItemCodes.insert("gsb"); // ÿc3Sapphire
-	gemItemCodes.insert("glb"); // ÿc3Flawless Sapphire
-	gemItemCodes.insert("gpb"); // ÿc3Blemished Sapphire
-	gemItemCodes.insert("gcg"); // ÿc2Chipped Emerald
-	gemItemCodes.insert("gfg"); // ÿc2Flawed Emerald
-	gemItemCodes.insert("gsg"); // ÿc2Emerald
-	gemItemCodes.insert("glg"); // ÿc2Flawless Emerald
-	gemItemCodes.insert("gpg"); // ÿc2Blemished Emerald
-	gemItemCodes.insert("gcr"); // ÿc1Chipped Ruby
-	gemItemCodes.insert("gfr"); // ÿc1Flawed Ruby
-	gemItemCodes.insert("gsr"); // ÿc1Ruby
-	gemItemCodes.insert("glr"); // ÿc1Flawless Ruby
-	gemItemCodes.insert("gpr"); // ÿc1Blemished Ruby
-	gemItemCodes.insert("gcw"); // ÿc/Chipped Diamond
-	gemItemCodes.insert("gfw"); // ÿc/Flawed Diamond
-	gemItemCodes.insert("gsw"); // ÿc/Diamond
-	gemItemCodes.insert("glw"); // ÿc/Flawless Diamond
-	gemItemCodes.insert("gpw"); // ÿc/Blemished Diamond
-	gemItemCodes.insert("skc"); // ÿc0Chipped Skull
-	gemItemCodes.insert("skf"); // ÿc0Flawed Skull
-	gemItemCodes.insert("sku"); // ÿc0Skull
-	gemItemCodes.insert("skl"); // ÿc0Flawless Skull
-	gemItemCodes.insert("skz"); // ÿc0Blemished Skull
-	gemItemCodes.insert("gvb"); // ÿc;Perfect Amethyst
-	gemItemCodes.insert("gyb"); // ÿc9Perfect Topaz
-	gemItemCodes.insert("gbb"); // ÿc3Perfect Sapphire
-	gemItemCodes.insert("ggb"); // ÿc2Perfect Emerald
-	gemItemCodes.insert("grb"); // ÿc1Perfect Ruby
-	gemItemCodes.insert("gwb"); // ÿc/Perfect Diamond
-	gemItemCodes.insert("skb"); // ÿc0Perfect Skull
-	gemItemCodes.insert("gck"); // ÿc5Chipped Obsidian
-	gemItemCodes.insert("gfk"); // ÿc5Flawed Obsidian
-	gemItemCodes.insert("gsk"); // ÿc5Obsidian
-	gemItemCodes.insert("gzk"); // ÿc5Flawless Obsidian
-	gemItemCodes.insert("gpk"); // ÿc5Blemished Obsidian
-	gemItemCodes.insert("gbk"); // ÿc5Perfect Obsidian
+	gemItemCodes.insert("gcv"); // Ã¿c;Chipped Amethyst
+	gemItemCodes.insert("gfv"); // Ã¿c;Flawed Amethyst
+	gemItemCodes.insert("gsv"); // Ã¿c;Amethyst
+	gemItemCodes.insert("gzv"); // Ã¿c;Flawless Amethyst
+	gemItemCodes.insert("gpv"); // Ã¿c;Blemished Amethyst
+	gemItemCodes.insert("gcy"); // Ã¿c9Chipped Topaz
+	gemItemCodes.insert("gfy"); // Ã¿c9Flawed Topaz
+	gemItemCodes.insert("gsy"); // Ã¿c9Topaz
+	gemItemCodes.insert("gly"); // Ã¿c9Flawless Topaz
+	gemItemCodes.insert("gpy"); // Ã¿c9Blemished Topaz
+	gemItemCodes.insert("gcb"); // Ã¿c3Chipped Sapphire
+	gemItemCodes.insert("gfb"); // Ã¿c3Flawed Sapphire
+	gemItemCodes.insert("gsb"); // Ã¿c3Sapphire
+	gemItemCodes.insert("glb"); // Ã¿c3Flawless Sapphire
+	gemItemCodes.insert("gpb"); // Ã¿c3Blemished Sapphire
+	gemItemCodes.insert("gcg"); // Ã¿c2Chipped Emerald
+	gemItemCodes.insert("gfg"); // Ã¿c2Flawed Emerald
+	gemItemCodes.insert("gsg"); // Ã¿c2Emerald
+	gemItemCodes.insert("glg"); // Ã¿c2Flawless Emerald
+	gemItemCodes.insert("gpg"); // Ã¿c2Blemished Emerald
+	gemItemCodes.insert("gcr"); // Ã¿c1Chipped Ruby
+	gemItemCodes.insert("gfr"); // Ã¿c1Flawed Ruby
+	gemItemCodes.insert("gsr"); // Ã¿c1Ruby
+	gemItemCodes.insert("glr"); // Ã¿c1Flawless Ruby
+	gemItemCodes.insert("gpr"); // Ã¿c1Blemished Ruby
+	gemItemCodes.insert("gcw"); // Ã¿c/Chipped Diamond
+	gemItemCodes.insert("gfw"); // Ã¿c/Flawed Diamond
+	gemItemCodes.insert("gsw"); // Ã¿c/Diamond
+	gemItemCodes.insert("glw"); // Ã¿c/Flawless Diamond
+	gemItemCodes.insert("gpw"); // Ã¿c/Blemished Diamond
+	gemItemCodes.insert("skc"); // Ã¿c0Chipped Skull
+	gemItemCodes.insert("skf"); // Ã¿c0Flawed Skull
+	gemItemCodes.insert("sku"); // Ã¿c0Skull
+	gemItemCodes.insert("skl"); // Ã¿c0Flawless Skull
+	gemItemCodes.insert("skz"); // Ã¿c0Blemished Skull
+	gemItemCodes.insert("gvb"); // Ã¿c;Perfect Amethyst
+	gemItemCodes.insert("gyb"); // Ã¿c9Perfect Topaz
+	gemItemCodes.insert("gbb"); // Ã¿c3Perfect Sapphire
+	gemItemCodes.insert("ggb"); // Ã¿c2Perfect Emerald
+	gemItemCodes.insert("grb"); // Ã¿c1Perfect Ruby
+	gemItemCodes.insert("gwb"); // Ã¿c/Perfect Diamond
+	gemItemCodes.insert("skb"); // Ã¿c0Perfect Skull
+	gemItemCodes.insert("gck"); // Ã¿c5Chipped Obsidian
+	gemItemCodes.insert("gfk"); // Ã¿c5Flawed Obsidian
+	gemItemCodes.insert("gsk"); // Ã¿c5Obsidian
+	gemItemCodes.insert("gzk"); // Ã¿c5Flawless Obsidian
+	gemItemCodes.insert("gpk"); // Ã¿c5Blemished Obsidian
+	gemItemCodes.insert("gbk"); // Ã¿c5Perfect Obsidian
 
 	gemCanItemCodes.clear();
 	gemCanItemCodes.insert("kv0"); // Gem Can
@@ -102,15 +102,26 @@ bool AutoReroll::Init(bool useChat)
 		return false;
 	}
 
+	if (!ReadStatConfig(".\\plugin\\goodUniqueStats_ar.txt", goodStats))
+	{
+		return false;
+	}
+
 	minPrefix = GetPrivateProfileInt("AutoReroll", "PrefixCount", 2, CONFIG_PATH);
 	minSuffix = GetPrivateProfileInt("AutoReroll", "SuffixCount", 0, CONFIG_PATH);
 	numGemsToUse = GetPrivateProfileInt("AutoReroll", "GemCount", 2, CONFIG_PATH);
+	uniqueStatCount = GetPrivateProfileInt("AutoReroll", "UniqueStatCount", 1, CONFIG_PATH);
+	increment = GetPrivateProfileInt("AutoReroll", "GemCanIncrement", 0, CONFIG_PATH);
 
 	server->GameStringf("Min prefix: %d Min suffix: %d", minPrefix, minSuffix);
 
 	itemToRerollID = 0;
 	rerollItemNeedsToGoBackToCube = false;
 	loadedEmptyCube = false;
+	// Failure counter used by gem can increment
+	numFails = 0;
+	// Bool that keeps track of if AE is being used to increment gemcan
+	incGemCan = false;
 
 	return true;
 }
@@ -131,7 +142,7 @@ bool AutoReroll::ReadAffixConfig(const std::string &configPath, std::unordered_s
 	std::ifstream inFile(configPath.c_str());
 	if(!inFile)
 	{
-		server->GameStringf("ÿc:AutoRerollÿc0: Failed to open file %s\n", configPath.c_str());
+		server->GameStringf("Ã¿c:AutoRerollÃ¿c0: Failed to open file %s\n", configPath.c_str());
 		return false;
 	}
 
@@ -143,6 +154,46 @@ bool AutoReroll::ReadAffixConfig(const std::string &configPath, std::unordered_s
 		if(readNum > 0)
 		{
 			readTo.insert(readNum);
+		}
+	}
+
+	inFile.close();
+
+	return true;
+}
+
+/// <summary>
+/// Reads list of stat values
+/// </summary>
+/// <param name="configPath">Path of config file.</param>
+/// <param name="readTo">Map to read good stat values into.</param>
+/// <returns>true if successful, false if failed.</returns>
+bool AutoReroll::ReadStatConfig(const std::string& configPath, std::map<int,int>& readTo)
+{
+	std::string readLineBuff;
+
+	readTo.clear();
+
+	std::ifstream inFile(configPath.c_str());
+	if (!inFile) {
+		server->GameStringf("Ã¿c:AutoRerollÃ¿c0: Failed to open file %s\n", configPath.c_str());
+		return false;
+	}
+	int statID;
+	std::string statName;
+	int statValue;
+
+	while (inFile.good()) {
+		// statId \t statName \t statValue \n
+		std::getline(inFile, readLineBuff, '\t');
+		statID = atoi(readLineBuff.c_str());
+		std::getline(inFile, readLineBuff, '\t');
+		statName = readLineBuff.c_str();
+		std::getline(inFile, readLineBuff, '\n');
+		statValue = atoi(readLineBuff.c_str());
+
+		if ((statID > 0) && (statValue > 0)) {
+			readTo[statID] = statValue;
 		}
 	}
 
@@ -166,10 +217,10 @@ bool AutoReroll::Start(int numGems, bool useChat)
 
 	if(numGems > 0)
 	{
-		server->GameStringf("ÿc:AutoRerollÿc0: Using %d gems", numGems);
+		server->GameStringf("Ã¿c:AutoRerollÃ¿c0: Using %d gems", numGems);
 		numGemsToUse = numGems;
 	}
-
+	numFails = 0;
 	server->GameCommandLine("load ae");
 	server->GameCommandLine("load emptycube");
 
@@ -187,9 +238,9 @@ bool AutoReroll::StartRerollingItemInCube()
 	{
 		if(useChat)
 		{
-			me->Say("ÿc:AutoRerollÿc0: Cube not opened");
+			me->Say("Ã¿c:AutoRerollÃ¿c0: Cube not opened");
 		}
-		server->GamePrintString("ÿc:AutoRerollÿc0: Cube not opened");
+		server->GamePrintString("Ã¿c:AutoRerollÃ¿c0: Cube not opened");
 		
 		Abort();
 		return false;
@@ -202,10 +253,10 @@ bool AutoReroll::StartRerollingItemInCube()
 	{
 		if(useChat)
 		{
-			me->Say("ÿc:AutoRerollÿc0: Place only one rare weapon/armor to reroll in cube before starting");
+			me->Say("Ã¿c:AutoRerollÃ¿c0: Place only one rare weapon/armor to reroll in cube before starting");
 		}
 		
-		server->GamePrintString("ÿc:AutoRerollÿc0: Place only one rare weapon/armor to reroll in cube before starting");
+		server->GamePrintString("Ã¿c:AutoRerollÃ¿c0: Place only one rare weapon/armor to reroll in cube before starting");
 		
 		Abort();
 		return false;
@@ -253,9 +304,9 @@ void AutoReroll::MoveNextGemToCube()
 	{
 		if(useChat)
 		{
-			me->Say("ÿc:AutoRerollÿc0: currentGemIndex > gemsInInventory.size()");
+			me->Say("Ã¿c:AutoRerollÃ¿c0: currentGemIndex > gemsInInventory.size()");
 		}
-		server->GamePrintString("ÿc:AutoRerollÿc0: currentGemIndex > gemsInInventory.size()");
+		server->GamePrintString("Ã¿c:AutoRerollÃ¿c0: currentGemIndex > gemsInInventory.size()");
 
 		Abort();
 		return;
@@ -267,10 +318,10 @@ void AutoReroll::MoveNextGemToCube()
 	{
 		if(useChat)
 		{
-			me->Say("ÿc:AutoRerollÿc0: Failed to pickup gem");
+			me->Say("Ã¿c:AutoRerollÃ¿c0: Failed to pickup gem");
 		}
 
-		server->GamePrintString("ÿc:AutoRerollÿc0: Failed to pickup gem");
+		server->GamePrintString("Ã¿c:AutoRerollÃ¿c0: Failed to pickup gem");
 		
 		Abort();
 		return;
@@ -280,7 +331,7 @@ void AutoReroll::MoveNextGemToCube()
 /// <summary>
 /// Starts moving the gemcan and can opener to the cube
 /// </summary>
-void AutoReroll::MoveGemCanAndOpenerToCube()
+void AutoReroll::ProcessGemCanToCube()
 {
 	DWORD itemToPickup = 0;
 
@@ -289,6 +340,10 @@ void AutoReroll::MoveGemCanAndOpenerToCube()
 		// Gem can hasn't been moved yet, we will move it now
 		gemCanAndOpener.GemCanMoved = true;
 		itemToPickup = gemCanAndOpener.GemCanID;
+		// Shim to use this function to also increment the gemcan, cheat by making it think it already moved the can opener.
+		if (incGemCan) {
+			gemCanAndOpener.CanOpenerMoved = true;
+		}
 	}
 	else if(!gemCanAndOpener.CanOpenerMoved)
 	{
@@ -310,9 +365,9 @@ void AutoReroll::MoveGemCanAndOpenerToCube()
 	{
 		if(useChat)
 		{
-			me->Say("ÿc:AutoRerollÿc0: Failed drop pickup can opener");
+			me->Say("Ã¿c:AutoRerollÃ¿c0: Failed drop pickup can opener");
 		}
-		server->GamePrintString("ÿc:AutoRerollÿc0: Failed drop pickup  can opener");
+		server->GamePrintString("Ã¿c:AutoRerollÃ¿c0: Failed drop pickup  can opener");
 
 		Abort();
 		return;
@@ -329,6 +384,10 @@ bool AutoReroll::CheckRerolledItem(const ITEM &item)
 {
 	int goodPrefixCount = 0;
 	int goodSuffixCount = 0;
+	int goodStatCount = 0;
+
+	// We rerolled something, so reset the failure state for gem can transmutes
+	numFails = 0;
 
 	if(item.iQuality == ITEM_QUALITY_RARE || item.iQuality == ITEM_QUALITY_MAGIC || item.iQuality == ITEM_QUALITY_CRAFT)
 	{
@@ -337,17 +396,33 @@ bool AutoReroll::CheckRerolledItem(const ITEM &item)
 			if(goodPrefix.count(item.wPrefix[i]) > 0)
 			{
 				goodPrefixCount++;
-				server->GameStringf("ÿc;Prefixÿc0 %s: %s", Prefix[item.wPrefix[i]], PrefixDetails[item.wPrefix[i]]);
+				server->GameStringf("Ã¿c;PrefixÃ¿c0 %s: %s", Prefix[item.wPrefix[i]], PrefixDetails[item.wPrefix[i]]);
 			}
 			if(goodSuffix.count(item.wSuffix[i]) > 0)
 			{
 				goodSuffixCount++;
-				server->GameStringf("ÿc:Suffixÿc0 %s: %s", Suffix[item.wSuffix[i]], SuffixDetails[item.wSuffix[i]]);
+				server->GameStringf("Ã¿c:SuffixÃ¿c0 %s: %s", Suffix[item.wSuffix[i]], SuffixDetails[item.wSuffix[i]]);
 			}
 		}
+		return goodPrefixCount >= minPrefix && goodSuffixCount >= minSuffix;
+	}
+	else if (item.iQuality == ITEM_QUALITY_UNIQUE) {
+		// Using game unit as a way to quickly get the item's stats
+		GAMEUNIT unit;
+		unit.dwUnitID = item.dwItemID;
+		unit.dwUnitType = UNIT_TYPE_ITEM;
+		// Iterate through our map of statID:Values
+		for (const auto& statVal : goodStats) {
+			const auto check = server->GetUnitStat(&unit, statVal.first);
+			if (check >= statVal.second) {
+				goodStatCount++; // Found a value at least as good as the specified value
+			}
+		}
+		// Check if we matched the number of desired stats.
+		return (goodStatCount >= uniqueStatCount);
 	}
 
-	return goodPrefixCount >= minPrefix && goodSuffixCount >= minSuffix;
+	return true;
 }
 
 /// <summary>
@@ -374,9 +449,9 @@ void AutoReroll::OnTick()
 
 			if(useChat)
 			{
-				me->Say("ÿc:AutoRerollÿc0: AutoReroll Ended");
+				me->Say("Ã¿c:AutoRerollÃ¿c0: AutoReroll Ended");
 			}
-			server->GamePrintString("ÿc:AutoRerollÿc0: AutoReroll Ended");
+			server->GamePrintString("Ã¿c:AutoRerollÃ¿c0: AutoReroll Ended");
 
 			break;
 		}
@@ -422,9 +497,9 @@ void AutoReroll::OnItemFromInventory(DWORD itemID)
 	{
 		if(useChat)
 		{
-			me->Say("ÿc:AutoRerollÿc0: Failed drop inventory item to cube");
+			me->Say("Ã¿c:AutoRerollÃ¿c0: Failed drop inventory item to cube");
 		}
-		server->GameStringf("ÿc:AutoRerollÿc0: Failed drop inventory item to cube");
+		server->GameStringf("Ã¿c:AutoRerollÃ¿c0: Failed drop inventory item to cube");
 
 		Abort();
 		return;
@@ -454,9 +529,9 @@ void AutoReroll::OnItemToCube(const ITEM &item)
 
 			if(useChat)
 			{
-				me->Say("ÿc:AutoRerollÿc0: Rolled good item");
+				me->Say("Ã¿c:AutoRerollÃ¿c0: Rolled good item");
 			}
-			server->GamePrintString("ÿc:AutoRerollÿc0: Rolled good item");
+			server->GamePrintString("Ã¿c:AutoRerollÃ¿c0: Rolled good item");
 
 			Abort();
 			return;
@@ -496,7 +571,7 @@ void AutoReroll::OnItemToCube(const ITEM &item)
 			}
 			else
 			{
-				MoveGemCanAndOpenerToCube();
+				ProcessGemCanToCube();
 			}
 			break;
 		}
@@ -524,18 +599,26 @@ bool AutoReroll::OnAutoExtractorMessage(const std::string_view &message)
 		me->EnumStorageItems(STORAGE_INVENTORY, enumFindGems, (LPARAM)&tempGemsInInventory);
 		if ((int)tempGemsInInventory.size() < numGemsToUse)
 		{
-			if (useChat)
-			{
-				me->Say("ÿc:AutoRerollÿc0: No more gems");
+			// Increment the gem can if we haven't iterated through all the gem types, and increment option set
+			if ((increment) && (numFails++ < 10)) {
+				incGemCan = !incGemCan; // Toggles the shim into the gemcan function
+				rerollItemNeedsToGoBackToCube = false; // not putting our item back in yet
 			}
-			server->GamePrintString("ÿc:AutoRerollÿc0: No more gems");
+			else {
+				if (useChat) {
+					me->Say("Ã¿c:AutoRerollÃ¿c0: No more gems");
+				}
+				server->GamePrintString("Ã¿c:AutoRerollÃ¿c0: No more gems");
 
-			Abort();
-			return true;
+				Abort();
+				return true;
+			}
+		}
+		else {
+			// Gem can and can opener are still in the cube, we need to empty the cube now
+			rerollItemNeedsToGoBackToCube = true;
 		}
 
-		// Gem can and can opener are still in the cube, we need to empty the cube now
-		rerollItemNeedsToGoBackToCube = true;
 		currentState = STATE_RUNNINGEMPTYCUBE;
 		server->GameCommandLine("emptycube start chat");
 	}
@@ -565,7 +648,7 @@ bool AutoReroll::OnEmptyCubeMessage(const std::string_view &message)
 	me->EnumStorageItems(STORAGE_CUBE, enumItemCountProc, (LPARAM)&itemCount);
 	if(itemCount != 0)
 	{
-		server->GameStringf("ÿc:AutoRerollÿc0: Unable to clean cube");
+		server->GameStringf("Ã¿c:AutoRerollÃ¿c0: Unable to clean cube");
 		Abort();
 		return true;
 	}
@@ -581,9 +664,9 @@ bool AutoReroll::OnEmptyCubeMessage(const std::string_view &message)
 		{
 			if(useChat)
 			{
-				me->Say("ÿc:AutoRerollÿc0: Unable to pickup previously extracted item from inventory");
+				me->Say("Ã¿c:AutoRerollÃ¿c0: Unable to pickup previously extracted item from inventory");
 			}
-			server->GamePrintString("ÿc:AutoRerollÿc0: Unable to pickup previously extracted item from inventory");
+			server->GamePrintString("Ã¿c:AutoRerollÃ¿c0: Unable to pickup previously extracted item from inventory");
 
 			Abort();
 			return false;
@@ -597,22 +680,23 @@ bool AutoReroll::OnEmptyCubeMessage(const std::string_view &message)
 	//   Find the IDs of the can opener and gem can (they change every time it's transmuted)
 	memset(&gemCanAndOpener, 0, sizeof(GemCanStuff));
 	me->EnumStorageItems(STORAGE_INVENTORY, enumFindGemCanStuff, (LPARAM)&gemCanAndOpener);
+
 	if(gemCanAndOpener.CanOpenerID == 0 || gemCanAndOpener.GemCanID == 0)
 	{
 		if(useChat)
 		{
-			me->Say("ÿc:AutoRerollÿc0: Unable to find gem can or gem can opener");
+			me->Say("Ã¿c:AutoRerollÃ¿c0: Unable to find gem can or gem can opener");
 		}
-		server->GameStringf("ÿc:AutoRerollÿc0: Unable to find %s%s", (gemCanAndOpener.CanOpenerID==0)?" Can Opener":"", (gemCanAndOpener.GemCanID==0)?" Gem Gan":"");
+		server->GameStringf("Ã¿c:AutoRerollÃ¿c0: Unable to find %s%s", (gemCanAndOpener.CanOpenerID==0)?" Can Opener":"", (gemCanAndOpener.GemCanID==0)?" Gem Gan":"");
 
 		Abort();
 		return true;
 	}
 
 	// Move the gem can or can opener to cube. Both gem can and can opener will be moved to the
-	//  cube during MoveGemCanAndOpenerToCube. After they're both in there autoextractor will begin
-	MoveGemCanAndOpenerToCube();
-
+	//  cube during ProcessGemCanToCube. After they're both in there autoextractor will begin
+	// also handles the case where we want to increment the gem can
+	ProcessGemCanToCube();
 	return true;
 }
 
@@ -653,15 +737,15 @@ BOOL CALLBACK enumFindGemCanStuff(LPCITEM item, LPARAM lParam)
 	// Store ID of this item as our can opener if it's a can opener
 	if(canOpenerItemCodes.count(item->szItemCode) > 0)
 	{
-		canStuff->GemCanID = item->dwItemID;
-		return canStuff->CanOpenerID == 0;
+		canStuff->CanOpenerID = item->dwItemID;
+		return canStuff->CanOpenerID > 0;
 	}
 
 	// Store ID of this item as our gem can if it's a gem can
 	if(gemCanItemCodes.count(item->szItemCode) > 0)
 	{
-		canStuff->CanOpenerID = item->dwItemID;
-		return canStuff->GemCanID == 0;
+		canStuff->GemCanID = item->dwItemID;
+		return canStuff->GemCanID > 0;
 	}
 	return TRUE;
 }
