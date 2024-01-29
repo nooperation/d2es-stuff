@@ -5,6 +5,7 @@
 #define __D2EXPFUNCS
 
 #include "definitions.h"
+#include "D2DataTbls.h"
 
 #define D2EXPFUNC(d1,v1,t1,t2) typedef t1 d1##_##v1##_t t2; extern d1##_##v1##_t *d1##_##v1;
 #define D2EXPVAR(d1,v1,t1)     typedef t1 d1##_##v1##_t;    extern d1##_##v1##_t *p_##d1##_##v1;
@@ -205,6 +206,17 @@ D2EXPFUNC(D2COMMON, GetUnitSkill, Skill * __fastcall, (UnitPlayer * ptPlayer, WO
 D2EXPFUNC(D2COMMON, GetSkillFlags, DWORD * __stdcall, (Skill * hSkill));											// #10957
 D2EXPFUNC(D2COMMON, GetSkillType, short __stdcall, (Skill * ptSkill));												// #10963
 
+// ++D2MOO stuff
+D2EXPFUNC(D2COMMON, GetStatValue, int __stdcall, (StatsList* pStatList, int nStatId, uint16_t nLayer));	 			// #10466
+D2EXPFUNC(D2COMMON, GetUnitStatBonus, int __stdcall, (UnitAny* pUnit, int nStatId, uint16_t nLayer));	 			// #10522
+
+D2EXPFUNC(D2COMMON, GetItemStatCostTxtRecord, D2ItemStatCostTxt* __fastcall, (int nStatId));
+D2EXPFUNC(D2COMMON, GetMagicAffixDataTables, D2MagicAffixDataTbl* __stdcall, ()); // #10603
+D2EXPFUNC(D2COMMON, GetMagicAffixTxtRecord, D2MagicAffixTxt* __stdcall, (int nIndex)); // #10604
+
+D2EXPVAR(D2COMMON, sgptDataTables, D2DataTablesStrc**); // #10042
+
+// --D2MOO stuff
 
 /* D2Lang.dll */
 D2EXPFUNC(D2LANG, GetLocaleText, wchar_t *__fastcall, (WORD nLocaleTxtNo))

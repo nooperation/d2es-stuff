@@ -12,6 +12,9 @@
     <Filter Include="Resources">
       <UniqueIdentifier>{7fa9dbb8-268a-4e98-ae09-49c396fba693}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\DataTbls">
+      <UniqueIdentifier>{cde498e3-181a-4c0e-9195-0fe9a89ac492}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientHandler.cpp">
@@ -217,6 +220,57 @@
     <ClInclude Include="MaphackStructs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Includes\D2DataTbls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\AnimTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\ArenaTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\BeltsTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\FieldTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\HoradricCube.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\InvTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\ItemsTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\LevelsTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\MissilesTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\MonsterTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\ObjectsIds.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\ObjectsTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\OverlayTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\SequenceTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\SkillsTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Includes\DataTbls\TokenTbls.h">
+      <Filter>Header Files\DataTbls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Armor.txt">
@@ -237,5 +291,13 @@
     <None Include="Resources\Weapons.txt">
       <Filter>Resources</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\ItemStatCost.txt">
+      <Filter>Resources</Filter>
+    </Text>
+    <Text Include="Resources\Properties.txt">
+      <Filter>Resources</Filter>
+    </Text>
   </ItemGroup>
 </Project>

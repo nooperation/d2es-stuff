@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <tlhelp32.h>
 #include "LinkedList\LinkedList.h"
+#include "D2DataTbls.h"
 #include <map>
 
 #ifdef __cplusplus
@@ -293,6 +294,20 @@ BOOL EXPORT D2GetRoomCoords(int roomNum, LPMAPPOS roomCoords, void **room);
 DWORD EXPORT D2GetAllRoomCoords(ROOMPOS *allRoomCoords, DWORD capacity);
 
 int EXPORT GetItemQuality(DWORD dwItemID);
+
+LPItemStatCostTxt EXPORT GetItemStatCostTxtRecord(int nStatId);
+LPD2MagicAffixDataTbl EXPORT GetMagicAffixDataTables();
+LPD2MagicAffixTxt EXPORT GetMagicAffixTxtRecord(int nIndex);
+LPVOID EXPORT GetDataTables();
+LPCWSTR EXPORT GetStringFromTblIndex(WORD index);
+LPCSTR EXPORT GetPropertyName(int propertyId);
+LPCSTR EXPORT GetStatName(int statId);
+std::size_t EXPORT GetNumStats(int statId);
+std::size_t EXPORT GetNumProperties();
+int EXPORT GetStatValue(UnitAny* unit, int statId, uint16_t nLayer);
+int EXPORT GetUnitStatBonus(UnitAny* unit, int statId, uint16_t nLayer);
+int EXPORT GetUnitBaseStat(UnitAny* unit, int statId, uint16_t nLayer);
+
 BOOL EXPORT LeftClickHere();
 BOOL EXPORT RightClickHere();
 BOOL EXPORT RemoveFromStorage(int storageType, DWORD dwItemID);

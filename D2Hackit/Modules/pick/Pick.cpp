@@ -1,8 +1,12 @@
+#include <sstream>
 #include <iostream>
 #include "../../Includes/ClientCore.cpp"
 #include "../../Includes/itemPrefix.h"
 #include "../../Includes/itemSuffix.h"
 #include "ItemWatcher.h"
+
+#undef min
+#undef max
 
 BOOL PRIVATE Radius(char** argv, int argc);
 BOOL PRIVATE GoldSpeed(char** argv, int argc);
@@ -13,6 +17,8 @@ BOOL PRIVATE ReloadItemDefs(char** argv, int argc);
 ItemWatcher itemWatcher;
 bool enabled = true;
 bool waitingForItemPickup = false;
+bool waitingForItemPickupStats = false;
+bool waitingForItemPickupDebug = false;
 
 BOOL PRIVATE Enable(char** argv, int argc)
 {
@@ -104,6 +110,37 @@ BOOL PRIVATE ToggleShowItemLevel(char** argv, int argc)
 	waitingForItemPickup = !waitingForItemPickup;
 
 	if(waitingForItemPickup)
+	{
+		server->GameInfof("Waiting for item pickup to cursor...");
+	}
+	else
+	{
+		server->GameInfof("No longer waiting for item pick to cursor");
+	}
+
+	return TRUE;
+}
+BOOL PRIVATE ToggleShowItemStats(char** argv, int argc)
+{
+	waitingForItemPickupStats = !waitingForItemPickupStats;
+
+	if(waitingForItemPickupStats)
+	{
+		server->GameInfof("Waiting for item pickup to cursor...");
+	}
+	else
+	{
+		server->GameInfof("No longer waiting for item pick to cursor");
+	}
+
+	return TRUE;
+}
+
+BOOL PRIVATE ToggleShowItemDebug(char** argv, int argc)
+{
+	waitingForItemPickupDebug = !waitingForItemPickupDebug;
+
+	if(waitingForItemPickupDebug)
 	{
 		server->GameInfof("Waiting for item pickup to cursor...");
 	}
@@ -218,6 +255,16 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		ToggleShowItemLevel,
 		"Shows the item level"
 	},
+    {
+		"stats",
+		ToggleShowItemStats,
+		"Shows the item stats (only simple stats)"
+	}, 
+	{
+		"debug",
+		ToggleShowItemDebug,
+		"Shows the item stat values along with max value before overflow"
+	},
 	{
 		"colors",
 		ShowColors,
@@ -287,28 +334,297 @@ VOID EXPORT OnUnitMessage(UINT nMessage, LPCGAMEUNIT lpUnit, WPARAM wParam, LPAR
 	}
 }
 
-#include "ItemStatNames.cpp"
-void DumpItemInfo(const ITEM& item)
+bool IsPerfectRare(const ITEM& item)
 {
-	char chatBuff[128];
-	char itemColor[4];
+	auto dataTables = (D2DataTablesStrc*)server->GetDataTables();
+	return true;
+}
 
-	if (false)
+bool IsPerfectUnique(const ITEM& item)
+{
+	auto dataTables = (D2DataTablesStrc*)server->GetDataTables();
+
+	if (item.wSetUniqueID >= dataTables->nUniqueItemsTxtRecordCount) 
 	{
-		server->GameStringf("STATS:");
-		GAMEUNIT unit;
-		unit.dwUnitID = item.dwItemID;
-		unit.dwUnitType = UNIT_TYPE_ITEM;
+		server->GameStringf("Invalid wSetUniqueID of wSetUniqueID", item.wSetUniqueID);
+		return true;
+	}
+	auto uniqueTxt = &dataTables->pUniqueItemsTxt[item.wSetUniqueID];
 
-		for (size_t i = 0; i < sizeof(StatNames)/sizeof(StatNames[0]); i++)
+	GAMEUNIT unit;
+	unit.dwUnitID = item.dwItemID;
+	unit.dwUnitType = UNIT_TYPE_ITEM;
+
+	for (auto i = 0; i < sizeof(uniqueTxt->pProperties)/sizeof(uniqueTxt->pProperties[0]); ++i)
+	{
+		auto currentProperty = &uniqueTxt->pProperties[i];
+		if (currentProperty->nProperty < 0) 
 		{
-			auto statValue = server->GetUnitStat(&unit, i);
-			if (statValue != 0)
+			break;
+		}
+
+		if (currentProperty->nMin == currentProperty->nMax) 
+		{
+			continue;
+		}
+
+		if (currentProperty->nLayer != 0) 
+		{
+			continue;
+		}
+
+		if (currentProperty->nProperty >= dataTables->nPropertiesTxtRecordCount) 
+		{
+			continue;
+		}
+		auto propertyTxt = &dataTables->pPropertiesTxt[currentProperty->nProperty];
+
+		if (propertyTxt == nullptr) 
+		{
+			continue;
+		}
+
+		if (propertyTxt->wStat[1] != UINT16_MAX)
+		{
+			continue;
+		}
+
+		auto statTxt = server->GetItemStatCostTxtRecord(propertyTxt->wStat[0]);
+		if (statTxt == nullptr) 
+		{
+			continue;
+		}
+
+		auto actualValue = server->GetUnitStat(&unit, propertyTxt->wStat[0]);
+		actualValue >>= statTxt->nValShift;
+
+		auto propertyName = server->GetPropertyName(currentProperty->nProperty);
+
+		// fix the odd negative cases of "min = -27 max = -80" -> "min = -80 max = -27"
+		auto minimumValue = std::min(currentProperty->nMin, currentProperty->nMax);
+		auto maximumValue = std::max(currentProperty->nMin, currentProperty->nMax);
+
+		if (actualValue > maximumValue || actualValue < minimumValue) 
+		{
+			server->GameStringf(" Property ÿc+%sÿc0 has a range of [%d - %d], ÿc9Abnormalÿc0 value of %d", propertyName, currentProperty->nMin, currentProperty->nMax, actualValue);
+		}
+		else if (actualValue == currentProperty->nMax)
+		{
+			server->GameStringf(" Property ÿc+%sÿc0 has a range of [%d - %d], ÿc2PERFECTÿc0 value of %d", propertyName, currentProperty->nMin, currentProperty->nMax, actualValue);
+		}
+		else 
+		{
+			server->GameStringf(" Property ÿc+%sÿc0 has a range of [%d - %d], ÿc1Flawedÿc0 value of %d", propertyName, currentProperty->nMin, currentProperty->nMax, actualValue);
+		}
+	}
+
+	return false;
+}
+
+bool CheckItemStats(const ITEM& item) 
+{
+	if (item.iQuality == ITEM_QUALITY_UNIQUE) 
+	{
+		return IsPerfectUnique(item);
+	}
+	if (item.iQuality == ITEM_QUALITY_UNIQUE) 
+	{
+		return IsPerfectRare(item);
+	}
+
+	return false;
+}
+
+void DumpItemDebug(const ITEM& item) 
+{
+	server->GameStringf("STATS:");
+	GAMEUNIT unit;
+	unit.dwUnitID = item.dwItemID;
+	unit.dwUnitType = UNIT_TYPE_ITEM;
+
+	auto numStats = server->GetNumStats();
+	for (size_t i = 0; i < numStats; i++)
+	{
+		auto statValue = server->GetUnitStat(&unit, i);
+		if (statValue != 0)
+		{
+			auto statTxt = server->GetItemStatCostTxtRecord(i);
+			statValue >>= statTxt->nValShift;
+
+			server->GameStringf(" [%d] %s = %d / %d", i, server->GetStatName(i), statValue, (int)pow(2, statTxt->nSaveBits) - statTxt->dwSaveAdd);
+		}
+	}
+}
+
+std::string GetAffixDetails(GAMEUNIT &itemUnit, LPD2MagicAffixTxt affix)
+{
+	auto dataTables = (D2DataTablesStrc*)server->GetDataTables();
+
+	std::stringstream ss("");
+
+	auto unit = (UnitAny *)server->VerifyUnit(&itemUnit);
+	if (unit == nullptr)
+	{
+		server->GameStringf("Failed to verify unit");
+		return "";
+	}
+
+	for (auto i = 0; i < 3; ++i)
+	{
+		auto currentProperty = &affix->pProperties[i];
+		if (currentProperty->nProperty < 0) 
+		{
+			break;
+		}
+
+		auto propertyTxt = &dataTables->pPropertiesTxt[currentProperty->nProperty];
+		if (propertyTxt == nullptr)
+		{
+			continue;
+		}
+
+		auto statTxt = server->GetItemStatCostTxtRecord(propertyTxt->wStat[0]);
+		if (statTxt == nullptr)
+		{
+			continue;
+		}
+
+		auto minimumValue = std::min(currentProperty->nMin, currentProperty->nMax);
+		auto maximumValue = std::max(currentProperty->nMin, currentProperty->nMax);
+
+		std::string propertyName = server->GetPropertyName(currentProperty->nProperty);
+		switch (propertyTxt->nFunc[0]) 
+		{
+			case 8:
+			case 1: 
 			{
-				server->GameStringf(" [%d] %s = %d", i, StatNames[i], statValue);
+				auto actualValue = server->GetUnitStat(&itemUnit, propertyTxt->wStat[0]);
+				actualValue >>= statTxt->nValShift;
+
+				ss << " " << propertyName << " [" << currentProperty->nMin << " - " << currentProperty->nMax << "] ";
+
+				if (actualValue > maximumValue || actualValue < minimumValue)
+				{
+					ss << " ÿc9Abnormalÿc0 value of " << actualValue;
+				}
+				else if (actualValue == currentProperty->nMax)
+				{
+					ss << " ÿc2PERFECTÿc0 value of " << actualValue;
+				}
+				else
+				{
+					ss << " ÿc1Flawedÿc0 value of " << actualValue;
+				}
+
+				break;
+			}
+			case 17:
+			{
+				auto actualValue = server->GetUnitStat(&itemUnit, propertyTxt->wStat[0]);
+				actualValue >>= statTxt->nValShift;
+
+				ss << " " << actualValue << " " << propertyName;
+				break;
+			}
+			case 19: // Skill charges
+			{
+				const auto chargeLevel = currentProperty->nMax;
+				const auto totalCharges = currentProperty->nMin;
+				const auto skillChargeId = currentProperty->nLayer;
+
+				if (skillChargeId >= dataTables->nSkillsTxtRecordCount)
+				{
+					server->GameStringf("Invalid skillChargeId %d", skillChargeId);
+					return "ERROR";
+				}
+
+				auto skillTxt = &dataTables->pSkillsTxt[skillChargeId];
+				auto skillDesc = &dataTables->pSkillDescTxt[skillTxt->wSkillDesc];
+
+				std::wstring skillNameW = server->GetStringFromTblIndex(skillDesc->wStrName);
+				std::string skillName(skillNameW.begin(), skillNameW.end());
+
+				ss << " Level " << chargeLevel << " " << skillName << " (" << totalCharges << " charges)";
+
+				break;
+			}
+			case 21: // +class skills
+			{
+				auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[0], propertyTxt->wVal[0]);
+				actualValue >>= statTxt->nValShift;
+
+				ss << " " << propertyName << " [" << currentProperty->nMin << " - " << currentProperty->nMax << "] ";
+
+				if (actualValue > maximumValue || actualValue < minimumValue)
+				{
+					ss << " ÿc9Abnormalÿc0 value of " << actualValue;
+				}
+				else if (actualValue == currentProperty->nMax)
+				{
+					ss << " ÿc2PERFECTÿc0 value of " << actualValue;
+				}
+				else
+				{
+					ss << " ÿc1Flawedÿc0 value of " << actualValue;
+				}
+				break;
+			}
+			case 22: // oskills
+			{
+				auto oskillId = currentProperty->nLayer;
+				if (oskillId >= dataTables->nSkillsTxtRecordCount)
+				{
+					server->GameStringf("Invalid oskillID %d", oskillId);
+					return "ERROR";
+				}
+
+				auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[0], currentProperty->nLayer);
+
+				auto skillTxt = &dataTables->pSkillsTxt[oskillId];
+				auto skillDesc = &dataTables->pSkillDescTxt[skillTxt->wSkillDesc];
+
+				std::wstring skillNameW = server->GetStringFromTblIndex(skillDesc->wStrName);
+				std::string skillName(skillNameW.begin(), skillNameW.end());
+
+				ss << " " << skillName << " [" << currentProperty->nMin << " - " << currentProperty->nMax << "] ";
+
+				if (actualValue > maximumValue || actualValue < minimumValue)
+				{
+					ss << " ÿc9Abnormalÿc0 value of " << actualValue;
+				}
+				else if (actualValue == currentProperty->nMax)
+				{
+					ss << " ÿc2PERFECTÿc0 value of " << actualValue;
+				}
+				else
+				{
+					ss << " ÿc1Flawedÿc0 value of " << actualValue;
+				}
+				break;
+			}
+			default:
+			{
+				ss << " " << propertyName << " [" << currentProperty->nMin << " - " << currentProperty->nMax << "] ";
+				break;
 			}
 		}
 	}
+
+	return ss.str();
+}
+
+void DumpItemInfo(const ITEM& item)
+{
+	auto dataTables = (D2DataTablesStrc*)server->GetDataTables();
+	auto numPrefixes = dataTables->pMagicAffixDataTables.pAutoMagic - dataTables->pMagicAffixDataTables.pMagicPrefix;
+	auto numSuffixes = dataTables->pMagicAffixDataTables.pMagicPrefix - dataTables->pMagicAffixDataTables.pMagicSuffix;
+
+	char chatBuff[512];
+	char itemColor[4];
+
+	GAMEUNIT unit;
+	unit.dwUnitID = item.dwItemID;
+	unit.dwUnitType = UNIT_TYPE_ITEM;
 
 	switch(item.iQuality)
 	{
@@ -331,35 +647,36 @@ void DumpItemInfo(const ITEM& item)
 	{
 		if(item.wPrefix[i] != 0)
 		{
-			if(item.wPrefix[i] > ITEM_PREFIX_COUNT)
+			if (item.wPrefix[i] >= numPrefixes)
 			{
-				server->GameStringf("Prefix too large: %d", item.wPrefix[i]);
+				server->GameStringf("Unknown prefix %d", item.wPrefix[i]);
+				continue;
 			}
-			else
-			{
-				sprintf(chatBuff, "  ÿc;Prefixÿc0 %d: %s - %s",item.wPrefix[i], Prefix[item.wPrefix[i]], PrefixDetails[item.wPrefix[i]]);
-				server->GamePrintString(chatBuff);
-			}
+
+			auto prefixTxt = &dataTables->pMagicAffixDataTables.pMagicPrefix[item.wPrefix[i] - 1];
+			auto prefixDetails = GetAffixDetails(unit, prefixTxt);
+
+			server->GameStringf("  ÿc;Prefixÿc0 %d: %s - %s", item.wPrefix[i], prefixTxt->szName, prefixDetails.c_str());
 		}
 	}
 	for(int i = 0; i < 3; i++)
 	{
 		if(item.wSuffix[i] != 0)
 		{
-			if(item.wSuffix[i] > ITEM_SUFFIX_COUNT)
+			if (item.wSuffix[i] >= numSuffixes)
 			{
-				server->GameStringf("Suffix too large: %d", item.wSuffix[i]);
+				server->GameStringf("Unknown suffix %d", item.wSuffix[i]);
+				continue;
 			}
-			else
-			{
-				sprintf(chatBuff, "  ÿc:Suffixÿc0 %d: %s - %s", item.wSuffix[i], Suffix[item.wSuffix[i]], SuffixDetails[item.wSuffix[i]]);
-				server->GamePrintString(chatBuff);
-			}
+
+			auto suffixTxt = &dataTables->pMagicAffixDataTables.pMagicSuffix[item.wSuffix[i] - 1];
+			auto suffixDetails = GetAffixDetails(unit, suffixTxt);
+
+			server->GameStringf("  ÿc:Suffixÿc0 %d: %s - %s", item.wSuffix[i], suffixTxt->szName, suffixDetails.c_str());
 		}
 	}
-
-
 }
+
 DWORD EXPORT OnGamePacketBeforeSent(BYTE* aPacket, DWORD aLen)
 {
 	if(aPacket[0] == 0x68)
@@ -387,6 +704,14 @@ VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 			{
 				server->GameStringf("%s: Level %d", item.szItemCode, item.iLevel);
 				DumpItemInfo(item);
+			}	
+			if(waitingForItemPickupDebug)
+			{
+				DumpItemDebug(item);
+			}
+			if(waitingForItemPickupStats)
+			{
+				CheckItemStats(item);
 			}
 		}
 		else

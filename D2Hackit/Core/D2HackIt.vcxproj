@@ -380,7 +380,24 @@ xcopy /Y $(TargetDir)$(TargetName).pdb "$(Diablo2Path)\plugin\"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Includes\CommonStructs.h" />
+    <ClInclude Include="..\Includes\D2DataTbls.h" />
     <ClInclude Include="..\Includes\D2HackIt.h" />
+    <ClInclude Include="..\Includes\DataTbls\AnimTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\ArenaTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\BeltsTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\FieldTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\HoradricCube.h" />
+    <ClInclude Include="..\Includes\DataTbls\InvTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\ItemsTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\LevelsTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\MissilesTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\MonsterTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\ObjectsIds.h" />
+    <ClInclude Include="..\Includes\DataTbls\ObjectsTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\OverlayTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\SequenceTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\SkillsTbls.h" />
+    <ClInclude Include="..\Includes\DataTbls\TokenTbls.h" />
     <ClInclude Include="D2HackItServer.h" />
     <ClInclude Include="..\Includes\ItemPrefix.h" />
     <ClInclude Include="..\Includes\ItemSuffix.h" />
@@ -415,6 +432,10 @@ xcopy /Y $(TargetDir)$(TargetName).pdb "$(Diablo2Path)\plugin\"</Command>
     <None Include="Resources\MagicSuffix_all.txt" />
     <None Include="Resources\Sets.txt" />
     <None Include="Resources\Weapons.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\ItemStatCost.txt" />
+    <Text Include="Resources\Properties.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

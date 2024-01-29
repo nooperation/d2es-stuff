@@ -23,8 +23,13 @@ std::unordered_set<std::string> itemDecals;
 std::unordered_set<std::string> itemAncientScrolls;
 std::unordered_set<std::string> itemSpecialItems;
 
+std::vector<std::string> propertyNames;
+std::vector<std::string> statNames;
+
 CRITICAL_SECTION csLoadingItems;
 
+bool ReadFirstColumn(const std::string& filename, std::vector<std::string>& firstColumnOut);
+bool LoadItemMap(std::string fileName, std::unordered_map<std::string, std::string>& itemMap);
 
 DWORD ItemCodeStringToNum(LPCTSTR szItemCode) {
 	return  ' ' << 24 | szItemCode[2] << 16 | szItemCode[1] << 8 | szItemCode[0];
@@ -95,6 +100,56 @@ LPCSTR D2GetItemName(LPCSTR itemCode)
 	}
 
 	return itemMapIter->second.c_str();
+}
+
+LPCSTR D2GetPropertyName(int propertyId)
+{
+	if (!itemsLoaded)
+	{
+		LoadItems();
+	}
+
+	if (propertyId < 0 || propertyId >= propertyNames.size())
+	{
+		return "Unknown";
+	}
+
+	return propertyNames[propertyId].c_str();
+}
+
+std::size_t D2GetNumProperties()
+{
+	if (!itemsLoaded)
+	{
+		LoadItems();
+	}
+
+	return propertyNames.size();
+}
+
+LPCSTR D2GetStatName(int statId)
+{
+	if (!itemsLoaded)
+	{
+		LoadItems();
+	}
+
+	if (statId < 0 || statId >= statNames.size())
+	{
+		return "Unknown";
+	}
+
+	return statNames[statId].c_str();
+}
+
+std::size_t D2GetNumStats()
+{
+	if (!itemsLoaded)
+	{
+		LoadItems();
+	}
+
+	return statNames.size();
 }
 
 std::wstring FixDisplayText(std::wstring input)
@@ -179,6 +234,17 @@ bool LoadItems()
 	if (!std::filesystem::exists(".\\plugin\\AllItems.txt"))
 	{
 		DumpAllItems(".\\plugin\\AllItems.txt");
+	}
+
+	if (!ReadFirstColumn(".\\plugin\\Properties.txt", propertyNames)) {
+		GameErrorf("Unable to open .\\plugin\\Properties.txt");
+		LeaveCriticalSection(&csLoadingItems);
+		return false;
+	}
+	if (!ReadFirstColumn(".\\plugin\\ItemStatCost.txt", statNames)) {
+		GameErrorf("Unable to open .\\plugin\\ItemStatCost.txt");
+		LeaveCriticalSection(&csLoadingItems);
+		return false;
 	}
 
 	if(!LoadItemMap(".\\plugin\\AllItems.txt", itemMapAll))
@@ -543,6 +609,38 @@ bool LoadItemSizeMap(std::string fileName, std::unordered_map<std::string, SIZE>
 
 	inFile.close();
 
+	return true;
+}
+
+bool ReadFirstColumn(const std::string& filename, std::vector<std::string> &firstColumnOut)
+{
+	firstColumnOut.clear();
+
+	std::ifstream inFile(filename);
+
+	if (!inFile.is_open()) 
+	{
+		return false;
+	}
+
+	std::string line;
+	std::getline(inFile, line);
+
+	while (std::getline(inFile, line))
+	{
+		const auto pos = line.find('\t');
+		if (pos != std::string::npos) 
+		{
+			auto firstCell = line.substr(0, pos);
+
+			if (firstCell != "Expansion") 
+			{
+				firstColumnOut.push_back(firstCell);
+			}
+		}
+	}
+
+	inFile.close();
 	return true;
 }
 

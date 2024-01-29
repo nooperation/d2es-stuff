@@ -345,9 +345,14 @@ bool AutoReroll::CheckRerolledItem(const ITEM &item)
 				server->GameStringf("ÿc:Suffixÿc0 %s: %s", Suffix[item.wSuffix[i]], SuffixDetails[item.wSuffix[i]]);
 			}
 		}
+
+		return goodPrefixCount >= minPrefix && goodSuffixCount >= minSuffix;
+	}
+	else if (item.iQuality == ITEM_QUALITY_UNIQUE) 
+	{
+
 	}
 
-	return goodPrefixCount >= minPrefix && goodSuffixCount >= minSuffix;
 }
 
 /// <summary>

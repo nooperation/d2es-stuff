@@ -20,6 +20,7 @@
 #include "ScrollDraw.h"
 #include "SpellDef.h"
 #include "KeyDef.h"
+#include "D2DataTbls.h"
 #include <map>
 
 BOOL RevealPresetUnits(CArrayEx<PRESETUNIT, const PRESETUNIT&>& aUnits);
@@ -879,6 +880,61 @@ BOOL EXPORT GetItemQuality(DWORD dwItemID)
 		return FALSE;
 
 	return D2COMMON_GetItemQuality(p);
+}
+
+LPItemStatCostTxt EXPORT GetItemStatCostTxtRecord(int nStatId)
+{
+	return D2COMMON_GetItemStatCostTxtRecord(nStatId);
+}
+LPD2MagicAffixDataTbl EXPORT GetMagicAffixDataTables()
+{
+	return D2COMMON_GetMagicAffixDataTables();
+}
+LPD2MagicAffixTxt EXPORT GetMagicAffixTxtRecord(int nIndex)
+{
+	return D2COMMON_GetMagicAffixTxtRecord(nIndex);
+}
+LPVOID EXPORT GetDataTables()
+{
+	if (p_D2COMMON_sgptDataTables == nullptr) {
+		return nullptr;
+	}
+
+	return *p_D2COMMON_sgptDataTables;
+}
+
+LPCWSTR EXPORT GetStringFromTblIndex(WORD index) 
+{
+	return D2LANG_GetLocaleText(index);
+}
+LPCSTR EXPORT GetPropertyName(int propertyId)
+{
+	return D2GetPropertyName(propertyId);
+}
+std::size_t EXPORT GetNumProperties()
+{
+	return D2GetNumProperties();
+}
+
+LPCSTR EXPORT GetStatName(int statId)
+{
+	return D2GetStatName(statId);
+}
+std::size_t EXPORT GetNumStats(int statId)
+{
+	return D2GetNumStats();
+}
+int EXPORT GetUnitBaseStat(UnitAny* unit, int statId, uint16_t nLayer)
+{
+	return D2COMMON_GetStatValue3(unit, statId, nLayer);
+}
+int EXPORT GetStatValue(UnitAny *unit, int statId, uint16_t nLayer)
+{
+	return D2COMMON_GetStatValue(unit->ptStatsList, statId, nLayer);
+}
+int EXPORT GetUnitStatBonus(UnitAny *unit, int statId, uint16_t nLayer)
+{
+	return D2COMMON_GetUnitStatBonus(unit, statId, nLayer);
 }
 
 BYTE EXPORT GetItemBeltRows(LPCSTR lpszItemCode)

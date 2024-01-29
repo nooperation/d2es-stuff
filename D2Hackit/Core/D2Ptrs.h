@@ -3,6 +3,8 @@
 
 #include <windows.h>
 #include "definitions.h"
+#include "CommonStructs.h"
+#include "D2DataTbls.h"
 
 ///////////////////////////////////////////////
 // Originally Mousepad's Code
@@ -216,6 +218,19 @@ D2FUNCPTR(D2COMMON, GetMaxItemSockets, int __stdcall, (UnitItem * ptItem), -0x2A
 D2FUNCPTR(D2COMMON, PrintOverhead, Msg * __stdcall, (DWORD Unk/*always 0*/ , char * Message,  DWORD dwMsgId), -0x2A8C);		// #10892
 D2FUNCPTR(D2COMMON, GetUnitSkill, Skill * __fastcall, (UnitPlayer * ptPlayer, WORD SkillId, DWORD Flags), -0x2AC5);		// #10949
 D2FUNCPTR(D2COMMON, GetSkillFlags, DWORD * __stdcall, (Skill * hSkill), -0x2ACD);						// #10957
+
+// ++D2MOO stuff
+D2FUNCPTR(D2COMMON, GetStatValue, int __stdcall, (StatsList* pStatList, int nStatId, uint16_t nLayer), -0x28E2);	 			// #10466
+D2FUNCPTR(D2COMMON, GetUnitStatBonus, int __stdcall, (UnitAny* pUnit, int nStatId, uint16_t nLayer), -0x291A);	 			// #10522
+
+D2FUNCPTR(D2COMMON, GetItemStatCostTxtRecord, D2ItemStatCostTxt* __fastcall, (int nStatId), 0x642B0);
+D2FUNCPTR(D2COMMON, GetMagicAffixDataTables, D2MagicAffixDataTbl* __stdcall, (), -0x296B); // #10603
+D2FUNCPTR(D2COMMON, GetMagicAffixTxtRecord, D2MagicAffixTxt* __stdcall, (int nIndex), -0x296C); // #10604
+
+D2VARPTR(D2COMMON, sgptDataTables, D2DataTablesStrc**, 0x96A20); // #10042
+
+// --D2MOO stuff
+
 D2FUNCPTR(D2COMMON, GetSkillType, short __stdcall, (Skill * ptSkill), -0x2AD3);							// #10963
 
 #define D2COMMON_END D2COMMON_GetSkillType

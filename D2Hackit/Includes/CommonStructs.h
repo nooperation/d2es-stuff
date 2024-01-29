@@ -11,7 +11,11 @@
 
 #include <windows.h>
 #include "Constants.h"
+#include "D2DataTbls.h"
+#include "DataTbls/ItemsTbls.h"
 #include <map>
+
+struct UnitAny;
 
 ////////////////////////////////////////////////////////////////////
 // D2 Game Map Position
@@ -61,6 +65,7 @@ typedef struct tagItemMod
 typedef const tagItemMod* LPCITEMMOD;
 
 // Miscs
+
 #define	ITEM_CODE_LEN					3
 #define	ITEM_DESC_LEN					128
 #define ITEM_MAX_MOD	25
@@ -462,6 +467,20 @@ typedef DWORD(__cdecl *fnGetInteractedNPCClassID)();
 typedef DWORD(__cdecl *fnGetInteractedWPUniqueID)();
 typedef BOOL(__cdecl *fnIsInteractedWithWP)();
 typedef BOOL (__cdecl *fnEnumPlayers)(fnEnumPlayerProc lpfn, LPARAM lParam);
+
+typedef LPItemStatCostTxt (__cdecl *fnGetItemStatCostTxtRecord)(int nStatId);
+typedef LPD2MagicAffixDataTbl(__cdecl *fnGetMagicAffixDataTables)();
+typedef LPD2MagicAffixTxt(__cdecl *fnGetMagicAffixTxtRecord)(int nIndex);
+typedef void*(__cdecl *fnGetDataTables)();
+typedef LPCWSTR(__cdecl *fnGetStringFromTblIndex)(WORD index);
+typedef LPCSTR(__cdecl * fnGetPropertyName)(int propertyId);
+typedef std::size_t(__cdecl * fnGetNumProperties)();
+typedef LPCSTR(__cdecl * fnGetStatName)(int statId);
+typedef std::size_t(__cdecl* fnGetNumStats)();
+typedef int(__cdecl* fnGetStatValue)(UnitAny* unit, int statId, uint16_t nLayer);
+typedef int(__cdecl* fnGetUnitStatBonus)(UnitAny* unit, int statId, uint16_t nLayer);
+typedef int(__cdecl* fnGetUnitBaseStat)(UnitAny* unit, int statId, uint16_t nLayer);
+
 // -- B
 typedef struct functionentrypoints_t
 {
@@ -577,6 +596,20 @@ typedef struct functionentrypoints_t
 	fnGetInteractedWPUniqueID		GetInteractedWPUniqueID;
 	fnIsInteractedWithWP			IsInteractedWithWP;
 	fnEnumPlayers					EnumPlayers;			// 2.00 (Abin)
+
+	fnGetItemStatCostTxtRecord		GetItemStatCostTxtRecord;
+	fnGetMagicAffixDataTables		GetMagicAffixDataTables;
+	fnGetMagicAffixTxtRecord		GetMagicAffixTxtRecord;
+	fnGetDataTables					GetDataTables;
+	fnGetStringFromTblIndex			GetStringFromTblIndex;
+
+	fnGetPropertyName				GetPropertyName;
+	fnGetNumProperties				GetNumProperties;
+	fnGetStatName					GetStatName;
+	fnGetNumStats					GetNumStats;
+	fnGetStatValue					GetStatValue;
+	fnGetUnitStatBonus					GetUnitStatBonus;
+	fnGetUnitBaseStat					GetUnitBaseStat;
 	// -- B
 } FUNCTIONENTRYPOINTS, *PFUNCTIONENTRYPOINTS;
 
