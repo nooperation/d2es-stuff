@@ -538,7 +538,7 @@ bool AutoReroll::CheckRerolledItem(const ITEM &item)
 			return false;
 		}
 
-		server->GameStringf("Perfect unique");
+		server->GameStringf("ÿc:AutoRerollÿc0: Perfect unique");
 		return true;
 	}
 }

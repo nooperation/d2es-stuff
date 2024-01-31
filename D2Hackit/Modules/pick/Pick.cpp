@@ -367,17 +367,20 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 
 			ss << " " << propertyName << " [" << property.nMin << " - " << property.nMax << "] ";
 
-			if (actualValue > maximumValue || actualValue < minimumValue)
+			if (property.nMax != property.nMin)
 			{
-				ss << " ÿc9Abnormalÿc0 value of " << actualValue;
-			}
-			else if (actualValue == property.nMax)
-			{
-				ss << " ÿc2PERFECTÿc0 value of " << actualValue;
-			}
-			else
-			{
-				ss << " ÿc1Flawedÿc0 value of " << actualValue;
+				if (actualValue > maximumValue || actualValue < minimumValue)
+				{
+					ss << " ÿc9Abnormalÿc0 value of " << actualValue;
+				}
+				else if (actualValue == property.nMax)
+				{
+					ss << " ÿc2PERFECTÿc0 value of " << actualValue;
+				}
+				else
+				{
+					ss << " ÿc1Flawedÿc0 value of " << actualValue;
+				}
 			}
 
 			break;
@@ -461,18 +464,22 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 
 			ss << " " << propertyName << " [" << property.nMin << " - " << property.nMax << "] ";
 
-			if (actualValue > maximumValue || actualValue < minimumValue)
+			if (property.nMin != property.nMax) 
 			{
-				ss << " ÿc9Abnormalÿc0 value of " << actualValue;
+				if (actualValue > maximumValue || actualValue < minimumValue)
+				{
+					ss << " ÿc9Abnormalÿc0 value of " << actualValue;
+				}
+				else if (actualValue == property.nMax)
+				{
+					ss << " ÿc2PERFECTÿc0 value of " << actualValue;
+				}
+				else
+				{
+					ss << " ÿc1Flawedÿc0 value of " << actualValue;
+				}
 			}
-			else if (actualValue == property.nMax)
-			{
-				ss << " ÿc2PERFECTÿc0 value of " << actualValue;
-			}
-			else
-			{
-				ss << " ÿc1Flawedÿc0 value of " << actualValue;
-			}
+
 			break;
 		}
 		case 22: // oskills
@@ -494,17 +501,20 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 
 			ss << " " << skillName << " [" << property.nMin << " - " << property.nMax << "] ";
 
-			if (actualValue > maximumValue || actualValue < minimumValue)
+			if (property.nMin != property.nMax)
 			{
-				ss << " ÿc9Abnormalÿc0 value of " << actualValue;
-			}
-			else if (actualValue == property.nMax)
-			{
-				ss << " ÿc2PERFECTÿc0 value of " << actualValue;
-			}
-			else
-			{
-				ss << " ÿc1Flawedÿc0 value of " << actualValue;
+				if (actualValue > maximumValue || actualValue < minimumValue)
+				{
+					ss << " ÿc9Abnormalÿc0 value of " << actualValue;
+				}
+				else if (actualValue == property.nMax)
+				{
+					ss << " ÿc2PERFECTÿc0 value of " << actualValue;
+				}
+				else
+				{
+					ss << " ÿc1Flawedÿc0 value of " << actualValue;
+				}
 			}
 			break;
 		}
@@ -624,7 +634,7 @@ void DumpItemInfo(const ITEM& item)
 			strcpy_s(itemColor, 4, "ÿc8");
 			break;
 		case ITEM_QUALITY_UNIQUE:
-			strcpy_s(itemColor, 4, "ÿc4");
+ 			strcpy_s(itemColor, 4, "ÿc4");
 			break;
 		default:
 			return;
@@ -632,7 +642,7 @@ void DumpItemInfo(const ITEM& item)
 
 	if (item.iQuality == ITEM_QUALITY_UNIQUE)
 	{
-		server->GameStringf("%s%sÿc0 properties:", itemColor, server->GetItemName(item.szItemCode));
+		server->GameStringf("%s%sÿc0 (%d) properties:", itemColor, server->GetItemName(item.szItemCode), item.wSetUniqueID);
 
 		DumpUniqueProperties(item);
 	}
