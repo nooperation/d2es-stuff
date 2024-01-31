@@ -23,4 +23,11 @@ BOOL D2IsArmor(LPCSTR itemCode);
 BYTE D2GetBeltRows(LPCSTR lpszItemCode); // if it's a belt, get the row count(1-4)
 int D2IsPotion(LPCSTR lpszItemCode);
 
+LPCSTR D2GetPropertyName(int propertyId);
+LPCSTR D2GetStatName(int statId);
+std::size_t D2GetNumProperties();
+std::size_t D2GetNumStats();
+int EXPORT GetStatValue(UnitAny* unit, int statId, uint16_t nLayer);
+int EXPORT GetUnitBaseStat(UnitAny* unit, int statId, uint16_t nLayer);
+
 #endif // __ITEM_H__

@@ -15,12 +15,48 @@ AutoJewel::AutoJewel()
 	kRingItemCodes.insert("drn");
 	kRingItemCodes.insert("arn");
 
+	kRingItemCodes.insert("zam");
+	kRingItemCodes.insert("sam");
+	kRingItemCodes.insert("nam");
+	kRingItemCodes.insert("pam");
+	kRingItemCodes.insert("bam");
+	kRingItemCodes.insert("dam");
+	kRingItemCodes.insert("aam");
+
 	kUniqueIdsWeCanDestroy.insert(410);
 	kUniqueIdsWeCanDestroy.insert(411);
 	kUniqueIdsWeCanDestroy.insert(412);
 	kUniqueIdsWeCanDestroy.insert(413);
 	kUniqueIdsWeCanDestroy.insert(414);
 	kUniqueIdsWeCanDestroy.insert(1070);
+
+	kUniqueIdsWeCanDestroy.insert(438); // Lovers' Pendant
+	kUniqueIdsWeCanDestroy.insert(439);	// Eye of the Witch
+	kUniqueIdsWeCanDestroy.insert(440);	// Collar of the Minotaur
+	kUniqueIdsWeCanDestroy.insert(441);	// Beads of the Guardian
+	kUniqueIdsWeCanDestroy.insert(442);	// Eye of the Beholder
+	//kUniqueIdsWeCanDestroy.insert(443);	// Spellcasters Aide
+	kUniqueIdsWeCanDestroy.insert(444);	// Talisman of Benzaiten
+	kUniqueIdsWeCanDestroy.insert(445);	// Talisman of Fukurokuju
+	kUniqueIdsWeCanDestroy.insert(446);	// Talisman of Ebisu
+	kUniqueIdsWeCanDestroy.insert(447);	// Talisman of Daikokuten
+	kUniqueIdsWeCanDestroy.insert(448);	// Talisman of Bishamonten
+	kUniqueIdsWeCanDestroy.insert(449);	// Talisman of Hotei
+	kUniqueIdsWeCanDestroy.insert(450);	// Talisman of Kisshoten
+	kUniqueIdsWeCanDestroy.insert(451);	// Valhalla's Pendant
+	kUniqueIdsWeCanDestroy.insert(452);	// Jade's Locket
+	kUniqueIdsWeCanDestroy.insert(453);	// Daeveran's Stone
+	kUniqueIdsWeCanDestroy.insert(454);	// Holy Deviant
+	kUniqueIdsWeCanDestroy.insert(455);	// Khisanth
+	kUniqueIdsWeCanDestroy.insert(456);	// Grim Creaper
+	kUniqueIdsWeCanDestroy.insert(457);	// Sub Sanity
+	// kUniqueIdsWeCanDestroy.insert(458); //Plague's Last Arrowhead
+	// kUniqueIdsWeCanDestroy.insert(459); //The Mistress' Leather Collar
+	// kUniqueIdsWeCanDestroy.insert(460); //The Cursed Donut
+	// kUniqueIdsWeCanDestroy.insert(461); //BlackKnight's Holy Signet
+	// kUniqueIdsWeCanDestroy.insert(462); //Smaqdoun's Painful Pride
+	// kUniqueIdsWeCanDestroy.insert(463); //Yagul's Bloody Rage
+	// kUniqueIdsWeCanDestroy.insert(464); //Dweia's Revenge
 }
 
 void AutoJewel::SetState(AutoJewelState newState)

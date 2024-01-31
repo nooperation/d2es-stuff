@@ -248,6 +248,19 @@ BOOL PRIVATE SetupClient(HMODULE hModule, LPCSTR szModule)
 	BIND_AND_CHECK(GetKeyName);					// 2.00 (Abin)
 
 	// ++ B
+	BIND_AND_CHECK(GetItemStatCostTxtRecord);
+	BIND_AND_CHECK(GetMagicAffixDataTables);
+	BIND_AND_CHECK(GetMagicAffixTxtRecord);
+	BIND_AND_CHECK(GetDataTables);
+	BIND_AND_CHECK(GetStringFromTblIndex);
+	BIND_AND_CHECK(GetPropertyName);
+	BIND_AND_CHECK(GetNumProperties);
+	BIND_AND_CHECK(GetStatName);
+	BIND_AND_CHECK(GetNumStats);
+	BIND_AND_CHECK(GetStatValue);
+	BIND_AND_CHECK(GetUnitStatBonus);
+	BIND_AND_CHECK(GetUnitBaseStat);
+
 	BIND_AND_CHECK(GetItemQuality);
 	BIND_AND_CHECK(LeftClickHere);
 	BIND_AND_CHECK(RightClickHere);	

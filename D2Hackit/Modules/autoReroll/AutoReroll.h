@@ -50,6 +50,11 @@ class AutoReroll
 	private:
 		void StartStocking();
 		bool CheckRerolledItem(const ITEM &item);
+		bool IsPerfectProperty(GAMEUNIT& itemUnit, UnitAny* unit, const D2PropertyStrc& property, D2DataTablesStrc* dataTables);
+
+		bool CheckRerolledMagicAffix(GAMEUNIT& itemUnit, LPD2MagicAffixTxt affix);
+		bool CheckRerolledUnique(const ITEM& item);
+		bool CheckRerolledRare(const ITEM& item);
 
 		void ExtractMoreGems();
 		void MoveGemCanAndOpenerToCube();

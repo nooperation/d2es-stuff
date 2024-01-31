@@ -124,7 +124,6 @@ xcopy /Y $(TargetPath) $(SolutionDir)\Publish_$(Configuration)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ItemStatNames.cpp" />
     <ClCompile Include="ItemWatcher.cpp" />
     <ClCompile Include="Pick.cpp" />
   </ItemGroup>

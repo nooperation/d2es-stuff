@@ -123,6 +123,7 @@ void AutoBuy::RestockScrolls()
 {
 	if (isAutomaticallyRefillTP)
 	{
+		this->numTPTomesToRefill = 0;
 		me->EnumStorageItems(STORAGE_INVENTORY, FindStuffToRefillCallback, (LPARAM)this);
 
 		auto tpScrollIdIter = merchantItems.find("tsc");
