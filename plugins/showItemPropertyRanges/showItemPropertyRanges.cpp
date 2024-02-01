@@ -19,7 +19,7 @@ typedef D2RunesTxt* (__stdcall* ITEMS_GetRunesTxtRecordFromItem)(const D2UnitStr
 
 
 PLUGIN_INTERFACE Interface;
-D2DataTablesStrc *pDataTables = nullptr;
+D2DataTablesStrc* pDataTables = nullptr;
 unsigned long ReturnPoint_BuildItemPropertyLine = 0;
 
 BuildItemPropertyLineFunc originalBuildItemPropertyLineFunc = nullptr;
@@ -34,7 +34,7 @@ LPPLUGIN_INTERFACE __stdcall QueryInterface(VOID)
     return &Interface;
 }
 
-bool AppendStatPropertyRange(wchar_t* propertyString, D2ItemDataStrc* pItemData, const D2PropertyStrc &prop, const D2ItemStatCostTxt& itemStatCostTxt, int statId, int statValue)
+bool AppendStatPropertyRange(wchar_t* propertyString, D2ItemDataStrc* pItemData, const D2PropertyStrc& prop, const D2ItemStatCostTxt& itemStatCostTxt, int statId, int statValue)
 {
     auto propertyTxt = &pDataTables->pPropertiesTxt[prop.nProperty];
     if (propertyTxt == nullptr)
@@ -79,9 +79,9 @@ bool AppendStatPropertyRange(wchar_t* propertyString, D2ItemDataStrc* pItemData,
     return true;
 }
 
-bool AppendItemStatRangeMagicAffix(wchar_t* propertyString, D2ItemDataStrc* pItemData, const D2ItemStatCostTxt& itemStatCostTxt, int statId, int statValue, D2MagicAffixTxt *magicAffixTxt)
+bool AppendItemStatRangeMagicAffix(wchar_t* propertyString, D2ItemDataStrc* pItemData, const D2ItemStatCostTxt& itemStatCostTxt, int statId, int statValue, D2MagicAffixTxt* magicAffixTxt)
 {
-    for (auto propertyIndex = 0; propertyIndex < sizeof(magicAffixTxt->pProperties)/sizeof(magicAffixTxt->pProperties[0]); ++propertyIndex)
+    for (auto propertyIndex = 0; propertyIndex < sizeof(magicAffixTxt->pProperties) / sizeof(magicAffixTxt->pProperties[0]); ++propertyIndex)
     {
         auto& currentProperty = magicAffixTxt->pProperties[propertyIndex];
         if (currentProperty.nProperty < 0)
@@ -98,7 +98,7 @@ bool AppendItemStatRangeMagicAffix(wchar_t* propertyString, D2ItemDataStrc* pIte
     return false;
 }
 
-void AppendItemStatRangeRare(wchar_t* propertyString, D2UnitStrc *pItem, D2ItemDataStrc* pItemData, const D2ItemStatCostTxt& itemStatCostTxt, int statId, int statValue)
+void AppendItemStatRangeRare(wchar_t* propertyString, D2UnitStrc* pItem, D2ItemDataStrc* pItemData, const D2ItemStatCostTxt& itemStatCostTxt, int statId, int statValue)
 {
     auto numAffix = pDataTables->pMagicAffixDataTables.nMagicAffixTxtRecordCount;
 
@@ -116,7 +116,7 @@ void AppendItemStatRangeRare(wchar_t* propertyString, D2UnitStrc *pItem, D2ItemD
         auto runeTxt = getRunesTxtRecordFromItem(pItem);
         if (runeTxt != nullptr)
         {
-            for (auto propertyIndex = 0; propertyIndex < sizeof(runeTxt->pProperties)/sizeof(runeTxt->pProperties[0]); ++propertyIndex)
+            for (auto propertyIndex = 0; propertyIndex < sizeof(runeTxt->pProperties) / sizeof(runeTxt->pProperties[0]); ++propertyIndex)
             {
                 auto& currentProperty = runeTxt->pProperties[propertyIndex];
                 if (currentProperty.nProperty < 0)
@@ -212,11 +212,11 @@ void AppendItemStatRangeUnique(wchar_t* propertyString, D2ItemDataStrc* pItemDat
     }
 
     const auto uniqueTxt = &pDataTables->pUniqueItemsTxt[pItemData->dwFileIndex];
-    if (uniqueTxt == nullptr) 
+    if (uniqueTxt == nullptr)
     {
         return;
     }
-    
+
     for (auto i = 0; i < sizeof(uniqueTxt->pProperties) / sizeof(uniqueTxt->pProperties[0]); ++i)
     {
         const auto& currentProperty = uniqueTxt->pProperties[i];
@@ -245,30 +245,30 @@ void AppendItemStatRange(wchar_t* propertyString, D2UnitStrc* pUnit, int statId,
         return;
     }
 
-	if (statId <= 0 || statId >= pDataTables->nItemStatCostTxtRecordCount) 
-	{
-		return;
-	}
+    if (statId <= 0 || statId >= pDataTables->nItemStatCostTxtRecordCount)
+    {
+        return;
+    }
 
-	const auto &itemStatCostTxt = pDataTables->pItemStatCostTxt[statId];
-	switch (pItemData->dwQualityNo)
-	{
+    const auto& itemStatCostTxt = pDataTables->pItemStatCostTxt[statId];
+    switch (pItemData->dwQualityNo)
+    {
         case ITEMQUAL_NORMAL:
         case ITEMQUAL_INFERIOR:
         case ITEMQUAL_SUPERIOR:
         case ITEMQUAL_TEMPERED:
-	    case ITEMQUAL_MAGIC:
-	    case ITEMQUAL_RARE:
+        case ITEMQUAL_MAGIC:
+        case ITEMQUAL_RARE:
         case ITEMQUAL_CRAFT:
             AppendItemStatRangeRare(propertyString, pUnit, pItemData, itemStatCostTxt, statId, statValue);
             break;
-	    case ITEMQUAL_UNIQUE:
+        case ITEMQUAL_UNIQUE:
             AppendItemStatRangeUnique(propertyString, pItemData, itemStatCostTxt, statId, statValue);
             break;
         case ITEMQUAL_SET:
             AppendItemStatRangeSet(propertyString, pItemData, itemStatCostTxt, statId, statValue);
             break;
-	}
+    }
 }
 
 bool __cdecl MyBuildItemPropertyLine(D2UnitStrc* pUnit, D2StatListStrc* pStatList, int statId, int charStatsTxtRecordIndex, int statValue, wchar_t* outputBuffer128)
@@ -316,12 +316,12 @@ DWORD __stdcall PluginEntry(DWORD dwReason, LPVOID lpData)
             0xBA, 0x00, 0x00, 0x00, 0x00,   // mov edx, [address]
             0xFF, 0xE2,                     // jmp edx
         };
-        
+
         originalBuildItemPropertyLineFunc = (BuildItemPropertyLineFunc)((uint32_t)d2ClientHandle + 0x521C0);
 
         const auto offset = 0x51FEC;
         *((uint32_t*)&interceptStatStringBytecode[1]) = (uint32_t)intercept_BuildItemPropertyLine;
-        
+
         RewriteCode((unsigned char*)d2ClientHandle + offset, interceptStatStringBytecode, sizeof(interceptStatStringBytecode));
         ReturnPoint_BuildItemPropertyLine = (uint32_t)((unsigned char*)d2ClientHandle + offset + sizeof(interceptStatStringBytecode));
     }
