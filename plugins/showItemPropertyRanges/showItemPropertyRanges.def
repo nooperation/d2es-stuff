@@ -1,0 +1,3 @@
+LIBRARY	"showItemPropertyRanges"
+EXPORTS
+	QueryInterface=QueryInterface
