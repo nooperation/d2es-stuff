@@ -108,6 +108,7 @@ xcopy /Y $(TargetDir)$(TargetName).pdb "$(Diablo2Path)\plugin\"</Command>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y Resources $(SolutionDir)\Publish_$(Configuration)\
