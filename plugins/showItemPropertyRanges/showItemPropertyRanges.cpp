@@ -274,7 +274,10 @@ void AppendItemStatRange(wchar_t* propertyString, D2UnitStrc* pUnit, int statId,
 bool __cdecl MyBuildItemPropertyLine(D2UnitStrc* pUnit, D2StatListStrc* pStatList, int statId, int charStatsTxtRecordIndex, int statValue, wchar_t* outputBuffer128)
 {
     const auto result = originalBuildItemPropertyLineFunc(pUnit, pStatList, statId, charStatsTxtRecordIndex, statValue, outputBuffer128);
-    AppendItemStatRange(outputBuffer128, pUnit, statId, statValue);
+    if (result != 0)
+    {
+        AppendItemStatRange(outputBuffer128, pUnit, statId, statValue);
+    }
 
     return result;
 }
