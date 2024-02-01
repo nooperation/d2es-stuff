@@ -8,6 +8,9 @@
 
 #include "magic.h"
 
+#undef min
+#undef max
+
 DWORD __stdcall PluginEntry(DWORD dwReason, LPVOID lpData);
 bool RewriteCode(void* targetAddress, uint8_t* newCode, std::size_t newCodeLength);
 
@@ -61,11 +64,14 @@ bool AppendStatPropertyRange(wchar_t* propertyString, D2ItemDataStrc* pItemData,
 
     auto actualValue = statValue >> itemStatCostTxt.nValShift;
 
+    auto minimumValue = std::min(prop.nMin, prop.nMax);
+    auto maximumValue = std::max(prop.nMin, prop.nMax);
+
     wchar_t colorCode = '1';
     if (actualValue == prop.nMax) {
         colorCode = '2';
     }
-    else if (actualValue > prop.nMax || actualValue < prop.nMin) {
+    else if (actualValue > maximumValue || actualValue < minimumValue) {
         colorCode = '2'; // 8 highlights modified values, but it's probably too much information 
     }
 
