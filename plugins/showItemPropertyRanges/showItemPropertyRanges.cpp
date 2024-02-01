@@ -42,55 +42,62 @@ bool AppendStatPropertyRange(wchar_t* propertyString, D2ItemDataStrc* pItemData,
         return false;
     }
 
-    if (propertyTxt->wStat[0] != statId)
-    {
-        return false;
-    }
-
     if (prop.nMin == prop.nMax)
     {
         return false;
     }
 
-    if (propertyTxt->nFunc[0] == 19) // level {prop.nMax} skill ({prop.nMin} charges)
+    for (int i = 0; i < sizeof(propertyTxt->wStat) / sizeof(propertyTxt->wStat[0]); i++)
     {
-        return false;
+        if (propertyTxt->wStat[i] != statId)
+        {
+            continue;
+        }
+
+        if (propertyTxt->nFunc[i] == 19) // level {prop.nMax} skill ({prop.nMin} charges)
+        {
+            return false;
+        }
+
+        if (propertyTxt->nFunc[i] == 11) // {prop.nMin}% ctc level %{prop.nMax} skill on action
+        {
+            return false;
+        }
+
+        const auto actualValue = statValue >> itemStatCostTxt.nValShift;
+        const auto minimumValue = std::min(prop.nMin, prop.nMax);
+        const auto maximumValue = std::max(prop.nMin, prop.nMax);
+
+        wchar_t colorCode = '1';
+        if (actualValue == prop.nMax)
+        {
+            colorCode = '2';
+        }
+        else if (actualValue > maximumValue || actualValue < minimumValue)
+        {
+            colorCode = '2'; // 8 highlights modified values, but it's probably too much information 
+        }
+
+        if (prop.nMax < 0 || prop.nMin < 0)
+        {
+            wsprintfW(propertyString, L"%s ÿc%c[%d - %d]ÿc3", propertyString, colorCode, prop.nMin, prop.nMax);
+        }
+        else
+        {
+            wsprintfW(propertyString, L"%s ÿc%c[%d-%d]ÿc3", propertyString, colorCode, prop.nMin, prop.nMax);
+        }
+
+        return true;
     }
 
-    if (propertyTxt->nFunc[0] == 11) // {prop.nMin}% ctc level %{prop.nMax} skill on action
-    {
-        return false;
-    }
-
-    auto actualValue = statValue >> itemStatCostTxt.nValShift;
-
-    auto minimumValue = std::min(prop.nMin, prop.nMax);
-    auto maximumValue = std::max(prop.nMin, prop.nMax);
-
-    wchar_t colorCode = '1';
-    if (actualValue == prop.nMax) {
-        colorCode = '2';
-    }
-    else if (actualValue > maximumValue || actualValue < minimumValue) {
-        colorCode = '2'; // 8 highlights modified values, but it's probably too much information 
-    }
-
-    if (prop.nMax < 0 || prop.nMin < 0)
-    {
-        wsprintfW(propertyString, L"%s ÿc%c[%d - %d]ÿc3", propertyString, colorCode, prop.nMin, prop.nMax);
-    }
-    else
-    {
-        wsprintfW(propertyString, L"%s ÿc%c[%d-%d]ÿc3", propertyString, colorCode, prop.nMin, prop.nMax);
-    }
-    return true;
+    return false;
 }
 
 bool AppendItemStatRangeMagicAffix(wchar_t* propertyString, D2ItemDataStrc* pItemData, const D2ItemStatCostTxt& itemStatCostTxt, int statId, int statValue, D2MagicAffixTxt* magicAffixTxt)
 {
     for (auto propertyIndex = 0; propertyIndex < sizeof(magicAffixTxt->pProperties) / sizeof(magicAffixTxt->pProperties[0]); ++propertyIndex)
     {
-        auto& currentProperty = magicAffixTxt->pProperties[propertyIndex];
+        const auto& currentProperty = magicAffixTxt->pProperties[propertyIndex];
         if (currentProperty.nProperty < 0)
         {
             break;
@@ -107,7 +114,7 @@ bool AppendItemStatRangeMagicAffix(wchar_t* propertyString, D2ItemDataStrc* pIte
 
 void AppendItemStatRangeRare(wchar_t* propertyString, D2UnitStrc* pItem, D2ItemDataStrc* pItemData, const D2ItemStatCostTxt& itemStatCostTxt, int statId, int statValue)
 {
-    auto numAffix = pDataTables->pMagicAffixDataTables.nMagicAffixTxtRecordCount;
+    const auto numAffix = pDataTables->pMagicAffixDataTables.nMagicAffixTxtRecordCount;
 
     if (pItemData->wAutoAffix > 0 && pItemData->wAutoAffix < numAffix)
     {
@@ -120,12 +127,12 @@ void AppendItemStatRangeRare(wchar_t* propertyString, D2UnitStrc* pItem, D2ItemD
 
     if (pItemData->dwItemFlags & IFLAG_RUNEWORD)
     {
-        auto runeTxt = getRunesTxtRecordFromItem(pItem);
+        const auto runeTxt = getRunesTxtRecordFromItem(pItem);
         if (runeTxt != nullptr)
         {
             for (auto propertyIndex = 0; propertyIndex < sizeof(runeTxt->pProperties) / sizeof(runeTxt->pProperties[0]); ++propertyIndex)
             {
-                auto& currentProperty = runeTxt->pProperties[propertyIndex];
+                const auto& currentProperty = runeTxt->pProperties[propertyIndex];
                 if (currentProperty.nProperty < 0)
                 {
                     break;
