@@ -75,7 +75,14 @@ bool AppendStatPropertyRange(wchar_t* propertyString, D2ItemDataStrc* pItemData,
         colorCode = '2'; // 8 highlights modified values, but it's probably too much information 
     }
 
-    wsprintfW(propertyString, L"%s ÿc%c[%d - %d]ÿc3", propertyString, colorCode, prop.nMin, prop.nMax);
+    if (prop.nMax < 0 || prop.nMin < 0)
+    {
+        wsprintfW(propertyString, L"%s ÿc%c[%d - %d]ÿc3", propertyString, colorCode, prop.nMin, prop.nMax);
+    }
+    else
+    {
+        wsprintfW(propertyString, L"%s ÿc%c[%d-%d]ÿc3", propertyString, colorCode, prop.nMin, prop.nMax);
+    }
     return true;
 }
 
