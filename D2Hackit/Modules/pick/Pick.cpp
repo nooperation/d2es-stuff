@@ -18,6 +18,7 @@ ItemWatcher itemWatcher;
 bool enabled = true;
 bool waitingForItemPickup = false;
 bool waitingForItemPickupDebug = false;
+bool waitingForItemPickupStats = false;
 
 BOOL PRIVATE Enable(char** argv, int argc)
 {
@@ -136,6 +137,22 @@ BOOL PRIVATE ToggleShowItemDebug(char** argv, int argc)
 	return TRUE;
 }
 
+BOOL PRIVATE ToggleShowItemStats(char** argv, int argc)
+{
+	waitingForItemPickupStats = !waitingForItemPickupStats;
+
+	if(waitingForItemPickupStats)
+	{
+		server->GameInfof("Waiting for item pickup to cursor...");
+	}
+	else
+	{
+		server->GameInfof("No longer waiting for item pick to cursor");
+	}
+
+	return TRUE;
+}
+
 BOOL PRIVATE ShowColors(char** argv, int argc)
 {
 	server->GameStringf("ÿc1 1 - abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+1234567890-=");
@@ -239,10 +256,14 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		ToggleShowItemLevel,
 		"Shows the item level"
 	},
-
 	{
 		"debug",
 		ToggleShowItemDebug,
+		"Shows the item stat values along with max value before overflow"
+	},
+	{
+		"stats",
+		ToggleShowItemStats,
 		"Shows the item stat values along with max value before overflow"
 	},
 	{
@@ -337,35 +358,29 @@ const char* eventNames[]{
 };
 
 
-std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStrc& property, D2DataTablesStrc *dataTables)
+void CheckSubProperty(const std::string &indent, GAMEUNIT& itemUnit, UnitAny* unit, const D2PropertyStrc& property, D2DataTablesStrc* dataTables, D2PropertiesTxt *propertyTxt, int propertyTxtIndex)
 {
-	std::stringstream ss("");
-
-	auto propertyTxt = &dataTables->pPropertiesTxt[property.nProperty];
-	if (propertyTxt == nullptr)
-	{
-		return "ERROR";
-	}
-
-	auto statTxt = server->GetItemStatCostTxtRecord(propertyTxt->wStat[0]);
+	auto statTxt = server->GetItemStatCostTxtRecord(propertyTxt->wStat[propertyTxtIndex]);
 	if (statTxt == nullptr)
 	{
-		return "ERROR";
+		return;
 	}
 
 	auto minimumValue = std::min(property.nMin, property.nMax);
 	auto maximumValue = std::max(property.nMin, property.nMax);
+	
+	auto statName = server->GetStatName(propertyTxt->wStat[propertyTxtIndex]);
 
-	std::string propertyName = server->GetPropertyName(property.nProperty);
-	switch (propertyTxt->nFunc[0])
+	std::stringstream ss;
+	switch (propertyTxt->nFunc[propertyTxtIndex])
 	{
 		case 8:
 		case 1:
 		{
-			auto actualValue = (int32_t)server->GetUnitStat(&itemUnit, propertyTxt->wStat[0]);
+			auto actualValue = (int32_t)server->GetUnitStat(&itemUnit, propertyTxt->wStat[propertyTxtIndex]);
 			actualValue >>= statTxt->nValShift;
 
-			ss << " " << propertyName << " [" << property.nMin << " - " << property.nMax << "] ";
+			ss << " [" << property.nMin << " - " << property.nMax << "] ";
 
 			if (property.nMax != property.nMin)
 			{
@@ -385,7 +400,7 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 
 			break;
 		}
-		case 11: 
+		case 11:
 		{
 			const auto chargeLevel = property.nMax;
 			const auto chanceToCast = property.nMin;
@@ -394,7 +409,7 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 			if (skillChargeId >= dataTables->nSkillsTxtRecordCount)
 			{
 				server->GameStringf("Invalid skillChargeId %d", skillChargeId);
-				return "ERROR";
+				return;
 			}
 
 			auto skillTxt = &dataTables->pSkillsTxt[skillChargeId];
@@ -403,7 +418,7 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 			std::wstring skillNameW = server->GetStringFromTblIndex(skillDesc->wStrName);
 			std::string skillName(skillNameW.begin(), skillNameW.end());
 
-			ss << " " << chanceToCast << "% chance to cast level " << chargeLevel << " " << skillName << " on ";
+			ss << chanceToCast << "% chance to cast level " << chargeLevel << " " << skillName << " on ";
 
 			for (int i = 0; i < 2; i++) {
 				auto eventIndex = statTxt->wItemEvent[i];
@@ -411,7 +426,7 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 					break;
 				}
 
-				if (eventIndex > sizeof(eventNames) / sizeof(eventNames[0])) 
+				if (eventIndex > sizeof(eventNames) / sizeof(eventNames[0]))
 				{
 					ss << "ERROR";
 				}
@@ -419,7 +434,7 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 				{
 					ss << eventNames[eventIndex];
 				}
-				if (i == 0 && statTxt->wItemEvent[1] != -1) 
+				if (i == 0 && statTxt->wItemEvent[1] != -1)
 				{
 					ss << " OR ";
 				}
@@ -432,7 +447,7 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 			auto actualValue = server->GetUnitStat(&itemUnit, propertyTxt->wStat[0]);
 			actualValue >>= statTxt->nValShift;
 
-			ss << " " << actualValue << " " << propertyName;
+			ss << actualValue;
 			break;
 		}
 		case 19: // Skill charges
@@ -444,7 +459,7 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 			if (skillChargeId >= dataTables->nSkillsTxtRecordCount)
 			{
 				server->GameStringf("Invalid skillChargeId %d", skillChargeId);
-				return "ERROR";
+				return;
 			}
 
 			auto skillTxt = &dataTables->pSkillsTxt[skillChargeId];
@@ -459,12 +474,12 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 		}
 		case 21: // +class skills
 		{
-			auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[0], propertyTxt->wVal[0]);
+			auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[propertyTxtIndex], propertyTxt->wVal[propertyTxtIndex]);
 			actualValue >>= statTxt->nValShift;
 
-			ss << " " << propertyName << " [" << property.nMin << " - " << property.nMax << "] ";
+			ss << " [" << property.nMin << " - " << property.nMax << "] ";
 
-			if (property.nMin != property.nMax) 
+			if (property.nMin != property.nMax)
 			{
 				if (actualValue > maximumValue || actualValue < minimumValue)
 				{
@@ -488,10 +503,10 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 			if (oskillId >= dataTables->nSkillsTxtRecordCount)
 			{
 				server->GameStringf("Invalid oskillID %d", oskillId);
-				return "ERROR";
+				return;
 			}
 
-			auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[0], property.nLayer);
+			auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[propertyTxtIndex], property.nLayer);
 
 			auto skillTxt = &dataTables->pSkillsTxt[oskillId];
 			auto skillDesc = &dataTables->pSkillDescTxt[skillTxt->wSkillDesc];
@@ -520,22 +535,46 @@ std::string CheckProperty(GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStr
 		}
 		default:
 		{
-			ss << " " << propertyName << " [" << property.nMin << " - " << property.nMax << "] ";
+			ss << "[" << property.nMin << " - " << property.nMax << "] ";
 			break;
 		}
 	}
 
-	return ss.str();
+	server->GameStringf("%s[ÿc(stat %dÿc0] ÿc+%sÿc0: %s", indent.c_str(), propertyTxt->wStat[propertyTxtIndex], statName, ss.str().c_str());
 }
 
-bool DumpUniqueProperties(const ITEM& item)
+void CheckProperty(const std::string &indent, GAMEUNIT &itemUnit, UnitAny *unit, const D2PropertyStrc& property, D2DataTablesStrc *dataTables)
+{
+	auto propertyTxt = &dataTables->pPropertiesTxt[property.nProperty];
+	if (propertyTxt == nullptr)
+	{
+		server->GameStringf("Error: Invalid property %d", property.nProperty);
+		return;
+	}
+
+	auto propertyName = server->GetPropertyName(property.nProperty);
+
+	server->GameStringf("%s[ÿc5prop %dÿc0] %s", indent.c_str(), property.nProperty, propertyName);
+
+	for (int propertyIndex = 0; propertyIndex < sizeof(propertyTxt->wStat) / sizeof(propertyTxt->wStat[0]); propertyIndex++)
+	{
+		if (propertyTxt->wStat <= 0)
+		{
+			break;
+		}
+
+		CheckSubProperty(indent + "  ", itemUnit, unit, property, dataTables, propertyTxt, propertyIndex);
+	}
+}
+
+void DumpUniqueProperties(const ITEM& item)
 {
 	auto dataTables = (D2DataTablesStrc*)server->GetDataTables();
 
 	if (item.wSetUniqueID >= dataTables->nUniqueItemsTxtRecordCount) 
 	{
 		server->GameStringf("Invalid wSetUniqueID of wSetUniqueID", item.wSetUniqueID);
-		return true;
+		return;
 	}
 	auto uniqueTxt = &dataTables->pUniqueItemsTxt[item.wSetUniqueID];
 
@@ -547,7 +586,7 @@ bool DumpUniqueProperties(const ITEM& item)
 	if (unit == nullptr)
 	{
 		server->GameStringf("Failed to verify unit");
-		return "";
+		return;
 	}
 
 	for (auto i = 0; i < sizeof(uniqueTxt->pProperties)/sizeof(uniqueTxt->pProperties[0]); ++i)
@@ -558,15 +597,12 @@ bool DumpUniqueProperties(const ITEM& item)
 			break;
 		}
 
-		auto result = CheckProperty(itemUnit, unit, currentProperty, dataTables);
-		server->GameStringf("  ÿc5Propertyÿc0 %d: %s", currentProperty.nProperty, result.c_str());
+		CheckProperty("  ", itemUnit, unit, currentProperty, dataTables);
 
 		// fix the odd negative cases of "min = -27 max = -80" -> "min = -80 max = -27"
 		//auto minimumValue = std::min(currentProperty->nMin, currentProperty->nMax);
 		//auto maximumValue = std::max(currentProperty->nMin, currentProperty->nMax);
 	}
-
-	return false;
 }
 
 void DumpItemDebug(const ITEM& item) 
@@ -590,17 +626,15 @@ void DumpItemDebug(const ITEM& item)
 	}
 }
 
-std::string GetAffixDetails(GAMEUNIT &itemUnit, LPD2MagicAffixTxt affix)
+void GetAffixDetails(const std::string &indent, GAMEUNIT &itemUnit, LPD2MagicAffixTxt affix)
 {
 	auto dataTables = (D2DataTablesStrc*)server->GetDataTables();
-
-	std::stringstream ss("");
 
 	auto unit = (UnitAny *)server->VerifyUnit(&itemUnit);
 	if (unit == nullptr)
 	{
 		server->GameStringf("Failed to verify unit");
-		return "";
+		return;
 	}
 
 	for (auto i = 0; i < 3; ++i)
@@ -611,10 +645,8 @@ std::string GetAffixDetails(GAMEUNIT &itemUnit, LPD2MagicAffixTxt affix)
 			break;
 		}
 
-		ss << CheckProperty(itemUnit, unit, currentProperty, dataTables);
+		CheckProperty(indent, itemUnit, unit, currentProperty, dataTables);
 	}
-
-	return ss.str();
 }
 
 void DumpItemInfo(const ITEM& item)
@@ -668,9 +700,9 @@ void DumpItemInfo(const ITEM& item)
 				}
 
 				auto prefixTxt = &dataTables->pMagicAffixDataTables.pMagicPrefix[item.wPrefix[i] - 1];
-				auto prefixDetails = GetAffixDetails(unit, prefixTxt);
 
-				server->GameStringf("  ÿc;Prefixÿc0 %d: %s - %s", item.wPrefix[i], prefixTxt->szName, prefixDetails.c_str());
+				server->GameStringf("  [ÿc;Prefix %dÿc0] %s", item.wPrefix[i], prefixTxt->szName);
+				GetAffixDetails("    ", unit, prefixTxt);
 			}
 		}
 		for (int i = 0; i < 3; i++)
@@ -684,9 +716,10 @@ void DumpItemInfo(const ITEM& item)
 				}
 
 				auto suffixTxt = &dataTables->pMagicAffixDataTables.pMagicSuffix[item.wSuffix[i] - 1];
-				auto suffixDetails = GetAffixDetails(unit, suffixTxt);
+				
+				server->GameStringf("  [ÿc:Suffix %dÿc0] %s", item.wSuffix[i], suffixTxt->szName);
+				GetAffixDetails("    ", unit, suffixTxt);
 
-				server->GameStringf("  ÿc:Suffixÿc0 %d: %s - %s", item.wSuffix[i], suffixTxt->szName, suffixDetails.c_str());
 			}
 		}
 	}
@@ -718,11 +751,14 @@ VOID EXPORT OnGamePacketAfterReceived(BYTE* aPacket, DWORD aLen)
 			if(waitingForItemPickup)
 			{
 				server->GameStringf("%s: Level %d", item.szItemCode, item.iLevel);
-				DumpItemInfo(item);
 			}	
 			if(waitingForItemPickupDebug)
 			{
 				DumpItemDebug(item);
+			}
+			if(waitingForItemPickupStats)
+			{
+				DumpItemInfo(item);
 			}
 		}
 		else

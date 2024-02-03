@@ -442,7 +442,7 @@ struct D2PropertiesTxt
 	uint16_t wVal[7];						//0x0A
 	uint8_t nFunc[7];						//0x18
 	uint8_t pad0x1F;						//0x1F
-	uint16_t wStat[7];						//0x20
+	int16_t wStat[7];						//0x20
 };
 
 // sgptDataTable and inlined structs

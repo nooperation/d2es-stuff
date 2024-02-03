@@ -348,51 +348,57 @@ bool AutoReroll::IsPerfectProperty(GAMEUNIT& itemUnit, UnitAny* unit, const D2Pr
 		return true;
 	}
 
-	auto statTxt = server->GetItemStatCostTxtRecord(propertyTxt->wStat[0]);
-	if (statTxt == nullptr)
+	for (int propertyTxtIndex = 0; propertyTxtIndex < sizeof(propertyTxt->wStat) / sizeof(propertyTxt->wStat[0]); ++propertyTxtIndex)
 	{
-		server->GameStringf("Invalid propertyTxt stat %d", propertyTxt->wStat[0]);
-		return true;
-	}
-
-	auto minimumValue = std::min(property.nMin, property.nMax);
-	auto maximumValue = std::max(property.nMin, property.nMax);
-
-	std::string propertyName = server->GetPropertyName(property.nProperty);
-	switch (propertyTxt->nFunc[0])
-	{
-		case 8:
-		case 1:
+		auto statTxt = server->GetItemStatCostTxtRecord(propertyTxt->wStat[propertyTxtIndex]);
+		if (statTxt == nullptr)
 		{
-			auto actualValue = (int32_t)server->GetUnitStat(&itemUnit, propertyTxt->wStat[0]);
-			actualValue >>= statTxt->nValShift;
-
-			if (actualValue < maximumValue && actualValue >= minimumValue) {
-				return false;
-			}
-
+			server->GameStringf("Invalid propertyTxt stat %d", propertyTxt->wStat[propertyTxtIndex]);
 			return true;
 		}
-		case 21: // +class skills
+
+		auto minimumValue = std::min(property.nMin, property.nMax);
+		auto maximumValue = std::max(property.nMin, property.nMax);
+
+		std::string propertyName = server->GetPropertyName(property.nProperty);
+		switch (propertyTxt->nFunc[propertyTxtIndex])
 		{
-			auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[0], propertyTxt->wVal[0]);
-			actualValue >>= statTxt->nValShift;
+			case 8:
+			case 1:
+			{
+				auto actualValue = (int32_t)server->GetUnitStat(&itemUnit, propertyTxt->wStat[propertyTxtIndex]);
+				actualValue >>= statTxt->nValShift;
 
-			if (actualValue < maximumValue && actualValue >= minimumValue) {
-				return false;
+				if (actualValue < maximumValue && actualValue >= minimumValue)
+				{
+					return false;
+				}
+
+				return true;
 			}
+			case 21: // +class skills
+			{
+				auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[propertyTxtIndex], propertyTxt->wVal[propertyTxtIndex]);
+				actualValue >>= statTxt->nValShift;
 
-			return true;
-		}
-		case 22: // oskills
-		{
-			auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[0], property.nLayer);
+				if (actualValue < maximumValue && actualValue >= minimumValue)
+				{
+					return false;
+				}
 
-			if (actualValue < maximumValue && actualValue >= minimumValue) {
-				return false;
+				return true;
 			}
+			case 22: // oskills
+			{
+				auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[propertyTxtIndex], property.nLayer);
 
-			return true;
+				if (actualValue < maximumValue && actualValue >= minimumValue)
+				{
+					return false;
+				}
+
+				return true;
+			}
 		}
 	}
 
