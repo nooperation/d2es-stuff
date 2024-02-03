@@ -40,7 +40,6 @@ class AutoReroll
 		bool Init(bool useChat);
 
 		void OnItemToCube(const ITEM &item);
-		void OnItemFromCube(DWORD itemID);
 		void OnItemFromInventory(DWORD itemID);
 		bool OnEmptyCubeMessage(const std::string_view &message);
 		bool OnAutoExtractorMessage(const std::string_view &message);
@@ -48,7 +47,6 @@ class AutoReroll
 		void Abort();		
 
 	private:
-		void StartStocking();
 		bool CheckRerolledItem(const ITEM &item);
 		bool IsPerfectProperty(GAMEUNIT& itemUnit, UnitAny* unit, const D2PropertyStrc& property, D2DataTablesStrc* dataTables);
 
@@ -59,7 +57,6 @@ class AutoReroll
 		void ExtractMoreGems();
 		void MoveGemCanAndOpenerToCube();
 		void MoveNextGemToCube();
-		void FinishedEmptyCube();
 
 		bool ReadAffixConfig(const std::string &configPath, std::unordered_set<int> &readTo);
 
@@ -69,11 +66,10 @@ class AutoReroll
 		int minPrefix;
 		int minSuffix;
 		int numGemsToUse;
+		bool requirePerfectStats;
+		int perfectionPercentage;
 		DWORD itemToRerollID;
 		int currentGemIndex;
-		std::vector<DWORD> gemsInInventory;
-		std::unordered_set<int> goodPrefix;
-		std::unordered_set<int> goodSuffix;
 
 		States currentState;
 		GemCanStuff gemCanAndOpener;

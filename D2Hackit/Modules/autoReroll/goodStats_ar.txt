@@ -1,0 +1,7 @@
+437 passive_mag_pierce
+335 passive_cold_pierce
+429 passive_cold_mastery_multi
+331 passive_cold_mastery
+127 item_allskills
+37  magicresist
+85  item_addexperience

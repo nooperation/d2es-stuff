@@ -124,6 +124,9 @@ xcopy /Y $(TargetPath) $(SolutionDir)\Publish_$(Configuration)\</Command>
     <None Include="Resources\goodPrefix_ar.txt" />
     <None Include="Resources\goodSuffix_ar.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="goodStats_ar.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

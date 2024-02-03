@@ -9,6 +9,11 @@
 #undef min
 #undef max
 
+std::vector<DWORD> gemsInInventory;
+std::unordered_set<int> goodPrefix;
+std::unordered_set<int> goodSuffix;
+std::unordered_set<int> goodStats;
+
 std::unordered_set<std::string> gemItemCodes;
 std::unordered_set<std::string> gemCanItemCodes;
 std::unordered_set<std::string> canOpenerItemCodes;
@@ -105,9 +110,16 @@ bool AutoReroll::Init(bool useChat)
 		return false;
 	}
 
+	if(!ReadAffixConfig(".\\plugin\\goodStats_ar.txt", goodStats))
+	{
+		return false;
+	}
+
 	minPrefix = GetPrivateProfileInt("AutoReroll", "PrefixCount", 2, CONFIG_PATH);
 	minSuffix = GetPrivateProfileInt("AutoReroll", "SuffixCount", 0, CONFIG_PATH);
 	numGemsToUse = GetPrivateProfileInt("AutoReroll", "GemCount", 2, CONFIG_PATH);
+	requirePerfectStats = GetPrivateProfileInt("AutoReroll", "RequirePerfectStats", 0, CONFIG_PATH) != 0;
+	perfectionPercentage = GetPrivateProfileInt("AutoReroll", "PerfectionPercentage", 100, CONFIG_PATH);
 
 	char buff[128];
 	if (GetPrivateProfileStringA("AutoReroll", "CustomExtractorItemCode", "", buff, sizeof(buff), CONFIG_PATH) > 0)
@@ -348,17 +360,34 @@ bool AutoReroll::IsPerfectProperty(GAMEUNIT& itemUnit, UnitAny* unit, const D2Pr
 		return true;
 	}
 
+	auto minimumValue = std::min(property.nMin, property.nMax);
+	auto maximumValue = std::max(property.nMin, property.nMax);
+
+	if (maximumValue == minimumValue)
+	{
+		return true;
+	}
+
+	bool isPerfect = false;
 	for (int propertyTxtIndex = 0; propertyTxtIndex < sizeof(propertyTxt->wStat) / sizeof(propertyTxt->wStat[0]); ++propertyTxtIndex)
 	{
+		if (propertyTxt->wStat[propertyTxtIndex] < 0)
+		{
+			break;
+		}
+
+		if (!requirePerfectStats && goodStats.find(propertyTxt->wStat[propertyTxtIndex]) == goodStats.end())
+		{
+			// We don't care about this stat since we're only looking for specific stats to be perfect
+			continue;
+		}
+
 		auto statTxt = server->GetItemStatCostTxtRecord(propertyTxt->wStat[propertyTxtIndex]);
 		if (statTxt == nullptr)
 		{
 			server->GameStringf("Invalid propertyTxt stat %d", propertyTxt->wStat[propertyTxtIndex]);
 			return true;
 		}
-
-		auto minimumValue = std::min(property.nMin, property.nMax);
-		auto maximumValue = std::max(property.nMin, property.nMax);
 
 		std::string propertyName = server->GetPropertyName(property.nProperty);
 		switch (propertyTxt->nFunc[propertyTxtIndex])
@@ -369,35 +398,32 @@ bool AutoReroll::IsPerfectProperty(GAMEUNIT& itemUnit, UnitAny* unit, const D2Pr
 				auto actualValue = (int32_t)server->GetUnitStat(&itemUnit, propertyTxt->wStat[propertyTxtIndex]);
 				actualValue >>= statTxt->nValShift;
 
-				if (actualValue < maximumValue && actualValue >= minimumValue)
+				auto percentPerfect = (int)(100.0 * (actualValue - minimumValue)) / (maximumValue - minimumValue);
+				if (percentPerfect < perfectionPercentage)
 				{
 					return false;
 				}
-
-				return true;
 			}
 			case 21: // +class skills
 			{
 				auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[propertyTxtIndex], propertyTxt->wVal[propertyTxtIndex]);
 				actualValue >>= statTxt->nValShift;
 
-				if (actualValue < maximumValue && actualValue >= minimumValue)
+				auto percentPerfect = (int)(100.0 * (actualValue - minimumValue)) / (maximumValue - minimumValue);
+				if (percentPerfect < perfectionPercentage)
 				{
 					return false;
 				}
-
-				return true;
 			}
 			case 22: // oskills
 			{
 				auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[propertyTxtIndex], property.nLayer);
 
-				if (actualValue < maximumValue && actualValue >= minimumValue)
+				auto percentPerfect = (int)(100.0 * (actualValue - minimumValue)) / (maximumValue - minimumValue);
+				if (percentPerfect < perfectionPercentage)
 				{
 					return false;
 				}
-
-				return true;
 			}
 		}
 	}
