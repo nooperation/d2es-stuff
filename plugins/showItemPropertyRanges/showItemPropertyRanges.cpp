@@ -306,7 +306,7 @@ DWORD __stdcall PluginEntry(DWORD dwReason, LPVOID lpData)
             return FALSE;
         }
 
-        auto d2CommonHandle = GetModuleHandleA("D2Common.dll");
+        auto d2CommonHandle = GetModuleHandle("D2Common.dll");
         if (d2CommonHandle == 0)
         {
             return FALSE;

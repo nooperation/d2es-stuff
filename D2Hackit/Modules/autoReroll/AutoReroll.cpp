@@ -109,6 +109,23 @@ bool AutoReroll::Init(bool useChat)
 	minSuffix = GetPrivateProfileInt("AutoReroll", "SuffixCount", 0, CONFIG_PATH);
 	numGemsToUse = GetPrivateProfileInt("AutoReroll", "GemCount", 2, CONFIG_PATH);
 
+	char buff[128];
+	if (GetPrivateProfileStringA("AutoReroll", "CustomExtractorItemCode", "", buff, sizeof(buff), CONFIG_PATH) > 0)
+	{
+		canOpenerItemCodes.clear();
+		canOpenerItemCodes.insert(std::string(buff));
+	}
+	if (GetPrivateProfileStringA("AutoReroll", "CustomGemItemCode", "", buff, sizeof(buff), CONFIG_PATH) > 0)
+	{
+		gemItemCodes.clear();
+		gemItemCodes.insert(std::string(buff));
+	}
+	if (GetPrivateProfileStringA("AutoReroll", "CustomGemCanItemCode", "", buff, sizeof(buff), CONFIG_PATH) > 0)
+	{
+		gemCanItemCodes.clear();
+		gemCanItemCodes.insert(std::string(buff));
+	}
+
 	server->GameStringf("Min prefix: %d Min suffix: %d", minPrefix, minSuffix);
 
 	itemToRerollID = 0;
