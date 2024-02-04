@@ -4,7 +4,7 @@
 1 hrn ÿc:Horn
 1 spe ÿc;Spleen
 1 tal ÿc8Tail
-2 jaw ÿc7Jawbone
+1 jaw ÿc7Jawbone
 1 scz ÿc:Scalp
 1 qll ÿc5Quill
 1 00g Griswold's Hand
@@ -12,3 +12,5 @@
 1 00r Radament's Head
 1 00h Hephasto's Hand
 2 xt7 ÿc1Enigmatic Cinnabar
+1 so1 Soulstone
+1 hr1 Jack of Hearts

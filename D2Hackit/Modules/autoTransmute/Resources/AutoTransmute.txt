@@ -1,11 +1,33 @@
 ; [Name] [Inputs=NumberOfInputItems] [Outputs=NumberOfOutputItems] [EmptyCube=ShouldEmptyCubeAfterTransmute] => [Item1Count] [Item1Code] ... [ItemNCount] [ItemNCode]
 ; .at start hand  --> 3x Chipped Frozen Soul + 3x Chipped Shadow Quartz -> 1x Griswold's Hand
+
+steakplatsoul Inputs=2 Outputs=1 EmptyCube=1 => 1 1z1 1 gvb
+
+pureandy Inputs=1 Outputs=1 EmptyCube=1 => 10 um5
+
+amulet Inputs=2 Outputs=2 EmptyCube=1 => 3 amu 1 29a
+
+anvil Inputs=2 Outputs=2 EmptyCube=0 => 1 skb
+
 hand Inputs=2 Outputs=1 EmptyCube=1 => 3 xr0 3 xr1
 radhead Inputs=4 Outputs=1 EmptyCube=1 => 2 xr4 2 xr5 2 xr6 2 xr7
+
 hephhand Inputs=4 Outputs=1 EmptyCube=1 => 2 xr8 2 xr9 2 xrx 2 xry
 
 ; .at start maple --> 1x ÿc4Maple Leaf + 1x ÿc9Sa Rune -> targetItem + scroll 50
+
+potbook Inputs=2 Outputs=1 EmptyCube=1 => 1 srj 3 qqq 
 maple Inputs=2 Outputs=2 EmptyCube=0 => 1 map 1 r15 
+
+brainsoul Inputs=2 Outputs=3 EmptyCube=1 => 3 brz 1 sku 
+soulheart Inputs=2 Outputs=3 EmptyCube=1 => 3 sol 1 sku 
+heartscalp Inputs=2 Outputs=3 EmptyCube=1 => 3 hrt 1 sku
+scalphorn Inputs=2 Outputs=3 EmptyCube=1 => 3 scz 1 sku
+hornfang Inputs=2 Outputs=3 EmptyCube=1 => 3 hrn 1 sku
+fangjaw Inputs=2 Outputs=3 EmptyCube=1 => 3 fng 1 sku
+steaksoul Inputs=2 Outputs=3 EmptyCube=1 => 3 zzz 1 skz
+heart Inputs=2 Outputs=1 EmptyCube=1 => 1 xr0 1 xr1
+
 dragon Inputs=1 Outputs=1 EmptyCube=0 => 1 ppp
 spider Inputs=1 Outputs=1 EmptyCube=0 => 1 sss
 crushed Inputs=1 Outputs=1 EmptyCube=0 => 1 ggg
@@ -13,12 +35,6 @@ blackmoor Inputs=1 Outputs=1 EmptyCube=0 => 1 eee
 holy Inputs=1 Outputs=1 EmptyCube=0 => 1 hly
 forging Inputs=1 Outputs=1 EmptyCube=0 => 1 hh2
 tyranium Inputs=1 Outputs=1 EmptyCube=0 => 1 ttt
-
-soulheart Inputs=2 Outputs=3 EmptyCube=1 => 3 sol 1 sku 
-heartscalp Inputs=2 Outputs=3 EmptyCube=1 => 3 hrt 1 sku
-scalphorn Inputs=2 Outputs=3 EmptyCube=1 => 3 scz 1 sku
-hornfang Inputs=2 Outputs=3 EmptyCube=1 => 3 hrn 1 sku
-fangjaw Inputs=2 Outputs=3 EmptyCube=1 => 3 fng 1 sku
 
 ame Inputs=2 Outputs=1 EmptyCube=0 => 1 gvb 1 ddd 
 top Inputs=2 Outputs=1 EmptyCube=0 => 1 gyb 1 ddd
@@ -28,5 +44,3 @@ rub Inputs=2 Outputs=1 EmptyCube=0 => 1 grb 1 ddd
 dia Inputs=2 Outputs=1 EmptyCube=0 => 1 gwb 1 ddd
 sku Inputs=2 Outputs=1 EmptyCube=0 => 1 skb 1 ddd
 obs Inputs=2 Outputs=1 EmptyCube=0 => 1 gbk 1 ddd
-
-chit Inputs=1 Outputs=1 Emptycube=1 => 1 f26
