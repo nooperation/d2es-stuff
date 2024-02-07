@@ -398,6 +398,11 @@ bool AutoReroll::IsPerfectProperty(GAMEUNIT& itemUnit, UnitAny* unit, const D2Pr
 				auto actualValue = (int32_t)server->GetUnitStat(&itemUnit, propertyTxt->wStat[propertyTxtIndex]);
 				actualValue >>= statTxt->nValShift;
 
+				if (requirePerfectStats && actualValue < maximumValue)
+				{
+					return false;
+				}
+
 				auto percentPerfect = (int)(100.0 * (actualValue - minimumValue)) / (maximumValue - minimumValue);
 				if (percentPerfect < perfectionPercentage)
 				{
@@ -409,6 +414,11 @@ bool AutoReroll::IsPerfectProperty(GAMEUNIT& itemUnit, UnitAny* unit, const D2Pr
 				auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[propertyTxtIndex], propertyTxt->wVal[propertyTxtIndex]);
 				actualValue >>= statTxt->nValShift;
 
+				if (requirePerfectStats && actualValue < maximumValue)
+				{
+					return false;
+				}
+
 				auto percentPerfect = (int)(100.0 * (actualValue - minimumValue)) / (maximumValue - minimumValue);
 				if (percentPerfect < perfectionPercentage)
 				{
@@ -418,6 +428,11 @@ bool AutoReroll::IsPerfectProperty(GAMEUNIT& itemUnit, UnitAny* unit, const D2Pr
 			case 22: // oskills
 			{
 				auto actualValue = server->GetUnitStatBonus(unit, propertyTxt->wStat[propertyTxtIndex], property.nLayer);
+
+				if (requirePerfectStats && actualValue < maximumValue)
+				{
+					return false;
+				}
 
 				auto percentPerfect = (int)(100.0 * (actualValue - minimumValue)) / (maximumValue - minimumValue);
 				if (percentPerfect < perfectionPercentage)
