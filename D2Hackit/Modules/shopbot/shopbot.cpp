@@ -73,13 +73,14 @@ bool ShopBot::ReadConfig(const std::string &configPath, std::unordered_set<int> 
 	return true;
 }
 
-bool ShopBot::Start(const std::vector<MAPPOS> &customPath, const std::string &merchant)
+bool ShopBot::Start(const std::vector<MAPPOS> &customPath, const std::vector<std::string> &itemCodesToShopFor)
 {
 	memset(&merchantNpc, 0, sizeof(GAMEUNIT));
-	merchantName = merchant;
+	merchantName = "";
 	teleportPath = customPath;
 	currentTeleportIndex = 1;
 	ticksSinceLastTeleport = 0;
+	targetItems.clear();
 
 	while (!gambleQueue.empty()) {
 		gambleQueue.pop();
@@ -119,9 +120,20 @@ bool ShopBot::Start(const std::vector<MAPPOS> &customPath, const std::string &me
 	if(!ReadConfig(".\\plugin\\goodSuffix_shopbot.txt", goodSuffix))
 		return false;
 
-	if(!LoadItemMap(".\\plugin\\shopbot_items.txt", targetItems))
-		return false;
-
+	if (itemCodesToShopFor.empty())
+	{
+		if (!LoadItemMap(".\\plugin\\shopbot_items.txt", targetItems))
+		{
+			return false;
+		}
+	}
+	else
+	{
+		for (const auto& iter : itemCodesToShopFor)
+		{
+			targetItems[iter] = iter;
+		}
+	}
 
 	minPrefix = GetPrivateProfileInt("ShopBot", "PrefixCount", 1, CONFIG_PATH);
 	minSuffix = GetPrivateProfileInt("ShopBot", "SuffixCount", 0, CONFIG_PATH);

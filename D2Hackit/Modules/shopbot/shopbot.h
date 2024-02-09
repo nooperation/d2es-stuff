@@ -26,7 +26,7 @@ class ShopBot
 {
 	public:
 		ShopBot();
-		bool Start(const std::vector<MAPPOS> &customPath, const std::string &merchant);
+		bool Start(const std::vector<MAPPOS>& customPath, const std::vector<std::string>& itemCodesToShopFor);
 		void OnTick();
 		void OnMapBlink();
 		void OnNpcSession(int success);

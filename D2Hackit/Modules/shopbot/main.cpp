@@ -7,15 +7,28 @@ std::vector<MAPPOS> customPath;
 
 BOOL PRIVATE Shop(char** argv, int argc)
 {
-	if(argc >= 3)
+	if (argc < 3)
 	{
-		shopbot.Start(customPath, argv[2]);
-	}
-	else
-	{
-		shopbot.Start(customPath, "");
+		return FALSE;
 	}
 
+	std::vector<std::string> itemCodesToShopFor;
+
+	for (int i = 2; i < argc; i++)
+	{
+		if (strlen(argv[i]) == 3)
+		{
+			itemCodesToShopFor.push_back(argv[i]);
+		}
+		else
+		{
+			server->GameStringf("ÿc:Shopbotÿc0: Invalid item code %s (must be 3 characters)", argv[i]);
+			return FALSE;
+		}
+	}
+
+	shopbot.Start(customPath, itemCodesToShopFor);
+	
 	return TRUE;
 }
 
