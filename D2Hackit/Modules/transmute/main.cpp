@@ -68,12 +68,12 @@ VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
 	stockers["kk0"] = i++;
 
 	i = STOCKER_CANOPENER;
+	stockers["ko0"] = i++;
 	stockers["ko1"] = i++;
 	stockers["ko2"] = i++;
 	stockers["ko3"] = i++;
 	stockers["ko4"] = i++;
 	stockers["ko5"] = i++;
-	stockers["ko0"] = i++;
 
 	i = STOCKER_RUNESA;
 	stockers["s01"] = i++;
