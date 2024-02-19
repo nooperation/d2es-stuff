@@ -135,6 +135,12 @@ bool ShopBot::Start(const std::vector<MAPPOS> &customPath, const std::vector<std
 		}
 	}
 
+	std::string itemList = "";
+	for (const auto& iter : targetItems) {
+		itemList += " " + iter.first;
+	}
+	server->GameStringf("ÿc:Shopbotÿc0: Shopping for:%s", itemList.c_str());
+
 	minPrefix = GetPrivateProfileInt("ShopBot", "PrefixCount", 1, CONFIG_PATH);
 	minSuffix = GetPrivateProfileInt("ShopBot", "SuffixCount", 0, CONFIG_PATH);
 	leftClickTeleport = GetPrivateProfileInt("ShopBot", "LeftClickTeleport", 1, CONFIG_PATH);

@@ -7,7 +7,7 @@ std::vector<MAPPOS> customPath;
 
 BOOL PRIVATE Shop(char** argv, int argc)
 {
-	if (argc < 3)
+	if (argc < 2)
 	{
 		return FALSE;
 	}
