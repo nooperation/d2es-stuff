@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup>
+    <Diablo2Path Condition="'$(Diablo2Path)' == '' ">C:\Program Files (x86)\Diablo II</Diablo2Path>
+  </PropertyGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FFFF12D1-F611-4E9A-81E5-074B75B02094}</ProjectGuid>
+    <RootNamespace>showDamage</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <SccProjectName>Svn</SccProjectName>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccProvider>SubversionScc</SccProvider>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;showDamage_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <ModuleDefinitionFile>showDamage.def</ModuleDefinitionFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y $(TargetPath) $(SolutionDir)\Publish_$(Configuration)\
+xcopy /Y $(TargetPath) "$(Diablo2Path)\plugin\"
+xcopy /Y $(TargetDir)$(TargetName).pdb "$(Diablo2Path)\plugin\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;showDamage_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <ModuleDefinitionFile>showDamage.def</ModuleDefinitionFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y $(TargetPath) $(SolutionDir)\Publish_$(Configuration)\</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="showDamage.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="showDamage.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="d2moo\D2Common\include\CommonDefinitions.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2Chat.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2Collision.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2Composit.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2DataTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2Environment.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2Inventory.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2ItemMods.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2Items.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2Monsters.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2Roster.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2Seed.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2Skills.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2StatList.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2Text.h" />
+    <ClInclude Include="d2moo\D2Common\include\D2Waypoints.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\AnimTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\ArenaTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\BeltsTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\FieldTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\HoradricCube.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\InvTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\ItemsTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\LevelsTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\MissilesTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\MonsterTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\ObjectsTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\OverlayTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\SequenceTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\SkillsTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\TokenTbls.h" />
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgDrlg.h" />
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgDrlgGrid.h" />
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgDrlgLogic.h" />
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgDrlgVer.h" />
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgMaze.h" />
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgOutdoors.h" />
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgOutPlace.h" />
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgOutRoom.h" />
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgPreset.h" />
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgRoomTile.h" />
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgTileSub.h" />
+    <ClInclude Include="d2moo\D2Common\include\Path\FollowWall.h" />
+    <ClInclude Include="d2moo\D2Common\include\Path\IDAStar.h" />
+    <ClInclude Include="d2moo\D2Common\include\Path\Path.h" />
+    <ClInclude Include="d2moo\D2Common\include\Units\Item.h" />
+    <ClInclude Include="d2moo\D2Common\include\Units\Missile.h" />
+    <ClInclude Include="d2moo\D2Common\include\Units\MissileStream.h" />
+    <ClInclude Include="d2moo\D2Common\include\Units\Monster.h" />
+    <ClInclude Include="d2moo\D2Common\include\Units\Object.h" />
+    <ClInclude Include="d2moo\D2Common\include\Units\Player.h" />
+    <ClInclude Include="d2moo\D2Common\include\Units\UnitFinds.h" />
+    <ClInclude Include="d2moo\D2Common\include\Units\Units.h" />
+    <ClInclude Include="magic.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="magic.asm" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
+</Project>

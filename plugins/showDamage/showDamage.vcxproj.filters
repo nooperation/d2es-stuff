@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{FE266CF1-B9F6-499B-9517-748879A0DBD5}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{338FDC0F-89EF-4FC2-945A-25176B298E79}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{484BA4C5-A5CB-402C-BE3C-7E05F6B5B2EB}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Header Files\d2moo">
+      <UniqueIdentifier>{e1f2cf9b-c24f-4509-8f22-9de61c3e860f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\d2moo\D2Common">
+      <UniqueIdentifier>{e134e8b5-9134-486c-b373-c7d59b30c2b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\d2moo\D2Common\include">
+      <UniqueIdentifier>{707a18af-759d-450f-81d7-62aa75da63b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\d2moo\D2Common\include\Units">
+      <UniqueIdentifier>{13a8c88f-2e30-4142-8d01-9b7f85fab7b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\d2moo\D2Common\include\Path">
+      <UniqueIdentifier>{14f289af-2dbf-4414-bbbf-90d94960cee4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\d2moo\D2Common\include\Drlg">
+      <UniqueIdentifier>{4872bf82-067c-4682-98f6-885fe82e1a72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\d2moo\D2Common\include\DataTbls">
+      <UniqueIdentifier>{1aeb4b9e-decd-49f7-b5a1-5be425ebe7cb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="showDamage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="showDamage.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="d2moo\D2Common\include\CommonDefinitions.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2Chat.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2Collision.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2Composit.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2DataTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2Environment.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2Inventory.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2ItemMods.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2Items.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2Monsters.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2Roster.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2Seed.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2Skills.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2StatList.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2Text.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\D2Waypoints.h">
+      <Filter>Header Files\d2moo\D2Common\include</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Path\FollowWall.h">
+      <Filter>Header Files\d2moo\D2Common\include\Path</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Path\IDAStar.h">
+      <Filter>Header Files\d2moo\D2Common\include\Path</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Path\Path.h">
+      <Filter>Header Files\d2moo\D2Common\include\Path</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgDrlg.h">
+      <Filter>Header Files\d2moo\D2Common\include\Drlg</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgDrlgGrid.h">
+      <Filter>Header Files\d2moo\D2Common\include\Drlg</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgDrlgLogic.h">
+      <Filter>Header Files\d2moo\D2Common\include\Drlg</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgDrlgVer.h">
+      <Filter>Header Files\d2moo\D2Common\include\Drlg</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgMaze.h">
+      <Filter>Header Files\d2moo\D2Common\include\Drlg</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgOutdoors.h">
+      <Filter>Header Files\d2moo\D2Common\include\Drlg</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgOutPlace.h">
+      <Filter>Header Files\d2moo\D2Common\include\Drlg</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgOutRoom.h">
+      <Filter>Header Files\d2moo\D2Common\include\Drlg</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgPreset.h">
+      <Filter>Header Files\d2moo\D2Common\include\Drlg</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgRoomTile.h">
+      <Filter>Header Files\d2moo\D2Common\include\Drlg</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Drlg\D2DrlgTileSub.h">
+      <Filter>Header Files\d2moo\D2Common\include\Drlg</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\AnimTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\ArenaTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\BeltsTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\FieldTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\HoradricCube.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\InvTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\ItemsTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\LevelsTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\MissilesTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\MonsterTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\ObjectsTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\OverlayTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\SequenceTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\SkillsTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\DataTbls\TokenTbls.h">
+      <Filter>Header Files\d2moo\D2Common\include\DataTbls</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Units\Item.h">
+      <Filter>Header Files\d2moo\D2Common\include\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Units\Missile.h">
+      <Filter>Header Files\d2moo\D2Common\include\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Units\MissileStream.h">
+      <Filter>Header Files\d2moo\D2Common\include\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Units\Monster.h">
+      <Filter>Header Files\d2moo\D2Common\include\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Units\Object.h">
+      <Filter>Header Files\d2moo\D2Common\include\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Units\Player.h">
+      <Filter>Header Files\d2moo\D2Common\include\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Units\UnitFinds.h">
+      <Filter>Header Files\d2moo\D2Common\include\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="d2moo\D2Common\include\Units\Units.h">
+      <Filter>Header Files\d2moo\D2Common\include\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="magic.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="magic.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
+  </ItemGroup>
+</Project>
