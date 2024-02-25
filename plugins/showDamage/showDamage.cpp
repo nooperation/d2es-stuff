@@ -65,16 +65,15 @@ struct PacketHandlerEntry
 {
     PacketHandlerFunc_t Callback;
     uint32_t PacketSize;
-    uint32_t UnknownFlag;
+    void* UnknownFunc;
 };
 
-struct D2DamagePacket
+struct D2DamageReportPacket
 {
-    uint8_t unknownA;
-    uint8_t unknownB;
-    uint8_t unknownC;
+    uint8_t packetId;
+    uint8_t isPlayerBeingAttacked;
     uint32_t unitId;
-    uint32_t damage;
+    int64_t damage;
 };
 #pragma pack(pop)
 
@@ -84,7 +83,7 @@ struct DamageInfo
     bool isPlayerBeingAttacked;
     uint32_t unitId;
     uint64_t tickCreated;
-    std::wstring text;
+    wchar_t text[32];
 };
 
 PLUGIN_INTERFACE Interface;
@@ -167,18 +166,18 @@ void __cdecl RenderHook()
 
         int32_t textWidth;
         int32_t textHeight;
-        D2Win_10131_GetTextDimensions(damageInfos[i].text.c_str(), &textWidth, &textHeight);
+        D2Win_10131_GetTextDimensions(damageInfos[i].text, &textWidth, &textHeight);
 
         unitY -= (65 + ticksRemaining >> 3);
         unitX -= textWidth / 2;
 
-        D2Win_10117_DrawText(damageInfos[i].text.c_str(), unitX, unitY, color, FALSE);
+        D2Win_10117_DrawText(damageInfos[i].text, unitX, unitY, color, FALSE);
     }
 
     D2Win_10127_SetFont(originalFont);
 }
 
-void UpdateUnitDamage(uint32_t unitId, int32_t damage, bool isPlayerBeingAttacked)
+void UpdateUnitDamage(uint32_t unitId, int64_t damage, bool isPlayerBeingAttacked)
 {
     for (std::size_t i = 0; i < damageInfos.size(); ++i)
     {
@@ -196,15 +195,17 @@ void UpdateUnitDamage(uint32_t unitId, int32_t damage, bool isPlayerBeingAttacke
         wss.imbue(std::locale(""));
         wss << (damage >> 8);
 
-        damageInfos[i].text = wss.str();
+        swprintf_s(damageInfos[i].text, L"%s", wss.str().c_str());
+
+       // damageInfos[i].text = wss.str();
         return;
     }
 }
 
 uint32_t __fastcall HandleDamagePacket(const char* packet, uint32_t packetLength)
 {
-    auto damage = (D2DamagePacket*)&packet[1];
-    UpdateUnitDamage(damage->unitId, damage->damage, damage->unknownA == 2);
+    auto damage = (D2DamageReportPacket*)&packet[0];
+    UpdateUnitDamage(damage->unitId, damage->damage, damage->isPlayerBeingAttacked);
 
     return 1;
 }
@@ -230,8 +231,14 @@ DWORD __stdcall PluginEntry(DWORD dwReason, LPVOID lpData)
         }
 
         PacketHandlerEntry* packetHandlerTable = (PacketHandlerEntry*)((unsigned char*)d2ClientHandle + 0xD6270);
-        packetHandlerTable[0x45].Callback = HandleDamagePacket;
-        packetHandlerTable[0x45].PacketSize = 13;
+        packetHandlerTable[0x64].Callback = HandleDamagePacket;
+        packetHandlerTable[0x64].PacketSize = sizeof(D2DamageReportPacket);
+        packetHandlerTable[0x64].UnknownFunc = nullptr;
+
+        // This is already setup on via D2CommonESE.dll
+        //auto d2NetHandle = GetModuleHandle("D2Net.dll");
+        //volatile int32_t* pServerPacketSizeTable = (volatile int32_t*)((unsigned char*)d2NetHandle + 0x8148);
+        //pServerPacketSizeTable[0x64] = sizeof(D2DamageReportPacket);
 
         GetUnit = (GetUnit_t)((unsigned char*)d2ClientHandle + 0x869F0);
         GetPlayerUnit = (GetPlayerUnit_t)((unsigned char*)d2ClientHandle + 0x883D0);
