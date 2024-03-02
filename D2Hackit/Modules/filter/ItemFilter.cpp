@@ -3,6 +3,29 @@
 
 #define FILTER_SETTINGS_PATH ".\\plugin\\filter.ini"
 
+int32_t MyGetPrivateProfileInt(
+	_In_     LPCSTR lpAppName,
+	_In_     LPCSTR lpKeyName,
+	_In_     INT nDefault,
+	_In_opt_ LPCSTR lpFileName)
+{
+	auto defaultStr = std::to_string(nDefault);
+
+	char buff[1024];
+	GetPrivateProfileStringA(lpAppName, lpKeyName, defaultStr.c_str(), buff, sizeof(buff), lpFileName);
+
+	std::string strBuff(buff);
+	try
+	{
+		const auto number = std::stoi(strBuff);
+		return number;
+	}
+	catch (...)
+	{
+		return 0;
+	}
+}
+
 bool ItemFilter::OnItemAction(ITEM &item)
 {
 	switch(item.iAction)
@@ -60,7 +83,7 @@ bool ItemFilter::LoadItems()
 	showMagicJewels     = GetPrivateProfileInt("Jewels", "MagicJewels", 1, FILTER_SETTINGS_PATH) == TRUE;
 	showRareJewels      = GetPrivateProfileInt("Jewels", "RareJewels", 1, FILTER_SETTINGS_PATH) == TRUE;
 
-	minGoldAmount		= GetPrivateProfileInt("Misc", "MinGoldAmount", 0, FILTER_SETTINGS_PATH);
+	minGoldAmount		= MyGetPrivateProfileInt("Misc", "MinGoldAmount", 0, FILTER_SETTINGS_PATH);
 	hideRejuvsWhenBeltFull = GetPrivateProfileInt("Misc", "HideRejuvsWenBeltFull", 1, FILTER_SETTINGS_PATH) == TRUE;
 
 	return true;
