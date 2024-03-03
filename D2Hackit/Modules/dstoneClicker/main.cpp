@@ -96,10 +96,10 @@ BOOL PRIVATE PrintDStoneTypes(char** argv, int argc)
 	server->GameStringf("Dstone Types:");
 	server->GameStringf("  1 - ÿc;Dragon Stone");
 	server->GameStringf("  2 - ÿc/Holy Symbol");
-	server->GameStringf("  3 - ÿc1Bloackmoor");
+	server->GameStringf("  3 - ÿc1Blackmoor");
 	server->GameStringf("  4 - ÿc7Forging Hammer");
 	server->GameStringf("  5 - ÿc3Crushed Gem");
-	server->GameStringf("  6 - ÿc5Sipder's Silk");
+	server->GameStringf("  6 - ÿc5Spider's Silk");
 	server->GameStringf("  7 - ÿc5Tyranium Ore");
 
 	return TRUE;
