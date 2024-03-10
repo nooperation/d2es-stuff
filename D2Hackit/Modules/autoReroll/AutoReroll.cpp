@@ -408,6 +408,8 @@ bool AutoReroll::IsPerfectProperty(GAMEUNIT& itemUnit, UnitAny* unit, const D2Pr
 				{
 					return false;
 				}
+
+				break;
 			}
 			case 21: // +class skills
 			{
@@ -424,6 +426,7 @@ bool AutoReroll::IsPerfectProperty(GAMEUNIT& itemUnit, UnitAny* unit, const D2Pr
 				{
 					return false;
 				}
+				break;
 			}
 			case 22: // oskills
 			{
@@ -439,6 +442,7 @@ bool AutoReroll::IsPerfectProperty(GAMEUNIT& itemUnit, UnitAny* unit, const D2Pr
 				{
 					return false;
 				}
+				break;
 			}
 		}
 	}
