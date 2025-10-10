@@ -15,6 +15,7 @@ AutoJewel::AutoJewel()
 	kRingItemCodes.insert("drn");
 	kRingItemCodes.insert("arn");
 
+	kRingItemCodes.insert("amu");
 	kRingItemCodes.insert("zam");
 	kRingItemCodes.insert("sam");
 	kRingItemCodes.insert("nam");
