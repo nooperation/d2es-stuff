@@ -219,6 +219,64 @@ void DumpAllItems(char *path)
 	fclose(outFile);
 }
 
+typedef D2SetItemsTxt* (__fastcall* D2Client_GetSetItemsTxt_6FAE5C80_t)(int32_t setsTxtIndex);
+
+void DumpAllSets(char *path)
+{
+	FILE *outFile = nullptr;
+	fopen_s(&outFile, path, "w");
+
+	if (outFile == nullptr)
+	{
+		return;
+	}
+
+	auto d2ClientModule = GetModuleHandle("D2Client");
+	D2Client_GetSetItemsTxt_6FAE5C80_t D2Client_GetSetItemsTxt_6FAE5C80 = (D2Client_GetSetItemsTxt_6FAE5C80_t)((char*)d2ClientModule + 0x45C80);
+
+	for (int i = 0; i < 1000000; i++)
+	{
+		const auto itemTxt = D2Client_GetSetItemsTxt_6FAE5C80(i);
+		if (itemTxt == nullptr)
+		{
+			break;
+		}
+
+		fprintf(outFile, "%d %s\n", i, itemTxt->szName);
+	}
+
+	fclose(outFile);
+}
+
+typedef D2UniqueItemsTxt* (__fastcall* ITEMS_GetUniqueItemsTxtRecord_t)(int32_t nUniqueItemId);
+
+void DumpAllUniques(char *path)
+{
+	FILE *outFile = nullptr;
+	fopen_s(&outFile, path, "w");
+
+	if (outFile == nullptr)
+	{
+		return;
+	}
+
+	auto D2GameImageBase = (uint32_t)GetModuleHandle("D2Game");
+	auto ITEMS_GetUniqueItemsTxtRecord = (ITEMS_GetUniqueItemsTxtRecord_t)(D2GameImageBase + 0x1D470);
+
+	for (int i = 0; i < 1000000; i++)
+	{
+		const auto itemTxt = ITEMS_GetUniqueItemsTxtRecord(i);
+		if (itemTxt == nullptr)
+		{
+			break;
+		}
+
+		fprintf(outFile, "%d %s\n", i, itemTxt->szName);
+	}
+
+	fclose(outFile);
+}
+
 bool LoadItems()
 {
 	// I figure it's better to just wait for one thread to read and set the data
@@ -234,6 +292,16 @@ bool LoadItems()
 	if (!std::filesystem::exists(".\\plugin\\AllItems.txt"))
 	{
 		DumpAllItems(".\\plugin\\AllItems.txt");
+	}
+
+	if (!std::filesystem::exists(".\\plugin\\AllUniques.txt"))
+	{
+		DumpAllUniques(".\\plugin\\AllUniques.txt");
+	}
+
+	if (!std::filesystem::exists(".\\plugin\\AllSets.txt"))
+	{
+		DumpAllSets(".\\plugin\\AllSets.txt");
 	}
 
 	if (!ReadFirstColumn(".\\plugin\\Properties.txt", propertyNames)) {

@@ -120,6 +120,7 @@ class AutoStocker
 		unsigned int currentStocker;
 		std::unordered_set<int> goodPrefix;
 		std::unordered_set<int> goodSuffix;
+		std::unordered_set<int> junkUniques;
 		States currentState;
 };
 

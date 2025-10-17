@@ -31,6 +31,8 @@ class ItemFilter
 		bool showMagic;
 		bool showMagicRingAmulet;
 		bool showRareRingAmulet;
+		bool showSetRingAmulet;
+		bool showUniqueRingAmulet;
 		bool showMagicCharms;
 		bool showRareCharms;
 		bool showMagicJewels;

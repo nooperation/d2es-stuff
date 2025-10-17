@@ -90,6 +90,29 @@ BOOL PRIVATE StartAmulets(char **argv, int argc)
 	return TRUE;
 }
 
+BOOL PRIVATE StartAuraStones(char** argv, int argc)
+{
+	std::vector<std::string> jewellery;
+
+	server->GameCommandLine("gamble autostock magic rare set unique");
+
+	jewellery.push_back("zam"); //Amazonian"); //Pin");
+	jewellery.push_back("sam"); //Sorcerer's"); //Talisman");
+	jewellery.push_back("nam"); //Death's"); //Locket");
+	jewellery.push_back("pam"); //Holy"); //Pendant");
+	jewellery.push_back("bam"); //Totemic"); //Pebble");
+	jewellery.push_back("dam"); //Druidic"); //Necklace");
+	jewellery.push_back("aam"); //Assassin's"); //Choker");
+
+	if (!gambler.Init(jewellery))
+	{
+		return TRUE;
+	}
+	gambler.StartGambling();
+
+	return TRUE;
+}
+
 BOOL PRIVATE StartJewellery(char** argv, int argc)
 {
 	std::vector<std::string> jewellery;
@@ -607,6 +630,11 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"StartJewellery",
 		StartJewellery,
 		"Start gambling for rings and amulets",
+	},
+	{
+		"StartAuraStones",
+		StartAuraStones,
+		"Start gambling for class specific amulets",
 	},
 	{
 		"StartFoc",

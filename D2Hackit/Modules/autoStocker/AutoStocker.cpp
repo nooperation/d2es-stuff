@@ -49,6 +49,11 @@ bool AutoStocker::Init(bool useChat)
 		return false;
 	}
 
+	if (!ReadAffixConfig(".\\plugin\\junkUniques_as.txt", junkUniques))
+	{
+		junkUniques.clear();
+	}
+
 	MaxUnidentifiedSCharmLevel = GetPrivateProfileInt("Autostocker", "MaxUnidentifiedSCharmLvl", 0, CONFIG_FILE);
 	MaxUnidentifiedLCharmLevel = GetPrivateProfileInt("Autostocker", "MaxUnidentifiedLCharmLvl", 0, CONFIG_FILE);
 	MaxUnidentifiedGCharmLevel = GetPrivateProfileInt("Autostocker", "MaxUnidentifiedGCharmLvl", 0, CONFIG_FILE);
@@ -1164,10 +1169,14 @@ bool AutoStocker::IsRerollItem(const ITEM &item)
 		}
 	}
 
+	if (transmuteUnique && item.iQuality == ITEM_QUALITY_UNIQUE && junkUniques.find(item.wSetUniqueID) != junkUniques.end())
+	{
+		return true;
+	}
+
 	if(item.iQuality == ITEM_LEVEL_NORMAL || item.iQuality == ITEM_LEVEL_MAGIC ||
 		(item.iQuality == ITEM_LEVEL_SET && transmuteSet) ||
-		(item.iQuality == ITEM_LEVEL_RARE && transmuteRare) ||
-		(item.iQuality == ITEM_LEVEL_UNIQUE && transmuteUnique))
+		(item.iQuality == ITEM_LEVEL_RARE && transmuteRare))
 	{
 		if(!CheckItemAffix(item))
 		{

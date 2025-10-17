@@ -76,6 +76,8 @@ bool ItemFilter::LoadItems()
 
 	showMagicRingAmulet	= GetPrivateProfileInt("Jewellery", "MagicRingAmulet", 1, FILTER_SETTINGS_PATH) == TRUE;
     showRareRingAmulet	= GetPrivateProfileInt("Jewellery", "RareRingAmulet", 1, FILTER_SETTINGS_PATH) == TRUE;
+    showSetRingAmulet	= GetPrivateProfileInt("Jewellery", "SetRingAmulet", 1, FILTER_SETTINGS_PATH) == TRUE;
+    showUniqueRingAmulet	= GetPrivateProfileInt("Jewellery", "UniqueRingAmulet", 1, FILTER_SETTINGS_PATH) == TRUE;
 
 	showMagicCharms		= GetPrivateProfileInt("Charms", "MagicCharms", 1, FILTER_SETTINGS_PATH) == TRUE;
     showRareCharms		= GetPrivateProfileInt("Charms", "RareCharms", 1, FILTER_SETTINGS_PATH) == TRUE;
@@ -175,6 +177,12 @@ bool ItemFilter::OnItemFind(ITEM &item)
     		return false;
 
         if(!showRareRingAmulet &&  item.iQuality == ITEM_LEVEL_RARE)
+    		return false;
+
+        if(!showSetRingAmulet &&  item.iQuality == ITEM_LEVEL_SET)
+    		return false;
+
+        if(!showUniqueRingAmulet &&  item.iQuality == ITEM_LEVEL_UNIQUE)
     		return false;
 
         return true;
