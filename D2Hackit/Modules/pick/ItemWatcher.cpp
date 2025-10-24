@@ -117,6 +117,15 @@ void ItemWatcher::CheckWatchedItems()
 
 		if(itemIter->isGold)
 		{
+			auto goldLimit = 256000000;
+			auto currentGold = me->GetStat(STAT_GOLD);
+
+			if (currentGold >= goldLimit)
+			{
+				itemIter = watchedItems.erase(itemIter);
+				continue;
+			}
+
 			numPickAttemptsThisFrame++;
 			me->PickGroundItem(itemIter->id, this->isWalkToGold);
 		}
@@ -473,6 +482,14 @@ void ItemWatcher::OnItemFind(const ITEM &item)
 	{
 		if(itemCode == "gld" && item.dwGoldAmount >= minGold)
 		{
+			auto goldLimit = 256000000;
+			auto currentGold = me->GetStat(STAT_GOLD);
+
+			if (currentGold >= goldLimit)
+			{
+				return;
+			}
+
 			itemData.isGold = true;
 			watchedItems.push_back(itemData);
 			SortWatchedItems();

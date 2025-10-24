@@ -77,18 +77,19 @@ bool AutoBuy::Start(int quantity, const std::string& itemCode, bool isAutomaticM
 	if (currentState != State::Uninitialized)
 	{
 		this->Stop();
+		return false;
 	}
 
-	server->GameStringf("Attempting to buy %d %s", quantity, itemCode.c_str());
-
+	this->isAutomaticMode = isAutomaticMode;
 	this->numTPTomesToRefill = 0;
-	this->itemQuantityToBuy = max(0, quantity);
+	this->itemQuantityToBuy = isAutomaticMode ? 999 : max(0, quantity);
 	this->itemCodeToBuy = itemCode;
 	this->hasAlreadyRestockedTps = false;
-	this->isAutomaticMode = isAutomaticMode;
 
 	if (!me->IsUIOpened(UI_NPCSHOP))
 	{
+		server->GameStringf("Attempting to buy %d %s", quantity, itemCode.c_str());
+
 		merchantNpc.dwUnitType = UNIT_TYPE_MONSTER;
 		merchantNpc.dwUnitID = FindMerchant();
 
@@ -109,14 +110,9 @@ bool AutoBuy::Start(int quantity, const std::string& itemCode, bool isAutomaticM
 	}
 	else
 	{
-		if (isAutomaticMode)
-		{
-			currentState = State::CloseMerchantUiAndRestart;
-			me->CloseAllUIs();
-			return true;
-		}
-
-		BuyOurStuff();
+		currentState = State::CloseMerchantUiAndRestart;
+		me->CloseAllUIs();
+		return true;
 	}
 
 	return true;
@@ -203,7 +199,6 @@ void AutoBuy::OnNPCShopScreenOpened()
 {
 	merchantItems.clear();
 	this->hasAlreadyRestockedTps = false;
-
 }
 
 void AutoBuy::ProcessInventoryItem(const ITEM* item)
@@ -255,23 +250,26 @@ void AutoBuy::OnNpcSession(int success)
 		if (isAutomaticMode)
 		{
 			currentState = State::Uninitialized;
-			Start(1, itemCodeToBuy, isAutomaticMode);
+			Start(itemQuantityToBuy, itemCodeToBuy, isAutomaticMode);
 		}
 
 		return;
 	}
 
-	if (isAutomaticMode)
-	{
-		currentState = State::PurchaseNextitem;
-		BuyOurStuff();
-	}
+	currentState = State::PurchaseNextitem;
+	BuyOurStuff();
 }
 
 void AutoBuy::OnItemToStorageFromStore(ITEM& item)
 {
 	if (currentState != State::PurchaseWaitforitem)
 	{
+		return;
+	}
+
+	if (!me->IsInTown())
+	{
+		this->Stop();
 		return;
 	}
 
@@ -287,13 +285,20 @@ void AutoBuy::OnUIClosed()
 	if (currentState == State::CloseMerchantUiAndRestart)
 	{
 		currentState = State::Uninitialized;
-		Start(1, itemCodeToBuy, isAutomaticMode);
+		Start(itemQuantityToBuy, itemCodeToBuy, isAutomaticMode);
 		return;
 	}
 
 	if (currentState == State::CloseMerchantUiAndRunAutostock)
 	{
+		if (!me->IsInTown())
+		{
+			this->Stop();
+			return;
+		}
+
 		currentState = State::RunAutostocker;
+		server->GameStringf("ÿc:AutoBuyÿc0: Running autostocker...");
 		server->GameCommandLine("as start chat");
 		return;
 	}
@@ -301,7 +306,7 @@ void AutoBuy::OnUIClosed()
 
 bool AutoBuy::OnAutostockerMessage(const std::string_view& message)
 {
-	if (currentState != State::RunAutostocker)
+	if (currentState != State::RunAutostocker || !me->IsInTown())
 	{
 		return false;
 	}
@@ -313,7 +318,7 @@ bool AutoBuy::OnAutostockerMessage(const std::string_view& message)
 		if (isAutomaticMode)
 		{
 			currentState = State::Uninitialized;
-			Start(1, itemCodeToBuy, true);
+			Start(itemQuantityToBuy, itemCodeToBuy, isAutomaticMode);
 		}
 	}
 

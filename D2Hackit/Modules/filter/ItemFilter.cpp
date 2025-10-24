@@ -161,7 +161,16 @@ bool ItemFilter::OnItemFind(ITEM &item)
 		return false;
 	}
 
-	if (strcmp(item.szItemCode, "gld") == 0) {
+	if (strcmp(item.szItemCode, "gld") == 0) 
+	{
+		auto goldLimit = 256000000;
+		auto currentGold = me->GetStat(STAT_GOLD);
+
+		if (currentGold >= goldLimit)
+		{
+			return false;
+		}
+
 		return item.dwGoldAmount >= minGoldAmount;
 	}
 

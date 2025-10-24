@@ -19,14 +19,13 @@ BOOL PRIVATE Start(char** argv, int argc)
 		return FALSE;
 	}
 
-	auto quantity = atoi(argv[2]);
-	auto itemCode = std::string(argv[3]);
+	auto itemCode = std::string(argv[2]);
+	auto quantity = atoi(argv[3]);
 
 	autoBuy.Start(quantity, itemCode, false);
 
 	return TRUE;
 }
-
 
 BOOL PRIVATE Auto(char** argv, int argc)
 {
@@ -38,6 +37,26 @@ BOOL PRIVATE Auto(char** argv, int argc)
 	auto itemCode = std::string(argv[2]);
 
 	autoBuy.Start(1, itemCode, true);
+
+	return TRUE;
+}
+
+BOOL PRIVATE StartMaples(char** argv, int argc)
+{
+	if (argc != 3)
+	{
+		return FALSE;
+	}
+
+	if (stricmp(argv[2], "all") == 0)
+	{
+		autoBuy.Start(1, "map", true);
+	}
+	else
+	{
+		auto quantity = atoi(argv[2]);
+		autoBuy.Start(quantity, "map", false);
+	}
 
 	return TRUE;
 }
@@ -57,6 +76,10 @@ VOID EXPORT OnThisPlayerMessage(UINT nMessage, WPARAM wParam, LPARAM lParam)
 	if (nMessage == PM_NPCSESSION)
 	{
 		autoBuy.OnNpcSession(wParam);
+	}
+	if (nMessage == PM_LEAVETOWN)
+	{
+		autoBuy.Stop();
 	}
 }
 
@@ -165,14 +188,24 @@ MODULECOMMANDSTRUCT ModuleCommands[]=
 		"<command> helpÿc0 Shows detailed help for <command> in this module."
 	},
 	{
+		"Map",
+		StartMaples,
+		"Usage: Map <count> or: Map all",
+	},
+	{
 		"Start",
 		Start,
-		"Usage: Start <count> <itemcode>",
+		"Usage: Start <itemcode> <count>",
 	},
 	{
 		"Auto",
 		Auto,
 		"Usage: Auto <itemcode>",
+	},
+	{
+		"All",
+		Auto,
+		"Alias of auto. Usage: All <itemcode>",
 	},
 	{
 		"Gempacks",
