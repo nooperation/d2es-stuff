@@ -7,6 +7,11 @@ bool settingTransmuteHotkey = 0;
 int dropToCubeHotkey = 0;
 int transmuteHotkey = 0;
 
+bool prevTransmuteKeyState = false;
+bool prevDropToCubeKeyState = false;
+
+DWORD currentProcessId = GetCurrentProcessId();
+
 BOOL PRIVATE SetDropToCubeHotkey(char** argv, int argc);
 BOOL PRIVATE SetTransmuteHotkey(char** argv, int argc);
 void ReadConfig();
@@ -61,11 +66,54 @@ VOID EXPORT OnGameJoin(THISGAMESTRUCT* thisgame)
 	ReadConfig();
 }
 
+DWORD EXPORT OnGameTimerTick()
+{
+	if (!transmuteHotkey && !dropToCubeHotkey)
+	{
+		return 0;
+	}
+
+	HWND foregroundWindow = GetForegroundWindow();
+	DWORD foregroundProcessId = 0;
+	GetWindowThreadProcessId(foregroundWindow, &foregroundProcessId);
+	
+	if (foregroundProcessId != currentProcessId)
+	{
+		prevTransmuteKeyState = false;
+		prevDropToCubeKeyState = false;
+		return 0;
+	}
+
+	if (transmuteHotkey)
+	{
+		bool currentTransmuteKeyState = (GetAsyncKeyState(transmuteHotkey) & 0x8000) != 0;
+		if (currentTransmuteKeyState && !prevTransmuteKeyState)
+		{
+			me->Transmute();
+		}
+		prevTransmuteKeyState = currentTransmuteKeyState;
+	}
+
+	if (dropToCubeHotkey)
+	{
+		bool currentDropToCubeKeyState = (GetAsyncKeyState(dropToCubeHotkey) & 0x8000) != 0;
+		if (currentDropToCubeKeyState && !prevDropToCubeKeyState)
+		{
+			if (!me->DropCursorItemToGround())
+			{
+				me->DropCursorItemToStorage(STORAGE_CUBE);
+			}
+		}
+		prevDropToCubeKeyState = currentDropToCubeKeyState;
+	}
+
+	return 0;
+}
+
 BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 {
 	if(settingDropToCubeHotkey || settingTransmuteHotkey)
 	{
-		
 		int hotkey = 0;
 
 		if(iKeyCode == 0 || iKeyCode == VK_ESCAPE || iKeyCode == VK_RETURN)
@@ -92,18 +140,6 @@ BYTE EXPORT OnGameKeyDown(BYTE iKeyCode)
 		settingTransmuteHotkey = false;
 
 		WriteConfig();
-	}
-	else
-	{
-		if(iKeyCode == transmuteHotkey)
-		{
-			me->Transmute();
-		}
-		if(iKeyCode == dropToCubeHotkey)
-		{
-			if (me->DropCursorItemToGround())
-				me->DropCursorItemToStorage(STORAGE_CUBE);
-		}
 	}
 
 	return iKeyCode;
