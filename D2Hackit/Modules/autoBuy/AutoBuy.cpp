@@ -9,6 +9,8 @@
 
 BOOL CALLBACK FindStuffToRefillCallback(LPCITEM item, LPARAM lParam);
 
+int32_t* D2Client_pIsNpcDialogOpen_6FBB5CF9 = nullptr; // 115CF9
+
 AutoBuy::AutoBuy()
 {
 	memset(&merchantNpc, 0, sizeof(GAMEUNIT));
@@ -16,6 +18,10 @@ AutoBuy::AutoBuy()
 
 	this->isAutomaticallyRefillTP = GetPrivateProfileInt("AutoBuy", "AutomaticallyRefillTP", 1, CONFIG_PATH);
 	this->refillTpAtCharge = GetPrivateProfileInt("AutoBuy", "RefillTpAtCharge", 35, CONFIG_PATH);
+
+	auto d2ClientModule = GetModuleHandle("D2Client");
+
+	D2Client_pIsNpcDialogOpen_6FBB5CF9 = (int32_t*)((char*)d2ClientModule + 0x115CF9);
 }
 
 #pragma pack(push, 1)
@@ -267,13 +273,13 @@ void AutoBuy::OnItemToStorageFromStore(ITEM& item)
 		return;
 	}
 
-	if (!me->IsInTown())
+	if (!me->IsInTown() || !me->IsUIOpened(UI_NPCSHOP) || D2Client_pIsNpcDialogOpen_6FBB5CF9 == nullptr || *D2Client_pIsNpcDialogOpen_6FBB5CF9 == 0)
 	{
 		this->Stop();
 		return;
 	}
-
-	if (!WillItemFit(item.dwItemID))
+	
+	if (isAutomaticMode && !WillItemFit(item.dwItemID))
 	{
 		currentState = State::CloseMerchantUiAndRunAutostock;
 		me->CloseAllUIs();
@@ -288,8 +294,7 @@ void AutoBuy::OnUIClosed()
 		Start(itemQuantityToBuy, itemCodeToBuy, isAutomaticMode);
 		return;
 	}
-
-	if (currentState == State::CloseMerchantUiAndRunAutostock)
+	else if (currentState == State::CloseMerchantUiAndRunAutostock)
 	{
 		if (!me->IsInTown())
 		{
